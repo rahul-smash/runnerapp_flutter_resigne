@@ -1,6 +1,65 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
 
-void main() {
+import 'package:device_info/device_info.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:package_info/package_info.dart';
+import 'package:valueappz_feature_component/src/model/config_model.dart';
+import 'package:valueappz_feature_component/src/model/store_response_model.dart';
+import 'package:valueappz_feature_component/src/network/app_network_repository.dart';
+import 'package:valueappz_feature_component/src/sharedpreference/SharedPrefs.dart';
+import 'package:valueappz_feature_component/src/utils/app_constants.dart';
+import 'package:valueappz_feature_component/src/utils/app_theme.dart';
+import 'package:valueappz_feature_component/src/utils/app_utils.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  AppConstants.isLoggedIn = await SharedPrefs.isUserLoggedIn();
+
+  bool isAdminLogin = false;
+  String jsonResult = await loadAsset();
+  final parsed = json.decode(jsonResult);
+  ConfigModel configObject = ConfigModel.fromJson(parsed);
+  if (Platform.isIOS) {
+    IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+    SharedPrefs.storeSharedValue(
+        AppConstants.deviceId, iosDeviceInfo.identifierForVendor);
+  } else {
+    AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
+    SharedPrefs.storeSharedValue(
+        AppConstants.deviceId, androidDeviceInfo.androidId);
+  }
+
+  if (configObject.isGroceryApp == "true") {
+    AppConstants.isRestroApp = false;
+  } else {
+    AppConstants.isRestroApp = true;
+  }
+
+  String branch_id =
+      await SharedPrefs.getStoreSharedValue(AppConstants.branch_id);
+  if (branch_id == null || branch_id.isEmpty) {
+  } else if (branch_id.isNotEmpty) {
+    configObject.storeId = branch_id;
+  }
+  //print(configObject.storeId);
+
+  Crashlytics.instance.enableInDevMode = true;
+  StoreResponse storeData =
+      await AppNetworkRepository.instance.versionApi(configObject.storeId);
+  setAppThemeColors(storeData.store);
+  // Pass all uncaught errors to Crashlytics.
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  SharedPrefs.storeSharedValue(AppConstants.isAdminLogin, "${isAdminLogin}");
+
+  PackageInfo packageInfo = await AppUtils.getAppVersionDetails(storeData);
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await AppUtils.getDeviceInfo(storeData);
   runApp(MyApp());
 }
 
@@ -25,6 +84,85 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
+}
+
+void setAppThemeColors(StoreModel store) {
+  AppThemeColors appThemeColors = store.appThemeColors;
+  AppTheme.primaryColor = Color(int.parse(appThemeColors.appThemeColor));
+  AppTheme.primaryColorLight = AppTheme.primaryColor.withOpacity(0.1);
+
+  AppTheme.leftMenuHeaderBackground =
+      Color(int.parse(appThemeColors.leftMenuHeaderBackgroundColor));
+  AppTheme.leftMenuIconColors =
+      Color(int.parse(appThemeColors.leftMenuIconColor));
+  AppTheme.leftMenuBackgroundColor =
+      Color(int.parse(appThemeColors.leftMenuBackgroundColor));
+  AppTheme.leftMenuWelcomeTextColors =
+      Color(int.parse(appThemeColors.leftMenuUsernameColor));
+  AppTheme.leftMenuUsernameColors =
+      Color(int.parse(appThemeColors.leftMenuUsernameColor));
+  AppTheme.bottomBarIconColor =
+      Color(int.parse(appThemeColors.bottomBarIconColor));
+  AppTheme.bottomBarTextColor =
+      Color(int.parse(appThemeColors.bottomBarTextColor));
+  AppTheme.dotIncreasedColor =
+      Color(int.parse(appThemeColors.dotIncreasedColor));
+  AppTheme.bottomBarBackgroundColor =
+      Color(int.parse(appThemeColors.bottom_bar_background_color));
+  AppTheme.leftMenuLabelTextColors =
+      Color(int.parse(appThemeColors.left_menu_label_Color));
+
+  //flow
+  if (store.webAppThemeColors != null) {
+    WebAppThemeColors webAppThemeColors = store.webAppThemeColors;
+    AppTheme.primaryColor = AppUtils.colorGeneralization(
+        AppTheme.primaryColor, webAppThemeColors.webThemePrimaryColor);
+    AppTheme.primaryColorLight = AppTheme.primaryColor.withOpacity(0.1);
+    AppTheme.appThemeSecondary = AppUtils.colorGeneralization(
+        AppTheme.appThemeSecondary, webAppThemeColors.webThemeSecondaryColor);
+
+    AppTheme.dotIncreasedColor = AppTheme.appThemeSecondary;
+    AppTheme.webThemeCategoryOpenColor = AppUtils.colorGeneralization(
+        AppTheme.primaryColorLight,
+        webAppThemeColors.webThemeCategoryOpenColor);
+    AppTheme.stripsColor = AppUtils.colorGeneralization(
+        AppTheme.stripsColor, webAppThemeColors.stripsColor);
+    AppTheme.footerColor = AppUtils.colorGeneralization(
+        AppTheme.footerColor, webAppThemeColors.footerColor);
+    AppTheme.listingBackgroundColor = AppUtils.colorGeneralization(
+        AppTheme.listingBackgroundColor,
+        webAppThemeColors.listingBackgroundColor);
+    AppTheme.listingBorderColor = AppUtils.colorGeneralization(
+        AppTheme.listingBorderColor, webAppThemeColors.listingBorderColor);
+    AppTheme.listingBoxBackgroundColor = AppUtils.colorGeneralization(
+        AppTheme.listingBoxBackgroundColor,
+        webAppThemeColors.listingBoxBackgroundColor);
+    AppTheme.homeSubHeadingColor = AppUtils.colorGeneralization(
+        AppTheme.homeSubHeadingColor, webAppThemeColors.homeSubHeadingColor);
+    AppTheme.homeDescriptionColor = AppUtils.colorGeneralization(
+        AppTheme.homeDescriptionColor, webAppThemeColors.homeDescriptionColor);
+    AppTheme.categoryListingButtonBorderColor = AppUtils.colorGeneralization(
+        AppTheme.categoryListingButtonBorderColor,
+        webAppThemeColors.categoryListingButtonBorderColor);
+    AppTheme.categoryListingBoxBackgroundColor = AppUtils.colorGeneralization(
+        AppTheme.categoryListingBoxBackgroundColor,
+        webAppThemeColors.categoryListingBoxBackgroundColor);
+
+    AppTheme.bottomBarTextColor = AppUtils.colorGeneralization(
+        AppTheme.bottomBarBackgroundColor, "#000000");
+    AppTheme.bottomBarIconColor = AppTheme.primaryColor;
+    AppTheme.bottomBarBackgroundColor = AppUtils.colorGeneralization(
+        AppTheme.bottomBarBackgroundColor, "#ffffff");
+    AppTheme.leftMenuLabelTextColors = AppUtils.colorGeneralization(
+        AppTheme.leftMenuLabelTextColors, "#ffffff");
+  } else {
+    AppTheme.primaryColor = Color(int.parse(appThemeColors.appThemeColor));
+    AppTheme.primaryColorLight = AppTheme.primaryColor.withOpacity(0.1);
+  }
+}
+
+Future<String> loadAsset() async {
+  return await rootBundle.loadString('assets/config/app_config.json');
 }
 
 class MyHomePage extends StatefulWidget {

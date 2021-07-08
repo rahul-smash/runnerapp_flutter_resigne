@@ -32,18 +32,13 @@ abstract class DioBaseService {
       ..sendTimeout = REQUEST_TIME_OUT
       ..receiveTimeout = RESPONSE_TIME_OUT
       ..headers = _headers
-      ..responseType = ResponseType.json;
+      ..responseType = ResponseType.plain;
 
     _dioClient.interceptors.add(new LogInterceptor(
         requestBody: true,
         responseHeader: false,
         responseBody: true,
         request: false));
-    _dioClient.interceptors.add(new InterceptorsWrapper(
-      onRequest: (options, handler) {
-
-      },
-    ));
   }
 
   @protected
