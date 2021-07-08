@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:valueappz_feature_component/src/model/device_info.dart';
 import 'package:valueappz_feature_component/src/model/store_response_model.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/SharedPrefs.dart';
+import 'package:valueappz_feature_component/src/sharedpreference/shared_prefs.dart';
 import 'package:valueappz_feature_component/src/utils/app_constants.dart';
 
 class AppUtils {

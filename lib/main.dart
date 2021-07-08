@@ -9,7 +9,8 @@ import 'package:package_info/package_info.dart';
 import 'package:valueappz_feature_component/src/model/config_model.dart';
 import 'package:valueappz_feature_component/src/model/store_response_model.dart';
 import 'package:valueappz_feature_component/src/network/app_network_repository.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/SharedPrefs.dart';
+import 'package:valueappz_feature_component/src/sharedpreference/shared_prefs.dart';
+import 'package:valueappz_feature_component/src/singleton/store_data_singleton.dart';
 import 'package:valueappz_feature_component/src/utils/app_constants.dart';
 import 'package:valueappz_feature_component/src/utils/app_theme.dart';
 import 'package:valueappz_feature_component/src/utils/app_utils.dart';
@@ -51,7 +52,8 @@ void main() async {
   Crashlytics.instance.enableInDevMode = true;
   StoreResponse storeData =
       await AppNetworkRepository.instance.versionApi(configObject.storeId);
-  setAppThemeColors(storeData.store);
+  StoreDataSingleton.instance.store = storeData.store;
+  setAppThemeColors();
   // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   SharedPrefs.storeSharedValue(AppConstants.isAdminLogin, "${isAdminLogin}");
@@ -69,25 +71,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.theme,
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-void setAppThemeColors(StoreModel store) {
-  AppThemeColors appThemeColors = store.appThemeColors;
+void setAppThemeColors() {
+  AppThemeColors appThemeColors =
+      StoreDataSingleton.instance.store?.appThemeColors;
   AppTheme.primaryColor = Color(int.parse(appThemeColors.appThemeColor));
   AppTheme.primaryColorLight = AppTheme.primaryColor.withOpacity(0.1);
 
@@ -113,8 +105,9 @@ void setAppThemeColors(StoreModel store) {
       Color(int.parse(appThemeColors.left_menu_label_Color));
 
   //flow
-  if (store.webAppThemeColors != null) {
-    WebAppThemeColors webAppThemeColors = store.webAppThemeColors;
+  if (StoreDataSingleton.instance.store.webAppThemeColors != null) {
+    WebAppThemeColors webAppThemeColors =
+        StoreDataSingleton.instance.store.webAppThemeColors;
     AppTheme.primaryColor = AppUtils.colorGeneralization(
         AppTheme.primaryColor, webAppThemeColors.webThemePrimaryColor);
     AppTheme.primaryColorLight = AppTheme.primaryColor.withOpacity(0.1);
