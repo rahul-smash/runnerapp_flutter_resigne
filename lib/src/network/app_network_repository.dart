@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:valueappz_feature_component/core/network/api/dio_base_service.dart';
 import 'package:valueappz_feature_component/src/model/store_response_model.dart';
 import 'package:valueappz_feature_component/src/network/app_network_constants.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/shared_prefs.dart';
-import 'package:valueappz_feature_component/src/utils/app_constants.dart';
+import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref.dart';
 
 class AppNetworkRepository extends DioBaseService {
   static AppNetworkRepository _instance;
@@ -21,25 +19,26 @@ class AppNetworkRepository extends DioBaseService {
       '$storeId${AppNetworkConstants.baseRoute}$path';
 
   Future<StoreResponse> versionApi(String storeId) async {
-    String deviceId =
-        await SharedPrefs.getStoreSharedValue(AppConstants.deviceId);
-    String deviceToken =
-        await SharedPrefs.getStoreSharedValue(AppConstants.deviceToken);
+    String deviceId = AppSharedPref.instance.getDeviceId();
+    String deviceToken = AppSharedPref.instance.getDeviceToken();
+    String platform = AppSharedPref.instance.getDevicePlatform();
+
     Map<String, dynamic> param = {
       'device_id': deviceId,
       'device_token': deviceToken,
-      'platform': Platform.isIOS ? 'IOS' : 'Android'
+      'platform': platform
     };
+
     try {
       var response = await post(apiPath(storeId, _version), param);
       StoreResponse storeData = StoreResponse.fromJson(jsonDecode(response));
-      SharedPrefs.saveStore(storeData.store);
-      String version = await SharedPrefs.getAPiDetailsVersion();
-      print("older version is $version");
+      String version = AppSharedPref.instance.getApiVersion();
+      debugPrint("older version is $version");
       if (version != storeData.store.version) {
         debugPrint(
             "version not matched older version is $version and new version is ${storeData.store.version}.");
-        SharedPrefs.saveAPiDetailsVersion(storeData.store.version);
+        AppSharedPref.instance.setApiVersion(storeData.store.version);
+        // fixme: clear database
         // DatabaseHelper databaseHelper = DatabaseHelper();
         // databaseHelper.clearDataBase();
       }

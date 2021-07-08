@@ -9,7 +9,7 @@ import 'package:package_info/package_info.dart';
 import 'package:valueappz_feature_component/src/model/config_model.dart';
 import 'package:valueappz_feature_component/src/model/store_response_model.dart';
 import 'package:valueappz_feature_component/src/network/app_network_repository.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/shared_prefs.dart';
+import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref.dart';
 import 'package:valueappz_feature_component/src/singleton/store_data_singleton.dart';
 import 'package:valueappz_feature_component/src/utils/app_constants.dart';
 import 'package:valueappz_feature_component/src/utils/app_theme.dart';
@@ -17,9 +17,12 @@ import 'package:valueappz_feature_component/src/utils/app_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppSharedPref.instance.init();
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  AppConstants.isLoggedIn = await SharedPrefs.isUserLoggedIn();
+  AppConstants.isLoggedIn = AppSharedPref.instance.isLoggedIn();
+  await AppSharedPref.instance
+      .setDevicePlatform(Platform.isIOS ? 'IOS' : 'Android');
 
   bool isAdminLogin = false;
   String jsonResult = await loadAsset();
@@ -27,12 +30,10 @@ void main() async {
   ConfigModel configObject = ConfigModel.fromJson(parsed);
   if (Platform.isIOS) {
     IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-    SharedPrefs.storeSharedValue(
-        AppConstants.deviceId, iosDeviceInfo.identifierForVendor);
+    await AppSharedPref.instance.setDeviceId(iosDeviceInfo.identifierForVendor);
   } else {
     AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
-    SharedPrefs.storeSharedValue(
-        AppConstants.deviceId, androidDeviceInfo.androidId);
+    await AppSharedPref.instance.setDeviceId(androidDeviceInfo.androidId);
   }
 
   if (configObject.isGroceryApp == "true") {
@@ -41,12 +42,13 @@ void main() async {
     AppConstants.isRestroApp = true;
   }
 
-  String branch_id =
+  // fixme: is this required??
+/*  String branch_id =
       await SharedPrefs.getStoreSharedValue(AppConstants.branch_id);
   if (branch_id == null || branch_id.isEmpty) {
   } else if (branch_id.isNotEmpty) {
     configObject.storeId = branch_id;
-  }
+  }*/
   //print(configObject.storeId);
 
   Crashlytics.instance.enableInDevMode = true;
@@ -56,7 +58,7 @@ void main() async {
   setAppThemeColors();
   // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  SharedPrefs.storeSharedValue(AppConstants.isAdminLogin, "${isAdminLogin}");
+  await AppSharedPref.instance.setAdminLogin(isAdminLogin);
 
   PackageInfo packageInfo = await AppUtils.getAppVersionDetails(storeData);
 

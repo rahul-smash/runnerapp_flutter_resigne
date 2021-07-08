@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:valueappz_feature_component/src/model/device_info.dart';
 import 'package:valueappz_feature_component/src/model/store_response_model.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/shared_prefs.dart';
-import 'package:valueappz_feature_component/src/utils/app_constants.dart';
+import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref.dart';
 
 class AppUtils {
   static Color colorGeneralization(Color passedColor, String colorString) {
@@ -25,9 +24,8 @@ class AppUtils {
       StoreResponse storeData) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-    SharedPrefs.storeSharedValue(AppConstants.appName, packageInfo.appName);
-    SharedPrefs.storeSharedValue(
-        AppConstants.old_appverion, packageInfo.version);
+    AppSharedPref.instance.setAppName(packageInfo.appName);
+    AppSharedPref.instance.setAppVersion(packageInfo.version);
 
     return packageInfo;
   }
@@ -35,10 +33,8 @@ class AppUtils {
   static void getDeviceInfo(StoreResponse storeData) async {
     DeviceInfoPlugin deviceInfo = await DeviceInfoPlugin();
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails(storeData);
-    String deviceId =
-        await SharedPrefs.getStoreSharedValue(AppConstants.deviceId);
-    String deviceToken =
-        await SharedPrefs.getStoreSharedValue(AppConstants.deviceToken);
+    String deviceId = AppSharedPref.instance.getDeviceId();
+    String deviceToken = AppSharedPref.instance.getDeviceToken();
     Map<String, dynamic> param = Map();
     param['app_version'] = packageInfo.version;
     param['device_id'] = deviceId;
