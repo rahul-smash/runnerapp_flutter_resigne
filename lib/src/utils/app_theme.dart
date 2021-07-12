@@ -2,14 +2,34 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static ThemeData theme = ThemeData(
-    primaryColor: primaryColor,
-    primaryColorLight: primaryColorLight,
-    primaryColorDark: primaryColorDark,
-    buttonTheme: ButtonThemeData(
-      buttonColor: primaryColorLight,
-    ),
-    scaffoldBackgroundColor: backgroundColor,
-  );
+      primaryColor: primaryColor,
+      primaryColorLight: primaryColorLight,
+      primaryColorDark: primaryColorDark,
+      buttonTheme: ButtonThemeData(
+        buttonColor: primaryColorLight,
+      ),
+      scaffoldBackgroundColor: backgroundColor,
+      textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+              textStyle: TextStyle(fontSize: 14.0),
+              primary: primaryColor,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)))),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+              textStyle: TextStyle(fontSize: 14.0),
+              primary: primaryColor,
+              side: BorderSide(
+                  color: primaryColor, width: 1.0, style: BorderStyle.solid),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)))),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+              primary: primaryColor,
+              onPrimary: Colors.white,
+              textStyle: TextStyle(fontSize: 14.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)))));
 
   static Color primaryColor = Color(0xff75990B);
   static Color primaryColorLight = Color(0xff75990B);
