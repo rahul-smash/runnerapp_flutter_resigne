@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:valueappz_feature_component/src/model/device_info.dart';
 import 'package:valueappz_feature_component/src/model/store_response_model.dart';
 import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref.dart';
+
+import 'AppColor.dart';
 
 class AppUtils {
   static Color colorGeneralization(Color passedColor, String colorString) {
@@ -76,4 +79,47 @@ class AppUtils {
     }
     DeviceInfo.getInstance(deviceInfo: param);
   }
+
+  static void showToast(String msg, bool shortLength) {
+    try {
+      if (shortLength) {
+        Fluttertoast.showToast(
+            msg: msg,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: toastbgColor.withOpacity(0.9),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: msg,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: toastbgColor.withOpacity(0.9),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static void hideKeyboard(BuildContext context) {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  static bool validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    /*if (!regex.hasMatch(value))
+      return true;
+    else
+      return false;*/
+    return regex.hasMatch(value);
+  }
+
+
 }
