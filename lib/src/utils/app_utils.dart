@@ -77,5 +77,3 @@ class AppUtils {
     DeviceInfo.getInstance(deviceInfo: param);
   }
 }
-
-enum OrderType { Delivery, PickUp, Menu, SubScription }
