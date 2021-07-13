@@ -55,7 +55,8 @@ abstract class DioBaseService {
   @protected
   Future<dynamic> post(String path, Map<String, dynamic> data) async {
     try {
-      Response response = await _dioClient.post(path, data: data);
+      Response response =
+          await _dioClient.post(path, data: FormData.fromMap(data));
       return _responseHandler(response);
     } on DioError catch (dioError) {
       _errorHandler(dioError);
