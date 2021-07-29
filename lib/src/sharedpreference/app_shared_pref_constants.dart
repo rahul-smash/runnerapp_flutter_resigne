@@ -8,4 +8,5 @@ class AppSharePrefConstants {
   static const prefKeyApiVersion = 'prefKeyApiVersion';
   static const prefKeyAppName = 'prefKeyAppName';
   static const prefKeyAppVersion = 'prefKeyAppVersion';
+  static const prefKeyAppLanguage = 'prefKeyAppLanguage';
 }

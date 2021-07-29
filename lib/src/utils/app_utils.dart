@@ -1,14 +1,18 @@
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:marketplace_service_provider/src/model/device_info.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/utils/app_constants.dart';
+import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:package_info/package_info.dart';
-import 'package:valueappz_feature_component/src/model/device_info.dart';
-import 'package:valueappz_feature_component/src/model/store_response_model.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref.dart';
 
-import 'AppColor.dart';
+appPrintLog(dynamic content) {
+  if (AppConstants.isLoggerOn) print(content);
+}
 
 class AppUtils {
   static Color colorGeneralization(Color passedColor, String colorString) {
@@ -23,8 +27,7 @@ class AppUtils {
     return returnedColor;
   }
 
-  static Future<PackageInfo> getAppVersionDetails(
-      StoreResponse storeData) async {
+  static Future<PackageInfo> getAppVersionDetails() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     AppSharedPref.instance.setAppName(packageInfo.appName);
@@ -33,9 +36,9 @@ class AppUtils {
     return packageInfo;
   }
 
-  static void getDeviceInfo(StoreResponse storeData) async {
+  static void getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = await DeviceInfoPlugin();
-    PackageInfo packageInfo = await AppUtils.getAppVersionDetails(storeData);
+    PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
     String deviceId = AppSharedPref.instance.getDeviceId();
     String deviceToken = AppSharedPref.instance.getDeviceToken();
     Map<String, dynamic> param = Map();
@@ -85,10 +88,10 @@ class AppUtils {
       if (shortLength) {
         Fluttertoast.showToast(
             msg: msg,
-            toastLength: Toast.LENGTH_LONG,
+            toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: toastbgColor.withOpacity(0.9),
+            backgroundColor: AppTheme.toastbgColor.withOpacity(0.9),
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
@@ -97,7 +100,7 @@ class AppUtils {
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: toastbgColor.withOpacity(0.9),
+            backgroundColor: AppTheme.toastbgColor.withOpacity(0.9),
             textColor: Colors.white,
             fontSize: 16.0);
       }
@@ -121,5 +124,22 @@ class AppUtils {
     return regex.hasMatch(value);
   }
 
+  static Future<bool> isNetworkAvailable() async {
+    bool isNetworkAvailable = false;
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      isNetworkAvailable = true;
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      isNetworkAvailable = true;
+    }
+    return isNetworkAvailable;
+  }
 
+  static double getDeviceWidth(BuildContext context) {
+    return MediaQuery.of(context).size.width;
+  }
+
+  static double getDeviceHeight(BuildContext context) {
+    return MediaQuery.of(context).size.height;
+  }
 }

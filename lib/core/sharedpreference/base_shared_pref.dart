@@ -1,6 +1,6 @@
+import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref_constants.dart';
+import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:valueappz_feature_component/core/sharedpreference/base_shared_pref_constants.dart';
-import 'package:valueappz_feature_component/core/sharedpreference/base_shared_pref_interface.dart';
 
 abstract class BaseSharedPreference implements BaseSharedPrefInterface {
   SharedPreferences sharepref;

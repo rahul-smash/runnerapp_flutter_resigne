@@ -26,4 +26,11 @@ abstract class AppSharePrefInterface {
   Future<bool> setAppVersion(String appVersion);
 
   String getAppVersion();
+
+  Future<bool> setAppLanguage(String appLanguage);
+
+  String getAppLanguage();
+
+
+
 }

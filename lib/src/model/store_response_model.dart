@@ -1,1054 +1,356 @@
+// To parse this JSON data, do
+//
+//     final storeResponse = storeResponseFromJson(jsonString);
+
 import 'dart:convert';
 
 class StoreResponse {
-  bool success;
-  StoreModel store;
-
   StoreResponse({
     this.success,
-    this.store,
+    this.brand,
   });
 
-  factory StoreResponse.fromJson(Map<String, dynamic> json) =>
-      new StoreResponse(
-        success: json["success"],
-        store: StoreModel.fromJson(json["store"]),
-      );
+  bool success;
+  Brand brand;
 
-  Map<String, dynamic> toJson() => {
-        "success": success,
-        "store": store.toJson(),
-      };
-}
-
-class StoreModel {
-  String id;
-  String storeName;
-  String location;
-  String city;
-  String state;
-  String country;
-  String wallet_setting;
-  Subscription subscription;
-  String zipcode;
-  String lat;
-  String lng;
-  String contactPerson;
-  String contactNumber;
-  String contactEmail;
-  String aboutUs;
-  String otpSkip;
-  String version;
-  String currency;
-  String showCurrency;
-  String social_login;
-  String currency_unicode;
-  String appShareLink;
-  String androidShareLink;
-  String iphoneShareLink;
-  String theme;
-  String cod;
-  String webTheme;
-  String type;
-  String catType;
-  String storeApp;
-  String storeLogo;
-  String favIcon;
-  String bannerTime;
-  String webCache;
-  String currentGoldRate;
-  String scoMetaTitle;
-  String scoMetaDescription;
-  String scoMetaKeywords;
-  String planType;
-  String updatedPlanType;
-  String newPlanToBeUpdate;
-  String laterUpdatePlanType;
-  String paymentId;
-  String payment;
-  String gstNo;
-  String laterUpdateDate;
-  String modifiedPlanDate;
-  String banner;
-  String videoLink;
-  String taxLabelName;
-  String taxRate;
-  String istaxenable;
-  List<Null> taxDetail;
-  List<Null> fixedTaxDetail;
-  String storeStatus;
-  String storeMsg;
-  String masterCategory;
-  String recommendedProducts;
-  String deliverySlot;
-  String geofencing;
-  String loyality;
-  String onlinePayment;
-  String pickupFacility;
-  String deliveryFacility;
-  String inStore;
-  String internationalOtp;
-  String multipleStore;
-  String webMenuSetting;
-  String mobileNotifications;
-  String emailNotifications;
-  String smsNotifications;
-  String gst;
-  String gaCode;
-  String categoryLayout;
-  String deliveryArea;
-  String radiusIn;
-  String productImage;
-  List<Null> deliverySlots;
-  String is24x7Open;
-  String openhoursFrom;
-  String openhoursTo;
-  String closehoursMessage;
-  String storeOpenDays;
-  String timeZone;
-  String androidAppShare;
-  String iphoneAppShare;
-  String windowAppShare;
-  List<Banners> banners;
-  List<Banner> aboutusBanner;
-  List<ForceDownload> forceDownload;
-
-/*  List<Geofencing> geofencing;*/
-  List<AppLabels> appLabels;
-  String banner10080;
-  String banner300200;
-  String currencyAbbr;
-  bool blDeviceIdUnique;
-  bool isRefererFnEnable;
-  String paymentGateway;
-  PaymentSetting paymentSetting;
-  List<PaymentGatewaySettings> paymentGatewaySettings;
-  AppThemeColors appThemeColors;
-  WebAppThemeColors webAppThemeColors;
-
-  //new keys added
-  bool homePageTitleStatus;
-  String homePageTitle;
-  bool homePageSubtitleStatus;
-  String homePageSubtitle;
-  String homePageHeaderRight; //0=>Contact Number,1=>App Icon,2=>None
-  String homePageDisplayNumber; //Dispaly Number On App Home Page
-  String homePageDisplayNumberType; //0=>Whats app, 1=>Phone Call
-
-  String domain;
-  String poweredByText;
-  String poweredByLink;
-  String reviewRatingDisplay;
-  String allowCustomerForGst;
-
-  StoreModel(
-      {this.id,
-      this.storeName,
-      this.aboutusBanner,
-      this.location,
-      this.wallet_setting,
-      this.subscription,
-      this.city,
-      this.state,
-      this.country,
-      this.cod,
-      this.zipcode,
-      this.lat,
-      this.lng,
-      this.social_login,
-      this.appThemeColors,
-      this.webAppThemeColors,
-      this.contactPerson,
-      this.contactNumber,
-      this.contactEmail,
-      this.aboutUs,
-      this.otpSkip,
-      this.version,
-      this.currency,
-      this.showCurrency,
-      this.currency_unicode,
-      this.appShareLink,
-      this.androidShareLink,
-      this.iphoneShareLink,
-      this.theme,
-      this.webTheme,
-      this.type,
-      this.catType,
-      this.storeApp,
-      this.storeLogo,
-      this.favIcon,
-      this.bannerTime,
-      this.webCache,
-      this.currentGoldRate,
-      this.scoMetaTitle,
-      this.scoMetaDescription,
-      this.scoMetaKeywords,
-      this.planType,
-      this.updatedPlanType,
-      this.newPlanToBeUpdate,
-      this.laterUpdatePlanType,
-      this.paymentId,
-      this.payment,
-      this.gstNo,
-      this.laterUpdateDate,
-      this.deliveryArea,
-      this.modifiedPlanDate,
-      this.banner,
-      this.videoLink,
-      this.taxLabelName,
-      this.taxRate,
-      this.istaxenable,
-      this.taxDetail,
-      this.fixedTaxDetail,
-      this.storeStatus,
-      this.storeMsg,
-      this.masterCategory,
-      this.recommendedProducts,
-      this.deliverySlot,
-      this.geofencing,
-      this.loyality,
-      this.onlinePayment,
-      this.pickupFacility,
-      this.deliveryFacility,
-      this.inStore,
-      this.internationalOtp,
-      this.multipleStore,
-      this.webMenuSetting,
-      this.mobileNotifications,
-      this.emailNotifications,
-      this.smsNotifications,
-      this.gst,
-      this.gaCode,
-      this.categoryLayout,
-      this.radiusIn,
-      this.productImage,
-      this.deliverySlots,
-      this.is24x7Open,
-      this.openhoursFrom,
-      this.openhoursTo,
-      this.closehoursMessage,
-      this.storeOpenDays,
-      this.timeZone,
-      this.androidAppShare,
-      this.iphoneAppShare,
-      this.windowAppShare,
-      this.banners,
-      this.forceDownload,
-      /* this.geofencing,*/
-      this.appLabels,
-      this.banner10080,
-      this.banner300200,
-      this.currencyAbbr,
-      this.blDeviceIdUnique,
-      this.paymentGateway,
-      this.paymentSetting,
-      this.paymentGatewaySettings,
-      this.isRefererFnEnable,
-      this.homePageTitleStatus,
-        this.homePageTitle,
-        this.homePageSubtitleStatus,
-        this.homePageSubtitle,
-        this.homePageHeaderRight,
-        this.homePageDisplayNumber,
-        this.homePageDisplayNumberType,
-        this.domain,
-        this.poweredByText,
-        this.poweredByLink,
-        this.reviewRatingDisplay,
-        this.allowCustomerForGst,
-      });
-
-  StoreModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    storeName = json['store_name'];
-    aboutusBanner = json["aboutus_banner"] == null
-        ? null
-        : List<Banner>.from(
-            json["aboutus_banner"].map((x) => Banner.fromJson(x)));
-    location = json['location'];
-    city = json['city'];
-    state = json['state'];
-    country = json['country'];
-    zipcode = json['zipcode'];
-    cod = json['cod'];
-    lat = json['lat'];
-    lng = json['lng'];
-    social_login = json['social_login'];
-    wallet_setting = json['wallet_setting'];
-    contactPerson = json['contact_person'];
-    contactNumber = json['contact_number'];
-    contactEmail = json['contact_email'];
-    aboutUs = json['about_us'];
-    otpSkip = json['otp_skip'];
-    version = json['version'];
-    currency = json['currency'];
-    showCurrency = json['show_currency'];
-    currency_unicode = json['currency_unicode'];
-    appShareLink = json['app_share_link'];
-    androidShareLink = json['android_share_link'];
-    iphoneShareLink = json['iphone_share_link'];
-    theme = json['theme'];
-    webTheme = json['web_theme'];
-    type = json['type'];
-    catType = json['cat_type'];
-    storeApp = json['store_app'];
-    storeLogo = json['store_logo'];
-    favIcon = json['fav_icon'];
-    bannerTime = json['banner_time'];
-    webCache = json['web_cache'];
-    currentGoldRate = json['current_gold_rate'];
-    scoMetaTitle = json['sco_meta_title'];
-    scoMetaDescription = json['sco_meta_description'];
-    scoMetaKeywords = json['sco_meta_keywords'];
-    planType = json['plan_type'];
-    updatedPlanType = json['updated_plan_type'];
-    newPlanToBeUpdate = json['new_plan_to_be_update'];
-    laterUpdatePlanType = json['later_update_plan_type'];
-    paymentId = json['payment_id'];
-    payment = json['payment'];
-    gstNo = json['gst_no'];
-    laterUpdateDate = json['later_update_date'];
-    modifiedPlanDate = json['modified_plan_date'];
-    banner = json['banner'];
-    videoLink = json['video_link'];
-    taxLabelName = json['tax_label_name'];
-    taxRate = json['tax_rate'];
-    istaxenable = json['istaxenable'];
-    paymentGateway = json["payment_gateway"];
-    subscription = Subscription.fromJson(json["Subscription"]);
-    paymentSetting = PaymentSetting.fromJson(json["payment_setting"]);
-    if (json['payment_gateway_settings'] != null) {
-      if (json['payment_gateway_settings'] is String) {
-        paymentGatewaySettings = null;
-      } else {
-        paymentGatewaySettings=
-        json["payment_gateway_settings"] == null ? null : List<
-            PaymentGatewaySettings>.from(
-            json["payment_gateway_settings"].map((x) =>
-                PaymentGatewaySettings.fromJson(x)));
-//    paymentGatewaySettings = new List<PaymentGatewaySettings>();
-//    json['payment_gateway_settings'].forEach((v) {
-//    paymentGatewaySettings.add(new PaymentGatewaySettings.fromJson(v));
-//    });
-      }
-    }
-    appThemeColors = AppThemeColors.fromJson(json["app_theme_colors"]);
-    webAppThemeColors= json["web_app_theme_colors"] == null ? null : WebAppThemeColors.fromJson(json["web_app_theme_colors"]);
-    /* if (json['tax_detail'] != null) {
-      taxDetail = new List<Null>();
-      json['tax_detail'].forEach((v) {
-        taxDetail.add(new Null.fromJson(v));
-      });
-    }
-    if (json['fixed_tax_detail'] != null) {
-      fixedTaxDetail = new List<Null>();
-      json['fixed_tax_detail'].forEach((v) {
-        fixedTaxDetail.add(new Null.fromJson(v));
-      });
-    }*/
-    storeStatus = json['store_status'];
-    storeMsg = json['store_msg'];
-    masterCategory = json['master_category'];
-    recommendedProducts = json['recommended_products'];
-    deliverySlot = json['delivery_slot'];
-    geofencing = json['geofencing'];
-    loyality = json['loyality'];
-    onlinePayment = json['online_payment'];
-    pickupFacility = json['pickup_facility'];
-    deliveryFacility = json['delivery_facility'];
-    inStore = json['in_store'];
-    internationalOtp = json['international_otp'];
-    multipleStore = json['multiple_store'];
-    webMenuSetting = json['web_menu_setting'];
-    mobileNotifications = json['mobile_notifications'];
-    emailNotifications = json['email_notifications'];
-    smsNotifications = json['sms_notifications'];
-    gst = json['gst'];
-    gaCode = json['ga_code'];
-    categoryLayout = json['category_layout'];
-    deliveryArea = json["delivery_area"];
-    radiusIn = json['radius_in'];
-    productImage = json['product_image'];
-    /*  if (json['delivery_slots'] != null) {
-      deliverySlots = new List<Null>();
-      json['delivery_slots'].forEach((v) {
-        deliverySlots.add(new Null.fromJson(v));
-      });
-    }*/
-    is24x7Open = json['is24x7_open'];
-    openhoursFrom = json['openhours_from'];
-    openhoursTo = json['openhours_to'];
-    closehoursMessage = json['closehours_message'];
-    storeOpenDays = json['store_open_days'];
-    timeZone = json['time_zone'];
-    androidAppShare = json['android_app_share'];
-    iphoneAppShare = json['iphone_app_share'];
-    windowAppShare = json['window_app_share'];
-    if (json['banners'] != null) {
-      banners = new List<Banners>();
-      json['banners'].forEach((v) {
-        banners.add(new Banners.fromJson(v));
-      });
-    }
-    if (json['force_download'] != null) {
-      forceDownload = new List<ForceDownload>();
-      json['force_download'].forEach((v) {
-        forceDownload.add(new ForceDownload.fromJson(v));
-      });
-    }
-    /* if (json['Geofencing'] != null) {
-      geofencing = new List<Geofencing>();
-      json['Geofencing'].forEach((v) {
-        geofencing.add(new Geofencing.fromJson(v));
-      });
-    }*/
-    if (json['app_labels'] != null) {
-      appLabels = new List<AppLabels>();
-      json['app_labels'].forEach((v) {
-        appLabels.add(new AppLabels.fromJson(v));
-      });
-    }
-    banner10080 = json['banner_100_80'];
-    banner300200 = json['banner_300_200'];
-    currencyAbbr = json['currency_abbr'];
-    blDeviceIdUnique = json['bl_device_id_unique'];
-    isRefererFnEnable = json['is_referer_fn_enable'];
-    homePageTitleStatus = json['home_page_title_status'];
-    homePageTitle = json['home_page_title'];
-    homePageSubtitleStatus = json['home_page_subtitle_status'];
-    homePageSubtitle = json['home_page_subtitle'];
-    homePageHeaderRight = json['home_page_header_right'];
-    homePageDisplayNumber = json['home_page_display_number'];
-    homePageDisplayNumberType = json['home_page_display_number_type'];
-    domain=json["domain"];
-    poweredByText=json["powered_by_text"];
-    poweredByLink=json["powered_by_link"];
-    reviewRatingDisplay=json["review_rating_display"]==null?null:json["review_rating_display"];
-    allowCustomerForGst=json["allow_customer_for_gst"]==null?null:json["allow_customer_for_gst"];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['store_name'] = this.storeName;
-    data['cod'] = this.cod;
-    data['location'] = this.location;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['zipcode'] = this.zipcode;
-    data['lat'] = this.lat;
-    data['lng'] = this.lng;
-    data['Subscription'] = this.subscription.toJson();
-    data['contact_person'] = this.contactPerson;
-    data['contact_number'] = this.contactNumber;
-    data['contact_email'] = this.contactEmail;
-    data['about_us'] = this.aboutUs;
-    data['wallet_setting'] = this.wallet_setting;
-    data['otp_skip'] = this.otpSkip;
-    data['app_theme_colors'] = this.appThemeColors;
-    data['web_app_theme_colors'] = this.webAppThemeColors;
-    data['version'] = this.version;
-    data['currency'] = this.currency;
-    data['show_currency'] = this.showCurrency;
-    data['currency_unicode'] = this.currency_unicode;
-    data['app_share_link'] = this.appShareLink;
-    data['android_share_link'] = this.androidShareLink;
-    data['iphone_share_link'] = this.iphoneShareLink;
-    data['theme'] = this.theme;
-    data['web_theme'] = this.webTheme;
-    data['aboutus_banner'] = this.aboutusBanner;
-    data['type'] = this.type;
-    data['social_login'] = this.social_login;
-    data['cat_type'] = this.catType;
-    data['store_app'] = this.storeApp;
-    data['store_logo'] = this.storeLogo;
-    data['fav_icon'] = this.favIcon;
-    data['banner_time'] = this.bannerTime;
-    data['web_cache'] = this.webCache;
-    data['current_gold_rate'] = this.currentGoldRate;
-    data['sco_meta_title'] = this.scoMetaTitle;
-    data['sco_meta_description'] = this.scoMetaDescription;
-    data['sco_meta_keywords'] = this.scoMetaKeywords;
-    data['plan_type'] = this.planType;
-    data['updated_plan_type'] = this.updatedPlanType;
-    data['new_plan_to_be_update'] = this.newPlanToBeUpdate;
-    data['later_update_plan_type'] = this.laterUpdatePlanType;
-    data['payment_id'] = this.paymentId;
-    data['payment'] = this.payment;
-    data['gst_no'] = this.gstNo;
-    data['later_update_date'] = this.laterUpdateDate;
-    data['modified_plan_date'] = this.modifiedPlanDate;
-    data['banner'] = this.banner;
-    data['video_link'] = this.videoLink;
-    data['tax_label_name'] = this.taxLabelName;
-    data['tax_rate'] = this.taxRate;
-    data['istaxenable'] = this.istaxenable;
-    data['payment_gateway'] = this.paymentGateway;
-    data['payment_setting'] = this.paymentSetting.toJson();
-    if (this.paymentGatewaySettings != null) {
-      data['payment_gateway_settings'] =
-          this.paymentGatewaySettings.map((v) => v.toJson()).toList();
-    }
-    /*if (this.taxDetail != null) {
-      data['tax_detail'] = this.taxDetail.map((v) => v.toJson()).toList();
-    }
-    if (this.fixedTaxDetail != null) {
-      data['fixed_tax_detail'] =
-          this.fixedTaxDetail.map((v) => v.toJson()).toList();
-    }*/
-    data['delivery_area'] = this.deliveryArea;
-    data['store_status'] = this.storeStatus;
-    data['store_msg'] = this.storeMsg;
-    data['master_category'] = this.masterCategory;
-    data['recommended_products'] = this.recommendedProducts;
-    data['delivery_slot'] = this.deliverySlot;
-    data['geofencing'] = this.geofencing;
-    data['loyality'] = this.loyality;
-    data['online_payment'] = this.onlinePayment;
-    data['pickup_facility'] = this.pickupFacility;
-    data['delivery_facility'] = this.deliveryFacility;
-    data['in_store'] = this.inStore;
-    data['international_otp'] = this.internationalOtp;
-    data['multiple_store'] = this.multipleStore;
-    data['web_menu_setting'] = this.webMenuSetting;
-    data['mobile_notifications'] = this.mobileNotifications;
-    data['email_notifications'] = this.emailNotifications;
-    data['sms_notifications'] = this.smsNotifications;
-    data['gst'] = this.gst;
-    data['ga_code'] = this.gaCode;
-    data['category_layout'] = this.categoryLayout;
-    data['radius_in'] = this.radiusIn;
-    data['product_image'] = this.productImage;
-    /*  if (this.deliverySlots != null) {
-      data['delivery_slots'] =
-          this.deliverySlots.map((v) => v.toJson()).toList();
-    }*/
-    data['is24x7_open'] = this.is24x7Open;
-    data['openhours_from'] = this.openhoursFrom;
-    data['openhours_to'] = this.openhoursTo;
-    data['closehours_message'] = this.closehoursMessage;
-    data['store_open_days'] = this.storeOpenDays;
-    data['time_zone'] = this.timeZone;
-    data['android_app_share'] = this.androidAppShare;
-    data['iphone_app_share'] = this.iphoneAppShare;
-    data['window_app_share'] = this.windowAppShare;
-    if (this.banners != null) {
-      data['banners'] = this.banners.map((v) => v.toJson()).toList();
-    }
-    if (this.forceDownload != null) {
-      data['force_download'] =
-          this.forceDownload.map((v) => v.toJson()).toList();
-    }
-    /* if (this.geofencing != null) {
-      data['Geofencing'] = this.geofencing.map((v) => v.toJson()).toList();
-    }*/
-    if (this.appLabels != null) {
-      data['app_labels'] = this.appLabels.map((v) => v.toJson()).toList();
-    }
-    data['banner_100_80'] = this.banner10080;
-    data['banner_300_200'] = this.banner300200;
-    data['currency_abbr'] = this.currencyAbbr;
-    data['bl_device_id_unique'] = this.blDeviceIdUnique;
-    data['is_referer_fn_enable'] = this.isRefererFnEnable;
-
-    data['home_page_title_status'] = this.homePageTitleStatus;
-    data['home_page_title'] = this.homePageTitle;
-    data['home_page_subtitle_status'] = this.homePageSubtitleStatus;
-    data['home_page_subtitle'] = this.homePageSubtitle;
-    data['home_page_header_right'] = this.homePageHeaderRight;
-    data['home_page_display_number'] = this.homePageDisplayNumber;
-    data['home_page_display_number_type'] = this.homePageDisplayNumberType;
-    data['domain']=this.domain;
-    data['powered_by_text']=this.poweredByText;
-    data['powered_by_link']=this.poweredByLink;
-    data['review_rating_display']=this.reviewRatingDisplay;
-    data['allow_customer_for_gst']=this.allowCustomerForGst;
-    return data;
-  }
-}
-
-class Subscription {
-  Subscription({
-    this.status,
-    this.feeType,
-    this.cycleType,
-    this.minimumOrderDaily,
-  });
-
-  String status;
-  dynamic feeType;
-  List<CycleType> cycleType;
-  String minimumOrderDaily;
-
-  factory Subscription.fromJson(Map<String, dynamic> json) => Subscription(
-    status: json["status"],
-    feeType: json["fee_type"],
-    cycleType: List<CycleType>.from(json["cycle_type"].map((x) => CycleType.fromJson(x))),
-    minimumOrderDaily: json["minimum_order_daily"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "status": status,
-    "fee_type": feeType,
-    //"cycle_type": cycleType,
-    "cycle_type": List<dynamic>.from(cycleType.map((x) => x.toJson())),
-    "minimum_order_daily": minimumOrderDaily,
-  };
-}
-
-class CycleType {
-  CycleType({
-    this.label,
-    this.days,
-    this.key,
-  });
-
-  String label;
-  String days;
-  String key;
-
-  factory CycleType.fromJson(Map<String, dynamic> json) => CycleType(
-    label: json["label"],
-    days: json["days"],
-    key: json["key"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "label": label,
-    "days": days,
-    "key": key,
-  };
-}
-
-class PaymentSetting {
-  String apiKey;
-  String secretKey;
-
-  PaymentSetting({
-    this.apiKey,
-    this.secretKey,
-  });
-
-  factory PaymentSetting.fromJson(Map<String, dynamic> json) => PaymentSetting(
-        apiKey: json["api_key"],
-        secretKey: json["secret_key"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "api_key": apiKey,
-        "secret_key": secretKey,
-      };
-}
-
-class PaymentGatewaySettings {
-  String apiKey;
-  String secretKey;
-  String paymentGateway;
-
-  PaymentGatewaySettings({this.apiKey, this.secretKey, this.paymentGateway});
-
-  PaymentGatewaySettings.fromJson(Map<String, dynamic> json) {
-    apiKey = json['api_key'];
-    secretKey = json['secret_key'];
-    paymentGateway = json['payment_gateway'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['api_key'] = this.apiKey;
-    data['secret_key'] = this.secretKey;
-    data['payment_gateway'] = this.paymentGateway;
-    return data;
-  }
-}
-
-
-class AppThemeColors {
-  String id;
-  String appThemeColor;
-  String leftMenuIconColor;
-  String leftMenuBackgroundColor;
-  String leftMenuTitleColor;
-  String leftMenuUsernameColor;
-  String bottomBarIconColor;
-  String bottomBarTextColor;
-  String dotIncreasedColor;
-  String leftMenuHeaderBackgroundColor;
-  String bottom_bar_background_color;
-  String left_menu_label_Color;
-
-  AppThemeColors({
-    this.id,
-    this.appThemeColor,
-    this.leftMenuIconColor,
-    this.leftMenuBackgroundColor,
-    this.leftMenuTitleColor,
-    this.leftMenuUsernameColor,
-    this.bottomBarIconColor,
-    this.bottomBarTextColor,
-    this.dotIncreasedColor,
-    this.leftMenuHeaderBackgroundColor,
-    this.bottom_bar_background_color,
-    this.left_menu_label_Color,
-  });
-
-  factory AppThemeColors.fromJson(Map<String, dynamic> json) => AppThemeColors(
-        id: json["id"],
-        appThemeColor: json["app_theme_color"],
-        leftMenuIconColor: json["left_menu_icon_color"],
-        leftMenuBackgroundColor: json["left_menu_background_color"],
-        leftMenuTitleColor: json["left_menu_title_color"],
-        leftMenuUsernameColor: json["left_menu_username_color"],
-        bottomBarIconColor: json["bottom_bar_icon_color"],
-        bottomBarTextColor: json["bottom_bar_text_color"],
-        dotIncreasedColor: json["dot_increased_color"],
-        leftMenuHeaderBackgroundColor:
-            json["left_menu_header_background_color"],
-        bottom_bar_background_color: json["bottom_bar_background_color"],
-        left_menu_label_Color: json["left_menu_label_color"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "app_theme_color": appThemeColor,
-        "left_menu_icon_color": leftMenuIconColor,
-        "left_menu_background_color": leftMenuBackgroundColor,
-        "left_menu_title_color": leftMenuTitleColor,
-        "left_menu_username_color": leftMenuUsernameColor,
-        "bottom_bar_icon_color": bottomBarIconColor,
-        "bottom_bar_text_color": bottomBarTextColor,
-        "dot_increased_color": dotIncreasedColor,
-        "left_menu_header_background_color": leftMenuHeaderBackgroundColor,
-        "bottom_bar_background_color": bottom_bar_background_color,
-        "left_menu_label_color": left_menu_label_Color,
-      };
-}
-
-class WebAppThemeColors {
-  WebAppThemeColors({
-    this.id,
-    this.storeId,
-    this.webThemePrimaryColor,
-    this.webThemeSecondaryColor,
-    this.webThemeCategoryOpenColor,
-    this.stripsColor,
-    this.footerColor,
-    this.listingBackgroundColor,
-    this.listingBorderColor,
-    this.listingBoxBackgroundColor,
-    this.homeSubHeadingColor,
-    this.homeDescriptionColor,
-    this.categoryListingButtonBorderColor,
-    this.categoryListingBoxBackgroundColor,
-  });
-
-  String id;
-  String storeId;
-  String webThemePrimaryColor;
-  String webThemeSecondaryColor;
-  String webThemeCategoryOpenColor;
-  String stripsColor;
-  String footerColor;
-  String listingBackgroundColor;
-  String listingBorderColor;
-  String listingBoxBackgroundColor;
-  String homeSubHeadingColor;
-  String homeDescriptionColor;
-  String categoryListingButtonBorderColor;
-  String categoryListingBoxBackgroundColor;
-
-  WebAppThemeColors copyWith({
-    String id,
-    String storeId,
-    String webThemePrimaryColor,
-    String webThemeSecondaryColor,
-    String webThemeCategoryOpenColor,
-    String stripsColor,
-    String footerColor,
-    String listingBackgroundColor,
-    String listingBorderColor,
-    String listingBoxBackgroundColor,
-    String homeSubHeadingColor,
-    String homeDescriptionColor,
-    String categoryListingButtonBorderColor,
-    String categoryListingBoxBackgroundColor,
+  StoreResponse copyWith({
+    bool success,
+    Brand brand,
   }) =>
-      WebAppThemeColors(
-        id: id ?? this.id,
-        storeId: storeId ?? this.storeId,
-        webThemePrimaryColor: webThemePrimaryColor ?? this.webThemePrimaryColor,
-        webThemeSecondaryColor: webThemeSecondaryColor ?? this.webThemeSecondaryColor,
-        webThemeCategoryOpenColor: webThemeCategoryOpenColor ?? this.webThemeCategoryOpenColor,
-        stripsColor: stripsColor ?? this.stripsColor,
-        footerColor: footerColor ?? this.footerColor,
-        listingBackgroundColor: listingBackgroundColor ?? this.listingBackgroundColor,
-        listingBorderColor: listingBorderColor ?? this.listingBorderColor,
-        listingBoxBackgroundColor: listingBoxBackgroundColor ?? this.listingBoxBackgroundColor,
-        homeSubHeadingColor: homeSubHeadingColor ?? this.homeSubHeadingColor,
-        homeDescriptionColor: homeDescriptionColor ?? this.homeDescriptionColor,
-        categoryListingButtonBorderColor: categoryListingButtonBorderColor ?? this.categoryListingButtonBorderColor,
-        categoryListingBoxBackgroundColor: categoryListingBoxBackgroundColor ?? this.categoryListingBoxBackgroundColor,
+      StoreResponse(
+        success: success ?? this.success,
+        brand: brand ?? this.brand,
       );
 
-  factory WebAppThemeColors.fromRawJson(String str) => WebAppThemeColors.fromJson(json.decode(str));
+  factory StoreResponse.fromRawJson(String str) => StoreResponse.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory WebAppThemeColors.fromJson(Map<String, dynamic> json) => WebAppThemeColors(
+  factory StoreResponse.fromJson(Map<String, dynamic> json) => StoreResponse(
+    success: json["success"] == null ? null : json["success"],
+    brand: json["brand"] == null ? null : Brand.fromJson(json["brand"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "success": success == null ? null : success,
+    "brand": brand == null ? null : brand.toJson(),
+  };
+}
+
+class Brand {
+  Brand({
+    this.id,
+    this.name,
+    this.userId,
+    this.contactNumber,
+    this.contactEmail,
+    this.address,
+    this.city,
+    this.state,
+    this.country,
+    this.timeZone,
+    this.lat,
+    this.lng,
+    this.zipcode,
+    this.logo,
+    this.aboutUs,
+    this.lang2AboutUs,
+    this.currency,
+    this.showCurrency,
+    this.favIcon,
+    this.appIcon,
+    this.appShareLink,
+    this.androidShareLink,
+    this.iphoneShareLink,
+    this.androidMerchantApp,
+    this.iphoneMerchantApp,
+    this.runnerApp,
+    this.radius,
+    this.radiusType,
+    this.radiusTypeValue,
+    this.runnersTrackingAutorefresh,
+    this.type,
+    this.isMembershipOn,
+    this.currencyUnicode,
+    this.currencyAbbr,
+    this.internationalOtp,
+    this.forceDownload,
+    this.logo10080,
+    this.logo300200,
+    this.banner10080,
+    this.banner300200,
+    this.domain,
+  });
+
+  String id;
+  String name;
+  String userId;
+  String contactNumber;
+  String contactEmail;
+  String address;
+  String city;
+  String state;
+  String country;
+  String timeZone;
+  String lat;
+  String lng;
+  String zipcode;
+  String logo;
+  String aboutUs;
+  String lang2AboutUs;
+  String currency;
+  String showCurrency;
+  String favIcon;
+  String appIcon;
+  String appShareLink;
+  String androidShareLink;
+  String iphoneShareLink;
+  String androidMerchantApp;
+  String iphoneMerchantApp;
+  String runnerApp;
+  String radius;
+  String radiusType;
+  String radiusTypeValue;
+  String runnersTrackingAutorefresh;
+  String type;
+  String isMembershipOn;
+  String currencyUnicode;
+  String currencyAbbr;
+  String internationalOtp;
+  List<ForceDownload> forceDownload;
+  String logo10080;
+  String logo300200;
+  String banner10080;
+  String banner300200;
+  String domain;
+
+  Brand copyWith({
+    String id,
+    String name,
+    String userId,
+    String contactNumber,
+    String contactEmail,
+    String address,
+    String city,
+    String state,
+    String country,
+    String timeZone,
+    String lat,
+    String lng,
+    String zipcode,
+    String logo,
+    String aboutUs,
+    String lang2AboutUs,
+    String currency,
+    String showCurrency,
+    String favIcon,
+    String appIcon,
+    String appShareLink,
+    String androidShareLink,
+    String iphoneShareLink,
+    String androidMerchantApp,
+    String iphoneMerchantApp,
+    String runnerApp,
+    String radius,
+    String radiusType,
+    String radiusTypeValue,
+    String runnersTrackingAutorefresh,
+    String type,
+    String isMembershipOn,
+    String currencyUnicode,
+    String currencyAbbr,
+    String internationalOtp,
+    List<ForceDownload> forceDownload,
+    String logo10080,
+    String logo300200,
+    String banner10080,
+    String banner300200,
+    String domain,
+  }) =>
+      Brand(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        userId: userId ?? this.userId,
+        contactNumber: contactNumber ?? this.contactNumber,
+        contactEmail: contactEmail ?? this.contactEmail,
+        address: address ?? this.address,
+        city: city ?? this.city,
+        state: state ?? this.state,
+        country: country ?? this.country,
+        timeZone: timeZone ?? this.timeZone,
+        lat: lat ?? this.lat,
+        lng: lng ?? this.lng,
+        zipcode: zipcode ?? this.zipcode,
+        logo: logo ?? this.logo,
+        aboutUs: aboutUs ?? this.aboutUs,
+        lang2AboutUs: lang2AboutUs ?? this.lang2AboutUs,
+        currency: currency ?? this.currency,
+        showCurrency: showCurrency ?? this.showCurrency,
+        favIcon: favIcon ?? this.favIcon,
+        appIcon: appIcon ?? this.appIcon,
+        appShareLink: appShareLink ?? this.appShareLink,
+        androidShareLink: androidShareLink ?? this.androidShareLink,
+        iphoneShareLink: iphoneShareLink ?? this.iphoneShareLink,
+        androidMerchantApp: androidMerchantApp ?? this.androidMerchantApp,
+        iphoneMerchantApp: iphoneMerchantApp ?? this.iphoneMerchantApp,
+        runnerApp: runnerApp ?? this.runnerApp,
+        radius: radius ?? this.radius,
+        radiusType: radiusType ?? this.radiusType,
+        radiusTypeValue: radiusTypeValue ?? this.radiusTypeValue,
+        runnersTrackingAutorefresh: runnersTrackingAutorefresh ?? this.runnersTrackingAutorefresh,
+        type: type ?? this.type,
+        isMembershipOn: isMembershipOn ?? this.isMembershipOn,
+        currencyUnicode: currencyUnicode ?? this.currencyUnicode,
+        currencyAbbr: currencyAbbr ?? this.currencyAbbr,
+        internationalOtp: internationalOtp ?? this.internationalOtp,
+        forceDownload: forceDownload ?? this.forceDownload,
+        logo10080: logo10080 ?? this.logo10080,
+        logo300200: logo300200 ?? this.logo300200,
+        banner10080: banner10080 ?? this.banner10080,
+        banner300200: banner300200 ?? this.banner300200,
+        domain: domain ?? this.domain,
+      );
+
+  factory Brand.fromRawJson(String str) => Brand.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Brand.fromJson(Map<String, dynamic> json) => Brand(
     id: json["id"] == null ? null : json["id"],
-    storeId: json["store_id"] == null ? null : json["store_id"],
-    webThemePrimaryColor: json["web_theme_primary_color"] == null ? null : json["web_theme_primary_color"],
-    webThemeSecondaryColor: json["web_theme_secondary_color"] == null ? null : json["web_theme_secondary_color"],
-    webThemeCategoryOpenColor: json["web_theme_category_open_color"] == null ? null : json["web_theme_category_open_color"],
-    stripsColor: json["strips_color"] == null ? null : json["strips_color"],
-    footerColor: json["footer_color"] == null ? null : json["footer_color"],
-    listingBackgroundColor: json["listing_background_color"] == null ? null : json["listing_background_color"],
-    listingBorderColor: json["listing_border_color"] == null ? null : json["listing_border_color"],
-    listingBoxBackgroundColor: json["listing_box_background_color"] == null ? null : json["listing_box_background_color"],
-    homeSubHeadingColor: json["home_sub_heading_color"] == null ? null : json["home_sub_heading_color"],
-    homeDescriptionColor: json["home_description_color"] == null ? null : json["home_description_color"],
-    categoryListingButtonBorderColor: json["category_listing_button_border_color"] == null ? null : json["category_listing_button_border_color"],
-    categoryListingBoxBackgroundColor: json["category_listing_box_background_color"] == null ? null : json["category_listing_box_background_color"],
+    name: json["name"] == null ? null : json["name"],
+    userId: json["user_id"] == null ? null : json["user_id"],
+    contactNumber: json["contact_number"] == null ? null : json["contact_number"],
+    contactEmail: json["contact_email"] == null ? null : json["contact_email"],
+    address: json["address"] == null ? null : json["address"],
+    city: json["city"] == null ? null : json["city"],
+    state: json["state"] == null ? null : json["state"],
+    country: json["country"] == null ? null : json["country"],
+    timeZone: json["time_zone"] == null ? null : json["time_zone"],
+    lat: json["lat"] == null ? null : json["lat"],
+    lng: json["lng"] == null ? null : json["lng"],
+    zipcode: json["zipcode"] == null ? null : json["zipcode"],
+    logo: json["logo"] == null ? null : json["logo"],
+    aboutUs: json["about_us"] == null ? null : json["about_us"],
+    lang2AboutUs: json["lang_2_about_us"] == null ? null : json["lang_2_about_us"],
+    currency: json["currency"] == null ? null : json["currency"],
+    showCurrency: json["show_currency"] == null ? null : json["show_currency"],
+    favIcon: json["fav_icon"] == null ? null : json["fav_icon"],
+    appIcon: json["app_icon"] == null ? null : json["app_icon"],
+    appShareLink: json["app_share_link"] == null ? null : json["app_share_link"],
+    androidShareLink: json["android_share_link"] == null ? null : json["android_share_link"],
+    iphoneShareLink: json["iphone_share_link"] == null ? null : json["iphone_share_link"],
+    androidMerchantApp: json["android_merchant_app"] == null ? null : json["android_merchant_app"],
+    iphoneMerchantApp: json["iphone_merchant_app"] == null ? null : json["iphone_merchant_app"],
+    runnerApp: json["runner_app"] == null ? null : json["runner_app"],
+    radius: json["radius"] == null ? null : json["radius"],
+    radiusType: json["radius_type"] == null ? null : json["radius_type"],
+    radiusTypeValue: json["radius_type_value"] == null ? null : json["radius_type_value"],
+    runnersTrackingAutorefresh: json["runners_tracking_autorefresh"] == null ? null : json["runners_tracking_autorefresh"],
+    type: json["type"] == null ? null : json["type"],
+    isMembershipOn: json["is_membership_on"] == null ? null : json["is_membership_on"],
+    currencyUnicode: json["currency_unicode"] == null ? null : json["currency_unicode"],
+    currencyAbbr: json["currency_abbr"] == null ? null : json["currency_abbr"],
+    internationalOtp: json["international_otp"] == null ? null : json["international_otp"],
+    forceDownload: json["force_download"] == null ? null : List<ForceDownload>.from(json["force_download"].map((x) => ForceDownload.fromJson(x))),
+    logo10080: json["logo_100_80"] == null ? null : json["logo_100_80"],
+    logo300200: json["logo_300_200"] == null ? null : json["logo_300_200"],
+    banner10080: json["banner_100_80"] == null ? null : json["banner_100_80"],
+    banner300200: json["banner_300_200"] == null ? null : json["banner_300_200"],
+    domain: json["domain"] == null ? null : json["domain"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id == null ? null : id,
-    "store_id": storeId == null ? null : storeId,
-    "web_theme_primary_color": webThemePrimaryColor == null ? null : webThemePrimaryColor,
-    "web_theme_secondary_color": webThemeSecondaryColor == null ? null : webThemeSecondaryColor,
-    "web_theme_category_open_color": webThemeCategoryOpenColor == null ? null : webThemeCategoryOpenColor,
-    "strips_color": stripsColor == null ? null : stripsColor,
-    "footer_color": footerColor == null ? null : footerColor,
-    "listing_background_color": listingBackgroundColor == null ? null : listingBackgroundColor,
-    "listing_border_color": listingBorderColor == null ? null : listingBorderColor,
-    "listing_box_background_color": listingBoxBackgroundColor == null ? null : listingBoxBackgroundColor,
-    "home_sub_heading_color": homeSubHeadingColor == null ? null : homeSubHeadingColor,
-    "home_description_color": homeDescriptionColor == null ? null : homeDescriptionColor,
-    "category_listing_button_border_color": categoryListingButtonBorderColor == null ? null : categoryListingButtonBorderColor,
-    "category_listing_box_background_color": categoryListingBoxBackgroundColor == null ? null : categoryListingBoxBackgroundColor,
+    "name": name == null ? null : name,
+    "user_id": userId == null ? null : userId,
+    "contact_number": contactNumber == null ? null : contactNumber,
+    "contact_email": contactEmail == null ? null : contactEmail,
+    "address": address == null ? null : address,
+    "city": city == null ? null : city,
+    "state": state == null ? null : state,
+    "country": country == null ? null : country,
+    "time_zone": timeZone == null ? null : timeZone,
+    "lat": lat == null ? null : lat,
+    "lng": lng == null ? null : lng,
+    "zipcode": zipcode == null ? null : zipcode,
+    "logo": logo == null ? null : logo,
+    "about_us": aboutUs == null ? null : aboutUs,
+    "lang_2_about_us": lang2AboutUs == null ? null : lang2AboutUs,
+    "currency": currency == null ? null : currency,
+    "show_currency": showCurrency == null ? null : showCurrency,
+    "fav_icon": favIcon == null ? null : favIcon,
+    "app_icon": appIcon == null ? null : appIcon,
+    "app_share_link": appShareLink == null ? null : appShareLink,
+    "android_share_link": androidShareLink == null ? null : androidShareLink,
+    "iphone_share_link": iphoneShareLink == null ? null : iphoneShareLink,
+    "android_merchant_app": androidMerchantApp == null ? null : androidMerchantApp,
+    "iphone_merchant_app": iphoneMerchantApp == null ? null : iphoneMerchantApp,
+    "runner_app": runnerApp == null ? null : runnerApp,
+    "radius": radius == null ? null : radius,
+    "radius_type": radiusType == null ? null : radiusType,
+    "radius_type_value": radiusTypeValue == null ? null : radiusTypeValue,
+    "runners_tracking_autorefresh": runnersTrackingAutorefresh == null ? null : runnersTrackingAutorefresh,
+    "type": type == null ? null : type,
+    "is_membership_on": isMembershipOn == null ? null : isMembershipOn,
+    "currency_unicode": currencyUnicode == null ? null : currencyUnicode,
+    "currency_abbr": currencyAbbr == null ? null : currencyAbbr,
+    "international_otp": internationalOtp == null ? null : internationalOtp,
+    "force_download": forceDownload == null ? null : List<dynamic>.from(forceDownload.map((x) => x.toJson())),
+    "logo_100_80": logo10080 == null ? null : logo10080,
+    "logo_300_200": logo300200 == null ? null : logo300200,
+    "banner_100_80": banner10080 == null ? null : banner10080,
+    "banner_300_200": banner300200 == null ? null : banner300200,
+    "domain": domain == null ? null : domain,
   };
 }
 
-class Banner {
-  Banner({
-    this.id,
-    this.storeId,
-    this.link,
-    this.title,
-    this.categoryId,
-    this.subCategoryId,
-    this.productId,
-    this.offerId,
-    this.image,
-    this.linkTo,
-    this.pageId,
-    this.status,
-    this.type,
-    this.platform,
+class ForceDownload {
+  ForceDownload({
+    this.iosAppVersion,
+    this.androidAppVerison,
+    this.windowAppVersion,
+    this.forceDownload,
+    this.forceDownloadMessage,
   });
 
-  String id;
-  String storeId;
-  String link;
-  String title;
-  String categoryId;
-  String subCategoryId;
-  String productId;
-  String offerId;
-  String image;
-  String linkTo;
-  String pageId;
-  bool status;
-  String type;
-  String platform;
-
-  factory Banner.fromJson(Map<String, dynamic> json) => Banner(
-        id: json["id"],
-        storeId: json["store_id"],
-        link: json["link"],
-        title: json["title"],
-        categoryId: json["category_id"],
-        subCategoryId: json["sub_category_id"],
-        productId: json["product_id"],
-        offerId: json["offer_id"],
-        image: json["image"],
-        linkTo: json["link_to"],
-        pageId: json["page_id"],
-        status: json["status"],
-        type: json["type"],
-        platform: json["platform"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "store_id": storeId,
-        "link": link,
-        "title": title,
-        "category_id": categoryId,
-        "sub_category_id": subCategoryId,
-        "product_id": productId,
-        "offer_id": offerId,
-        "image": image,
-        "link_to": linkTo,
-        "page_id": pageId,
-        "status": status,
-        "type": type,
-        "platform": platform,
-      };
-}
-
-class Banners {
-  String id;
-  String storeId;
-  String link;
-  String title;
-  String categoryId;
-  String subCategoryId;
-  String productId;
-  String offerId;
-  String image;
-  String linkTo;
-  String pageId;
-  bool status;
-
-  Banners(
-      {this.id,
-      this.storeId,
-      this.link,
-      this.title,
-      this.categoryId,
-      this.subCategoryId,
-      this.productId,
-      this.offerId,
-      this.image,
-      this.linkTo,
-      this.pageId,
-      this.status});
-
-  Banners.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    storeId = json['store_id'];
-    link = json['link'];
-    title = json['title'];
-    categoryId = json['category_id'];
-    subCategoryId = json['sub_category_id'];
-    productId = json['product_id'];
-    offerId = json['offer_id'];
-    image = json['image'];
-    linkTo = json['link_to'];
-    pageId = json['page_id'];
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['store_id'] = this.storeId;
-    data['link'] = this.link;
-    data['title'] = this.title;
-    data['category_id'] = this.categoryId;
-    data['sub_category_id'] = this.subCategoryId;
-    data['product_id'] = this.productId;
-    data['offer_id'] = this.offerId;
-    data['image'] = this.image;
-    data['link_to'] = this.linkTo;
-    data['page_id'] = this.pageId;
-    data['status'] = this.status;
-    return data;
-  }
-}
-
-class ForceDownload {
   String iosAppVersion;
   String androidAppVerison;
   String windowAppVersion;
   String forceDownload;
   String forceDownloadMessage;
 
-  ForceDownload(
-      {this.iosAppVersion,
-      this.androidAppVerison,
-      this.windowAppVersion,
-      this.forceDownload,
-      this.forceDownloadMessage});
+  ForceDownload copyWith({
+    String iosAppVersion,
+    String androidAppVerison,
+    String windowAppVersion,
+    String forceDownload,
+    String forceDownloadMessage,
+  }) =>
+      ForceDownload(
+        iosAppVersion: iosAppVersion ?? this.iosAppVersion,
+        androidAppVerison: androidAppVerison ?? this.androidAppVerison,
+        windowAppVersion: windowAppVersion ?? this.windowAppVersion,
+        forceDownload: forceDownload ?? this.forceDownload,
+        forceDownloadMessage: forceDownloadMessage ?? this.forceDownloadMessage,
+      );
 
-  ForceDownload.fromJson(Map<String, dynamic> json) {
-    iosAppVersion = json['ios_app_version'];
-    androidAppVerison = json['android_app_verison'];
-    windowAppVersion = json['window_app_version'];
-    forceDownload = json['force_download'];
-    forceDownloadMessage = json['force_download_message'];
-  }
+  factory ForceDownload.fromRawJson(String str) => ForceDownload.fromJson(json.decode(str));
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ios_app_version'] = this.iosAppVersion;
-    data['android_app_verison'] = this.androidAppVerison;
-    data['window_app_version'] = this.windowAppVersion;
-    data['force_download'] = this.forceDownload;
-    data['force_download_message'] = this.forceDownloadMessage;
-    return data;
-  }
-}
+  String toRawJson() => json.encode(toJson());
 
-class Geofencing {
-  String id;
-  String message;
-  String lat;
-  String lng;
-  String radius;
-  String status;
+  factory ForceDownload.fromJson(Map<String, dynamic> json) => ForceDownload(
+    iosAppVersion: json["ios_app_version"] == null ? null : json["ios_app_version"],
+    androidAppVerison: json["android_app_verison"] == null ? null : json["android_app_verison"],
+    windowAppVersion: json["window_app_version"] == null ? null : json["window_app_version"],
+    forceDownload: json["force_download"] == null ? null : json["force_download"],
+    forceDownloadMessage: json["force_download_message"] == null ? null : json["force_download_message"],
+  );
 
-  Geofencing(
-      {this.id, this.message, this.lat, this.lng, this.radius, this.status});
-
-  Geofencing.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    message = json['message'];
-    lat = json['lat'];
-    lng = json['lng'];
-    radius = json['radius'];
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['message'] = this.message;
-    data['lat'] = this.lat;
-    data['lng'] = this.lng;
-    data['radius'] = this.radius;
-    data['status'] = this.status;
-    return data;
-  }
-}
-
-class AppLabels {
-  String id;
-  String label;
-  String labelIdentifier;
-  String priority;
-  String status;
-
-  AppLabels(
-      {this.id, this.label, this.labelIdentifier, this.priority, this.status});
-
-  AppLabels.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    label = json['label'];
-    labelIdentifier = json['label_identifier'];
-    priority = json['priority'];
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['label'] = this.label;
-    data['label_identifier'] = this.labelIdentifier;
-    data['priority'] = this.priority;
-    data['status'] = this.status;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "ios_app_version": iosAppVersion == null ? null : iosAppVersion,
+    "android_app_verison": androidAppVerison == null ? null : androidAppVerison,
+    "window_app_version": windowAppVersion == null ? null : windowAppVersion,
+    "force_download": forceDownload == null ? null : forceDownload,
+    "force_download_message": forceDownloadMessage == null ? null : forceDownloadMessage,
+  };
 }

@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
-import 'package:valueappz_feature_component/core/network/api/dio_base_service.dart';
-import 'package:valueappz_feature_component/src/model/store_response_model.dart';
-import 'package:valueappz_feature_component/src/network/app_network_constants.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/singleton/store_data_singleton.dart';
 
 class AppNetworkRepository extends DioBaseService {
   static AppNetworkRepository _instance;
@@ -32,16 +34,7 @@ class AppNetworkRepository extends DioBaseService {
     try {
       var response = await post(apiPath(storeId, _version), param);
       StoreResponse storeData = StoreResponse.fromJson(jsonDecode(response));
-      String version = AppSharedPref.instance.getApiVersion();
-      debugPrint("older version is $version");
-      if (version != storeData.store.version) {
-        debugPrint(
-            "version not matched older version is $version and new version is ${storeData.store.version}.");
-        AppSharedPref.instance.setApiVersion(storeData.store.version);
-        // fixme: clear database
-        // DatabaseHelper databaseHelper = DatabaseHelper();
-        // databaseHelper.clearDataBase();
-      }
+      StoreDataSingleton.instance.storeData = storeData;
       return storeData;
     } catch (e) {
       debugPrint(e.toString());

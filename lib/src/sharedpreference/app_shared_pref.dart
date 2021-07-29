@@ -1,6 +1,7 @@
-import 'package:valueappz_feature_component/core/sharedpreference/base_shared_pref.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref_constants.dart';
-import 'package:valueappz_feature_component/src/sharedpreference/app_shared_pref_interface.dart';
+
+import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_constants.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_interface.dart';
 
 class AppSharedPref extends BaseSharedPreference
     implements AppSharePrefInterface {
@@ -87,4 +88,16 @@ class AppSharedPref extends BaseSharedPreference
     return await sharepref?.setString(
         AppSharePrefConstants.prefKeyAppVersion, appVersion);
   }
+
+  @override
+  String getAppLanguage() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppVersion);
+  }
+
+  @override
+  Future<bool> setAppLanguage(String appLanguage) async{
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppLanguage, appLanguage);
+  }
+
 }

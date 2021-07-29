@@ -1,0 +1,11 @@
+const appName = "appName";
+const labelWelcomeTitle = "Welcome to\nService Provider App";
+const labelDummyText = "Lorem Ipsum is simply dummy text ";
+const labelOTPWillSentMsg = "OTP would be send to the number ";
+const labelMobileNumber = "Mobile Number";
+const labelForgotPin = "Forget PIN?";
+const labelLogin = "Login";
+const labelOR = "or";
+const labelDontHaveAccount = "Don't have an account? ";
+const labelSignUp = "SignUp";
+const hintMPIN = "Enter 4 digit MPIN";
