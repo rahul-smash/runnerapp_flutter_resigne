@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/src/components/authentication/resetMPIN/reset_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/components/authentication/signUp/registration_complete_screen.dart';
+import 'package:marketplace_service_provider/src/network/app_network_repository.dart';
 import 'package:marketplace_service_provider/src/singleton/store_data_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -70,8 +71,14 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                 fit: BoxFit.fill),
           ),
           child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
             padding: EdgeInsets.only(left: 26, right: 26),
             child: SingleChildScrollView(
               child: Column(
@@ -121,7 +128,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       validator: (val) =>
-                          val.isEmpty ? labelErrorFirstName : null,
+                      val.isEmpty ? labelErrorFirstName : null,
                       onFieldSubmitted: (value) {
                         FocusScope.of(context).requestFocus(lastNameFocusNode);
                       },
@@ -227,9 +234,12 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                       keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.send,
                       validator: (val) =>
-                          val.isEmpty ? labelErrorMobileNumber : null,
-                      onFieldSubmitted: (value) {
+                      val.isEmpty ? labelErrorMobileNumber : null,
+                      onFieldSubmitted: (value) async {
                         FocusScope.of(context).requestFocus(otpFocusNode);
+                        if (mobileCont.text.isNotEmpty)
+                          AppNetworkRepository.instance.sendOtp(
+                              mobileCont.text);
                       },
                       style: TextStyle(color: AppTheme.mainTextColor),
                       decoration: InputDecoration(
@@ -284,7 +294,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                       focusNode: otpFocusNode,
                       keyboardType: TextInputType.number,
                       validator: (val) =>
-                          val.isEmpty ? labelErrorOTPNumber : null,
+                      val.isEmpty ? labelErrorOTPNumber : null,
                       style: TextStyle(color: AppTheme.mainTextColor),
                       decoration: InputDecoration(
                         hintText: hintEnterOtp,
@@ -313,7 +323,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                         onTap: () {
                           setState(() {
                             isTermAndConditionSelected =
-                                !isTermAndConditionSelected;
+                            !isTermAndConditionSelected;
                           });
                         },
                         child: Padding(
@@ -375,7 +385,10 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 50, right: 50),
-                    width: MediaQuery.of(context).size.width,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
                     child: GradientElevatedButton(
                       onPressed: _handleSignUpButton,
                       buttonText: labelSignUp,
@@ -437,7 +450,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
                 builder: (context) => RegistrationCompleteScreen()),
-            (Route<dynamic> route) => false);
+                (Route<dynamic> route) => false);
       }
     }
   }
