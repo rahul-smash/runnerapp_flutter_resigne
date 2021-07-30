@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
@@ -43,7 +42,6 @@ void main() async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await AppUtils.getDeviceInfo();
-  String token = await FirebaseMessaging.instance.getAPNSToken();
 
   bool isNetWorkAvailable = await AppUtils.isNetworkAvailable();
   if (isNetWorkAvailable) {
