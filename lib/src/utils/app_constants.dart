@@ -1,5 +1,5 @@
 class AppConstants {
-  static bool isLoggerOn = false;
+  static bool isLoggerOn = true;
   static bool isLoggedIn = false;
 
   static const iOS = 'IOS';

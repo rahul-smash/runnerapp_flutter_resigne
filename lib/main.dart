@@ -15,6 +15,7 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 import 'src/components/authentication/login/login_screen.dart';
+import 'src/components/authentication/signUp/registration_complete_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
