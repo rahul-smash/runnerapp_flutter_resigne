@@ -4,20 +4,18 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
-import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
-import 'src/components/authentication/login/login_screen.dart';
 import 'src/singleton/store_config_singleton.dart';
 
 void main() async {
