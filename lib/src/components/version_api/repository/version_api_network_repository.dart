@@ -1,0 +1,33 @@
+import 'dart:convert';
+import 'package:flutter/widgets.dart';
+import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
+import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
+
+class VersionApiNetworkRepository extends DioBaseService {
+  static VersionApiNetworkRepository _instance;
+  static const _version = '/version';
+
+  VersionApiNetworkRepository._() : super(AppNetworkConstants.baseUrl);
+
+  static VersionApiNetworkRepository get instance =>
+      _instance ??= VersionApiNetworkRepository._();
+
+  String apiPath(String storeId, String path) =>
+      '$storeId${AppNetworkConstants.baseRoute}$path';
+
+  Future<StoreResponse> versionApi(String storeId) async {
+    try {
+      var response = await post(apiPath(storeId, _version), getIt.get<CommonNetworkUtils>().getDeviceParams());
+      VersionApiSingleton.instance.storeResponse =StoreResponse.fromJson(jsonDecode(response));
+      return VersionApiSingleton.instance.storeResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+}

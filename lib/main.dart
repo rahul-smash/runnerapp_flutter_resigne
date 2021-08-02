@@ -1,23 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
-import 'package:marketplace_service_provider/src/model/store_response_model.dart';
-import 'package:marketplace_service_provider/src/network/app_network_repository.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-
+import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
+import 'core/dimensions/size_config.dart';
+import 'core/dimensions/size_custom_config.dart';
+import 'core/network/connectivity/network_connection_observer.dart';
 import 'src/components/authentication/login/login_screen.dart';
+import 'src/singleton/store_config_singleton.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  serviceLocator();
   //initialization of shared preferences
   await AppSharedPref.instance.init();
 
@@ -29,7 +34,7 @@ void main() async {
   String jsonResult = await loadAsset();
   final parsed = json.decode(jsonResult);
   ConfigModel configObject = ConfigModel.fromJson(parsed);
-
+  StoreConfigurationSingleton.instance.configModel = configObject;
   if (Platform.isIOS) {
     IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
     await AppSharedPref.instance.setDeviceId(iosDeviceInfo.identifierForVendor);
@@ -40,72 +45,28 @@ void main() async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await AppUtils.getDeviceInfo();
-  bool isNetWorkAvailable = await AppUtils.isNetworkAvailable();
-  if (isNetWorkAvailable) {
-    StoreResponse storeData =
-        await AppNetworkRepository.instance.versionApi(configObject.storeId);
+  if (!getIt.get<NetworkConnectionObserver>().offline) {
+    await getIt.get<VersionAuthRepository>().versionApi();
     runApp(MyApp());
   } else {
     runApp(NoNetworkApp());
   }
 }
 
-class NoNetworkApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return getMaterialApp(Scaffold(body: NoNetworkClass()));
-  }
-}
-
-class NoNetworkClass extends StatefulWidget {
-  @override
-  _NoNetworkClassState createState() => _NoNetworkClassState();
-}
-
-class _NoNetworkClassState extends BaseState<NoNetworkClass> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _noNetWorkDialog();
-    });
-  }
-
-  @override
-  Widget builder(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage(
-              AppConstants.staticSplash,
-            ),
-            fit: BoxFit.fill),
-      ),
-    );
-  }
-
-  void _noNetWorkDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Alert"),
-        content: Text("No intenet connection"),
-        actions: <Widget>[
-          TextButton(
-              child: Text("Ok"),
-              onPressed: () {
-                Navigator.pop(context);
-              })
-        ],
-      ),
-    );
-  }
-}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return getMaterialApp(LoginScreen());
+    return getMaterialApp(MainWidget());
+  }
+}
+
+class MainWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    SizeCustomConfig().init(
+        AppUtils.getDeviceHeight(context), AppUtils.getDeviceWidth(context), Orientation.portrait);
+    SizeConfig().init(context);
+    return Scaffold(body: LoginScreen());
   }
 }
 
@@ -119,4 +80,11 @@ getMaterialApp(dynamic child) {
 
 Future<String> loadAsset() async {
   return await rootBundle.loadString(AppConstants.configFile);
+}
+
+class NoNetworkApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return getMaterialApp(Scaffold(body: NoNetworkClass()));
+  }
 }

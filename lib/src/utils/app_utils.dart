@@ -124,16 +124,6 @@ class AppUtils {
     return regex.hasMatch(value);
   }
 
-  static Future<bool> isNetworkAvailable() async {
-    bool isNetworkAvailable = false;
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile) {
-      isNetworkAvailable = true;
-    } else if (connectivityResult == ConnectivityResult.wifi) {
-      isNetworkAvailable = true;
-    }
-    return isNetworkAvailable;
-  }
 
   static double getDeviceWidth(BuildContext context) {
     return MediaQuery.of(context).size.width;
