@@ -234,11 +234,12 @@ class _LoginScreenState extends BaseState<LoginScreen> {
         if(event.showLoader){
           AppUtils.showLoader(context);
         }
-
         if(!event.showLoader){
           AppUtils.hideKeyboard(context);
           AppUtils.hideLoader(context);
         }
+        //call next screen here
+
       });
     }
   }
