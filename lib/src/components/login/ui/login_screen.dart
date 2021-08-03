@@ -5,6 +5,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
+import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -200,7 +201,11 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                           children: <TextSpan>[
                             TextSpan(
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = () => print('Tap Here onTap'),
+                                  ..onTap = () {
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (BuildContext context) => SignUpScreen())
+                                    );
+                                  },
                                 text: labelSignUp,
                                 style: TextStyle(
                                     color: AppTheme.primaryColor,
@@ -230,13 +235,18 @@ class _LoginScreenState extends BaseState<LoginScreen> {
       userLoginBloc.eventSink.add(LoginEventData(UserLoginAction.PerformLoggin,mobileCont.text,passwordCont.text));
 
       userLoginBloc.userModelStream.listen((event) {
-        print("--------listen---------${event.showLoader}");
         if(event.showLoader){
           AppUtils.showLoader(context);
         }
         if(!event.showLoader){
           AppUtils.hideKeyboard(context);
           AppUtils.hideLoader(context);
+        }
+        if(event.loginResponse != null){
+          if(!event.loginResponse.success)
+          AppUtils.showToast(event.loginResponse.message, false);
+        }else if(event.loginResponse != null && event.loginResponse.success){
+
         }
         //call next screen here
 

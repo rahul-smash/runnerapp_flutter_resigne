@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -23,9 +24,9 @@ class UserLoginBloc{
       LoginEventData loginEventData = event;
       if (loginEventData.userLoginAction == UserLoginAction.PerformLoggin){
         _userLoginSink.add(LoginStreamOutput(true));
-        await getIt.get<UserAuthenticationRepository>().authenticate(phoneNumber: loginEventData.phoneNumber,
+        LoginResponse loginResponse = await getIt.get<UserAuthenticationRepository>().loginUser(phoneNumber: loginEventData.phoneNumber,
             mPin: loginEventData.mPin);
-        _userLoginSink.add(LoginStreamOutput(false));
+        _userLoginSink.add(LoginStreamOutput(false, loginResponse: loginResponse));
       }
     });
   }

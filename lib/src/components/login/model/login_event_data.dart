@@ -1,5 +1,7 @@
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 
+import 'login_response.dart';
+
 class LoginEventData{
   UserLoginAction userLoginAction;
   String phoneNumber;
@@ -9,5 +11,6 @@ class LoginEventData{
 
 class LoginStreamOutput{
   bool showLoader;
-  LoginStreamOutput(this.showLoader);
+  LoginResponse loginResponse;
+  LoginStreamOutput(this.showLoader,{this.loginResponse});
 }
