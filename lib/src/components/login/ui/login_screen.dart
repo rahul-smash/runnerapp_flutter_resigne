@@ -231,6 +231,14 @@ class _LoginScreenState extends BaseState<LoginScreen> {
 
       userLoginBloc.userModelStream.listen((event) {
         print("--------listen---------${event.showLoader}");
+        if(event.showLoader){
+          AppUtils.showLoader(context);
+        }
+
+        if(!event.showLoader){
+          AppUtils.hideKeyboard(context);
+          AppUtils.hideLoader(context);
+        }
       });
     }
   }

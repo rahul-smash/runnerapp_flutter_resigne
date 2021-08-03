@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:marketplace_service_provider/src/model/device_info.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
@@ -132,4 +133,19 @@ class AppUtils {
   static double getDeviceHeight(BuildContext context) {
     return MediaQuery.of(context).size.height;
   }
+
+  static void showLoader(BuildContext context) {
+    Loader.show(context,
+        isAppbarOverlay: true,
+        isBottomBarOverlay: false,
+        progressIndicator: CircularProgressIndicator(),
+        themeData: Theme.of(context)
+            .copyWith(accentColor: AppTheme.primaryColor),
+        overlayColor: Color(0x99E8EAF6));
+  }
+
+  static void hideLoader(BuildContext context) {
+    Loader.hide();
+  }
+
 }
