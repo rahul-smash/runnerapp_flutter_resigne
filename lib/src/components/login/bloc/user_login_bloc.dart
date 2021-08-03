@@ -23,10 +23,10 @@ class UserLoginBloc{
     _eventStream.listen((event) async {
       LoginEventData loginEventData = event;
       if (loginEventData.userLoginAction == UserLoginAction.PerformLoggin){
-        _userLoginSink.add(LoginStreamOutput(true));
+        _userLoginSink.add(LoginStreamOutput(showLoader: true,loginResponse: null));
         LoginResponse loginResponse = await getIt.get<UserAuthenticationRepository>().loginUser(phoneNumber: loginEventData.phoneNumber,
             mPin: loginEventData.mPin);
-        _userLoginSink.add(LoginStreamOutput(false, loginResponse: loginResponse));
+        _userLoginSink.add(LoginStreamOutput(showLoader: false,loginResponse: loginResponse));
       }
     });
   }

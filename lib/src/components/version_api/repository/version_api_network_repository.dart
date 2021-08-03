@@ -2,15 +2,18 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/version_api/model/service_location_response.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/singleton/singleton_service_locations.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 
 class VersionApiNetworkRepository extends DioBaseService {
   static VersionApiNetworkRepository _instance;
   static const _version = '/version';
+  static const _getLocations = '/runner_authentication/getLocations';
 
   VersionApiNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -30,4 +33,16 @@ class VersionApiNetworkRepository extends DioBaseService {
     }
     return null;
   }
+
+  Future<ServiceLocationResponse> serviceLocationsApi(String storeId) async {
+    try {
+      var response = await get(apiPath(storeId, _getLocations), getIt.get<CommonNetworkUtils>().getDeviceParams());
+      SingletonServiceLocations.instance.serviceLocationResponse = ServiceLocationResponse.fromJson(jsonDecode(response));
+      return SingletonServiceLocations.instance.serviceLocationResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
 }

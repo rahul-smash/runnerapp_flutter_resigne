@@ -16,6 +16,7 @@ import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart'
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
+import 'src/singleton/singleton_service_locations.dart';
 import 'src/singleton/store_config_singleton.dart';
 
 void main() async {
@@ -45,6 +46,7 @@ void main() async {
   await AppUtils.getDeviceInfo();
   if (!getIt.get<NetworkConnectionObserver>().offline) {
     await getIt.get<VersionAuthRepository>().versionApi();
+    SingletonServiceLocations.instance.serviceLocationResponse = await getIt.get<VersionAuthRepository>().serviceLocationsApi();
     runApp(MyApp());
   } else {
     runApp(NoNetworkApp());

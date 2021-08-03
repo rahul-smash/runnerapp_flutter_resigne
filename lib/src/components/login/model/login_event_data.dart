@@ -12,5 +12,5 @@ class LoginEventData{
 class LoginStreamOutput{
   bool showLoader;
   LoginResponse loginResponse;
-  LoginStreamOutput(this.showLoader,{this.loginResponse});
+  LoginStreamOutput({this.showLoader,this.loginResponse});
 }

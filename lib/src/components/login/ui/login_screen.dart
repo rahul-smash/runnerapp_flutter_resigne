@@ -5,6 +5,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
+import 'package:marketplace_service_provider/src/components/service_location/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -22,8 +23,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends BaseState<LoginScreen> {
 
   final UserLoginBloc userLoginBloc = getIt.get<UserLoginBloc>();
-  TextEditingController mobileCont = TextEditingController();
-  TextEditingController passwordCont = TextEditingController();
+  TextEditingController mobileCont = TextEditingController(text: "8847485654");
+  TextEditingController passwordCont = TextEditingController(text: "1234");
   bool _showPassword = false;
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
@@ -242,14 +243,24 @@ class _LoginScreenState extends BaseState<LoginScreen> {
           AppUtils.hideKeyboard(context);
           AppUtils.hideLoader(context);
         }
-        if(event.loginResponse != null){
-          if(!event.loginResponse.success)
-          AppUtils.showToast(event.loginResponse.message, false);
-        }else if(event.loginResponse != null && event.loginResponse.success){
 
+
+        if(event.loginResponse != null){
+          if(!event.loginResponse.success){
+            AppUtils.showToast(event.loginResponse.message, false);
+          }else if(event.loginResponse.success){
+            AppUtils.showToast(event.loginResponse.message, false);
+            if(event.loginResponse.locationId == 0){
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => ServicesLocationScreen(userId: event.loginResponse.data.id,))
+              );
+            }else{
+
+            }
+          }
         }
         //call next screen here
-
       });
     }
   }

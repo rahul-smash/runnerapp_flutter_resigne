@@ -1,3 +1,4 @@
+import 'package:marketplace_service_provider/src/model/device_info.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 
 class CommonNetworkUtils{
@@ -5,7 +6,7 @@ class CommonNetworkUtils{
   CommonNetworkUtils();
 
   Map<String, dynamic> getDeviceParams(){
-    String deviceId = AppSharedPref.instance.getDeviceId();
+    /*String deviceId = AppSharedPref.instance.getDeviceId();
     String deviceToken = AppSharedPref.instance.getDeviceToken();
     String platform = AppSharedPref.instance.getDevicePlatform();
 
@@ -13,8 +14,8 @@ class CommonNetworkUtils{
       'device_id': deviceId,
       'device_token': deviceToken,
       'platform': platform
-    };
-    return param;
+    };*/
+    return DeviceInfo.getInstance().deviceInfo;
   }
 
 
