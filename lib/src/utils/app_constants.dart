@@ -18,4 +18,6 @@ class AppConstants {
   static double extraSmallSize = 14.0;
   static double extraXSmallSize = 12.0;
   static double tinySize = 10.0;
+
+  static String noInternetMsg = "No internet connection!";
 }

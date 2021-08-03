@@ -31,6 +31,7 @@ dependencies:
   firebase_crashlytics: ^0.1.3+3
   fluttertoast: ^4.0.1
   get_it: ^7.1.3
+  rxdart: ^0.27.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -61,7 +62,7 @@ flutter:
     # splash
     - assets/splash.png
     # authentication
-    - lib/src/components/authentication/images/
+    - lib/src/components/login/images/
 
   #
   #   - images/a_dot_ham.jpeg
