@@ -45,3 +45,6 @@ const hintEnterOtp = "Enter OTP";
 const hintMPIN = "Enter 4 digit MPIN";
 const hintEnterNewMPIN = "Enter new 4 digit MPIN";
 const hintReEnterNewMPIN = "Re-Enter new 4 digit MPIN";
+
+const newPinValidationMsg = "Please enter your new Pin!";
+const confirmPinValidationMsg = "New pin and confirm pin should be same!";

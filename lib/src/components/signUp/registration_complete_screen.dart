@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/src/components/setMPIN/set_mpin_screen.dart';
+import 'package:marketplace_service_provider/src/components/signUp/model/register_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -7,6 +8,9 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class RegistrationCompleteScreen extends StatelessWidget {
+  final RegisterResponse registerResponse;
+  RegistrationCompleteScreen({this.registerResponse});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +109,7 @@ class RegistrationCompleteScreen extends StatelessWidget {
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
-                              builder: (BuildContext context) => SetMPINScreen(),
+                              builder: (BuildContext context) => SetMPINScreen(this.registerResponse),
                             ));
                       },
                       buttonText: labelSetUpMPIN,

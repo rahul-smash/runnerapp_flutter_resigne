@@ -1,6 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
+import 'package:marketplace_service_provider/src/components/login/repository/login_network_repository.dart';
+import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -10,6 +15,7 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
+import 'model/register_response.dart';
 import 'registration_complete_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -38,6 +44,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
   final _lastNameKey = GlobalKey<FormState>();
   final _mobileNumberKey = GlobalKey<FormState>();
   final _otpNumberKey = GlobalKey<FormState>();
+  BaseResponse response;
 
   @override
   void initState() {
@@ -236,9 +243,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                       val.isEmpty ? labelErrorMobileNumber : null,
                       onFieldSubmitted: (value) async {
                         FocusScope.of(context).requestFocus(otpFocusNode);
-                        //if (mobileCont.text.isNotEmpty)
-                         /* AppNetworkRepository.instance.sendOtp(
-                              mobileCont.text);*/
+                        sendOtp();
                       },
                       style: TextStyle(color: AppTheme.mainTextColor),
                       decoration: InputDecoration(
@@ -273,7 +278,8 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                         ),
                       ),
                       Text(
-                        labelResendOTP,
+                        //labelResendOTP,
+                        "",
                         style: TextStyle(
                             color: AppTheme.primaryColorDark,
                             fontSize: AppConstants.extraXSmallSize,
@@ -438,7 +444,26 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
         ));
   }
 
-  _handleSignUpButton() {
+  sendOtp() async {
+    try {
+      if(this.network.offline){
+        AppUtils.showToast(AppConstants.noInternetMsg, false);
+        return;
+      }
+      if (mobileCont.text.isNotEmpty){
+            AppUtils.showLoader(context);
+            response =
+                await getIt.get<UserAuthenticationRepository>().sendOtp(phoneNumber: mobileCont.text);
+            AppUtils.showToast(response.message, false);
+            AppUtils.hideKeyboard(context);
+            AppUtils.hideLoader(context);
+          }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _handleSignUpButton() async {
     if (_fistNameKey.currentState.validate() &&
         _lastNameKey.currentState.validate() &&
         _mobileNumberKey.currentState.validate() &&
@@ -446,9 +471,22 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
       if (!isTermAndConditionSelected) {
         AppUtils.showToast(labelErrorTermCondition, false);
       } else {
+        if(this.network.offline){
+          AppUtils.showToast(AppConstants.noInternetMsg, false);
+          return;
+        }
+        AppUtils.showLoader(context);
+        RegisterResponse response =
+            await getIt.get<UserAuthenticationRepository>().registerUser(
+              first_name: firstNameCont.text.trim(),last_name: lastNameCont.text.trim(),
+              otp: otpCont.text.trim(),phone: mobileCont.text.trim(),registeredAs: _selectedSignUpOption
+            );
+        AppUtils.showToast(response.message, false);
+        AppUtils.hideKeyboard(context);
+        AppUtils.hideLoader(context);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
-                builder: (context) => RegistrationCompleteScreen()),
+                builder: (context) => RegistrationCompleteScreen(registerResponse: response,)),
                 (Route<dynamic> route) => false);
       }
     }

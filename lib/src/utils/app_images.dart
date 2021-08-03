@@ -1,5 +1,4 @@
 class AppImages {
-  //lib/src/components/login/images/loginsignupbg.png
   static const login_graphic =
       'lib/src/components/login/images/login_graphic.png';
   static const login_sign_up_bg =
@@ -11,7 +10,7 @@ class AppImages {
   static const sign_up_graphic =
       'lib/src/components/login/images/signup_graphic.png';
   static const small_tick =
-      'lib/src/components/login/images/images/small_tick.png';
+      'lib/src/components/login/images/small_tick.png';
   static const tick_graphic =
-      'lib/src/components/login/images/images/tick_graphic.png';
+      'lib/src/components/login/images/tick_graphic.png';
 }
