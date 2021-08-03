@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 
 abstract class AuthenticationRepository {
 
-  Future<void> register(
-      {@required String firstName,
-        @required String lastName, @required String email, @required String password});
+  Future<void> register({@required String phoneNumber, @required String mPin});
 
   /// Authenticates a user using his [username] and [password]
-  Future<void> authenticate(
-      {@required String email, @required String password});
+  Future<void> authenticate({@required String phoneNumber,@required String mPin});
 
   /// Returns whether the [User] is authenticated.
   Future<bool> isAuthenticated();

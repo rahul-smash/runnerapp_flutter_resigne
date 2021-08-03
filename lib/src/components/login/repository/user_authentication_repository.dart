@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 import 'authentication_repository.dart';
+import 'login_network_repository.dart';
 
-class UserRepository extends AuthenticationRepository {
+class UserAuthenticationRepository extends AuthenticationRepository {
 
-  // singleton
-  static UserRepository _instance = UserRepository._internal();
-  UserRepository._internal();
-  factory UserRepository() => _instance;
-
-  @override
-  Future<void> register({@required String firstName,@required String lastName,
-    @required String email,@required String password}) {
-    // TODO: implement
-  }
+  UserAuthenticationRepository();
 
   /// Authenticates a user using his [username] and [password]
   @override
-  Future<void> authenticate(
-      {@required String email, @required String password}) {
-    // TODO: implement
+  Future<void> authenticate({@required String phoneNumber,@required String mPin}) async {
+    await LoginNetworkRepository.instance.loginApi(phoneNumber, mPin);
+  }
+
+  @override
+  Future<void> register({@required String phoneNumber,@required String mPin}) {
+
   }
 
   /// Returns whether the [User] is authenticated.

@@ -71,6 +71,7 @@ class Brand {
     this.runnersTrackingAutorefresh,
     this.type,
     this.isMembershipOn,
+    this.version,
     this.currencyUnicode,
     this.currencyAbbr,
     this.internationalOtp,
@@ -80,6 +81,7 @@ class Brand {
     this.banner10080,
     this.banner300200,
     this.domain,
+    this.signupAs,
   });
 
   String id;
@@ -114,6 +116,7 @@ class Brand {
   String runnersTrackingAutorefresh;
   String type;
   String isMembershipOn;
+  String version;
   String currencyUnicode;
   String currencyAbbr;
   String internationalOtp;
@@ -123,6 +126,7 @@ class Brand {
   String banner10080;
   String banner300200;
   String domain;
+  List<String> signupAs;
 
   Brand copyWith({
     String id,
@@ -157,6 +161,7 @@ class Brand {
     String runnersTrackingAutorefresh,
     String type,
     String isMembershipOn,
+    String version,
     String currencyUnicode,
     String currencyAbbr,
     String internationalOtp,
@@ -166,6 +171,7 @@ class Brand {
     String banner10080,
     String banner300200,
     String domain,
+    List<String> signupAs,
   }) =>
       Brand(
         id: id ?? this.id,
@@ -200,6 +206,7 @@ class Brand {
         runnersTrackingAutorefresh: runnersTrackingAutorefresh ?? this.runnersTrackingAutorefresh,
         type: type ?? this.type,
         isMembershipOn: isMembershipOn ?? this.isMembershipOn,
+        version: version ?? this.version,
         currencyUnicode: currencyUnicode ?? this.currencyUnicode,
         currencyAbbr: currencyAbbr ?? this.currencyAbbr,
         internationalOtp: internationalOtp ?? this.internationalOtp,
@@ -209,6 +216,7 @@ class Brand {
         banner10080: banner10080 ?? this.banner10080,
         banner300200: banner300200 ?? this.banner300200,
         domain: domain ?? this.domain,
+        signupAs: signupAs ?? this.signupAs,
       );
 
   factory Brand.fromRawJson(String str) => Brand.fromJson(json.decode(str));
@@ -248,6 +256,7 @@ class Brand {
     runnersTrackingAutorefresh: json["runners_tracking_autorefresh"] == null ? null : json["runners_tracking_autorefresh"],
     type: json["type"] == null ? null : json["type"],
     isMembershipOn: json["is_membership_on"] == null ? null : json["is_membership_on"],
+    version: json["version"] == null ? null : json["version"],
     currencyUnicode: json["currency_unicode"] == null ? null : json["currency_unicode"],
     currencyAbbr: json["currency_abbr"] == null ? null : json["currency_abbr"],
     internationalOtp: json["international_otp"] == null ? null : json["international_otp"],
@@ -257,6 +266,7 @@ class Brand {
     banner10080: json["banner_100_80"] == null ? null : json["banner_100_80"],
     banner300200: json["banner_300_200"] == null ? null : json["banner_300_200"],
     domain: json["domain"] == null ? null : json["domain"],
+    signupAs: json["signupAs"] == null ? null : List<String>.from(json["signupAs"].map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
@@ -292,6 +302,7 @@ class Brand {
     "runners_tracking_autorefresh": runnersTrackingAutorefresh == null ? null : runnersTrackingAutorefresh,
     "type": type == null ? null : type,
     "is_membership_on": isMembershipOn == null ? null : isMembershipOn,
+    "version": version == null ? null : version,
     "currency_unicode": currencyUnicode == null ? null : currencyUnicode,
     "currency_abbr": currencyAbbr == null ? null : currencyAbbr,
     "international_otp": internationalOtp == null ? null : internationalOtp,
@@ -301,6 +312,7 @@ class Brand {
     "banner_100_80": banner10080 == null ? null : banner10080,
     "banner_300_200": banner300200 == null ? null : banner300200,
     "domain": domain == null ? null : domain,
+    "signupAs": signupAs == null ? null : List<dynamic>.from(signupAs.map((x) => x)),
   };
 }
 

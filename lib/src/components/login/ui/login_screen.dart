@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -26,8 +27,6 @@ class _LoginScreenState extends BaseState<LoginScreen> {
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _email;
-  String _password;
 
   @override
   void dispose() {
@@ -228,7 +227,11 @@ class _LoginScreenState extends BaseState<LoginScreen> {
         AppUtils.showToast(AppConstants.noInternetMsg, false);
         return;
       }
-      userLoginBloc.eventSink.add(UserLoginAction.PerformLogged);
+      userLoginBloc.eventSink.add(LoginEventData(UserLoginAction.PerformLoggin,mobileCont.text,passwordCont.text));
+
+      userLoginBloc.userModelStream.listen((event) {
+        print("--------listen---------${event.showLoader}");
+      });
     }
   }
 
