@@ -1,10 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
+import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
@@ -176,7 +181,36 @@ class _SetNewMPINScreenState extends BaseState<SetNewMPINScreen> {
         ));
   }
 
-  _handleLoginButton() {
+  _handleLoginButton() async {
+    if(this.network.offline){
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+    if (newPinCont.text.isEmpty){
+      AppUtils.showToast("Please enter valid phone number!", false);
+      return;
+    }
+    if (confirmPinCont.text.isEmpty){
+      AppUtils.showToast("Please enter valid Otp!", false);
+      return;
+    }
+    if(!AppUtils.equalsIgnoreCase(newPinCont.text,confirmPinCont.text)){
+      AppUtils.showToast(confirmPinValidationMsg, false);
+      return;
+    }
+    AppUtils.showLoader(context);
+    BaseResponse response =
+        await getIt.get<UserAuthenticationRepository>().setMpin(mPin: newPinCont.text,userId: widget.user_id);
+    if(response != null)
+      AppUtils.showToast(response.message, false);
+    AppUtils.hideKeyboard(context);
+    AppUtils.hideLoader(context);
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (context) => LoginScreen()),
+            (Route<dynamic> route) => false);
+
 
   }
 }
