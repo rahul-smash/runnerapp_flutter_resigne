@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -18,7 +20,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   int _selectedTabIndex = 0;
 
   List _pages = [
-    Text("Home"),
+    HomeScreen(),
     Text("Order"),
     Text("Notfication"),
     Text("More"),
@@ -44,11 +46,15 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   @override
   Widget builder(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: BaseAppBar(
         backgroundColor: AppTheme.primaryColor,
-        title: Text('bottom nav bar'),
+        title: Text(''),
+        appBar: AppBar(),
+        widgets: <Widget>[Icon(Icons.notifications,color: Colors.white,),SizedBox(width: 20,)],
       ),
-      body: Center(child: _pages[_selectedTabIndex]),
+      body: Center(
+          child: _pages[_selectedTabIndex]
+      ),
       bottomNavigationBar: bottomNavigationBar,
     );
   }
