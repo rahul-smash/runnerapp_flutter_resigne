@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -243,20 +246,26 @@ class _LoginScreenState extends BaseState<LoginScreen> {
           AppUtils.hideKeyboard(context);
           AppUtils.hideLoader(context);
         }
-
-
         if(event.loginResponse != null){
           if(!event.loginResponse.success){
             AppUtils.showToast(event.loginResponse.message, false);
           }else if(event.loginResponse.success){
             AppUtils.showToast(event.loginResponse.message, false);
-            if(event.loginResponse.locationId == "0"){
+            if(event.loginResponse.location.locationId == "0"){
               Navigator.pushReplacement(context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => ServicesLocationScreen(userId: event.loginResponse.data.id,))
               );
             }else{
-
+              Navigator.pop(context);
+              LoginUserSingleton.instance.loginResponse = event.loginResponse;
+              AppSharedPref.instance.saveUser(event.loginResponse).then((value) async {
+                AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+                Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => DashboardScreen())
+                );
+              });
             }
           }
         }

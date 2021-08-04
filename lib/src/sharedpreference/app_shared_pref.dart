@@ -1,10 +1,13 @@
 
+import 'dart:convert';
+
 import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_constants.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_interface.dart';
+import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 
-class AppSharedPref extends BaseSharedPreference
-    implements AppSharePrefInterface {
+class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterface {
   static AppSharedPref _instance;
 
   AppSharedPref._();
@@ -34,7 +37,8 @@ class AppSharedPref extends BaseSharedPreference
   }
 
   @override
-  bool isLoggedIn() {
+  Future<bool> isLoggedIn() async {
+    await getUser();
     return sharepref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
   }
 
@@ -44,17 +48,6 @@ class AppSharedPref extends BaseSharedPreference
         AppSharePrefConstants.prefKeyIsLoggedIn, value);
   }
 
-  @override
-  bool isAdminLogin() {
-    return sharepref?.getBool(AppSharePrefConstants.prefKeyIsAdminLogin) ??
-        false;
-  }
-
-  @override
-  Future<bool> setAdminLogin(bool value) async {
-    return await sharepref?.setBool(
-        AppSharePrefConstants.prefKeyIsAdminLogin, value);
-  }
 
   @override
   String getApiVersion() {
@@ -100,4 +93,19 @@ class AppSharedPref extends BaseSharedPreference
         AppSharePrefConstants.prefKeyAppLanguage, appLanguage);
   }
 
+  @override
+  Future<bool> saveUser(LoginResponse model) async {
+    dynamic userResponse = model.toJson();
+    String jsonString = jsonEncode(userResponse);
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppSaveUser, jsonString);
+  }
+
+  @override
+  Future<LoginResponse> getUser() async {
+    Map<String, dynamic> userMap = await json.decode(sharepref?.getString(AppSharePrefConstants.prefKeyAppSaveUser));
+    var user = LoginResponse.fromJson(userMap);
+    LoginUserSingleton.instance.loginResponse = user;
+    return user;
+  }
 }

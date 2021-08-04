@@ -15,7 +15,7 @@ class LoginResponse {
     this.userExists,
     this.message,
     this.brands,
-    this.locationId,
+    this.location,
   });
 
   bool success;
@@ -23,7 +23,7 @@ class LoginResponse {
   int userExists;
   String message;
   List<Brand> brands;
-  String locationId;
+  Location location;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
     success: json["success"],
@@ -31,7 +31,7 @@ class LoginResponse {
     userExists: json["user_exists"],
     message: json["message"],
     brands: List<Brand>.from(json["brands"].map((x) => Brand.fromJson(x))),
-    locationId: json["location_id"],
+    location: Location.fromJson(json["location"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -40,7 +40,7 @@ class LoginResponse {
     "user_exists": userExists,
     "message": message,
     "brands": List<dynamic>.from(brands.map((x) => x.toJson())),
-    "location_id": locationId,
+    "location": location.toJson(),
   };
 }
 
@@ -207,3 +207,23 @@ class UserData {
     "rating": rating,
   };
 }
+class Location {
+  Location({
+    this.locationId,
+    this.locationName,
+  });
+
+  String locationId;
+  String locationName;
+
+  factory Location.fromJson(Map<String, dynamic> json) => Location(
+    locationId: json["location_id"],
+    locationName: json["location_name"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "location_id": locationId,
+    "location_name": locationName,
+  };
+}
+

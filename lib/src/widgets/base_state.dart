@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/utils/language_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state_interface.dart';
 

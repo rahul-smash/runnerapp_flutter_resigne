@@ -4,6 +4,7 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
@@ -26,7 +27,7 @@ void main() async {
   await AppSharedPref.instance.init();
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  AppConstants.isLoggedIn = AppSharedPref.instance.isLoggedIn();
+  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
   await AppSharedPref.instance
       .setDevicePlatform(Platform.isIOS ? AppConstants.iOS : 'Android');
 
@@ -66,7 +67,7 @@ class MainWidget extends StatelessWidget {
     SizeCustomConfig().init(
         AppUtils.getDeviceHeight(context), AppUtils.getDeviceWidth(context), Orientation.portrait);
     SizeConfig().init(context);
-    return Scaffold(body: LoginScreen());
+    return Scaffold(body: AppConstants.isLoggedIn ? DashboardScreen(): LoginScreen());
   }
 }
 

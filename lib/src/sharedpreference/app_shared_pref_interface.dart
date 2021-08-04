@@ -1,3 +1,5 @@
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
+
 abstract class AppSharePrefInterface {
   Future<bool> setMobileNumber(String mobileNumber);
 
@@ -9,11 +11,7 @@ abstract class AppSharePrefInterface {
 
   Future<bool> setLoggedIn(bool value);
 
-  bool isLoggedIn();
-
-  Future<bool> setAdminLogin(bool value);
-
-  bool isAdminLogin();
+  Future<bool> isLoggedIn();
 
   Future<bool> setApiVersion(String apiVersion);
 
@@ -31,6 +29,6 @@ abstract class AppSharePrefInterface {
 
   String getAppLanguage();
 
-
+  Future<bool> saveUser(LoginResponse userJson);
 
 }
