@@ -1,7 +1,4 @@
 import 'dart:io';
-
-import 'package:connectivity/connectivity.dart';
-import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,6 +7,7 @@ import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pre
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
