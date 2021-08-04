@@ -254,13 +254,13 @@ class _LoginScreenState extends BaseState<LoginScreen> {
             if(event.loginResponse.location.locationId == "0"){
               Navigator.pushReplacement(context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => ServicesLocationScreen(userId: event.loginResponse.data.id,))
+                      builder: (BuildContext context) => ServicesLocationScreen(loginResponse:event.loginResponse,))
               );
             }else{
-              Navigator.pop(context);
               LoginUserSingleton.instance.loginResponse = event.loginResponse;
               AppSharedPref.instance.saveUser(event.loginResponse).then((value) async {
                 AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+                Navigator.pop(context);
                 Navigator.push(context,
                     MaterialPageRoute(
                         builder: (BuildContext context) => DashboardScreen())

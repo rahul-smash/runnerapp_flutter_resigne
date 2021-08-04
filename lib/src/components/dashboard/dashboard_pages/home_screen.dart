@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
                             child: new Text(
                               //AppConstant.txt_OTP,
-                              "Enter Verification Code",
+                              "Home",
                               textAlign: TextAlign.center,
                               style: new TextStyle(
                                   fontSize: 20.0,
@@ -61,17 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             )
                         ),
-                        Container(
-                            margin: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 5.0),
-                            child: new Text(
-                              //AppConstant.txt_OTP,
-                              "Verification code has been sent to (+91).Please enter it here",
-                              textAlign: TextAlign.center,
-                              style: new TextStyle(
-                                fontSize: 14.0,
-                                color: AppTheme.primaryColor,
-                              ),
-                            )),
                         SizedBox(height: 30,),
 
                       ],

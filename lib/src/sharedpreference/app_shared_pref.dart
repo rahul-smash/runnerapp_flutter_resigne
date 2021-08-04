@@ -38,8 +38,13 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
 
   @override
   Future<bool> isLoggedIn() async {
-    await getUser();
-    return sharepref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+    bool IsLoggedIn = sharepref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+    if(IsLoggedIn){
+      await getUser();
+      return IsLoggedIn;
+    }else{
+      return IsLoggedIn;
+    }
   }
 
   @override

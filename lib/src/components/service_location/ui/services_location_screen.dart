@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/version_api/model/service_location_response.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/singleton/singleton_service_locations.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -13,8 +17,8 @@ import '../bloc/save_location_bloc.dart';
 import '../model/location_event_data.dart';
 
 class ServicesLocationScreen extends StatefulWidget {
-  final String userId;
-  ServicesLocationScreen({this.userId});
+  final LoginResponse loginResponse;
+  ServicesLocationScreen({this.loginResponse});
   @override
   _ServicesLocationScreenState createState() {
     return _ServicesLocationScreenState();
@@ -29,7 +33,7 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
   @override
   void initState() {
     super.initState();
-    saveLocationBloc.eventSink.add((LocationEventData(null,widget.userId,LocationAction.SelectCity,selectedIndex:selectedCity)));
+    saveLocationBloc.eventSink.add((LocationEventData(null,widget.loginResponse.data.id,LocationAction.SelectCity,selectedIndex:selectedCity)));
   }
 
   @override
@@ -93,7 +97,7 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
                                         return selectedCity != index
                                             ? ListTile(
                                           onTap: (){
-                                            saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.userId,LocationAction.SelectCity,selectedIndex:index)));
+                                            saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.loginResponse.data.id,LocationAction.SelectCity,selectedIndex:index)));
                                           },
                                           title: Container(
                                             width: double.infinity,
@@ -102,7 +106,7 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
                                         )
                                             : ListTile(
                                           onTap: (){
-                                            saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.userId,LocationAction.SelectCity,selectedIndex:index)));
+                                            saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.loginResponse.data.id,LocationAction.SelectCity,selectedIndex:index)));
                                           },
                                           title: Container(
                                               margin: EdgeInsets.only(left: 20),
@@ -184,22 +188,37 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
       return;
     }
     ServiceLocationData object = SingletonServiceLocations.instance.serviceLocationResponse.data[selectedCity];
-    saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.userId,LocationAction.SaveLocation)));
+    saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.loginResponse.data.id,LocationAction.SaveLocation)));
 
     saveLocationBloc.locationStream.listen((event) {
       if(event.showLoader){
         AppUtils.showLoader(context);
       }
       if(!event.showLoader){
-        if(event.baseResponse != null)
-        AppUtils.showToast(event.baseResponse.message, false);
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
+        if(event.baseResponse != null){
+          AppUtils.showToast(event.baseResponse.message, false);
+          if(event.baseResponse.success){
+            LoginResponse loginResponse = widget.loginResponse;
+            Location location = new Location();
+            location.locationId = object.id;
+            location.locationName = object.name;
+            loginResponse.location =location;
+            LoginUserSingleton.instance.loginResponse = loginResponse;
+
+            AppSharedPref.instance.saveUser(loginResponse).then((value) async {
+              AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => DashboardScreen())
+              );
+            });
+          }
+        }
       }
-
     });
-
   }
-
 
 }
