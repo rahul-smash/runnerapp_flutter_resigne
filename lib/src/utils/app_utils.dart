@@ -137,8 +137,10 @@ class AppUtils {
   static void showLoader(BuildContext context) {
     Loader.show(context,
         isAppbarOverlay: true,
-        isBottomBarOverlay: false,
-        progressIndicator: CircularProgressIndicator(),
+        isBottomBarOverlay: true,
+        progressIndicator: CircularProgressIndicator(
+          backgroundColor: Color(0xFFFF7443),
+        ),
         themeData: Theme.of(context)
             .copyWith(accentColor: AppTheme.primaryColor),
         overlayColor: Color(0x99E8EAF6));

@@ -191,6 +191,8 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
         AppUtils.showLoader(context);
       }
       if(!event.showLoader){
+        if(event.baseResponse != null)
+        AppUtils.showToast(event.baseResponse.message, false);
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
       }
