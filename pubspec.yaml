@@ -24,16 +24,16 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^4.0.0
-  connectivity: ^0.4.2
-  shared_preferences: ^0.5.0
-  package_info: ^0.4.0+17
+  connectivity: ^3.0.6        #ANDROID IOS MACOS WEB
+  shared_preferences: ^2.0.6  #ANDROID IOS LINUX MACOS WEB WINDOWS
+  package_info_plus: ^1.0.4   #ANDROID IOS LINUX MACOS WEB WINDOWS
   device_info: ^0.4.2+1
-  firebase_crashlytics: ^0.1.3+3
-  fluttertoast: ^4.0.1
+  #firebase_crashlytics: ^0.1.3+3 #ANDROID IOS MACOS
+  fluttertoast: ^8.0.8
 #  firebase_messaging: ^10.0.4
-  get_it: ^7.1.3
-  rxdart: ^0.27.1
-  flutter_overlay_loader: ^0.1.1
+  get_it: ^7.1.3             #ANDROID IOS LINUX MACOS WEB WINDOWS
+  rxdart: ^0.27.1            #ANDROID IOS LINUX MACOS WEB WINDOWS
+  flutter_overlay_loader: ^0.1.1 #ANDROID IOS LINUX MACOS WEB WINDOWS
 
 
   # The following adds the Cupertino Icons font to your application.

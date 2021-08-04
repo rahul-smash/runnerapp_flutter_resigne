@@ -9,7 +9,7 @@ import 'package:marketplace_service_provider/src/model/device_info.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
