@@ -9,8 +9,8 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
-import 'bloc/save_location_bloc.dart';
-import 'model/location_event_data.dart';
+import '../bloc/save_location_bloc.dart';
+import '../model/location_event_data.dart';
 
 class ServicesLocationScreen extends StatefulWidget {
   final String userId;

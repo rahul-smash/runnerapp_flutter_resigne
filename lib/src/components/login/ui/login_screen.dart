@@ -5,7 +5,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
-import 'package:marketplace_service_provider/src/components/service_location/services_location_screen.dart';
+import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
