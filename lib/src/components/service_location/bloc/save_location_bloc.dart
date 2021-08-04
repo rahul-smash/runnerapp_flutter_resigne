@@ -5,14 +5,14 @@ import 'package:marketplace_service_provider/src/components/service_location/rep
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:rxdart/rxdart.dart';
 
-enum LocationAction {SaveLocation}
+enum LocationAction {SaveLocation,SelectCity}
 
 class SaveLocationBloc{
 
   //This StreamController is used to update the state of widgets
-  PublishSubject<BaseResponse> _stateStreamController = new PublishSubject();
-  StreamSink<BaseResponse> get _locationSink => _stateStreamController.sink;
-  Stream<BaseResponse> get userModelStream => _stateStreamController.stream;
+  PublishSubject<LocationStreamOutput> _stateStreamController = new PublishSubject();
+  StreamSink<LocationStreamOutput> get _locationSink => _stateStreamController.sink;
+  Stream<LocationStreamOutput> get locationStream => _stateStreamController.stream;
 
   //user input event StreamController
   PublishSubject<LocationEventData> _eventStreamController = new PublishSubject();
@@ -23,10 +23,15 @@ class SaveLocationBloc{
     _eventStream.listen((event) async {
       LocationEventData locationEventData = event;
       if(locationEventData.locationAction == LocationAction.SaveLocation){
+        _locationSink.add(LocationStreamOutput(showLoader: true,baseResponse: null));
         BaseResponse baseResponse = await getIt.get<ServiceLocationAuthRepository>().saveLocation(
           userId: locationEventData.userId,locationId: locationEventData.locationId
         );
-        //_locationSink.add(LoginStreamOutput(showLoader: false,loginResponse: loginResponse));
+        _locationSink.add(LocationStreamOutput(showLoader: false,baseResponse: baseResponse));
+      }else if(locationEventData.locationAction == LocationAction.SelectCity){
+        LocationEventData locationEventData = event;
+        //print("locationEventData.selectedIndex=${locationEventData.selectedIndex}");
+        _locationSink.add(LocationStreamOutput(showLoader: false,baseResponse: null,selectedIndex: locationEventData.selectedIndex));
       }
     });
   }

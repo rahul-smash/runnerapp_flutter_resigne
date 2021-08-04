@@ -27,143 +27,175 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
   int selectedCity = -1;
 
   @override
+  void initState() {
+    super.initState();
+    saveLocationBloc.eventSink.add((LocationEventData(null,widget.userId,LocationAction.SelectCity,selectedIndex:selectedCity)));
+  }
+
+  @override
   Widget builder(BuildContext context) {
 
-    return WillPopScope(
-      onWillPop: () {
-        if(selectedCity == -1){
-          AppUtils.showToast("Please select city", false);
-          return;
-        }
-      },
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Color(0xFFECECEC),
-          body: Container(
-            child: Stack(
-              children: [
-                Container(
-                  height: 150,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(30),bottomLeft: Radius.circular(30)),
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      stops: [0.1, 0.5, 0.7, 0.9],
-                      colors: [
-                        AppTheme.primaryColorDark,
-                        AppTheme.primaryColor,
-                        AppTheme.primaryColor,
-                        AppTheme.primaryColor,
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                    decoration: new BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: new BorderRadius.only(
-                            topLeft:  const  Radius.circular(20.0),
-                            topRight: const  Radius.circular(20.0))
-                    ),
-                    margin: EdgeInsets.fromLTRB(20,  100, 20, 0),
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: Column(
-                      //padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      children: <Widget>[
-                        Expanded(
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              itemCount: SingletonServiceLocations.instance.serviceLocationResponse.data.length,
-                              itemBuilder: (context, index) {
-                                ServiceLocationData object = SingletonServiceLocations.instance.serviceLocationResponse.data[index];
-                                return selectedCity != index
-                                    ? ListTile(
-                                  onTap: (){
-                                    setState(() {
-                                      selectedCity = index;
-                                    });
-                                  },
-                                  title: Container(
-                                    width: double.infinity,
-                                    child: Text(object.name,style: TextStyle(fontFamily: AppConstants.fontName,),),
-                                  ),
-                                )
-                                    : ListTile(
-                                  onTap: (){
-                                    setState(() {
-                                      selectedCity = index;
-                                    });
-                                  },
-                                  title: Container(
-                                      margin: EdgeInsets.only(left: 20),
-                                      width: double.infinity,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(object.name,style: TextStyle(color: AppTheme.primaryColor,
-                                              fontWeight: FontWeight.w600,fontFamily: AppConstants.fontName,),),
-                                          Icon(Icons.check,color: AppTheme.primaryColor)
-                                        ],
-                                      )
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) {
-                                return Divider();
-                              },
+    return StreamBuilder<LocationStreamOutput>(
+        stream: saveLocationBloc.locationStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            LocationStreamOutput locationStreamOutput = snapshot.data;
+            selectedCity = locationStreamOutput.selectedIndex;
+            return WillPopScope(
+              onWillPop: () {
+                if(selectedCity == -1){
+                  AppUtils.showToast("Please select city", false);
+                  return;
+                }
+              },
+              child: SafeArea(
+                child: Scaffold(
+                  backgroundColor: Color(0xFFECECEC),
+                  body: Container(
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 150,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(bottomRight: Radius.circular(30),bottomLeft: Radius.circular(30)),
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              stops: [0.1, 0.5, 0.7, 0.9],
+                              colors: [
+                                AppTheme.primaryColorDark,
+                                AppTheme.primaryColor,
+                                AppTheme.primaryColor,
+                                AppTheme.primaryColor,
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                            decoration: new BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: new BorderRadius.only(
+                                    topLeft:  const  Radius.circular(20.0),
+                                    topRight: const  Radius.circular(20.0))
+                            ),
+                            margin: EdgeInsets.fromLTRB(20,  100, 20, 0),
+                            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                            child: Column(
+                              //padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              children: <Widget>[
+                                Expanded(
+                                    child: ListView.separated(
+                                      shrinkWrap: true,
+                                      itemCount: SingletonServiceLocations.instance.serviceLocationResponse.data.length,
+                                      itemBuilder: (context, index) {
+                                        ServiceLocationData object = SingletonServiceLocations.instance.serviceLocationResponse.data[index];
+                                        return selectedCity != index
+                                            ? ListTile(
+                                          onTap: (){
+                                            saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.userId,LocationAction.SelectCity,selectedIndex:index)));
+                                          },
+                                          title: Container(
+                                            width: double.infinity,
+                                            child: Text(object.name,style: TextStyle(fontFamily: AppConstants.fontName,),),
+                                          ),
+                                        )
+                                            : ListTile(
+                                          onTap: (){
+                                            saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.userId,LocationAction.SelectCity,selectedIndex:index)));
+                                          },
+                                          title: Container(
+                                              margin: EdgeInsets.only(left: 20),
+                                              width: double.infinity,
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(object.name,style: TextStyle(color: AppTheme.primaryColor,
+                                                    fontWeight: FontWeight.w600,fontFamily: AppConstants.fontName,),),
+                                                  Icon(Icons.check,color: AppTheme.primaryColor)
+                                                ],
+                                              )
+                                          ),
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return Divider();
+                                      },
+                                    )
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 50, right: 50,bottom: 25),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: GradientElevatedButton(
+                                    onPressed: (){
+                                      validateAndSave(isSubmitPressed: true);
+                                    },
+                                    //onPressed: validateAndSave(isSubmitPressed: true),
+                                    buttonText: labelSubmit,),
+                                ),
+
+                              ],
                             )
                         ),
                         Container(
-                          margin: EdgeInsets.only(left: 50, right: 50,bottom: 25),
+                          margin: EdgeInsets.fromLTRB(0, 45, 0, 0),
                           width: MediaQuery.of(context).size.width,
-                          child: GradientElevatedButton(
-                            onPressed: validateAndSave(),
-                            buttonText: labelSubmit,),
+                          child: Text(
+                            "Choose Area",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18.0,
+                                color: Colors.white,
+                                fontFamily: AppConstants.fontName,
+                                fontWeight: FontWeight.w700
+                            ),
+                          ),
                         ),
-
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 70, 0, 0),
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              width: 30,height: 3,color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ],
-                    )
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 45, 0, 0),
-                  width: MediaQuery.of(context).size.width,
-                  child: Text(
-                    "Choose Area",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
-                        fontFamily: AppConstants.fontName,
-                        fontWeight: FontWeight.w700
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 70, 0, 0),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      width: 30,height: 3,color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+              ),
+            );
+          }
+          return Container();
+        });
   }
 
-  validateAndSave() {
+  validateAndSave({bool isSubmitPressed = false}) {
     if(selectedCity == -1){
       AppUtils.showToast("Please select city", false);
       return;
     }
+    if(!isSubmitPressed){
+      return;
+    }
+    if(this.network.offline){
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
     ServiceLocationData object = SingletonServiceLocations.instance.serviceLocationResponse.data[selectedCity];
     saveLocationBloc.eventSink.add((LocationEventData(object.id,widget.userId,LocationAction.SaveLocation)));
+
+    saveLocationBloc.locationStream.listen((event) {
+      if(event.showLoader){
+        AppUtils.showLoader(context);
+      }
+      if(!event.showLoader){
+        AppUtils.hideKeyboard(context);
+        AppUtils.hideLoader(context);
+      }
+
+    });
 
   }
 
