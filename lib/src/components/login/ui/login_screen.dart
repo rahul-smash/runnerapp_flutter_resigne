@@ -250,7 +250,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
             AppUtils.showToast(event.loginResponse.message, false);
           }else if(event.loginResponse.success){
             AppUtils.showToast(event.loginResponse.message, false);
-            if(event.loginResponse.locationId == 0){
+            if(event.loginResponse.locationId == "0"){
               Navigator.pushReplacement(context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => ServicesLocationScreen(userId: event.loginResponse.data.id,))

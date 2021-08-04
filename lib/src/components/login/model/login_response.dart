@@ -23,7 +23,7 @@ class LoginResponse {
   int userExists;
   String message;
   List<Brand> brands;
-  int locationId;
+  String locationId;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
     success: json["success"],
