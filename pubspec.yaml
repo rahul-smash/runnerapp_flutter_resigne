@@ -65,6 +65,7 @@ flutter:
     - assets/splash.png
     # authentication
     - lib/src/components/login/images/
+    - lib/src/components/dashboard/images/
 
   #
   #   - images/a_dot_ham.jpeg

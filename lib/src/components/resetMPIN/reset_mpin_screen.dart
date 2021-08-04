@@ -1,11 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/set_new_mpin_screen.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
@@ -19,6 +23,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
   TextEditingController otpCont = TextEditingController();
   FocusNode mobileFocusNode = FocusNode();
   FocusNode otpFocusNode = FocusNode();
+  BaseResponse baseResponse;
 
   @override
   void dispose() {
@@ -106,6 +111,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                             textInputAction: TextInputAction.next,
                             onFieldSubmitted: (value) {
                               FocusScope.of(context).requestFocus(otpFocusNode);
+                              sendOtp();
                             },
                             style: TextStyle(color: AppTheme.mainTextColor),
                             decoration: InputDecoration(
@@ -137,7 +143,8 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                                 ),
                               ),
                               Text(
-                                labelResendOTP,
+                                //labelResendOTP,
+                                "",
                                 style: TextStyle(
                                     color: AppTheme.primaryColorDark,
                                     fontSize: AppConstants.extraXSmallSize,
@@ -197,11 +204,52 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
         ));
   }
 
-  _handleResetPINButton() {
+  sendOtp() async {
+    try {
+      if(this.network.offline){
+        AppUtils.showToast(AppConstants.noInternetMsg, false);
+        return;
+      }
+      if (mobileCont.text.isNotEmpty){
+        AppUtils.showLoader(context);
+        baseResponse =
+        await getIt.get<UserAuthenticationRepository>().resetPinOtp(phoneNumber: mobileCont.text);
+        if(baseResponse != null)
+          AppUtils.showToast(baseResponse.message, false);
+        AppUtils.hideKeyboard(context);
+        AppUtils.hideLoader(context);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _handleResetPINButton() async {
+    if(this.network.offline){
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+    if (mobileCont.text.isEmpty){
+      AppUtils.showToast("Please enter valid phone number!", false);
+      return;
+    }
+    if (otpCont.text.isEmpty){
+      AppUtils.showToast("Please enter valid Otp!", false);
+      return;
+    }
+    AppUtils.showLoader(context);
+    baseResponse =
+        await getIt.get<UserAuthenticationRepository>().verifyResetPinOtp(
+            otp: otpCont.text,phoneNumber: mobileCont.text);
+    if(baseResponse != null)
+      AppUtils.showToast(baseResponse.message, false);
+    AppUtils.hideKeyboard(context);
+    AppUtils.hideLoader(context);
+    Navigator.pop(context);
     Navigator.push(
         context,
         new MaterialPageRoute(
-          builder: (BuildContext context) => SetNewMPINScreen(),
+          builder: (BuildContext context) => SetNewMPINScreen(user_id:baseResponse.user_id),
         ));
   }
 }

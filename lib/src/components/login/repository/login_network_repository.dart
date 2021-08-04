@@ -20,6 +20,8 @@ class LoginNetworkRepository extends DioBaseService {
   static const _sendOTP = '/runner_authentication/sendOTP';
   static const _registration = '/runner_authentication/registration';
   static const _setPin = '/runner_authentication/setPin';
+  static const _resetPinOTP = '/runner_authentication/resetPinOTP';
+  static const _verifyResetPinOTP = '/runner_authentication/verifyResetPinOTP';
 
   LoginNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -57,6 +59,20 @@ class LoginNetworkRepository extends DioBaseService {
     return null;
   }
 
+  Future<BaseResponse> resetPinOtpApi(String _phone) async {
+    String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
+    Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+    param['phone'] = _phone;
+    try {
+      var response = await post(apiPath(storeId, _resetPinOTP), param);
+      BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
+      return baseResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
 
   Future<RegisterResponse> registerApi(String first_name, String last_name, String registeredAs, String phone, String otp) async {
     String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
@@ -84,6 +100,21 @@ class LoginNetworkRepository extends DioBaseService {
     param['user_id'] = userId;
     try {
       var response = await post(apiPath(storeId, _setPin), param);
+      BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
+      return baseResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<BaseResponse> verifyResetPinOtpApi(String phoneNumber, String otp) async {
+    String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
+    Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+    param['phone'] = phoneNumber;
+    param['otp'] = otp;
+    try {
+      var response = await post(apiPath(storeId, _verifyResetPinOTP), param);
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
       return baseResponse;
     } catch (e) {

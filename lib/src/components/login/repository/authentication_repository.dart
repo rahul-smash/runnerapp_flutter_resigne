@@ -13,4 +13,8 @@ abstract class AuthenticationRepository {
   Future<void> sendOtp({@required String phoneNumber});
 
   Future<void> setMpin({@required String mPin,@required String userId});
+
+  Future<void> resetPinOtp({@required String phoneNumber});
+
+  Future<void> verifyResetPinOtp({@required String phoneNumber,String otp});
 }

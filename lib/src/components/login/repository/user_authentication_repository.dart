@@ -30,5 +30,15 @@ class UserAuthenticationRepository extends AuthenticationRepository {
     return await LoginNetworkRepository.instance.setMpinApi(mPin,userId);
   }
 
+  @override
+  Future<BaseResponse> resetPinOtp({String phoneNumber}) async{
+    return await LoginNetworkRepository.instance.resetPinOtpApi(phoneNumber);
+  }
+
+  @override
+  Future<BaseResponse> verifyResetPinOtp({String phoneNumber, String otp}) async{
+    return await LoginNetworkRepository.instance.verifyResetPinOtpApi(phoneNumber,otp);
+  }
+
 
 }

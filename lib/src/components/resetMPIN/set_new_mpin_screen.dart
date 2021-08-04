@@ -9,6 +9,10 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class SetNewMPINScreen extends StatefulWidget {
+
+  String user_id;
+  SetNewMPINScreen({this.user_id});
+
   @override
   _SetNewMPINScreenState createState() => _SetNewMPINScreenState();
 }
@@ -172,5 +176,7 @@ class _SetNewMPINScreenState extends BaseState<SetNewMPINScreen> {
         ));
   }
 
-  _handleLoginButton() {}
+  _handleLoginButton() {
+
+  }
 }
