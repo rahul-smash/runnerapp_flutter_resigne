@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             topLeft:  const  Radius.circular(30.0),
                             topRight: const  Radius.circular(30.0))
                     ),
-                    margin: EdgeInsets.fromLTRB(0,  Dimensions.getHeight(percentage: 18), 0, 0),
+                    margin: EdgeInsets.fromLTRB(0,  Dimensions.getScaledSize(18), 0, 0),
                     padding: EdgeInsets.fromLTRB(Dimensions.getScaledSize(20), Dimensions.getScaledSize(40),
                         Dimensions.getScaledSize(20), 0),
                     child: ListView(
