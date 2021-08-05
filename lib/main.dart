@@ -30,7 +30,7 @@ void main() async {
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
   if (kIsWeb) {
-    await AppSharedPref.instance.setDevicePlatform("web");
+    await AppSharedPref.instance.setDevicePlatform(AppConstants.web);
   }else{
     if(Platform.isAndroid){
       await AppSharedPref.instance.setDevicePlatform(AppConstants.android);
