@@ -8,6 +8,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
@@ -44,40 +45,44 @@ class AppUtils {
     param['app_version'] = packageInfo.version;
     param['device_id'] = deviceId;
     param['device_token'] = deviceToken;
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      param['device_brand'] = androidInfo.brand;
-      param['device_model'] = androidInfo.model;
-      param['device_os'] = androidInfo.version.sdkInt;
-      param['device_os_version'] = androidInfo.version.sdkInt;
+    if (kIsWeb) {
 
-      param['platform'] = 'android';
-      param['model'] = androidInfo.model;
-      param['manufacturer'] = androidInfo.manufacturer;
-      param['isPhysicalDevice'] = androidInfo.isPhysicalDevice;
-      param['androidId'] = androidInfo.androidId;
-      param['brand'] = androidInfo.brand;
-      param['device'] = androidInfo.device;
-      param['display'] = androidInfo.display;
-      param['version_sdkInt'] = androidInfo.version.sdkInt;
-      param['version_release'] = androidInfo.version.release;
-    }
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      param['device_brand'] = iosInfo.model;
-      param['device_model'] = iosInfo.model;
-      param['device_os'] = iosInfo.systemName;
-      param['device_os_version'] = iosInfo.systemVersion;
+    }else{
+      if (Platform.operatingSystem == "android") {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        param['device_brand'] = androidInfo.brand;
+        param['device_model'] = androidInfo.model;
+        param['device_os'] = androidInfo.version.sdkInt;
+        param['device_os_version'] = androidInfo.version.sdkInt;
 
-      param['platform'] = 'ios';
-      param['name'] = iosInfo.name;
-      param['systemName'] = iosInfo.systemName;
-      param['systemVersion'] = iosInfo.systemVersion;
-      param['model'] = iosInfo.model;
-      param['isPhysicalDevice'] = iosInfo.isPhysicalDevice;
-      param['release'] = iosInfo.utsname.release;
-      param['version'] = iosInfo.utsname.version;
-      param['machine'] = iosInfo.utsname.machine;
+        param['platform'] = 'android';
+        param['model'] = androidInfo.model;
+        param['manufacturer'] = androidInfo.manufacturer;
+        param['isPhysicalDevice'] = androidInfo.isPhysicalDevice;
+        param['androidId'] = androidInfo.androidId;
+        param['brand'] = androidInfo.brand;
+        param['device'] = androidInfo.device;
+        param['display'] = androidInfo.display;
+        param['version_sdkInt'] = androidInfo.version.sdkInt;
+        param['version_release'] = androidInfo.version.release;
+      }
+      if (Platform.operatingSystem == "ios") {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        param['device_brand'] = iosInfo.model;
+        param['device_model'] = iosInfo.model;
+        param['device_os'] = iosInfo.systemName;
+        param['device_os_version'] = iosInfo.systemVersion;
+
+        param['platform'] = 'ios';
+        param['name'] = iosInfo.name;
+        param['systemName'] = iosInfo.systemName;
+        param['systemVersion'] = iosInfo.systemVersion;
+        param['model'] = iosInfo.model;
+        param['isPhysicalDevice'] = iosInfo.isPhysicalDevice;
+        param['release'] = iosInfo.utsname.release;
+        param['version'] = iosInfo.utsname.version;
+        param['machine'] = iosInfo.utsname.machine;
+      }
     }
     DeviceInfo.getInstance(deviceInfo: param);
   }

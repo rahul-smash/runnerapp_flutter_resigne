@@ -19,6 +19,7 @@ import 'core/network/connectivity/network_connection_observer.dart';
 import 'src/singleton/singleton_service_locations.dart';
 import 'src/singleton/store_config_singleton.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,20 +29,33 @@ void main() async {
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-  await AppSharedPref.instance
-      .setDevicePlatform(Platform.isIOS ? AppConstants.iOS : 'Android');
+  if (kIsWeb) {
+    await AppSharedPref.instance.setDevicePlatform("web");
+  }else{
+    if(Platform.isAndroid){
+      await AppSharedPref.instance.setDevicePlatform(AppConstants.android);
+    }else if(Platform.isIOS){
+      await AppSharedPref.instance.setDevicePlatform(AppConstants.iOS);
+    }
 
+  }
   String jsonResult = await loadAsset();
   final parsed = json.decode(jsonResult);
   ConfigModel configObject = ConfigModel.fromJson(parsed);
   StoreConfigurationSingleton.instance.configModel = configObject;
-  if (Platform.isIOS) {
-    IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-    await AppSharedPref.instance.setDeviceId(iosDeviceInfo.identifierForVendor);
-  } else {
-    AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
-    await AppSharedPref.instance.setDeviceId(androidDeviceInfo.androidId);
+
+  if (kIsWeb) {
+    await AppSharedPref.instance.setDeviceId("12345678");
+  }else{
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
+      await AppSharedPref.instance.setDeviceId(androidDeviceInfo.androidId);
+    } else {
+      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+      await AppSharedPref.instance.setDeviceId(iosDeviceInfo.identifierForVendor);
+    }
   }
+
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await AppUtils.getDeviceInfo();
