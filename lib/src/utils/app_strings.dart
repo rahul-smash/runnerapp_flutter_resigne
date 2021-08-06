@@ -6,6 +6,9 @@ const labelSetNewMPINTitle = "Set New PIN";
 const labelSetNewMPINSubTitle = "Please enter 4 digit new pin";
 const labelResetPIN = "Reset PIN";
 const labelSubmit = "Submit";
+const labelSubmitForApproval = "Submit For Approval";
+const labelSaveNext = "Save & Next";
+const labelSave = "Save";
 const labelResendOTP = "Resend OTP";
 const labelResetMPINSubTitle =
     "Enter your mobile below to reset your\nPassword";
