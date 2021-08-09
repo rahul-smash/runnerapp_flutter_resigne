@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -182,5 +183,12 @@ class AppUtils {
       //dayName = DateFormat('DD-MM-yyyy').format(selectedDate);
       return picked;
   }
-
+  static getFileSize(String filepath, int decimals) async {
+    var file = File(filepath);
+    int bytes = await file.length();
+    if (bytes <= 0) return "0 B";
+    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + ' ' + suffixes[i];
+  }
 }

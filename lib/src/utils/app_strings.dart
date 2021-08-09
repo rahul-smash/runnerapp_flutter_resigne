@@ -26,6 +26,7 @@ const labelFirstName = "First Name";
 const labelErrorFirstName = "Enter First Name";
 const labelErrorLastName = "Enter Last Name";
 const labelErrorMobileNumber = "Enter Mobile Number";
+const labelErrorEmail= "Enter Email";
 const labelErrorOTPNumber = "Enter valid OTP";
 const labelErrorMPINNumber = "Enter valid MPIN";
 const labelErrorMPINNotMatched = "MPIN Doesn't not Match";

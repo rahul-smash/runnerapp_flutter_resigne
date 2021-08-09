@@ -52,4 +52,13 @@ class AppTheme {
   static Color buttonShadowColor = Color(0xffC8CFF2);
   static Color whiteDisable=Colors.white38;
   static Color grayCircle = Color(0xffECECEC);
+
 }
+
+List<BoxShadow> shadow = <BoxShadow>[
+  BoxShadow(
+    color: Colors.black.withOpacity(0.16),
+    blurRadius: 6.0,
+    offset: Offset(0, 3),
+  ),
+];

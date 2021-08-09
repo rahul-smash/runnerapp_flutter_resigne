@@ -2,10 +2,11 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
-import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -13,6 +14,7 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
+import 'dart:io';
 
 class MyProfileScreen extends StatefulWidget {
 
@@ -24,21 +26,25 @@ class MyProfileScreen extends StatefulWidget {
   }
 }
 
-class _MyProfileScreenState extends BaseState<MyProfileScreen> {
+class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProviderStateMixin,
+    ImagePickerListener{
 
   final _key = GlobalKey<FormState>();
   TextEditingController nameCont = TextEditingController();
   TextEditingController ageCont = TextEditingController();
   TextEditingController mobileCont = TextEditingController();
+  TextEditingController emailCont = TextEditingController();
   List<String> _genderOptions = ["Male","Female"];
   String _selectedGenderUpOption = labelSignUpAs;
   DateTime selectedStartDate;
   List<String> addressProofsList = [];
   String _selectedTag;
-
-  var _isDefaultAddress = false;
-
   var userCommentController = TextEditingController();
+  AnimationController _controller;
+  ImagePickerHandler imagePicker;
+  File _selectedProfileImg;
+  File _selectedImg1,_selectedImg2;
+  var resultFileImgSize1,resultFileImgSize2;
 
   @override
   void initState() {
@@ -48,7 +54,49 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
     addressProofsList.add('Driving Licence');
     addressProofsList.add('Voter Id');
     _selectedTag = addressProofsList.first;
+    _controller = new AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    imagePicker = new ImagePickerHandler(this,_controller);
+    imagePicker.init();
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2) async{
+    try {
+      print("XFile=${_image.path}");
+      if(profileImage){
+        _selectedProfileImg = File(_image.path);
+        setState(() {
+        });
+      }
+      if(docImage1){
+        _selectedImg1 = File(_image.path);
+        resultFileImgSize1 = await AppUtils.getFileSize(_selectedImg1.path, 1);
+        print("resultFileImgSize1=${resultFileImgSize1}");
+        setState(() {
+        });
+      }
+      if(docImage2){
+        _selectedImg2 = File(_image.path);
+        resultFileImgSize2 = await AppUtils.getFileSize(_selectedImg2.path, 1);
+        print("resultFileImgSize2=${resultFileImgSize2}");
+        setState(() {
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
 
   @override
   Widget builder(BuildContext context) {
@@ -91,16 +139,13 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                      top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(20)
-                  ),
-                  width: Dimensions.getScaledSize(80),
-                  height: Dimensions.getScaledSize(80),
-                  child: Icon(Icons.person_outline,color: AppTheme.subHeadingTextColor, size: 40,),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppTheme.grayCircle),
+                InkWell(
+                  onTap: (){
+                    imagePicker.showDialog(context,profileImage: true,docImage1: false,docImage2: false);
+                  },
+                  child: _selectedProfileImg == null
+                      ? showImgPlaceholderView()
+                      : showUserImgView() ,
                 ),
                 Container(
                   margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
@@ -269,6 +314,39 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                         SizedBox(
                           height: 20,
                         ),
+
+                        TextFormField(
+                          controller: emailCont,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.send,
+                          validator: (val) =>
+                          val.isEmpty ? labelErrorEmail : null,
+                          onFieldSubmitted: (value) async {
+
+                          },
+                          style: TextStyle(color: AppTheme.mainTextColor),
+                          decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppTheme.borderNotFocusedColor)),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppTheme.primaryColor)),
+                            hintText: labelErrorEmail,
+                            errorStyle: TextStyle(
+                                fontSize: AppConstants.extraXSmallSize,
+                                fontFamily: AppConstants.fontName),
+                            hintStyle: TextStyle(
+                                color: AppTheme.subHeadingTextColor, fontSize: 14),
+                            labelStyle: TextStyle(
+                                color: AppTheme.mainTextColor, fontSize: 14),
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: 20,
+                        ),
+
                         Container(
                           height: Dimensions.getScaledSize(100),
                           decoration: BoxDecoration(
@@ -325,8 +403,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                   },
                                   child: Container(
                                     width: SizeConfig.screenWidth/4.1,
-                                    padding: EdgeInsets.only(left: 5, right: 5),
-                                    height: 30,
+                                    padding: EdgeInsets.only(left: 0, right: 0),
+                                    height: 35,
                                     decoration: BoxDecoration(
                                       color: _selectedTag.toLowerCase() ==
                                           tag.toLowerCase()
@@ -337,9 +415,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        tag,
+                                        tag,textAlign: TextAlign.center,
                                         style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             color: _selectedTag.toLowerCase() ==
                                                 tag.toLowerCase()
                                                 ? AppTheme.white
@@ -443,76 +521,88 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                         ),
                         Row(
                           children: [
-                            DottedBorder(
-                              dashPattern: [3, 3, 3, 3],
-                              strokeWidth: 1,
-                              borderType: BorderType.RRect,
-                              radius: Radius.circular(12),
-                              //padding: EdgeInsets.all(6),
-                              color: AppTheme.subHeadingTextColor,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                child: Container(
-                                  height: Dimensions.getWidth(percentage: 22),
-                                  width: Dimensions.getWidth(percentage: 30),
-                                  color: Color(0xffF9F9F9),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
-                                        Text(
-                                          "Upload\nImage 1",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: AppTheme.mainTextColor,
-                                            fontFamily: AppConstants.fontName,
+                            InkWell(
+                              child: DottedBorder(
+                                dashPattern: [3, 3, 3, 3],
+                                strokeWidth: 1,
+                                borderType: BorderType.RRect,
+                                radius: Radius.circular(12),
+                                //padding: EdgeInsets.all(6),
+                                color: AppTheme.subHeadingTextColor,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  child: Container(
+                                    height: Dimensions.getWidth(percentage: 22),
+                                    width: Dimensions.getWidth(percentage: 30),
+                                    color: Color(0xffF9F9F9),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
+                                          Text(
+                                            "Upload\nImage 1",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: AppTheme.mainTextColor,
+                                              fontFamily: AppConstants.fontName,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
+                              onTap: (){
+                                imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
+                              },
                             ),
                             SizedBox(
                               width: 20,
                             ),
-                            DottedBorder(
-                              dashPattern: [3, 3, 3, 3],
-                              strokeWidth: 1,
-                              borderType: BorderType.RRect,
-                              radius: Radius.circular(12),
-                              color: AppTheme.subHeadingTextColor,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                child: Container(
-                                  height: Dimensions.getWidth(percentage: 22),
-                                  width: Dimensions.getWidth(percentage: 30),
-                                  color: Color(0xffF9F9F9),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
-                                        Text(
-                                          "Upload\nImage 2",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: AppTheme.mainTextColor,
-                                            fontFamily: AppConstants.fontName,
+                            InkWell(
+                              child: DottedBorder(
+                                dashPattern: [3, 3, 3, 3],
+                                strokeWidth: 1,
+                                borderType: BorderType.RRect,
+                                radius: Radius.circular(12),
+                                color: AppTheme.subHeadingTextColor,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  child: Container(
+                                    height: Dimensions.getWidth(percentage: 22),
+                                    width: Dimensions.getWidth(percentage: 30),
+                                    color: Color(0xffF9F9F9),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
+                                          Text(
+                                            "Upload\nImage 2",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: AppTheme.mainTextColor,
+                                              fontFamily: AppConstants.fontName,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
+                              onTap: (){
+                                imagePicker.showDialog(context,docImage2: true,profileImage: false,docImage1: false);
+                              },
                             ),
+
                           ],
                         ),
+                        showDocListview(),
                         SizedBox(
                           height: 35,
                         ),
@@ -526,7 +616,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                             //onPressed: validateAndSave(isSubmitPressed: true),
                             buttonText: labelSaveNext,),
                         ),
-
                         SizedBox(
                           height: 20,
                         ),
@@ -540,6 +629,122 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
           )
         ),
       ),
+    );
+  }
+
+  showImgPlaceholderView() {
+    return Container(
+      margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+          top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(20)),
+      width: Dimensions.getScaledSize(80),
+      height: Dimensions.getScaledSize(80),
+      child: Icon(Icons.person_outline,color: AppTheme.subHeadingTextColor, size: 40,),
+      decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppTheme.grayCircle),
+    );
+  }
+
+  showUserImgView() {
+    return Container(
+      margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),top: Dimensions.getScaledSize(20) ),
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: AppTheme.primaryColor,
+            width: 4,
+          ),
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(50)
+      ),
+      width: 100,height: 100,
+      child: ClipRRect(
+          clipBehavior: Clip.antiAlias,
+          borderRadius: BorderRadius.all(Radius.circular(80)),
+          child: Image.file(_selectedProfileImg,width: 100,height: 100,fit: BoxFit.cover,)
+      )
+    );
+  }
+
+  showDocListview() {
+
+    return ListView(
+      shrinkWrap: true,
+      padding: EdgeInsets.all(0),
+      children: <Widget>[
+
+        Visibility(
+          visible: _selectedImg1 != null || _selectedImg2 != null ? true : false,
+          child: SizedBox(
+            height: 20,
+          ),
+        ),
+        Visibility(
+          visible: _selectedImg1 != null ? true : false,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: ListTile(
+              leading: Container(height: double.infinity,
+                  child: Icon(Icons.description_outlined)
+              ),
+              title: Text(resultFileImgSize1 == null ? "" : '${_selectedImg1.path.split('/').last}'),
+              subtitle: Text(resultFileImgSize1 == null ? "" : '${resultFileImgSize1}'),
+              trailing: InkWell(
+                onTap: (){
+                  setState(() {
+                    _selectedImg1 = null;
+                    resultFileImgSize1 = null;
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+              contentPadding: EdgeInsets.only(left: 10,right: 10),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Visibility(
+          visible: _selectedImg2 != null ? true : false,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.only(left: 10,right: 10),
+              leading: Container(height: double.infinity,
+                  child: Icon(Icons.description_outlined)
+              ),
+              title: Text(resultFileImgSize2 == null ? "" : '${_selectedImg2.path.split('/').last}'),
+              subtitle: Text(resultFileImgSize2 == null ? "" : '${resultFileImgSize2}'),
+              trailing: InkWell(
+                onTap: (){
+                  setState(() {
+                    _selectedImg2 = null;
+                    resultFileImgSize2 = null;
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+            ),
+          ),
+        ),
+
+      ],
     );
   }
 
