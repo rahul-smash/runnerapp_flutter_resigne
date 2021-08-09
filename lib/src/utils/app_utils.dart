@@ -47,7 +47,7 @@ class AppUtils {
     param['device_id'] = deviceId;
     param['device_token'] = deviceToken;
     if (kIsWeb) {
-
+      param['platform'] = 'web';
     }else{
       if (Platform.operatingSystem == "android") {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;

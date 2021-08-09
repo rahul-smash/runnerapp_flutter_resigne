@@ -54,10 +54,10 @@ abstract class DioBaseService {
 
   @protected
   Future<dynamic> post(String path, Map<String, dynamic> data,
-      {bool isMultipartUploadRequest,FormData formData}) async {
+      {bool isMultipartUploadRequest = false,FormData formData}) async {
     Response response;
     try {
-      if(isMultipartUploadRequest){
+      if(!isMultipartUploadRequest){
         response =
         await _dioClient.post(path, data: FormData.fromMap(data));
       }else{

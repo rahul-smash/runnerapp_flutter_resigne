@@ -60,7 +60,11 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       String profileFileName = selectedProfileImg.path.split('/').last;
       String docFileName = selectedDocument.path.split('/').last;
 
+      Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+
       FormData formData = FormData.fromMap({
+        'platform': param["platform"],
+        'device_id': param["device_id"],
         'user_id': user_id,
         'first_name': lastName,
         'last_name': lastName,
