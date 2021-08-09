@@ -53,10 +53,18 @@ abstract class DioBaseService {
   }
 
   @protected
-  Future<dynamic> post(String path, Map<String, dynamic> data) async {
+  Future<dynamic> post(String path, Map<String, dynamic> data,
+      {bool isMultipartUploadRequest,FormData formData}) async {
+    Response response;
     try {
-      Response response =
-          await _dioClient.post(path, data: FormData.fromMap(data));
+      if(isMultipartUploadRequest){
+        response =
+        await _dioClient.post(path, data: FormData.fromMap(data));
+      }else{
+        response =
+        await _dioClient.post(path, data: formData);
+      }
+
       return _responseHandler(response);
     } on DioError catch (dioError) {
       _errorHandler(dioError);

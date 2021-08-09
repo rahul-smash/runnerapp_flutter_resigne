@@ -6,7 +6,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -30,7 +34,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
     ImagePickerListener{
 
   final _key = GlobalKey<FormState>();
-  TextEditingController nameCont = TextEditingController();
+  TextEditingController firstNameCont = TextEditingController();
+  TextEditingController lastNameCont = TextEditingController();
   TextEditingController ageCont = TextEditingController();
   TextEditingController mobileCont = TextEditingController();
   TextEditingController emailCont = TextEditingController();
@@ -38,8 +43,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   String _selectedGenderUpOption = labelSignUpAs;
   DateTime selectedStartDate;
   List<String> addressProofsList = [];
-  String _selectedTag;
-  var userCommentController = TextEditingController();
+  String _selectedProofTypeTag;
+  TextEditingController userCommentController = TextEditingController();
+  TextEditingController proofNameCont = TextEditingController();
+  TextEditingController idProofNameCont = TextEditingController();
+  ProfileInfoModel profileInfoModel;
   AnimationController _controller;
   ImagePickerHandler imagePicker;
   File _selectedProfileImg;
@@ -53,7 +61,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
     addressProofsList.add('Aadhaar');
     addressProofsList.add('Driving Licence');
     addressProofsList.add('Voter Id');
-    _selectedTag = addressProofsList.first;
+    _selectedProofTypeTag = addressProofsList.first;
     _controller = new AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -61,6 +69,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
 
     imagePicker = new ImagePickerHandler(this,_controller);
     imagePicker.init();
+    getIt.get<AccountStepsDetailRepositoryImpl>().getProfileInfo(loginResponse.data.id).then((value){
+      profileInfoModel = value;
+    });
+
   }
 
   @override
@@ -174,11 +186,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextFormField(
-                          controller: nameCont,
+                          controller: firstNameCont,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
                           validator: (val) =>
-                          val.isEmpty ? "Please enter your name!" : null,
+                          val.isEmpty ? "Please enter your first name!" : null,
                           onFieldSubmitted: (value) {
 
                           },
@@ -190,7 +202,37 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: AppTheme.primaryColor)),
-                            hintText: "Enter Name",
+                            hintText: "Enter First Name",
+                            errorStyle: TextStyle(
+                                fontSize: AppConstants.extraXSmallSize,
+                                fontFamily: AppConstants.fontName),
+                            hintStyle: TextStyle(
+                                color: AppTheme.subHeadingTextColor, fontSize: 16),
+                            labelStyle: TextStyle(
+                                color: AppTheme.mainTextColor, fontSize: 16),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: lastNameCont,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                          validator: (val) =>
+                          val.isEmpty ? "Please enter your last name!" : null,
+                          onFieldSubmitted: (value) {
+
+                          },
+                          style: TextStyle(color: AppTheme.mainTextColor),
+                          decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppTheme.borderNotFocusedColor)),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppTheme.primaryColor)),
+                            hintText: "Enter Last Name",
                             errorStyle: TextStyle(
                                 fontSize: AppConstants.extraXSmallSize,
                                 fontFamily: AppConstants.fontName),
@@ -356,9 +398,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                           margin: EdgeInsets.only(top: 0,  bottom: 0),
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(15, 15, 10, 10),
-                            child: TextField(
+                            child: TextFormField(
                               //focusNode: _nodeText1,
                               controller: userCommentController,
+                              validator: (val) =>
+                              val.isEmpty ? labelErrorAboutUs : null,
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
                               textAlign: TextAlign.start,
@@ -398,7 +442,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                               return InkWell(
                                   onTap: () {
                                     setState(() {
-                                      _selectedTag = tag;
+                                      _selectedProofTypeTag = tag;
                                     });
                                   },
                                   child: Container(
@@ -406,7 +450,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                                     padding: EdgeInsets.only(left: 0, right: 0),
                                     height: 35,
                                     decoration: BoxDecoration(
-                                      color: _selectedTag.toLowerCase() ==
+                                      color: _selectedProofTypeTag.toLowerCase() ==
                                           tag.toLowerCase()
                                           ? AppTheme.primaryColor
                                           : AppTheme.grayCircle,
@@ -418,7 +462,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                                         tag,textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 14,
-                                            color: _selectedTag.toLowerCase() ==
+                                            color: _selectedProofTypeTag.toLowerCase() ==
                                                 tag.toLowerCase()
                                                 ? AppTheme.white
                                                 : AppTheme.subHeadingTextColor),
@@ -432,7 +476,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                           height: 10,
                         ),
                         TextFormField(
-                          controller: nameCont,
+                          controller: proofNameCont,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
                           validator: (val) =>
@@ -462,7 +506,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                           height: 20,
                         ),
                         TextFormField(
-                          controller: nameCont,
+                          controller: idProofNameCont,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
                           validator: (val) =>
@@ -611,7 +655,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
                           width: MediaQuery.of(context).size.width,
                           child: GradientElevatedButton(
                             onPressed: () async {
-
+                              if(this.network.offline){
+                                AppUtils.showToast(AppConstants.noInternetMsg, false);
+                                return;
+                              }
+                              callProfileApi();
                             },
                             //onPressed: validateAndSave(isSubmitPressed: true),
                             buttonText: labelSaveNext,),
@@ -666,7 +714,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   }
 
   showDocListview() {
-
     return ListView(
       shrinkWrap: true,
       padding: EdgeInsets.all(0),
@@ -746,6 +793,47 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
 
       ],
     );
+  }
+
+  Future<void> callProfileApi() async {
+    final FormState form = _key.currentState;
+    if (form.validate()) {
+      if(_selectedProfileImg == null){
+        AppUtils.showToast("Please upload your profile picture", false);
+        return;
+      }
+      if(_selectedProfileImg == null){
+        AppUtils.showToast("Please upload your profile picture", false);
+        return;
+      }
+      if(_selectedImg1 == null && _selectedImg2==null){
+        AppUtils.showToast("Please upload atleast one identity proof document", false);
+        return;
+      }
+
+      bool docSelected1 = false;
+      bool docSelected2 = false;
+      File proofDocument;
+      if(_selectedImg1 != null){
+        proofDocument = _selectedImg1;
+        docSelected1 = true;
+      }else if(_selectedImg2 != null){
+        proofDocument = _selectedImg2;
+        docSelected2 = true;
+      }
+
+      AppUtils.showLoader(context);
+      BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
+          .saveMyProfile(_selectedProfileImg,firstNameCont.text,lastNameCont.text,
+          _selectedGenderUpOption,ageCont.text,mobileCont.text,emailCont.text,userCommentController.text,
+          proofNameCont.text,idProofNameCont.text,_selectedProofTypeTag,
+          selectedDocument:proofDocument,user_id: loginResponse.data.id,
+          profile_id: profileInfoModel.data.profileId,docSelected1:docSelected1,docSelected2:docSelected2);
+      if(baseresponse != null){
+        AppUtils.hideKeyboard(context);
+        AppUtils.hideLoader(context);
+      }
+    }
   }
 
 }
