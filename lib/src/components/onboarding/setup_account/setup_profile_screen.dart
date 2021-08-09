@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'models/account_steps_detail_model.dart';
 import 'models/setup_account_model.dart';
+import 'presentation/my_profile_screen.dart';
 
 class SetupProfileScreen extends StatefulWidget {
   SetupProfileScreen();
@@ -28,7 +29,6 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
   @override
   void initState() {
     super.initState();
-    
   }
 
   @override
@@ -84,93 +84,99 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                                       return Text('Error: ${snapshot.error}');
                                     } else{
                                       AccountStepsDetailModel accountStepsDetailModel = snapshot.data;
-                                      addDataToList(accountStepsDetailModel);
+                                      addDataToList();
                                       return ListView.separated(
                                         shrinkWrap: true,
                                         itemCount: list.length,
                                         itemBuilder: (context, index) {
-                                          return Card(
-                                            elevation: 0,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(30)
-                                            ),
-                                            child: Stack(
-                                              clipBehavior: Clip.antiAlias,
-                                              children: [
-                                                Container(
-                                                    padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-                                                    width: double.infinity,height: 100,
-                                                    margin: EdgeInsets.fromLTRB(0,0,0,0),
-                                                    child: Row(
-                                                      crossAxisAlignment: CrossAxisAlignment.center ,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Row(
-                                                          crossAxisAlignment: CrossAxisAlignment.center ,
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            SizedBox(width: 10,),
-                                                            Container(
-                                                                width: 30,
-                                                                height: 30,
-                                                                child: Center(child: Text("${index+1}",style: TextStyle(fontSize: Dimensions.getScaledSize(20)),)),
-                                                                decoration: BoxDecoration(
-                                                                    border: Border.all(
-                                                                      width: 1.5,
-                                                                      color: AppTheme.primaryColor,
-                                                                    ),
-                                                                    shape: BoxShape.circle,
-                                                                    color: Colors.white)
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(width: 20,),
-                                                        Expanded(
-                                                          child: Row(
+                                          return InkWell(
+                                            onTap: (){
+                                              print("----index----");
+                                              onListViewTap(accountStepsDetailModel,index);
+                                            },
+                                            child: Card(
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(30)
+                                              ),
+                                              child: Stack(
+                                                clipBehavior: Clip.antiAlias,
+                                                children: [
+                                                  Container(
+                                                      padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                                                      width: double.infinity,height: 100,
+                                                      margin: EdgeInsets.fromLTRB(0,0,0,0),
+                                                      child: Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center ,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Row(
+                                                            crossAxisAlignment: CrossAxisAlignment.center ,
+                                                            mainAxisAlignment: MainAxisAlignment.center,
                                                             children: [
-                                                              Expanded(
-                                                                  child: Column(
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    children: [
-                                                                      Text("${list[index].title}",style: TextStyle(color: AppTheme.black,
-                                                                        fontSize: 18,fontWeight: FontWeight.w600,fontFamily: AppConstants.fontName,),),
-                                                                      Text("${list[index].subTitle}",
-                                                                        style: TextStyle(color: AppTheme.subHeadingTextColor,fontSize: 14,
-                                                                          fontWeight: FontWeight.w500,fontFamily: AppConstants.fontName,),),
-                                                                    ],
-                                                                  )
-                                                              ),
-                                                              Row(
-                                                                crossAxisAlignment: CrossAxisAlignment.center ,
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                children: [
-                                                                  SizedBox(width: 10,),
-                                                                  Container(
-                                                                    child: Center(child: Text("${getStatusValue(accountStepsDetailModel,list[index].title)}",
-                                                                      style: TextStyle(color: AppTheme.primaryColor),)),
-                                                                  ),
-                                                                  SizedBox(width: 10,),
-                                                                ],
+                                                              SizedBox(width: 10,),
+                                                              Container(
+                                                                  width: 30,
+                                                                  height: 30,
+                                                                  child: Center(child: Text("${index+1}",style: TextStyle(fontSize: Dimensions.getScaledSize(20)),)),
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border.all(
+                                                                        width: 1.5,
+                                                                        color: AppTheme.primaryColor,
+                                                                      ),
+                                                                      shape: BoxShape.circle,
+                                                                      color: Colors.white)
                                                               ),
                                                             ],
                                                           ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                ),
-
-                                                Positioned.fill(
-                                                  child: Align(
-                                                    child: Container(
-                                                      child: Image.asset("lib/src/components/onboarding/images/colored_next_arrow.png",
-                                                      width: 35,height: 35,),
-                                                    ),
-                                                    alignment: Alignment.bottomRight,
+                                                          SizedBox(width: 20,),
+                                                          Expanded(
+                                                            child: Row(
+                                                              children: [
+                                                                Expanded(
+                                                                    child: Column(
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                      children: [
+                                                                        Text("${list[index].title}",style: TextStyle(color: AppTheme.black,
+                                                                          fontSize: 18,fontWeight: FontWeight.w600,fontFamily: AppConstants.fontName,),),
+                                                                        Text("${list[index].subTitle}",
+                                                                          style: TextStyle(color: AppTheme.subHeadingTextColor,fontSize: 14,
+                                                                            fontWeight: FontWeight.w500,fontFamily: AppConstants.fontName,),),
+                                                                      ],
+                                                                    )
+                                                                ),
+                                                                Row(
+                                                                  crossAxisAlignment: CrossAxisAlignment.center ,
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  children: [
+                                                                    SizedBox(width: 10,),
+                                                                    Container(
+                                                                      child: Center(child: Text("${getStatusValue(accountStepsDetailModel,list[index].title)}",
+                                                                        style: TextStyle(color: AppTheme.primaryColor),)),
+                                                                    ),
+                                                                    SizedBox(width: 10,),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
                                                   ),
-                                                )
 
-                                              ],
+                                                  Positioned.fill(
+                                                    child: Align(
+                                                      child: Container(
+                                                        child: Image.asset("lib/src/components/onboarding/images/colored_next_arrow.png",
+                                                          width: 35,height: 35,),
+                                                      ),
+                                                      alignment: Alignment.bottomRight,
+                                                    ),
+                                                  )
+
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -229,7 +235,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     );
   }
 
-  void addDataToList(AccountStepsDetailModel accountStepsDetailModel) {
+  void addDataToList() {
     SetupAccountModel setupAccountModel1 = SetupAccountModel("My Profile","View your profile and updare personal detail");
     SetupAccountModel setupAccountModel2 = SetupAccountModel("Business Detail","View and update business detail");
     SetupAccountModel setupAccountModel3 = SetupAccountModel("Work Detail","View and update work detail");
@@ -269,6 +275,23 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
       status = "Not Completed";
     }
     return status;
+  }
+
+  void onListViewTap(AccountStepsDetailModel accountStepsDetailModel, int index) {
+    var accountStepsDetail = accountStepsDetailModel.data;
+    print(accountStepsDetail);
+    if(index == 0){
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => MyProfileScreen())
+      );
+    }else if(index == 1){
+
+    } else if(index == 2){
+
+    } else if(index == 3){
+
+    }
   }
 
 

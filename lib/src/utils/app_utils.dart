@@ -163,4 +163,24 @@ class AppUtils {
               AppTheme.theme.primaryColor)),
     );
   }
+
+  static Future<DateTime> selectDate(
+      BuildContext context, {
+        bool isStartIndex,
+        bool isEndIndex,
+      }) async {
+    DateTime selectedDate = DateTime.now();
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        currentDate: DateTime.now(),
+        firstDate: DateTime(1970, 1),
+        lastDate: DateTime.now()
+    );
+    print(picked);
+    if (picked != null)
+      //dayName = DateFormat('DD-MM-yyyy').format(selectedDate);
+      return picked;
+  }
+
 }
