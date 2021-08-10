@@ -341,24 +341,51 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> {
 
                           Container(
                               margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              child: Slider(
-                                  value: valueHolder.toDouble(),
-                                  min: 1,
-                                  max: 50,
-                                  divisions: 50,
-                                  activeColor: AppTheme.greenColor,
-                                  inactiveColor: AppTheme.borderOnFocusedColor,
-                                  label: '${valueHolder.round()}',
-                                  onChanged: (double newValue) {
-                                    setState(() {
-                                      valueHolder = newValue.round();
-                                    });
-                                  },
-                                  semanticFormatterCallback: (double newValue) {
-                                    return '${newValue.round()}';
-                                  }
+                              child: SliderTheme(
+                                data: SliderThemeData(
+                                  trackShape: CustomTrackShape(),
+                                ),
+                                child: Slider(
+                                    value: valueHolder.toDouble(),
+                                    min: 1,
+                                    max: 50,
+                                    //divisions: 50,
+                                    activeColor: AppTheme.primaryColor,
+                                    inactiveColor: AppTheme.borderOnFocusedColor,
+                                    label: '${valueHolder.round()}',
+                                    onChanged: (double newValue) {
+                                      setState(() {
+                                        valueHolder = newValue.round();
+                                      });
+                                    },
+                                    semanticFormatterCallback: (double newValue) {
+                                      return '${newValue.round()}';
+                                    }
+                                ),
                               )
                           ),
+
+
+                          Container(
+                            margin: EdgeInsets.only(left: 0,top: 5,bottom: 10 ),
+                            child: Center(
+                              child: Text(
+                                "${valueHolder} Km",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: AppTheme.mainTextColor,
+                                  fontFamily: AppConstants.fontName,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(
+                            height: 20,
+                          ),
+
+
 
                           Container(
                             margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
@@ -387,5 +414,21 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> {
         ),
       ),
     );
+  }
+}
+
+class CustomTrackShape extends RoundedRectSliderTrackShape {
+  Rect getPreferredRect({
+    @required RenderBox parentBox,
+    Offset offset = Offset.zero,
+    @required SliderThemeData sliderTheme,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+  }) {
+    final double trackHeight = sliderTheme.trackHeight;
+    final double trackLeft = offset.dx;
+    final double trackTop = offset.dy + (parentBox.size.height - trackHeight) / 2;
+    final double trackWidth = parentBox.size.width;
+    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }
 }
