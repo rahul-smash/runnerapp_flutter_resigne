@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
+import 'widgets/google_map.dart';
 
 class BusinessDetailScreen extends StatefulWidget {
 
@@ -35,7 +36,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> {
   var addressCont= TextEditingController();
   List<String> workLocationList = [];
   String _selectedWorkLocationTag;
-  int valueHolder = 20;
+
 
   @override
   void initState() {
@@ -339,54 +340,16 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> {
                             ),
                           ),
 
-                          Container(
-                              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  trackShape: CustomTrackShape(),
-                                ),
-                                child: Slider(
-                                    value: valueHolder.toDouble(),
-                                    min: 1,
-                                    max: 50,
-                                    //divisions: 50,
-                                    activeColor: AppTheme.primaryColor,
-                                    inactiveColor: AppTheme.borderOnFocusedColor,
-                                    label: '${valueHolder.round()}',
-                                    onChanged: (double newValue) {
-                                      setState(() {
-                                        valueHolder = newValue.round();
-                                      });
-                                    },
-                                    semanticFormatterCallback: (double newValue) {
-                                      return '${newValue.round()}';
-                                    }
-                                ),
-                              )
-                          ),
-
-
-                          Container(
-                            margin: EdgeInsets.only(left: 0,top: 5,bottom: 10 ),
-                            child: Center(
-                              child: Text(
-                                "${valueHolder} Km",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: AppTheme.mainTextColor,
-                                  fontFamily: AppConstants.fontName,
-                                ),
-                              ),
-                            ),
-                          ),
-
                           SizedBox(
                             height: 20,
                           ),
-
-
-
+                          Container(
+                            //height: Dimensions.getHeight(percentage: 60),
+                            child: GoogleMapScreen()
+                          ),
+                          SizedBox(
+                            height: 40,
+                          ),
                           Container(
                             margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
                             width: MediaQuery.of(context).size.width,
