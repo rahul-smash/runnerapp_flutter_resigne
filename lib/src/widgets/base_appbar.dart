@@ -22,7 +22,6 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: Icon(Icons.arrow_back, color: this.backBtnColor),
         onPressed: () {
           this.callback();
-          Navigator.of(context).pop();
         },
       ),
       centerTitle: this.centerTitle,

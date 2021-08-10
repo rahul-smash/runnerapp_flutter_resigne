@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,7 +12,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-appPrintLog(dynamic content) {
+ appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
 }
 
@@ -35,6 +36,23 @@ class AppUtils {
     AppSharedPref.instance.setAppVersion(packageInfo.version);
 
     return packageInfo;
+  }
+
+  static loadImageFromUrl(String imgURL){
+
+    return Image.network(imgURL, fit: BoxFit.cover,width: 100,height: 100,
+      loadingBuilder:(BuildContext context, Widget child,ImageChunkEvent loadingProgress) {
+        if (loadingProgress == null)
+          return Container();
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null ?
+            loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                : null,
+          ),
+        );
+      },
+    );
   }
 
   static void getDeviceInfo() async {
@@ -191,4 +209,5 @@ class AppUtils {
     var i = (log(bytes) / log(1024)).floor();
     return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + ' ' + suffixes[i];
   }
+
 }

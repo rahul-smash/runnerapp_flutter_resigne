@@ -237,8 +237,15 @@ class _SelectCategoryScreenState extends BaseState<SelectCategoryScreen> {
                                         width: MediaQuery.of(context).size.width,
                                         child: GradientElevatedButton(
                                           onPressed: () async {
+                                            if(this.network.offline){
+                                              AppUtils.showToast(AppConstants.noInternetMsg, false);
+                                              return;
+                                            }
+                                            AppUtils.showLoader(context);
                                             BaseResponse response = await getIt.get<CategoryListRemoteDataSourceImpl>()
                                                 .saveCategories(loginResponse.data.id,selectedIndexList);
+                                            AppUtils.hideLoader(context);
+                                            AppUtils.hideKeyboard(context);
                                             if(response != null){
                                               AppUtils.showToast(response.message, true);
                                               Navigator.pop(context);

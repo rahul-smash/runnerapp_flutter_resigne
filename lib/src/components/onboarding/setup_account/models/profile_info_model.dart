@@ -51,9 +51,13 @@ class Data {
     this.vehicleName,
     this.vehicleRegistrationNumber,
     this.vehicleRegistrationPlatePic,
-    this.profileId,
+    this.identityProofNumber,
     this.identityProofImage1,
     this.identityProofImage2,
+    this.aboutYourself,
+    this.identityProof,
+    this.identityProofMentionedName,
+    this.profileId,
     this.profileImage10080,
     this.profileImage300200,
     this.identityProofList,
@@ -80,9 +84,13 @@ class Data {
   String vehicleName;
   String vehicleRegistrationNumber;
   String vehicleRegistrationPlatePic;
-  String profileId;
+  String identityProofNumber;
   String identityProofImage1;
   String identityProofImage2;
+  String aboutYourself;
+  String identityProof;
+  String identityProofMentionedName;
+  String profileId;
   String profileImage10080;
   String profileImage300200;
   List<String> identityProofList;
@@ -109,9 +117,13 @@ class Data {
     vehicleName: json["vehicle_name"],
     vehicleRegistrationNumber: json["vehicle_registration_number"],
     vehicleRegistrationPlatePic: json["vehicle_registration_plate_pic"],
-    profileId: json["profile_id"],
+    identityProofNumber: json["identity_proof_number"],
     identityProofImage1: json["identity_proof_image1"],
     identityProofImage2: json["identity_proof_image2"],
+    aboutYourself: json["about_yourself"],
+    identityProof: json["identity_proof"],
+    identityProofMentionedName: json["identity_proof_mentioned_name"],
+    profileId: json["profile_id"],
     profileImage10080: json["profile_image_100_80"],
     profileImage300200: json["profile_image_300_200"],
     identityProofList: List<String>.from(json["identity_proof_list"].map((x) => x)),
@@ -139,9 +151,13 @@ class Data {
     "vehicle_name": vehicleName,
     "vehicle_registration_number": vehicleRegistrationNumber,
     "vehicle_registration_plate_pic": vehicleRegistrationPlatePic,
-    "profile_id": profileId,
+    "identity_proof_number": identityProofNumber,
     "identity_proof_image1": identityProofImage1,
     "identity_proof_image2": identityProofImage2,
+    "about_yourself": aboutYourself,
+    "identity_proof": identityProof,
+    "identity_proof_mentioned_name": identityProofMentionedName,
+    "profile_id": profileId,
     "profile_image_100_80": profileImage10080,
     "profile_image_300_200": profileImage300200,
     "identity_proof_list": List<dynamic>.from(identityProofList.map((x) => x)),

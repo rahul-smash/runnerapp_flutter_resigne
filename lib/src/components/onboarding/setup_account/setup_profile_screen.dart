@@ -281,7 +281,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     var accountStepsDetail = accountStepsDetailModel.data;
     print(accountStepsDetail);
     if(index == 0){
-      Navigator.pop(context);
+      //Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => MyProfileScreen())
       );
