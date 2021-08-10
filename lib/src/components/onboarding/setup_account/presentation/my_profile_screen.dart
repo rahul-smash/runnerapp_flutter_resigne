@@ -17,6 +17,7 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
+import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'dart:io';
 
@@ -58,21 +59,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   void initState() {
     super.initState();
     _selectedGenderUpOption = _genderOptions.first;
-    addressProofsList.add('Aadhaar');
-    addressProofsList.add('Driving Licence');
-    addressProofsList.add('Voter Id');
-    _selectedProofTypeTag = addressProofsList.first;
     _controller = new AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-
     imagePicker = new ImagePickerHandler(this,_controller);
     imagePicker.init();
-    getIt.get<AccountStepsDetailRepositoryImpl>().getProfileInfo(loginResponse.data.id).then((value){
-      profileInfoModel = value;
-    });
-
   }
 
   @override
@@ -113,570 +105,590 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   @override
   Widget builder(BuildContext context) {
 
-    return Scaffold(
-      backgroundColor: AppTheme.grayCircle,
-      appBar: BaseAppBar(
-      backgroundColor: AppTheme.white,
-      title: Text('My Profile',style: TextStyle(color: Colors.black),),
-      appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
-        backwardsCompatibility: false,
-        systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.white,
-            statusBarIconBrightness: Brightness.dark
-        ),
-        elevation: 0.0,
-        titleSpacing: 0.0,
-        bottom: PreferredSize(
-            child: Container(
-              color: AppTheme.grayCircle,
-              height: 4.0,
-            ),
-            preferredSize: Size.fromHeight(4.0)),
-      ),
-      widgets: <Widget>[
-        Container(
-          child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
-        ),
-        SizedBox(width: 20,)
-      ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            width: double.infinity,
-            margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),right: Dimensions.getScaledSize(20)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: (){
-                    imagePicker.showDialog(context,profileImage: true,docImage1: false,docImage2: false);
-                  },
-                  child: _selectedProfileImg == null
-                      ? showImgPlaceholderView()
-                      : showUserImgView() ,
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                      top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(10)
-                  ),
-                  child: Text(
-                    "Personal Detail",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        color: AppTheme.subHeadingTextColor,
-                        fontFamily: AppConstants.fontName,
+    return FutureBuilder<ProfileInfoModel>(
+      future: getIt.get<AccountStepsDetailRepositoryImpl>().getProfileInfo(loginResponse.data.id), // async work
+      builder: (BuildContext context, AsyncSnapshot<ProfileInfoModel> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return AppUtils.showSpinner();
+          default:
+            if (snapshot.hasError){
+              return Text('Error: ${snapshot.error}');
+            } else{
+              profileInfoModel = snapshot.data;
+              for(int i = 0; i < profileInfoModel.data.identityProofList.length; i ++){
+                addressProofsList.add(profileInfoModel.data.identityProofList[i]);
+              }
+              _selectedProofTypeTag = addressProofsList.first;
+              return Scaffold(
+                backgroundColor: AppTheme.grayCircle,
+                appBar: BaseAppBar(
+                  backgroundColor: AppTheme.white,
+                  title: Text('My Profile',style: TextStyle(color: Colors.black),),
+                  appBar: AppBar(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white,
+                    backwardsCompatibility: false,
+                    systemOverlayStyle: SystemUiOverlayStyle(
+                        statusBarColor: Colors.white,
+                        statusBarIconBrightness: Brightness.dark
                     ),
+                    elevation: 0.0,
+                    titleSpacing: 0.0,
+                    bottom: PreferredSize(
+                        child: Container(
+                          color: AppTheme.grayCircle,
+                          height: 4.0,
+                        ),
+                        preferredSize: Size.fromHeight(4.0)),
                   ),
-                ),
-
-                Form(
-                  key: _key,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Container(
-                    margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                        right: Dimensions.getScaledSize(20),
-                        bottom: Dimensions.getScaledSize(20)
+                  widgets: <Widget>[
+                    Container(
+                      child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          controller: firstNameCont,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.next,
-                          validator: (val) =>
-                          val.isEmpty ? "Please enter your first name!" : null,
-                          onFieldSubmitted: (value) {
-
-                          },
-                          style: TextStyle(color: AppTheme.mainTextColor),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.borderNotFocusedColor)),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.primaryColor)),
-                            hintText: "Enter First Name",
-                            errorStyle: TextStyle(
-                                fontSize: AppConstants.extraXSmallSize,
-                                fontFamily: AppConstants.fontName),
-                            hintStyle: TextStyle(
-                                color: AppTheme.subHeadingTextColor, fontSize: 16),
-                            labelStyle: TextStyle(
-                                color: AppTheme.mainTextColor, fontSize: 16),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          controller: lastNameCont,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.next,
-                          validator: (val) =>
-                          val.isEmpty ? "Please enter your last name!" : null,
-                          onFieldSubmitted: (value) {
-
-                          },
-                          style: TextStyle(color: AppTheme.mainTextColor),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.borderNotFocusedColor)),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.primaryColor)),
-                            hintText: "Enter Last Name",
-                            errorStyle: TextStyle(
-                                fontSize: AppConstants.extraXSmallSize,
-                                fontFamily: AppConstants.fontName),
-                            hintStyle: TextStyle(
-                                color: AppTheme.subHeadingTextColor, fontSize: 16),
-                            labelStyle: TextStyle(
-                                color: AppTheme.mainTextColor, fontSize: 16),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
+                    SizedBox(width: 20,)
+                  ],
+                ),
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                      child: Container(
+                        color: Colors.white,
+                        width: double.infinity,
+                        margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),right: Dimensions.getScaledSize(20)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: DropdownButtonFormField(
-                                dropdownColor: Colors.white,
-                                items: _genderOptions.map((String category) {
-                                  return new DropdownMenuItem(
-                                      value: category,
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            category,
-                                            style: TextStyle(
+                            InkWell(
+                              onTap: (){
+                                imagePicker.showDialog(context,profileImage: true,docImage1: false,docImage2: false);
+                              },
+                              child: _selectedProfileImg == null
+                                  ? showImgPlaceholderView()
+                                  : showUserImgView() ,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                                  top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(10)
+                              ),
+                              child: Text(
+                                "Personal Detail",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: AppTheme.subHeadingTextColor,
+                                  fontFamily: AppConstants.fontName,
+                                ),
+                              ),
+                            ),
+
+                            Form(
+                              key: _key,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              child: Container(
+                                margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                                    right: Dimensions.getScaledSize(20),
+                                    bottom: Dimensions.getScaledSize(20)
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextFormField(
+                                      controller: firstNameCont,
+                                      keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.next,
+                                      validator: (val) =>
+                                      val.isEmpty ? "Please enter your first name!" : null,
+                                      onFieldSubmitted: (value) {
+
+                                      },
+                                      style: TextStyle(color: AppTheme.mainTextColor),
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.borderNotFocusedColor)),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.primaryColor)),
+                                        hintText: "Enter First Name",
+                                        errorStyle: TextStyle(
+                                            fontSize: AppConstants.extraXSmallSize,
+                                            fontFamily: AppConstants.fontName),
+                                        hintStyle: TextStyle(
+                                            color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                        labelStyle: TextStyle(
+                                            color: AppTheme.mainTextColor, fontSize: 16),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    TextFormField(
+                                      controller: lastNameCont,
+                                      keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.next,
+                                      validator: (val) =>
+                                      val.isEmpty ? "Please enter your last name!" : null,
+                                      onFieldSubmitted: (value) {
+
+                                      },
+                                      style: TextStyle(color: AppTheme.mainTextColor),
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.borderNotFocusedColor)),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.primaryColor)),
+                                        hintText: "Enter Last Name",
+                                        errorStyle: TextStyle(
+                                            fontSize: AppConstants.extraXSmallSize,
+                                            fontFamily: AppConstants.fontName),
+                                        hintStyle: TextStyle(
+                                            color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                        labelStyle: TextStyle(
+                                            color: AppTheme.mainTextColor, fontSize: 16),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: DropdownButtonFormField(
+                                            dropdownColor: Colors.white,
+                                            items: _genderOptions.map((String category) {
+                                              return new DropdownMenuItem(
+                                                  value: category,
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Text(
+                                                        category,
+                                                        style: TextStyle(
+                                                            color: AppTheme.mainTextColor,
+                                                            fontFamily: AppConstants.fontName,
+                                                            fontSize: AppConstants.smallSize),
+                                                      ),
+                                                    ],
+                                                  ));
+                                            }).toList(),
+                                            onTap: () {},
+                                            onChanged: (newValue) {
+                                              // do other stuff with _category
+                                              setState(() => _selectedGenderUpOption = newValue);
+                                            },
+                                            value: _selectedGenderUpOption,
+                                            decoration: InputDecoration(
+                                              contentPadding: EdgeInsets.all(0),
+                                              filled: true,
+                                              fillColor: AppTheme.transparent,
+                                              focusColor: AppTheme.transparent,
+                                              hoverColor: AppTheme.transparent,
+                                              labelText: "Gender",
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: ageCont,
+                                            readOnly: true,
+                                            keyboardType: TextInputType.text,
+                                            textInputAction: TextInputAction.next,
+                                            validator: (val) =>
+                                            val.isEmpty ? "Please enter your age!" : null,
+                                            onTap: () async {
+                                              selectedStartDate =
+                                              await AppUtils.selectDate(context, isStartIndex: true);
+                                              if (selectedStartDate != null) {
+                                                String date = DateFormat('yyyy-MM-dd').format(selectedStartDate);
+                                                setState(() {
+                                                  ageCont.text = date;
+                                                });
+                                              }
+                                            },
+                                            style: TextStyle(color: AppTheme.mainTextColor),
+                                            decoration: InputDecoration(
+                                              enabledBorder: UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: AppTheme.borderNotFocusedColor)),
+                                              focusedBorder: UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: AppTheme.primaryColor)),
+                                              hintText: "Age",
+                                              errorStyle: TextStyle(
+                                                  fontSize: AppConstants.extraXSmallSize,
+                                                  fontFamily: AppConstants.fontName),
+                                              hintStyle: TextStyle(
+                                                  color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                              labelStyle: TextStyle(
+                                                  color: AppTheme.mainTextColor, fontSize: 16),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    TextFormField(
+                                      controller: mobileCont,
+                                      keyboardType: TextInputType.number,
+                                      textInputAction: TextInputAction.send,
+                                      validator: (val) =>
+                                      val.isEmpty ? labelErrorMobileNumber : null,
+                                      onFieldSubmitted: (value) async {
+
+                                      },
+                                      style: TextStyle(color: AppTheme.mainTextColor),
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.borderNotFocusedColor)),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.primaryColor)),
+                                        hintText: labelMobileNumber,
+                                        errorStyle: TextStyle(
+                                            fontSize: AppConstants.extraXSmallSize,
+                                            fontFamily: AppConstants.fontName),
+                                        hintStyle: TextStyle(
+                                            color: AppTheme.subHeadingTextColor, fontSize: 14),
+                                        labelStyle: TextStyle(
+                                            color: AppTheme.mainTextColor, fontSize: 14),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+
+                                    TextFormField(
+                                      controller: emailCont,
+                                      keyboardType: TextInputType.emailAddress,
+                                      textInputAction: TextInputAction.send,
+                                      validator: (val) =>
+                                      val.isEmpty ? labelErrorEmail : null,
+                                      onFieldSubmitted: (value) async {
+
+                                      },
+                                      style: TextStyle(color: AppTheme.mainTextColor),
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.borderNotFocusedColor)),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.primaryColor)),
+                                        hintText: labelErrorEmail,
+                                        errorStyle: TextStyle(
+                                            fontSize: AppConstants.extraXSmallSize,
+                                            fontFamily: AppConstants.fontName),
+                                        hintStyle: TextStyle(
+                                            color: AppTheme.subHeadingTextColor, fontSize: 14),
+                                        labelStyle: TextStyle(
+                                            color: AppTheme.mainTextColor, fontSize: 14),
+                                      ),
+                                    ),
+
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+
+                                    Container(
+                                      height: Dimensions.getScaledSize(100),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.grayCircle,
+                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      ),
+                                      margin: EdgeInsets.only(top: 0,  bottom: 0),
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(15, 15, 10, 10),
+                                        child: TextFormField(
+                                          //focusNode: _nodeText1,
+                                          controller: userCommentController,
+                                          validator: (val) =>
+                                          val.isEmpty ? labelErrorAboutUs : null,
+                                          keyboardType: TextInputType.multiline,
+                                          maxLines: null,
+                                          textAlign: TextAlign.start,
+                                          decoration: new InputDecoration.collapsed(
+                                            hintText: "About yourself",
+                                          ),
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        "Identity/Address Proof",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontFamily: AppConstants.fontName,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      child: Wrap(
+                                        crossAxisAlignment: WrapCrossAlignment.start,
+                                        spacing: 15,
+                                        children: addressProofsList.map((tag) {
+                                          return InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  _selectedProofTypeTag = tag;
+                                                });
+                                              },
+                                              child: Container(
+                                                width: SizeConfig.screenWidth/4.1,
+                                                padding: EdgeInsets.only(left: 0, right: 0),
+                                                height: 35,
+                                                decoration: BoxDecoration(
+                                                  color: _selectedProofTypeTag.toLowerCase() ==
+                                                      tag.toLowerCase()
+                                                      ? AppTheme.primaryColor
+                                                      : AppTheme.grayCircle,
+                                                  borderRadius: BorderRadius.circular(4),
+                                                ),
+                                                child: Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    tag,textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: _selectedProofTypeTag.toLowerCase() ==
+                                                            tag.toLowerCase()
+                                                            ? AppTheme.white
+                                                            : AppTheme.subHeadingTextColor),
+                                                  ),
+                                                ),
+                                              ));
+                                        }).toList(),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    TextFormField(
+                                      controller: proofNameCont,
+                                      keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.next,
+                                      validator: (val) =>
+                                      val.isEmpty ? "Name (As on selected Id)" : null,
+                                      onFieldSubmitted: (value) {
+
+                                      },
+                                      style: TextStyle(color: AppTheme.mainTextColor),
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.borderNotFocusedColor)),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.primaryColor)),
+                                        hintText: "Name (As on selected Id)",
+                                        errorStyle: TextStyle(
+                                            fontSize: AppConstants.extraXSmallSize,
+                                            fontFamily: AppConstants.fontName),
+                                        hintStyle: TextStyle(
+                                            color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                        labelStyle: TextStyle(
+                                            color: AppTheme.mainTextColor, fontSize: 16),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    TextFormField(
+                                      controller: idProofNameCont,
+                                      keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.next,
+                                      validator: (val) =>
+                                      val.isEmpty ? "Enter your Id Number(As on selected Id)" : null,
+                                      onFieldSubmitted: (value) {
+
+                                      },
+                                      style: TextStyle(color: AppTheme.mainTextColor),
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.borderNotFocusedColor)),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: AppTheme.primaryColor)),
+                                        hintText: "Enter your Id Number(As on selected Id)",
+                                        errorStyle: TextStyle(
+                                            fontSize: AppConstants.extraXSmallSize,
+                                            fontFamily: AppConstants.fontName),
+                                        hintStyle: TextStyle(
+                                            color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                        labelStyle: TextStyle(
+                                            color: AppTheme.mainTextColor, fontSize: 16),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              "Upload Documents",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppTheme.subHeadingTextColor,
+                                                fontFamily: AppConstants.fontName,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Text(
+                                              "Max file size: 15mb",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
                                                 color: AppTheme.mainTextColor,
                                                 fontFamily: AppConstants.fontName,
-                                                fontSize: AppConstants.smallSize),
-                                          ),
-                                        ],
-                                      ));
-                                }).toList(),
-                                onTap: () {},
-                                onChanged: (newValue) {
-                                  // do other stuff with _category
-                                  setState(() => _selectedGenderUpOption = newValue);
-                                },
-                                value: _selectedGenderUpOption,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(0),
-                                  filled: true,
-                                  fillColor: AppTheme.transparent,
-                                  focusColor: AppTheme.transparent,
-                                  hoverColor: AppTheme.transparent,
-                                  labelText: "Gender",
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: TextFormField(
-                                controller: ageCont,
-                                readOnly: true,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                validator: (val) =>
-                                val.isEmpty ? "Please enter your age!" : null,
-                                onTap: () async {
-                                  selectedStartDate =
-                                  await AppUtils.selectDate(context, isStartIndex: true);
-                                  if (selectedStartDate != null) {
-                                    String date = DateFormat('yyyy-MM-dd').format(selectedStartDate);
-                                    setState(() {
-                                      ageCont.text = date;
-                                    });
-                                  }
-                                },
-                                style: TextStyle(color: AppTheme.mainTextColor),
-                                decoration: InputDecoration(
-                                  enabledBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: AppTheme.borderNotFocusedColor)),
-                                  focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: AppTheme.primaryColor)),
-                                  hintText: "Age",
-                                  errorStyle: TextStyle(
-                                      fontSize: AppConstants.extraXSmallSize,
-                                      fontFamily: AppConstants.fontName),
-                                  hintStyle: TextStyle(
-                                      color: AppTheme.subHeadingTextColor, fontSize: 16),
-                                  labelStyle: TextStyle(
-                                      color: AppTheme.mainTextColor, fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          controller: mobileCont,
-                          keyboardType: TextInputType.number,
-                          textInputAction: TextInputAction.send,
-                          validator: (val) =>
-                          val.isEmpty ? labelErrorMobileNumber : null,
-                          onFieldSubmitted: (value) async {
-
-                          },
-                          style: TextStyle(color: AppTheme.mainTextColor),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.borderNotFocusedColor)),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.primaryColor)),
-                            hintText: labelMobileNumber,
-                            errorStyle: TextStyle(
-                                fontSize: AppConstants.extraXSmallSize,
-                                fontFamily: AppConstants.fontName),
-                            hintStyle: TextStyle(
-                                color: AppTheme.subHeadingTextColor, fontSize: 14),
-                            labelStyle: TextStyle(
-                                color: AppTheme.mainTextColor, fontSize: 14),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-
-                        TextFormField(
-                          controller: emailCont,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.send,
-                          validator: (val) =>
-                          val.isEmpty ? labelErrorEmail : null,
-                          onFieldSubmitted: (value) async {
-
-                          },
-                          style: TextStyle(color: AppTheme.mainTextColor),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.borderNotFocusedColor)),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.primaryColor)),
-                            hintText: labelErrorEmail,
-                            errorStyle: TextStyle(
-                                fontSize: AppConstants.extraXSmallSize,
-                                fontFamily: AppConstants.fontName),
-                            hintStyle: TextStyle(
-                                color: AppTheme.subHeadingTextColor, fontSize: 14),
-                            labelStyle: TextStyle(
-                                color: AppTheme.mainTextColor, fontSize: 14),
-                          ),
-                        ),
-
-                        SizedBox(
-                          height: 20,
-                        ),
-
-                        Container(
-                          height: Dimensions.getScaledSize(100),
-                          decoration: BoxDecoration(
-                            color: AppTheme.grayCircle,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          margin: EdgeInsets.only(top: 0,  bottom: 0),
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(15, 15, 10, 10),
-                            child: TextFormField(
-                              //focusNode: _nodeText1,
-                              controller: userCommentController,
-                              validator: (val) =>
-                              val.isEmpty ? labelErrorAboutUs : null,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              textAlign: TextAlign.start,
-                              decoration: new InputDecoration.collapsed(
-                                hintText: "About yourself",
-                              ),
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          child: Text(
-                            "Identity/Address Proof",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: AppTheme.subHeadingTextColor,
-                              fontFamily: AppConstants.fontName,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.start,
-                            spacing: 15,
-                            children: addressProofsList.map((tag) {
-                              return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedProofTypeTag = tag;
-                                    });
-                                  },
-                                  child: Container(
-                                    width: SizeConfig.screenWidth/4.1,
-                                    padding: EdgeInsets.only(left: 0, right: 0),
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      color: _selectedProofTypeTag.toLowerCase() ==
-                                          tag.toLowerCase()
-                                          ? AppTheme.primaryColor
-                                          : AppTheme.grayCircle,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        tag,textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: _selectedProofTypeTag.toLowerCase() ==
-                                                tag.toLowerCase()
-                                                ? AppTheme.white
-                                                : AppTheme.subHeadingTextColor),
-                                      ),
-                                    ),
-                                  ));
-                            }).toList(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TextFormField(
-                          controller: proofNameCont,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.next,
-                          validator: (val) =>
-                          val.isEmpty ? "Name (As on selected Id)" : null,
-                          onFieldSubmitted: (value) {
-
-                          },
-                          style: TextStyle(color: AppTheme.mainTextColor),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.borderNotFocusedColor)),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.primaryColor)),
-                            hintText: "Name (As on selected Id)",
-                            errorStyle: TextStyle(
-                                fontSize: AppConstants.extraXSmallSize,
-                                fontFamily: AppConstants.fontName),
-                            hintStyle: TextStyle(
-                                color: AppTheme.subHeadingTextColor, fontSize: 16),
-                            labelStyle: TextStyle(
-                                color: AppTheme.mainTextColor, fontSize: 16),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                          controller: idProofNameCont,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.next,
-                          validator: (val) =>
-                          val.isEmpty ? "Enter your Id Number(As on selected Id)" : null,
-                          onFieldSubmitted: (value) {
-
-                          },
-                          style: TextStyle(color: AppTheme.mainTextColor),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.borderNotFocusedColor)),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppTheme.primaryColor)),
-                            hintText: "Enter your Id Number(As on selected Id)",
-                            errorStyle: TextStyle(
-                                fontSize: AppConstants.extraXSmallSize,
-                                fontFamily: AppConstants.fontName),
-                            hintStyle: TextStyle(
-                                color: AppTheme.subHeadingTextColor, fontSize: 16),
-                            labelStyle: TextStyle(
-                                color: AppTheme.mainTextColor, fontSize: 16),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: Text(
-                                  "Upload Documents",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: AppTheme.subHeadingTextColor,
-                                    fontFamily: AppConstants.fontName,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                child: Text(
-                                  "Max file size: 15mb",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: AppTheme.mainTextColor,
-                                    fontFamily: AppConstants.fontName,
-                                  ),
-                                ),
-                              ),
-                            ]
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            InkWell(
-                              child: DottedBorder(
-                                dashPattern: [3, 3, 3, 3],
-                                strokeWidth: 1,
-                                borderType: BorderType.RRect,
-                                radius: Radius.circular(12),
-                                //padding: EdgeInsets.all(6),
-                                color: AppTheme.subHeadingTextColor,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  child: Container(
-                                    height: Dimensions.getWidth(percentage: 22),
-                                    width: Dimensions.getWidth(percentage: 30),
-                                    color: Color(0xffF9F9F9),
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
-                                          Text(
-                                            "Upload\nImage 1",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: AppTheme.mainTextColor,
-                                              fontFamily: AppConstants.fontName,
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        ]
                                     ),
-                                  ),
-                                ),
-                              ),
-                              onTap: (){
-                                imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
-                              },
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            InkWell(
-                              child: DottedBorder(
-                                dashPattern: [3, 3, 3, 3],
-                                strokeWidth: 1,
-                                borderType: BorderType.RRect,
-                                radius: Radius.circular(12),
-                                color: AppTheme.subHeadingTextColor,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  child: Container(
-                                    height: Dimensions.getWidth(percentage: 22),
-                                    width: Dimensions.getWidth(percentage: 30),
-                                    color: Color(0xffF9F9F9),
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
-                                          Text(
-                                            "Upload\nImage 2",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: AppTheme.mainTextColor,
-                                              fontFamily: AppConstants.fontName,
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                      children: [
+                                        InkWell(
+                                          child: DottedBorder(
+                                            dashPattern: [3, 3, 3, 3],
+                                            strokeWidth: 1,
+                                            borderType: BorderType.RRect,
+                                            radius: Radius.circular(12),
+                                            //padding: EdgeInsets.all(6),
+                                            color: AppTheme.subHeadingTextColor,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                                              child: Container(
+                                                height: Dimensions.getWidth(percentage: 22),
+                                                width: Dimensions.getWidth(percentage: 30),
+                                                color: Color(0xffF9F9F9),
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
+                                                      Text(
+                                                        "Upload\nImage 1",
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          color: AppTheme.mainTextColor,
+                                                          fontFamily: AppConstants.fontName,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                          onTap: (){
+                                            imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        InkWell(
+                                          child: DottedBorder(
+                                            dashPattern: [3, 3, 3, 3],
+                                            strokeWidth: 1,
+                                            borderType: BorderType.RRect,
+                                            radius: Radius.circular(12),
+                                            color: AppTheme.subHeadingTextColor,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                                              child: Container(
+                                                height: Dimensions.getWidth(percentage: 22),
+                                                width: Dimensions.getWidth(percentage: 30),
+                                                color: Color(0xffF9F9F9),
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
+                                                      Text(
+                                                        "Upload\nImage 2",
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          color: AppTheme.mainTextColor,
+                                                          fontFamily: AppConstants.fontName,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          onTap: (){
+                                            imagePicker.showDialog(context,docImage2: true,profileImage: false,docImage1: false);
+                                          },
+                                        ),
+
+                                      ],
                                     ),
-                                  ),
+                                    showDocListview(),
+                                    SizedBox(
+                                      height: 35,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
+                                      width: MediaQuery.of(context).size.width,
+                                      child: GradientElevatedButton(
+                                        onPressed: () async {
+                                          if(this.network.offline){
+                                            AppUtils.showToast(AppConstants.noInternetMsg, false);
+                                            return;
+                                          }
+                                          callProfileApi();
+                                        },
+                                        //onPressed: validateAndSave(isSubmitPressed: true),
+                                        buttonText: labelSaveNext,),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              onTap: (){
-                                imagePicker.showDialog(context,docImage2: true,profileImage: false,docImage1: false);
-                              },
                             ),
 
                           ],
                         ),
-                        showDocListview(),
-                        SizedBox(
-                          height: 35,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
-                          width: MediaQuery.of(context).size.width,
-                          child: GradientElevatedButton(
-                            onPressed: () async {
-                              if(this.network.offline){
-                                AppUtils.showToast(AppConstants.noInternetMsg, false);
-                                return;
-                              }
-                              callProfileApi();
-                            },
-                            //onPressed: validateAndSave(isSubmitPressed: true),
-                            buttonText: labelSaveNext,),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
+                      )
                   ),
                 ),
+              );
+            }
 
-              ],
-            ),
-          )
-        ),
-      ),
+        }
+      },
     );
   }
 
@@ -811,24 +823,14 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
         return;
       }
 
-      bool docSelected1 = false;
-      bool docSelected2 = false;
-      File proofDocument;
-      if(_selectedImg1 != null){
-        proofDocument = _selectedImg1;
-        docSelected1 = true;
-      }else if(_selectedImg2 != null){
-        proofDocument = _selectedImg2;
-        docSelected2 = true;
-      }
-
       AppUtils.showLoader(context);
       BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
           .saveMyProfile(_selectedProfileImg,firstNameCont.text,lastNameCont.text,
           _selectedGenderUpOption,ageCont.text,mobileCont.text,emailCont.text,userCommentController.text,
           proofNameCont.text,idProofNameCont.text,_selectedProofTypeTag,
-          selectedDocument:proofDocument,user_id: loginResponse.data.id,
-          profile_id: profileInfoModel.data.profileId,docSelected1:docSelected1,docSelected2:docSelected2);
+          selectedDocument1:_selectedImg1,selectedDocument2: _selectedImg2,
+          user_id: loginResponse.data.id,
+          profile_id: profileInfoModel.data.profileId);
       if(baseresponse != null){
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);

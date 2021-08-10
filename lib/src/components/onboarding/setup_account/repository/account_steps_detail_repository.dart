@@ -13,6 +13,6 @@ abstract class AccountStepsDetailRepository {
   Future<BaseResponse> saveMyProfile(File selectedProfileImg, String text,String lastName,
       String selectedGenderUpOption , String dob, String mobile, String email, String comments,
       String proofNameCont, String idProofNameCont, String selectedProofTypeTag,
-      {File selectedDocument});
+      {File selectedDocument1,File selectedDocument2});
 
 }

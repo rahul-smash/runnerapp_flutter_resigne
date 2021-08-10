@@ -53,34 +53,64 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   Future<BaseResponse> saveMyProfile(File selectedProfileImg, String firstNameCont,String lastName,
       String selectedGenderUpOption , String dob, String mobile, String email, String comments,
       String proofNameCont, String idProofNumberCont, String selectedProofTypeTag,
-      {File selectedDocument,String user_id,profile_id, bool docSelected1, bool docSelected2}) async{
-
+      {File selectedDocument1,File selectedDocument2,String user_id,profile_id}) async{
+    FormData formData;
+    Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
     try {
-      String docKeyName = docSelected1 ? "identity_proof_image1" :"identity_proof_image2";
       String profileFileName = selectedProfileImg.path.split('/').last;
-      String docFileName = selectedDocument.path.split('/').last;
+      if(selectedDocument1 != null && selectedDocument2 != null){
+        String doc1FileName = selectedDocument1.path.split('/').last;
+        String doc2FileName = selectedDocument2.path.split('/').last;
+        formData = FormData.fromMap({
+          'platform': param["platform"],
+          'device_id': param["device_id"],
+          'user_id': user_id,
+          'first_name': firstNameCont,
+          'last_name': lastName,
+          'email': email,
+          'phone': mobile,
+          'gender': selectedGenderUpOption,
+          'dob': dob,
+          'profile_id': profile_id,
+          'about_yourself': comments,
+          'identity_proof': selectedProofTypeTag,
+          'identity_proof_mentioned_name': proofNameCont,
+          'identity_proof_number': idProofNumberCont,
+          "image": await MultipartFile.fromFile(selectedProfileImg.path,filename: profileFileName,),
+          "identity_proof_image1": await MultipartFile.fromFile(selectedDocument1.path,filename: doc1FileName,),
+          "identity_proof_image2": await MultipartFile.fromFile(selectedDocument2.path,filename: doc2FileName,),
+        });
+      }else{
 
-      Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
-
-      FormData formData = FormData.fromMap({
-        'platform': param["platform"],
-        'device_id': param["device_id"],
-        'user_id': user_id,
-        'first_name': lastName,
-        'last_name': lastName,
-        'email': email,
-        'phone': mobile,
-        'gender': selectedGenderUpOption,
-        'dob': dob,
-        'profile_id': profile_id,
-        'about_yourself': comments,
-        'identity_proof': selectedProofTypeTag,
-        'identity_proof_mentioned_name': proofNameCont,
-        'identity_proof_number': idProofNumberCont,
-        "image": await MultipartFile.fromFile(selectedProfileImg.path,filename: profileFileName,),
-         "${docKeyName}": await MultipartFile.fromFile(selectedDocument.path,filename: docFileName,),
-      });
-
+        File proofDocument;
+        String selectedDocKeyName,selectedDocFileName;
+        if(selectedDocument1 != null){
+          proofDocument = selectedDocument1;
+          selectedDocKeyName = "identity_proof_image1";
+        }else if(selectedDocument2 != null){
+          proofDocument = selectedDocument2;
+          selectedDocKeyName = "identity_proof_image2";
+        }
+        selectedDocFileName = proofDocument.path.split('/').last;
+        formData = FormData.fromMap({
+          'platform': param["platform"],
+          'device_id': param["device_id"],
+          'user_id': user_id,
+          'first_name': lastName,
+          'last_name': lastName,
+          'email': email,
+          'phone': mobile,
+          'gender': selectedGenderUpOption,
+          'dob': dob,
+          'profile_id': profile_id,
+          'about_yourself': comments,
+          'identity_proof': selectedProofTypeTag,
+          'identity_proof_mentioned_name': proofNameCont,
+          'identity_proof_number': idProofNumberCont,
+          "image": await MultipartFile.fromFile(selectedProfileImg.path,filename: profileFileName,),
+          "$selectedDocKeyName": await MultipartFile.fromFile(proofDocument.path,filename: selectedDocFileName,),
+        });
+      }
 
       var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _updateProfile),
           null, isMultipartUploadRequest: true,formData: formData);
@@ -89,6 +119,7 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
     } catch (e) {
       debugPrint(e.toString());
     }
+    return null;
   }
 
 
