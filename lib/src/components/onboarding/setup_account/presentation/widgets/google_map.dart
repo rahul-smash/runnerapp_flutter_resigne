@@ -23,7 +23,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   List<Marker> _markers = <Marker>[];
   final LatLng _center = LatLng(45.521563, -122.677433);
   int valueHolder = 20;
-  double radiusValue;
+  //double radiusValue;
   Set<Circle> circles = {};
 
   void _onMapCreated(GoogleMapController controller) {
@@ -33,11 +33,11 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   @override
   void initState() {
     super.initState();
-    radiusValue = 2000;
+    //radiusValue = 2000;
     circles = Set.from([
       Circle(
           circleId: CircleId("myCircle"),
-          radius: radiusValue,
+          radius: 2000,
           center: LatLng(45.521563, -122.677433),
           fillColor: Colors.white.withOpacity(0.5),
           strokeColor: AppTheme.primaryColor,
@@ -78,12 +78,12 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
                   inactiveColor: AppTheme.borderOnFocusedColor,
                   label: '${valueHolder.round()}',
                   onChanged: (double newValue) {
-                    radiusValue = (valueHolder * 1000).toDouble();
+                    //radiusValue = (valueHolder * 1000).toDouble();
                     circles.clear();
                     circles = Set.from([
                       Circle(
                           circleId: CircleId("myCircle"),
-                          radius: radiusValue,
+                          radius: (newValue.roundToDouble() * 100),
                           center: LatLng(45.521563, -122.677433),
                           fillColor: Colors.white.withOpacity(0.5),
                           strokeColor: AppTheme.primaryColor,
@@ -92,11 +92,10 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
                             print('circle pressed');
                           })
                     ]);
-                    print("====meter====${radiusValue}");
+                    //print("====meter= ${newValue.roundToDouble()}");
                     setState(() {
                       valueHolder = newValue.round();
                     });
-
                   },
                   semanticFormatterCallback: (double newValue) {
                     return '${newValue.round()}';
@@ -108,7 +107,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
           margin: EdgeInsets.only(left: 0,top: 5,bottom: 10 ),
           child: Center(
             child: Text(
-              "${valueHolder} Km",
+              "${valueHolder} meters",
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 16.0,
