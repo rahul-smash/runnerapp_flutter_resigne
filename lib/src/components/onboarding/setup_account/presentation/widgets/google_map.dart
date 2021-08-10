@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -135,6 +137,17 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
         ),
       ],
     );
+  }
+
+  double getZoomLevel(double radius) {
+    double zoomLevel = 11;
+    if (radius > 0) {
+      double radiusElevated = radius + radius / 2;
+      double scale = radiusElevated / 500;
+      zoomLevel = 16 - log(scale) / log(2);
+    }
+    zoomLevel = num.parse(zoomLevel.toStringAsFixed(2));
+    return zoomLevel;
   }
 
 
