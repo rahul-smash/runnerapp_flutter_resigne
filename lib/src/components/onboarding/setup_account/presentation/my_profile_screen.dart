@@ -21,9 +21,12 @@ import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'dart:io';
 
+import 'business_detail_screen.dart';
+
 class MyProfileScreen extends StatefulWidget {
 
-  MyProfileScreen();
+  final VoidCallback voidCallback;
+  MyProfileScreen({@required this.voidCallback});
 
   @override
   _MyProfileScreenState createState() {
@@ -135,6 +138,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
       backgroundColor: AppTheme.grayCircle,
       appBar: BaseAppBar(
         callback: (){
+          widget.voidCallback();
           Navigator.of(context).pop();
         },
         backgroundColor: AppTheme.white,
@@ -874,6 +878,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
+        Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
+              widget.voidCallback();
+              Navigator.of(context).pop();
+            },))
+        );
       }
     }
   }

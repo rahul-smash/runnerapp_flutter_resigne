@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'models/account_steps_detail_model.dart';
 import 'models/setup_account_model.dart';
+import 'presentation/business_detail_screen.dart';
 import 'presentation/my_profile_screen.dart';
 
 class SetupProfileScreen extends StatefulWidget {
@@ -29,6 +30,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
   @override
   void initState() {
     super.initState();
+    addDataToList();
   }
 
   @override
@@ -84,20 +86,19 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                                       return Text('Error: ${snapshot.error}');
                                     } else{
                                       AccountStepsDetailModel accountStepsDetailModel = snapshot.data;
-                                      addDataToList();
-                                      return ListView.separated(
+                                      return ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: list.length,
                                         itemBuilder: (context, index) {
                                           return InkWell(
                                             onTap: (){
-                                              print("----index----");
                                               onListViewTap(accountStepsDetailModel,index);
                                             },
                                             child: Card(
                                               elevation: 0,
                                               shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(30)
+                                                side: BorderSide(color: getColorFromStatus(getStatusValue(accountStepsDetailModel,list[index].title)), width: 2),
+                                                  borderRadius: BorderRadius.circular(22)
                                               ),
                                               child: Stack(
                                                 clipBehavior: Clip.antiAlias,
@@ -153,7 +154,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                                                                     SizedBox(width: 10,),
                                                                     Container(
                                                                       child: Center(child: Text("${getStatusValue(accountStepsDetailModel,list[index].title)}",
-                                                                        style: TextStyle(color: AppTheme.primaryColor),)),
+                                                                        style: TextStyle(color: getTextColorFromStatus(getStatusValue(accountStepsDetailModel,list[index].title))),)),
                                                                     ),
                                                                     SizedBox(width: 10,),
                                                                   ],
@@ -164,24 +165,18 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                                                         ],
                                                       )
                                                   ),
-
                                                   Positioned.fill(
                                                     child: Align(
                                                       child: Container(
-                                                        child: Image.asset("lib/src/components/onboarding/images/colored_next_arrow.png",
-                                                          width: 35,height: 35,),
+                                                        child: getImgFromStatus(getStatusValue(accountStepsDetailModel,list[index].title))
                                                       ),
                                                       alignment: Alignment.bottomRight,
                                                     ),
                                                   )
-
                                                 ],
                                               ),
                                             ),
                                           );
-                                        },
-                                        separatorBuilder: (context, index) {
-                                          return Divider();
                                         },
                                       );
                                     }
@@ -235,6 +230,19 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     );
   }
 
+  // ignore: missing_return
+  Widget getImgFromStatus(String status){
+    if(status == "In Progress"){
+      return Image.asset("lib/src/components/onboarding/images/colored_next_arrow.png",width: 35,height: 35,);
+    }
+    if(status == "Not Completed"){
+      return Image.asset("lib/src/components/onboarding/images/grey_next_arrow.png",width: 35,height: 35,);
+    }
+    if(status == "Completed"){
+      return Image.asset("lib/src/components/onboarding/images/green_next_arrow.png",width: 35,height: 35,);
+    }
+  }
+
   void addDataToList() {
     SetupAccountModel setupAccountModel1 = SetupAccountModel("My Profile","View your profile and updare personal detail");
     SetupAccountModel setupAccountModel2 = SetupAccountModel("Business Detail","View and update business detail");
@@ -283,10 +291,18 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     if(index == 0){
       //Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => MyProfileScreen())
+          builder: (BuildContext context) => MyProfileScreen(voidCallback: (){
+            setState(() {
+            });
+          },))
       );
     }else if(index == 1){
-
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
+            setState(() {
+            });
+          },))
+      );
     } else if(index == 2){
 
     } else if(index == 3){
@@ -294,5 +310,30 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     }
   }
 
+  // ignore: missing_return
+  Color getColorFromStatus(status) {
+    if(status == "In Progress"){
+      return Colors.transparent;
+    }
+    if(status == "Not Completed"){
+      return Colors.transparent;
+    }
+    if(status == "Completed"){
+      return AppTheme.greenColor;
+    }
+  }
+
+// ignore: missing_return
+  Color getTextColorFromStatus(status) {
+    if(status == "In Progress"){
+      return AppTheme.primaryColor;
+    }
+    if(status == "Not Completed"){
+      return Colors.grey;
+    }
+    if(status == "Completed"){
+      return AppTheme.greenColor;
+    }
+  }
 
 }

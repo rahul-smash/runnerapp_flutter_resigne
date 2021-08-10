@@ -52,6 +52,7 @@ class AppTheme {
   static Color buttonShadowColor = Color(0xffC8CFF2);
   static Color whiteDisable=Colors.white38;
   static Color grayCircle = Color(0xffECECEC);
+  static Color greenColor = Color(0xff26D990);
 
 }
 

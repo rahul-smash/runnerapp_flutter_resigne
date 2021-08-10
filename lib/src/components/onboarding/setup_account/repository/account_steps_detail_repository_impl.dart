@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/account_steps_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
@@ -19,6 +20,8 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   static const _getAccountStepsDetail = '/runner_authentication/getAccountStepsDetail/';
   static const _getProfileInfo = '/runner_authentication/getProfileInfo/';
   static const _updateProfile = '/runner_authentication/updateProfile';
+  static const _getBusinessDetail = '/runner_authentication/getBusinessDetail/';
+
 
   String apiPath(String storeId, String path) =>
       '$storeId${AppNetworkConstants.baseRoute}$path';
@@ -92,6 +95,19 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       return loginResponse;
     } catch (e) {
       debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  @override
+  Future<BusinessDetailModel> getBusinessDetail(String userId) async{
+    try {
+      String queryParms = "/${userId}";
+      var response = await get(apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+          _getBusinessDetail)+queryParms, null);
+      BusinessDetailModel categoryModel = BusinessDetailModel.fromJson(jsonDecode(response));
+      return categoryModel;
+    } catch (e) {
     }
     return null;
   }
