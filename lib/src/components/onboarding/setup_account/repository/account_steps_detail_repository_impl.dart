@@ -122,10 +122,11 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
     String sun_open,String sun_close,String mon_open,String mon_close,
     String tue_open,String tue_close,String wed_open,String wed_close,
     String thu_open,String thu_close,String fri_open,String fri_close,
-    String sat_open,String sat_close}) {
+    String sat_open,String sat_close}) async {
 
     Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
     FormData formData;
+    String docFileName = business_identity_proof_image == null ? "" : business_identity_proof_image.path.isEmpty ? "" : business_identity_proof_image.path.split('/').last;
 
     formData = FormData.fromMap({
       'platform': param["platform"],
@@ -143,7 +144,9 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       'service_type': service_type,
       'business_identity_proof': business_identity_proof,
       'business_identity_proof_number': business_identity_proof_number,
-      //'business_identity_proof_image': selectedProofTypeTag,
+      "business_identity_proof_image": business_identity_proof_image == null
+          ? ""
+          : business_identity_proof_image.path.isEmpty ? "" : await MultipartFile.fromFile(business_identity_proof_image.path,filename: docFileName,),
       'working_id': working_id,
       'sun_open': sun_open,
       'sun_close': sun_close,
@@ -160,6 +163,11 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       'sat_open': sat_open,
       'sat_close': sat_close,
         });
+
+    var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _saveBusinessDetail),
+        null, isMultipartUploadRequest: true,formData: formData);
+    BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
+    return loginResponse;
   }
 
 

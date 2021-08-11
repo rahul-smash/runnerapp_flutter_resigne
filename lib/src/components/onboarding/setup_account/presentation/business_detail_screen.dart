@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -1048,6 +1049,20 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
     return boxColor;
   }
 
+  String sun_open = '';
+  String sun_close = '';
+  String mon_open = '';
+  String mon_close = '';
+  String tue_open = '';
+  String tue_close = '';
+  String wed_open = '';
+  String wed_close = '';
+  String thu_open = '';
+  String thu_close = '';
+  String fri_open = '';
+  String fri_close = '';
+  String sat_open = '';
+  String sat_close = '';
   Future<void> callApi() async {
     if(this.network.offline){
       AppUtils.showToast(AppConstants.noInternetMsg, false);
@@ -1068,23 +1083,49 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         }
       }
 
-      print("service_type=${service_type}");
-      print("selectedTagsList=${selectedTagsList}");
+      sun_open = selectedTagsList.contains("Sun") ? openTimeHashMap[openTimeHashMap["Sun"]] : "";
+      sun_close = selectedTagsList.contains("Sun") ? closeTimeHashMap[openTimeHashMap["Sun"]] : "";
+      mon_open = selectedTagsList.contains("Mon") ? openTimeHashMap[openTimeHashMap["Mon"]] : "";
+      mon_close = selectedTagsList.contains("Mon") ? closeTimeHashMap[openTimeHashMap["Mon"]] : "";
+      wed_open = selectedTagsList.contains("Wed") ? openTimeHashMap[openTimeHashMap["Wed"]] : "";
+      wed_close = selectedTagsList.contains("Wed") ? closeTimeHashMap[openTimeHashMap["Wed"]] : "";
+      thu_open = selectedTagsList.contains("Thu") ? openTimeHashMap[openTimeHashMap["Thu"]] : "";
+      thu_close = selectedTagsList.contains("Thu") ? closeTimeHashMap[openTimeHashMap["Thu"]] : "";
+      fri_open = selectedTagsList.contains("Fri") ? openTimeHashMap[openTimeHashMap["Fri"]] : "";
+      fri_close = selectedTagsList.contains("Fri") ? closeTimeHashMap[openTimeHashMap["Fri"]] : "";
+      sat_open = selectedTagsList.contains("Sat") ? openTimeHashMap[openTimeHashMap["Sat"]] : "";
+      sat_close = selectedTagsList.contains("Sat") ? closeTimeHashMap[openTimeHashMap["Sat"]] : "";
 
        for(int i = 0; i < selectedTagsList.length; i++){
         print("openTimeHashMap=${openTimeHashMap[selectedTagsList[i]]}");
         print("closeTimeHashMap=${closeTimeHashMap[selectedTagsList[i]]}");
       }
 
-      /*await getIt.get<AccountStepsDetailRepositoryImpl>().saveBusinessDetail(loginResponse.data.id,
+      AppUtils.showLoader(context);
+
+      BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>().saveBusinessDetail(loginResponse.data.id,
       business_id: businessDetailModel.data.businessDetail.businessId,business_name:businessNameCont.text,
       state: stateCont.text,pincode: pinCodeCont.text,city: cityCont.text,address: addressCont.text,
       service_type: service_type,radius:this.radius.toString(),lat: " 45.521563",lng: "-122.677433",
       business_identity_proof: _selectedProofTypeTag,business_identity_proof_number: idProofNumberCont.text,
       business_identity_proof_image: _selectedDocument,working_id:businessDetailModel.data.workingDetail.workingId,
-      sun_open: ,sun_close: ,mon_open: ,mon_close: ,tue_open: ,tue_close: ,wed_open: ,wed_close: ,
-          thu_open:,thu_close: ,fri_open: ,fri_close: ,sat_open: ,sat_close: ,);*/
+      sun_open: this.sun_open ,sun_close: this.sun_open ,mon_open: this.mon_open,mon_close:this.mon_close ,
+        tue_open:this.tue_open ,tue_close:this.tue_close ,wed_open:this.wed_open ,wed_close:this.wed_close ,
+          thu_open:this.thu_open,thu_close:this.thu_close ,fri_open:this.fri_open ,fri_close:this.fri_close ,
+        sat_open:this.sat_open ,sat_close:this.sat_close ,);
 
+      if(baseresponse != null){
+        AppUtils.showToast(baseresponse.message, true);
+        AppUtils.hideKeyboard(context);
+        AppUtils.hideLoader(context);
+        if(baseresponse.success)
+        Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
+              widget.voidCallback();
+              Navigator.of(context).pop();
+            },))
+        );
+      }
 
     }
   }

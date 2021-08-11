@@ -878,6 +878,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
+        if(baseresponse.success)
         Navigator.push(context, MaterialPageRoute(
             builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
               widget.voidCallback();
