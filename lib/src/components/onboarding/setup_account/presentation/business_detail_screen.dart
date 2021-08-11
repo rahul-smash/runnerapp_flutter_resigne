@@ -9,6 +9,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -1118,13 +1119,13 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
-        /*if(baseresponse.success)
+        if(baseresponse.success)
         Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
+            builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){
               widget.voidCallback();
               Navigator.of(context).pop();
             },))
-        );*/
+        );
       }
 
     }
