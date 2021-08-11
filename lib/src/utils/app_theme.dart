@@ -38,8 +38,9 @@ class AppTheme {
               ))));
 
   static Color primaryColor = Color(0xff334FE0);
-  static Color primaryColorLight = Color(0xff334FE0);
+  static Color primaryColorLight = Color(0xff635EEC);
   static Color primaryColorDark = Color(0xff8A6BF9);
+  static Color primaryColorDark2 = Color(0xff8F75F9);
   static Color backgroundColor = Colors.white;
   static Color white = Colors.white;
   static Color toastbgColor = Color(0xff656565);
@@ -49,6 +50,10 @@ class AppTheme {
   static Color black = Colors.black;
   static Color borderNotFocusedColor = Color(0xffE8E9EB);
   static Color borderOnFocusedColor = Color(0xffD2D3D8);
+  static Color containerBackgroundColor = Color(0xffECECEC);
   static Color buttonShadowColor = Color(0xffC8CFF2);
+  static Color optionTotalEarningColor = Color(0xff29C6C6);
+  static Color optionTotalBookingBgColor = Color(0xffFD7443);
+  static Color optionTotalCustomerBgColor = Color(0xffFE5767);
   static Color whiteDisable=Colors.white38;
 }

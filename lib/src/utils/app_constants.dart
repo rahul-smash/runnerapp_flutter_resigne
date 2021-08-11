@@ -1,3 +1,5 @@
+import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+
 class AppConstants {
   static bool isLoggerOn = true;
   static bool isLoggedIn = false;
@@ -13,11 +15,14 @@ class AppConstants {
 
   static const fontName = 'SFProDisplay';
 
-  static double extraLargeSize = 26.0;
-  static double smallSize = 16.0;
-  static double extraSmallSize = 14.0;
-  static double extraXSmallSize = 12.0;
-  static double tinySize = 10.0;
+  static double extraLargeSize = Dimensions.getScaledSize(26.0);
+  static double largeSize = Dimensions.getScaledSize(18.0);
+  static double smallSize = Dimensions.getScaledSize(16.0);
+  static double extraSmallSize = Dimensions.getScaledSize(14.0);
+  static double extraXSmallSize = Dimensions.getScaledSize(12.0);
+  static double tinySize = Dimensions.getScaledSize(10.0);
 
   static String noInternetMsg = "No internet connection!";
+
+  static String currency = '';
 }

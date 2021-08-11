@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_network_repository.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/item_new_request_booking.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/new_request_booking_screen.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
+import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/utils/app_constants.dart';
+import 'package:marketplace_service_provider/src/utils/app_images.dart';
+import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -14,63 +30,660 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  LoginResponse loginResponse;
+  List<String> _overviewOptions = List.empty(growable: true);
+  List<String> _filterOptions = List.empty(growable: true);
+  String _selectedOverviewOption = 'Today';
+  final PageController _pageController = PageController(initialPage: 0);
+
+  DashboardResponse _dashboardResponse;
+  BookingResponse _bookingResponse;
+
+  bool isDashboardApiLoading = true;
+  bool isBookingApiLoading = true;
+
+  int selectedFilterIndex = 0;
+
   @override
   void initState() {
     super.initState();
+    loginResponse = LoginUserSingleton.instance.loginResponse;
+    _overviewOptions.add('Today');
+    _overviewOptions.add('Yesterday');
+    _overviewOptions.add('7 days');
+    //Filter option
+    _filterOptions.add('All');
+    _filterOptions.add('Upcoming');
+    _filterOptions.add('Ongoing');
+    _filterOptions.add('Completed');
+    _filterOptions.add('Rejected');
+    _filterOptions.add('Cancelled');
+    _getDashboardSummary();
+  }
+
+  void _getDashboardSummary() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!getIt.get<NetworkConnectionObserver>().offline) {
+        AppUtils.showLoader(context);
+        isDashboardApiLoading = true;
+        _dashboardResponse = await getIt
+            .get<DashboardRepository>()
+            .getDashboardSummary(userId: loginResponse.data.id);
+        AppUtils.hideLoader(context);
+        isDashboardApiLoading = false;
+        setState(() {});
+      } else {
+        AppUtils.noNetWorkDialog(context);
+      }
+    });
+  }
+
+  void _getMyBookingOrders({bool isShowLoader = true}) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      if (isShowLoader) AppUtils.showLoader(context);
+      isBookingApiLoading = true;
+      _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
+          userId: loginResponse.data.id,
+          status: _getCurrentStatus(selectedFilterIndex));
+      AppUtils.hideLoader(context);
+      isBookingApiLoading = false;
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
+    setState(() {});
   }
 
   @override
   void dispose() {
     super.dispose();
+    _pageController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double mHeight = Dimensions.getHeight(percentage: 24);
     return new Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.white,
       body: Container(
           child: SingleChildScrollView(
-            child: Stack(
-              children: [
-                CommonWidgets.gradientContainer(context, mHeight, SizeConfig.screenWidth),
-
+        child: Stack(
+          children: [
+            //User Name
+            CommonWidgets.gradientContainer(
+                context,
+                -1,
+                SizeConfig.screenWidth,
                 Container(
-                    decoration: new BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: new BorderRadius.only(
-                            topLeft:  const  Radius.circular(30.0),
-                            topRight: const  Radius.circular(30.0))
-                    ),
-                    margin: EdgeInsets.fromLTRB(0,  Dimensions.getScaledSize(18), 0, 0),
-                    padding: EdgeInsets.fromLTRB(Dimensions.getScaledSize(20), Dimensions.getScaledSize(40),
-                        Dimensions.getScaledSize(20), 0),
-                    child: ListView(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      children: <Widget>[
-                        Container(
-                            margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-                            child: new Text(
-                              //AppConstant.txt_OTP,
-                              "Home",
-                              textAlign: TextAlign.center,
-                              style: new TextStyle(
-                                  fontSize: 20.0,
-                                  color: AppTheme.primaryColor,
-                                  fontWeight: FontWeight.w700
-                              ),
-                            )
-                        ),
-                        SizedBox(height: 30,),
-
-                      ],
-                    )
+                  margin: EdgeInsets.only(
+                      left: Dimensions.getScaledSize(45),
+                      bottom: Dimensions.getScaledSize(45)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Hi, ${loginResponse.data.fullName} ${loginResponse.data.lastName}",
+                        style: TextStyle(
+                            fontSize: Dimensions.getScaledSize(20),
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.white,
+                            fontFamily: AppConstants.fontName),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      //TODO: Handle this Date Concept
+//                      Text(
+//                        "Today, Thu 5 August",
+//                        style: TextStyle(
+//                            fontSize: Dimensions.getScaledSize(16),
+//                            fontWeight: FontWeight.normal,
+//                            color: AppTheme.subHeadingTextColor,
+//                            fontFamily: AppConstants.fontName),
+//                      ),
+                    ],
+                  ),
                 ),
-              ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [
+                  0.0,
+                  0.3,
+                  0.7,
+                  0.9
+                ],
+                colors: [
+                  AppTheme.primaryColor,
+                  AppTheme.primaryColor,
+                  AppTheme.primaryColorLight,
+                  AppTheme.primaryColorLight
+                ]),
+            Container(
+              width: SizeConfig.screenWidth,
+              decoration: new BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: new BorderRadius.only(
+                      topLeft: const Radius.circular(30.0),
+                      topRight: const Radius.circular(30.0))),
+              margin: EdgeInsets.only(top: Dimensions.getScaledSize(60)),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        Dimensions.getScaledSize(26),
+                        Dimensions.getScaledSize(16),
+                        Dimensions.getScaledSize(26),
+                        0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'Overview',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: Dimensions.getScaledSize(
+                                    AppConstants.largeSize),
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Flexible(
+                          child: SizedBox(
+                            width: 100,
+                            child: DropdownButtonFormField(
+                              dropdownColor: Colors.white,
+                              items: _overviewOptions.map((String options) {
+                                return DropdownMenuItem(
+                                    value: options,
+                                    child: Container(
+                                      child: Text(
+                                        options,
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                            color: AppTheme.subHeadingTextColor,
+                                            fontFamily: AppConstants.fontName,
+                                            fontSize: AppConstants.smallSize),
+                                      ),
+                                    ));
+                              }).toList(),
+                              onTap: () {},
+                              onChanged: (newValue) {
+                                // do other stuff with _category
+                                setState(
+                                    () => _selectedOverviewOption = newValue);
+                              },
+                              value: _selectedOverviewOption,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(0),
+                                filled: true,
+                                border: InputBorder.none,
+                                fillColor: AppTheme.transparent,
+                                focusColor: AppTheme.transparent,
+                                hoverColor: AppTheme.transparent,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        Dimensions.getScaledSize(22),
+                        0,
+                        Dimensions.getScaledSize(22),
+                        Dimensions.getScaledSize(22)),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Card(
+                            shadowColor: AppTheme.borderOnFocusedColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            elevation: 4,
+                            color: AppTheme.optionTotalEarningColor,
+                            margin: EdgeInsets.fromLTRB(
+                                Dimensions.pixels_5, 0, Dimensions.pixels_5, 0),
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: Image.asset(
+                                    AppImages.icon_totalearningfullicon,
+                                    height: 27,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(Dimensions.pixels_10),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 22,
+                                      ),
+                                      Text.rich(
+                                          TextSpan(
+                                            text: '${AppConstants.currency} ',
+                                            style: TextStyle(
+                                                fontSize:
+                                                    AppConstants.extraSmallSize,
+                                                color: AppTheme.white,
+                                                fontFamily:
+                                                    AppConstants.fontName,
+                                                fontWeight: FontWeight.normal),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text: _dashboardResponse
+                                                          ?.summery
+                                                          ?.totalEarning ??
+                                                      '--',
+                                                  style: TextStyle(
+                                                      fontSize: AppConstants
+                                                          .smallSize,
+                                                      color: AppTheme.white,
+                                                      fontFamily:
+                                                          AppConstants.fontName,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ],
+                                          ),
+                                          textAlign: TextAlign.center),
+                                      Text(
+                                        'Total Earnings',
+                                        style: TextStyle(
+                                            color: AppTheme.white,
+                                            fontFamily: AppConstants.fontName,
+                                            fontSize:
+                                                AppConstants.extraSmallSize),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Card(
+                            shadowColor: AppTheme.borderOnFocusedColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            elevation: 4,
+                            color: AppTheme.optionTotalBookingBgColor,
+                            margin: EdgeInsets.fromLTRB(
+                                Dimensions.pixels_5, 0, Dimensions.pixels_5, 0),
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: Image.asset(
+                                    AppImages.icon_totalbookingfullicon,
+                                    height: 27,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(Dimensions.pixels_10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 22,
+                                      ),
+                                      Text(
+                                        _dashboardResponse
+                                                ?.summery?.totalBookings ??
+                                            '--',
+                                        style: TextStyle(
+                                            fontSize: AppConstants.smallSize,
+                                            fontFamily: AppConstants.fontName,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.white),
+                                      ),
+                                      Text(
+                                        'Total Bookings',
+                                        style: TextStyle(
+                                            color: AppTheme.white,
+                                            fontFamily: AppConstants.fontName,
+                                            fontSize:
+                                                AppConstants.extraSmallSize),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Card(
+                            shadowColor: AppTheme.borderOnFocusedColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            elevation: 4,
+                            color: AppTheme.optionTotalCustomerBgColor,
+                            margin: EdgeInsets.fromLTRB(
+                                Dimensions.pixels_5, 0, Dimensions.pixels_5, 0),
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: Image.asset(
+                                    AppImages.icon_totalcustomerfullicon,
+                                    height: 27,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(Dimensions.pixels_10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 22,
+                                      ),
+                                      Text(
+                                        _dashboardResponse
+                                                ?.summery?.totalCustomers ??
+                                            '--',
+                                        style: TextStyle(
+                                            fontSize: AppConstants.smallSize,
+                                            fontFamily: AppConstants.fontName,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.white),
+                                      ),
+                                      Text(
+                                        'Total Customer',
+                                        style: TextStyle(
+                                            color: AppTheme.white,
+                                            fontFamily: AppConstants.fontName,
+                                            fontSize:
+                                                AppConstants.extraSmallSize),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _addNewBookingView(),
+                ],
+              ),
             ),
-          )
+          ],
+        ),
+      )),
+    );
+  }
+
+  _addNewBookingView() {
+    return Stack(
+      children: [
+        !isDashboardApiLoading &&
+                _dashboardResponse != null &&
+                _dashboardResponse.bookingRequests.isNotEmpty
+            ? ClipRRect(
+                borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(30.0),
+                    topRight: const Radius.circular(30.0)),
+                clipBehavior: Clip.antiAlias,
+                child: Container(
+                  decoration: new BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(30.0),
+                          topRight: const Radius.circular(30.0))),
+                  child: CommonWidgets.gradientContainer(
+                      context,
+                      Dimensions.getHeight(percentage: 47),
+                      SizeConfig.screenWidth,
+                      Padding(
+                        padding: EdgeInsets.all(
+                          Dimensions.getScaledSize(26),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'New Booking',
+                                  style: TextStyle(
+                                      fontSize: AppConstants.smallSize,
+                                      color: AppTheme.white,
+                                      fontFamily: AppConstants.fontName),
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    bool refreshData =
+                                        await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              NewRequestBookingScreen(
+                                                  _dashboardResponse)),
+                                    );
+                                    if (refreshData != null && refreshData) {
+                                      _getDashboardSummary();
+                                    }
+                                  },
+                                  child: Text(
+                                    'View All',
+                                    style: TextStyle(
+                                        fontSize: AppConstants.smallSize,
+                                        color: AppTheme.white,
+                                        fontFamily: AppConstants.fontName),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Flexible(
+                              child: PageView(
+                                /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+                                /// Use [Axis.vertical] to scroll vertically.
+                                scrollDirection: Axis.horizontal,
+                                controller: _pageController,
+                                children: _dashboardResponse.bookingRequests
+                                    .map((bookingRequest) =>
+                                        ItemNewRequestBooking(bookingRequest))
+                                    .toList(),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SmoothPageIndicator(
+                                controller: _pageController,
+                                count:
+                                    _dashboardResponse.bookingRequests.length,
+                                effect: ExpandingDotsEffect(
+                                  radius: 8,
+                                  dotHeight: 8,
+                                  dotWidth: 8,
+                                  dotColor: AppTheme.borderOnFocusedColor,
+                                  activeDotColor: AppTheme.white,
+                                  spacing: 5,
+                                )),
+                            SizedBox(
+                              height: 16,
+                            ),
+                          ],
+                        ),
+                      )),
+                ),
+              )
+            : Container(),
+        Container(
+          decoration: BoxDecoration(
+              color: AppTheme.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(Dimensions.getScaledSize(30)),
+                topRight: Radius.circular(Dimensions.getScaledSize(30)),
+              )),
+          margin: EdgeInsets.only(
+            top: Dimensions.getHeight(
+                percentage: _dashboardResponse != null &&
+                        _dashboardResponse.bookingRequests.isNotEmpty
+                    ? 43
+                    : 0),
+          ),
+          child: Center(
+              child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  Dimensions.getScaledSize(26),
+                  Dimensions.getScaledSize(30),
+                  Dimensions.getScaledSize(26),
+                  Dimensions.getScaledSize(26),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Recent Orders',
+                      style: TextStyle(
+                          fontSize: AppConstants.smallSize,
+                          color: AppTheme.subHeadingTextColor,
+                          fontFamily: AppConstants.fontName),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        //TODO: Navigate to My Booking Screen
+                      },
+                      child: Text(
+                        'View All',
+                        style: TextStyle(
+                            fontSize: AppConstants.smallSize,
+                            color: AppTheme.primaryColor,
+                            fontFamily: AppConstants.fontName),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: 30,
+                child: ListView.builder(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  itemCount: _filterOptions.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () async {
+                        setState(() {
+                          selectedFilterIndex = index;
+                        });
+                      },
+                      child: Container(
+                          height: 30,
+                          margin: EdgeInsets.only(left: 4, right: 4),
+                          padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+                          decoration: BoxDecoration(
+                              color: selectedFilterIndex == index
+                                  ? AppTheme.primaryColor.withOpacity(0.1)
+                                  : AppTheme.borderNotFocusedColor,
+                              border: Border.all(
+                                  color: selectedFilterIndex == index
+                                      ? AppTheme.primaryColor
+                                      : AppTheme.borderNotFocusedColor,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(30)),
+                          child: Row(
+                            children: [
+                              Text('${_filterOptions[index]}',
+                                  style: TextStyle(
+                                      color: AppTheme.mainTextColor,
+                                      fontSize: AppConstants.smallSize)),
+                            ],
+                          )),
+                    );
+                  },
+                ),
+              ),
+              _noOrderContainer(),
+            ],
+          )),
+        ),
+      ],
+    );
+  }
+
+  _noOrderContainer() {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 50,
+          ),
+          Image(
+            image: AssetImage(AppImages.icon_no_order_graphic),
+            height: Dimensions.getScaledSize(135),
+          ),
+          Text(
+            labelNoOrderYet,
+            style: TextStyle(
+                color: AppTheme.mainTextColor,
+                fontFamily: AppConstants.fontName,
+                fontWeight: FontWeight.w500,
+                fontSize: AppConstants.extraLargeSize),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            labelNoOrderYetMsg,
+            style: TextStyle(
+                color: AppTheme.subHeadingTextColor,
+                fontFamily: AppConstants.fontName,
+                fontWeight: FontWeight.w400,
+                fontSize: AppConstants.largeSize),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+        ],
       ),
     );
+  }
+
+  _getCurrentStatus(int selectedFilterIndex) {
+//    0 => 'pending',
+//    1 =>'accepted',
+//    2 =>'rejected',
+//    4 =>'ongoing',
+//    5 =>'completed',
+//    6 => 'cancelled' // cancelled by customer
+    switch (selectedFilterIndex) {
+      case 0:
+        return '0';
+        break; // all
+      case 1:
+        return '1';
+        break; // upcoming
+      case 2:
+        return '4';
+        break; // ongoing
+      case 3:
+        return '5';
+        break; // completed
+      case 4:
+        return '2';
+        break; // rejected
+      case 5:
+        return '6';
+        break; // cancelled
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboa
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -31,13 +32,12 @@ void main() async {
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
   if (kIsWeb) {
     await AppSharedPref.instance.setDevicePlatform(AppConstants.web);
-  }else{
-    if(Platform.isAndroid){
+  } else {
+    if (Platform.isAndroid) {
       await AppSharedPref.instance.setDevicePlatform(AppConstants.android);
-    }else if(Platform.isIOS){
+    } else if (Platform.isIOS) {
       await AppSharedPref.instance.setDevicePlatform(AppConstants.iOS);
     }
-
   }
   String jsonResult = await loadAsset();
   final parsed = json.decode(jsonResult);
@@ -46,25 +46,48 @@ void main() async {
 
   if (kIsWeb) {
     await AppSharedPref.instance.setDeviceId("12345678");
-  }else{
+  } else {
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
       await AppSharedPref.instance.setDeviceId(androidDeviceInfo.androidId);
     } else {
       IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-      await AppSharedPref.instance.setDeviceId(iosDeviceInfo.identifierForVendor);
+      await AppSharedPref.instance
+          .setDeviceId(iosDeviceInfo.identifierForVendor);
     }
   }
 
-
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await AppUtils.getDeviceInfo();
+
   if (!getIt.get<NetworkConnectionObserver>().offline) {
-    await getIt.get<VersionAuthRepository>().versionApi();
-    SingletonServiceLocations.instance.serviceLocationResponse = await getIt.get<VersionAuthRepository>().serviceLocationsApi();
+    StoreResponse storeResponse =
+        await getIt.get<VersionAuthRepository>().versionApi();
+    SingletonServiceLocations.instance.serviceLocationResponse =
+        await getIt.get<VersionAuthRepository>().serviceLocationsApi();
+    setStoreCurrency(storeResponse, configObject);
     runApp(MyApp());
   } else {
     runApp(NoNetworkApp());
+  }
+}
+
+/*Setting Store Currency*/
+void setStoreCurrency(StoreResponse storeResponse, ConfigModel configObject) {
+  if (storeResponse.brand.showCurrency == "symbol") {
+    if (storeResponse.brand.currency.isNotEmpty) {
+      AppConstants.currency =
+          AppUtils.removeAllHtmlTags(storeResponse.brand.currency);
+    } else {
+      AppConstants.currency = configObject.currency;
+    }
+  } else {
+    if (storeResponse.brand.currency.isNotEmpty) {
+      AppConstants.currency =
+          AppUtils.removeAllHtmlTags(storeResponse.brand.currency);
+    } else {
+      AppConstants.currency = configObject.currency;
+    }
   }
 }
 
@@ -78,10 +101,11 @@ class MyApp extends StatelessWidget {
 class MainWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SizeCustomConfig().init(
-        AppUtils.getDeviceHeight(context), AppUtils.getDeviceWidth(context), Orientation.portrait);
+    SizeCustomConfig().init(AppUtils.getDeviceHeight(context),
+        AppUtils.getDeviceWidth(context), Orientation.portrait);
     SizeConfig().init(context);
-    return Scaffold(body: AppConstants.isLoggedIn ? DashboardScreen(): LoginScreen());
+    return Scaffold(
+        body: AppConstants.isLoggedIn ? DashboardScreen() : LoginScreen());
   }
 }
 

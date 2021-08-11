@@ -8,6 +8,8 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:html/parser.dart';
+import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 appPrintLog(dynamic content) {
@@ -46,8 +48,7 @@ class AppUtils {
     param['device_id'] = deviceId;
     param['device_token'] = deviceToken;
     if (kIsWeb) {
-
-    }else{
+    } else {
       if (Platform.operatingSystem == "android") {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         param['device_brand'] = androidInfo.brand;
@@ -128,7 +129,6 @@ class AppUtils {
     return regex.hasMatch(value);
   }
 
-
   static double getDeviceWidth(BuildContext context) {
     return MediaQuery.of(context).size.width;
   }
@@ -144,8 +144,8 @@ class AppUtils {
         progressIndicator: CircularProgressIndicator(
           backgroundColor: Color(0xFFFF7443),
         ),
-        themeData: Theme.of(context)
-            .copyWith(accentColor: AppTheme.primaryColor),
+        themeData:
+            Theme.of(context).copyWith(accentColor: AppTheme.primaryColor),
         overlayColor: Color(0x99E8EAF6));
   }
 
@@ -157,4 +157,32 @@ class AppUtils {
     return string1?.toLowerCase() == string2?.toLowerCase();
   }
 
+  static String removeAllHtmlTags(String htmlText) {
+    try {
+      var document = parse(htmlText);
+      String parsedString = parse(document.body.text).documentElement.text;
+      return parsedString;
+    } catch (e) {
+      print(e);
+      return "";
+    }
+  }
+
+  static String noNetWorkDialog(BuildContext context, {Function onPressed}) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(labelErrorAlert),
+        content: Text(labelErrorNoInternet),
+        actions: <Widget>[
+          TextButton(
+              child: Text(labelOk),
+              onPressed: onPressed ??
+                  () {
+                    Navigator.pop(context);
+                  })
+        ],
+      ),
+    );
+  }
 }
