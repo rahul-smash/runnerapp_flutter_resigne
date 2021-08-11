@@ -248,10 +248,12 @@ class _SelectCategoryScreenState extends BaseState<SelectCategoryScreen> {
                                             AppUtils.hideKeyboard(context);
                                             if(response != null){
                                               AppUtils.showToast(response.message, true);
-                                              Navigator.pop(context);
-                                              Navigator.push(context, MaterialPageRoute(
-                                                  builder: (BuildContext context) => SetupProfileScreen())
-                                              );
+                                              if(response.success){
+                                                Navigator.pop(context);
+                                                Navigator.push(context, MaterialPageRoute(
+                                                    builder: (BuildContext context) => SetupProfileScreen())
+                                                );
+                                              }
                                             }
                                           },
                                           //onPressed: validateAndSave(isSubmitPressed: true),

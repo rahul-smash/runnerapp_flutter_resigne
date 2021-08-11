@@ -69,7 +69,9 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
     return Column(
       children: [
         Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                right: Dimensions.getScaledSize(20),
+            ),
             child: SliderTheme(
               data: SliderThemeData(
                 trackShape: CustomTrackShape(),
@@ -109,7 +111,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
             )
         ),
         Container(
-          margin: EdgeInsets.only(left: 0,top: 5,bottom: 10 ),
+          margin: EdgeInsets.only(left: 0,top: 5,bottom: 15 ),
           child: Center(
             child: Text(
               "${valueHolder} Km",
@@ -123,7 +125,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
           ),
         ),
         Container(
-          height: Dimensions.getHeight(percentage: 60),
+          height: Dimensions.getHeight(percentage: 40),
           child: GoogleMap(
             onMapCreated: _onMapCreated,
             mapType: MapType.normal,

@@ -49,14 +49,11 @@ class CategoryListRemoteDataSourceImpl extends DioBaseService implements Categor
   @override
   Future<BaseResponse> saveCategories(String userId,List<int> selectedCategoryIdsList) async{
     try {
-      //List<String> selectedCategoryIds = selectedCategoryIdsList.map((el) => el.toString()).toList();
-      //String jsonSelectedCategoryIds = jsonEncode(selectedCategoryIds);
-      print("selectedCategoryIdsList=${selectedCategoryIdsList}");
-      print(selectedCategoryIdsList.join(','));
       Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
-      param['category_ids '] = selectedCategoryIdsList.join(',');
+      param['category_ids'] = selectedCategoryIdsList.join(',');
       param['user_id'] = userId;
-      var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _saveCategories), param);
+      var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _saveCategories),
+          param);
       BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
       return loginResponse;
     } catch (e) {
