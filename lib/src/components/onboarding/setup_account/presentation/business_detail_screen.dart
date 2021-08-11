@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -41,6 +42,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   var pinCodeCont = TextEditingController();
   var cityCont = TextEditingController();
   var addressCont= TextEditingController();
+  var openTimeCont = TextEditingController();
+  var closeTimeCont = TextEditingController();
   List<String> workLocationList = [];
   String _selectedWorkLocationTag;
   String _selectedProofTypeTag;
@@ -49,6 +52,11 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   ImagePickerHandler imagePicker;
   File _selectedDocument;
   var docFileSize;
+  List<String> daysList = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  List<String> selectedTagsList = [];
+  List<String> selectedDaysList = [];
+  bool showSelectedDaysListvew = false;
+  HashMap<String,String> map = HashMap();
 
   @override
   void initState() {
@@ -593,6 +601,352 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                           ),
 
 
+                          Container(
+                            margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                                top: Dimensions.getScaledSize(30)
+                            ),
+                            child: Text(
+                              "I would like to work on",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: AppTheme.subHeadingTextColor,
+                                fontFamily: AppConstants.fontName,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(15, 20, 15, 5),
+                            child: Wrap(
+                              alignment: WrapAlignment.start,
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              spacing: 10,
+                              runSpacing: 5,
+                              children: daysList.map((tag) {
+                                return InkWell(
+                                    onTap: () {
+                                      if(showSelectedDaysListvew && selectedTagsList.contains(tag)){
+                                        map = new HashMap<String,String>();
+                                        map[tag] = tag;
+                                        setState(() {
+                                        });
+                                      }else{
+                                        if(selectedTagsList.contains(tag)){
+                                          selectedTagsList.remove(tag);
+                                        }else{
+                                          selectedTagsList.add(tag);
+                                        }
+                                        setState(() {
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      width: SizeConfig.screenWidth/7.5,
+                                      padding: EdgeInsets.only(left: 0, right: 0),
+                                      height: 35,
+                                      decoration: BoxDecoration(
+                                        color:  getBoxColor(tag),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          tag,textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppTheme.white),
+                                        ),
+                                      ),
+                                    ));
+                              }).toList(),
+                            ),
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                                top: Dimensions.getScaledSize(20)
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          "Open at",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: AppTheme.subHeadingTextColor,
+                                            fontFamily: AppConstants.fontName,
+                                          ),
+                                        ),
+                                      ),
+                                      TextFormField(
+                                        readOnly: true,
+                                        controller: openTimeCont,
+                                        keyboardType: TextInputType.text,
+                                        textInputAction: TextInputAction.next,
+                                        validator: (val) =>
+                                        val.isEmpty ? "Select time" : null,
+                                        onTap: () async {
+                                          TimeOfDay selectedTime =await AppUtils.selectTime(context);
+                                          print("selectedTime=${selectedTime}");
+                                          setState(() {
+                                            openTimeCont.text = "${selectedTime.format(context)}";
+                                          });
+                                        },
+                                        style: TextStyle(color: AppTheme.mainTextColor),
+                                        decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppTheme.borderNotFocusedColor)),
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppTheme.primaryColor)),
+                                          hintText: "Select time",
+                                          errorStyle: TextStyle(
+                                              fontSize: AppConstants.extraXSmallSize,
+                                              fontFamily: AppConstants.fontName),
+                                          hintStyle: TextStyle(
+                                              color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                          labelStyle: TextStyle(
+                                              color: AppTheme.mainTextColor, fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          "Close at",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: AppTheme.subHeadingTextColor,
+                                            fontFamily: AppConstants.fontName,
+                                          ),
+                                        ),
+                                      ),
+                                      TextFormField(
+                                        readOnly: true,
+                                        controller: closeTimeCont,
+                                        keyboardType: TextInputType.text,
+                                        textInputAction: TextInputAction.next,
+                                        validator: (val) =>
+                                        val.isEmpty ? "Select time" : null,
+                                        onTap: () async {
+                                          TimeOfDay selectedTime = await AppUtils.selectTime(context);
+                                          print("selectedTime=${selectedTime}");
+                                          setState(() {
+                                            closeTimeCont.text = "${selectedTime.format(context)}";
+                                          });
+                                        },
+                                        style: TextStyle(color: AppTheme.mainTextColor),
+                                        decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppTheme.borderNotFocusedColor)),
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppTheme.primaryColor)),
+                                          hintText: "Select time",
+                                          errorStyle: TextStyle(
+                                              fontSize: AppConstants.extraXSmallSize,
+                                              fontFamily: AppConstants.fontName),
+                                          hintStyle: TextStyle(
+                                              color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                          labelStyle: TextStyle(
+                                              color: AppTheme.mainTextColor, fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: GradientElevatedButton(
+                                      onPressed: () async {
+                                        if(selectedTagsList.isEmpty){
+                                          AppUtils.showToast("Please select work days!", true);
+                                          return;
+                                        }
+                                        if(openTimeCont.text.isEmpty){
+                                          AppUtils.showToast("Please open time!", true);
+                                          return;
+                                        }
+                                        if(closeTimeCont.text.isEmpty){
+                                          AppUtils.showToast("Please close time!", true);
+                                          return;
+                                        }
+                                        selectedDaysList = selectedTagsList;
+                                        setState(() {
+                                          showSelectedDaysListvew = true;
+                                        });
+                                      },
+                                      //onPressed: validateAndSave(isSubmitPressed: true),
+                                      buttonText: labelSave,),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.only(left: 20, right: 20,top: 20, bottom: 20),
+                            width: double.infinity,
+                            height: 5,
+                            color: AppTheme.grayCircle,
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                                top: Dimensions.getScaledSize(20)
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    child: Text(
+                                      "Days",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontFamily: AppConstants.fontName,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Text(
+                                      "Open at",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontFamily: AppConstants.fontName,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Text(
+                                      "Close at",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontFamily: AppConstants.fontName,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Icon(Icons.clear,color: Colors.white,),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Visibility(
+                            visible: showSelectedDaysListvew,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 20, right: 20,top: 10, bottom: 20),
+                              width: double.infinity,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: selectedDaysList.length,
+                                itemBuilder: (context,index){
+
+                                  return Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              "${selectedDaysList[index]}",
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                color: AppTheme.mainTextColor,
+                                                fontFamily: AppConstants.fontName,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              "${openTimeCont.text}",
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                color: AppTheme.mainTextColor,
+                                                fontFamily: AppConstants.fontName,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              "${closeTimeCont.text}",
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                color: AppTheme.mainTextColor,
+                                                fontFamily: AppConstants.fontName,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: (){
+
+                                            },
+                                            child: Container(
+                                              child: Icon(Icons.clear),
+                                            ),
+                                          )
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+
                           SizedBox(
                             height: 40,
                           ),
@@ -623,6 +977,31 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         ),
       ),
     );
+  }
+
+  getBoxColor(String tag) {
+    Color boxColor;
+    if(showSelectedDaysListvew){
+      if(selectedTagsList.contains(tag)){
+        if(map.containsKey(tag)){
+          boxColor = AppTheme.primaryColor;
+        }else{
+          boxColor = AppTheme.greenColor;
+        }
+      }else{
+        boxColor = AppTheme.grayCircle;
+      }
+    }else{
+      if(selectedTagsList.contains(tag)){
+        boxColor = AppTheme.primaryColor;
+      }else{
+        boxColor = AppTheme.grayCircle;
+      }
+    }
+    /*showSelectedDaysListvew
+        ? selectedTagsList.contains(tag) ? AppTheme.greenColor : AppTheme.grayCircle
+        : selectedTagsList.contains(tag) ? AppTheme.primaryColor : AppTheme.grayCircle*/
+    return boxColor;
   }
 }
 

@@ -210,4 +210,20 @@ class AppUtils {
     return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + ' ' + suffixes[i];
   }
 
+  static Future<TimeOfDay> selectTime(BuildContext context) async {
+    TimeOfDay selectedTime = TimeOfDay.now();
+    final TimeOfDay picked_s = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+        builder: (BuildContext context, Widget child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child,
+          );
+        });
+    if (picked_s != null && picked_s != selectedTime )
+      selectedTime = picked_s;
+    return selectedTime;
+  }
+
 }
