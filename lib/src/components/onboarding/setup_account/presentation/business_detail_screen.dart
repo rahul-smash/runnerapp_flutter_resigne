@@ -400,6 +400,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
 
                           Container(
                             child: GoogleMapScreen(
+                              businessDetailModel: businessDetailModel,
                               radius: businessDetailModel.data.businessDetail.radius.isEmpty
                                   ? 20
                                   : int.parse(businessDetailModel.data.businessDetail.radius),

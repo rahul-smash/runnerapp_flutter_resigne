@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
@@ -13,7 +14,9 @@ class GoogleMapScreen extends StatefulWidget {
 
   Function(int) callback;
   int radius;
-  GoogleMapScreen({@required this.callback,this.radius});
+  final BusinessDetailModel businessDetailModel;
+
+  GoogleMapScreen({@required this.callback,this.radius,this.businessDetailModel});
 
   @override
   _GoogleMapScreenState createState() {
@@ -38,6 +41,12 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   @override
   void initState() {
     super.initState();
+    if(widget.businessDetailModel.data.businessDetail.lat.isNotEmpty
+        && widget.businessDetailModel.data.businessDetail.lng.isNotEmpty){
+       latitude = double.parse(widget.businessDetailModel.data.businessDetail.lat);
+       longitude = double.parse(widget.businessDetailModel.data.businessDetail.lng);
+    }
+
     valueHolder = widget.radius;
     _center = LatLng(latitude, longitude);
     print("--radius--${(valueHolder * 1000).toDouble()}-getZoomLevel()-=${getZoomLevel(2000)}");
@@ -130,7 +139,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
           ),
         ),
         Container(
-          height: Dimensions.getHeight(percentage: 40),
+          height: Dimensions.getHeight(percentage: 60),
           child: GoogleMap(
             onMapCreated: _onMapCreated,
             mapType: MapType.normal,
