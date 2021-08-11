@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -400,7 +399,11 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                           ),
 
                           Container(
-                            child: GoogleMapScreen(callback: (radius){
+                            child: GoogleMapScreen(
+                              radius: businessDetailModel.data.businessDetail.radius.isEmpty
+                                  ? 20
+                                  : int.parse(businessDetailModel.data.businessDetail.radius),
+                              callback: (radius){
                               this.radius = radius;
                             },)
                           ),
@@ -1084,18 +1087,18 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         }
       }
 
-      sun_open = selectedTagsList.contains("Sun") ? openTimeHashMap[openTimeHashMap["Sun"]] : "";
-      sun_close = selectedTagsList.contains("Sun") ? closeTimeHashMap[openTimeHashMap["Sun"]] : "";
-      mon_open = selectedTagsList.contains("Mon") ? openTimeHashMap[openTimeHashMap["Mon"]] : "";
-      mon_close = selectedTagsList.contains("Mon") ? closeTimeHashMap[openTimeHashMap["Mon"]] : "";
-      wed_open = selectedTagsList.contains("Wed") ? openTimeHashMap[openTimeHashMap["Wed"]] : "";
-      wed_close = selectedTagsList.contains("Wed") ? closeTimeHashMap[openTimeHashMap["Wed"]] : "";
-      thu_open = selectedTagsList.contains("Thu") ? openTimeHashMap[openTimeHashMap["Thu"]] : "";
-      thu_close = selectedTagsList.contains("Thu") ? closeTimeHashMap[openTimeHashMap["Thu"]] : "";
-      fri_open = selectedTagsList.contains("Fri") ? openTimeHashMap[openTimeHashMap["Fri"]] : "";
-      fri_close = selectedTagsList.contains("Fri") ? closeTimeHashMap[openTimeHashMap["Fri"]] : "";
-      sat_open = selectedTagsList.contains("Sat") ? openTimeHashMap[openTimeHashMap["Sat"]] : "";
-      sat_close = selectedTagsList.contains("Sat") ? closeTimeHashMap[openTimeHashMap["Sat"]] : "";
+      sun_open = selectedTagsList.contains("Sun") ? openTimeHashMap["Sun"] : "";
+      sun_close = selectedTagsList.contains("Sun") ? closeTimeHashMap["Sun"] : "";
+      mon_open = selectedTagsList.contains("Mon") ? openTimeHashMap["Mon"] : "";
+      mon_close = selectedTagsList.contains("Mon") ? closeTimeHashMap["Mon"] : "";
+      wed_open = selectedTagsList.contains("Wed") ? openTimeHashMap["Wed"] : "";
+      wed_close = selectedTagsList.contains("Wed") ? closeTimeHashMap["Wed"] : "";
+      thu_open = selectedTagsList.contains("Thu") ? openTimeHashMap["Thu"] : "";
+      thu_close = selectedTagsList.contains("Thu") ? closeTimeHashMap["Thu"] : "";
+      fri_open = selectedTagsList.contains("Fri") ? openTimeHashMap["Fri"] : "";
+      fri_close = selectedTagsList.contains("Fri") ? closeTimeHashMap["Fri"] : "";
+      sat_open = selectedTagsList.contains("Sat") ? openTimeHashMap["Sat"] : "";
+      sat_close = selectedTagsList.contains("Sat") ? closeTimeHashMap["Sat"] : "";
 
       AppUtils.showLoader(context);
 
@@ -1114,13 +1117,13 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
-        if(baseresponse.success)
+        /*if(baseresponse.success)
         Navigator.push(context, MaterialPageRoute(
             builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
               widget.voidCallback();
               Navigator.of(context).pop();
             },))
-        );
+        );*/
       }
 
     }
@@ -1150,6 +1153,66 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
       _selectedDocument = File("");
       docFileSize = "";
     }
+
+    //selectedTagsList
+    if(businessDetailModel.data.workingDetail.sunOpen.isNotEmpty){
+      selectedTagsList.add("Sun");
+      openTimeHashMap["Sun"] = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeHashMap["Sun"] = businessDetailModel.data.workingDetail.sunClose;
+      showSelectedDaysListvew = true;
+      openTimeCont.text = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeCont.text = businessDetailModel.data.workingDetail.sunClose;
+    }
+    if(businessDetailModel.data.workingDetail.monOpen.isNotEmpty){
+      selectedTagsList.add("Mon");
+      openTimeHashMap["Mon"] = businessDetailModel.data.workingDetail.monOpen;
+      closeTimeHashMap["Mon"] = businessDetailModel.data.workingDetail.monClose;
+      showSelectedDaysListvew = true;
+      openTimeCont.text = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeCont.text = businessDetailModel.data.workingDetail.sunClose;
+    }
+    if(businessDetailModel.data.workingDetail.tueOpen.isNotEmpty){
+      selectedTagsList.add("Tue");
+      openTimeHashMap["Tue"] = businessDetailModel.data.workingDetail.tueOpen;
+      closeTimeHashMap["Tue"] = businessDetailModel.data.workingDetail.tueClose;
+      showSelectedDaysListvew = true;
+      openTimeCont.text = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeCont.text = businessDetailModel.data.workingDetail.sunClose;
+    }
+    if(businessDetailModel.data.workingDetail.wedOpen.isNotEmpty){
+      selectedTagsList.add("Wed");
+      openTimeHashMap["Wed"] = businessDetailModel.data.workingDetail.wedOpen;
+      closeTimeHashMap["Wed"] = businessDetailModel.data.workingDetail.wedClose;
+      showSelectedDaysListvew = true;
+      openTimeCont.text = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeCont.text = businessDetailModel.data.workingDetail.sunClose;
+    }
+    if(businessDetailModel.data.workingDetail.thuOpen.isNotEmpty){
+      selectedTagsList.add("Thu");
+      openTimeHashMap["Thu"] = businessDetailModel.data.workingDetail.thuOpen;
+      closeTimeHashMap["Thu"] = businessDetailModel.data.workingDetail.thuClose;
+      showSelectedDaysListvew = true;
+      openTimeCont.text = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeCont.text = businessDetailModel.data.workingDetail.sunClose;
+    }
+    if(businessDetailModel.data.workingDetail.friOpen.isNotEmpty){
+      selectedTagsList.add("Fri");
+      openTimeHashMap["Fri"] = businessDetailModel.data.workingDetail.friOpen;
+      closeTimeHashMap["Fri"] = businessDetailModel.data.workingDetail.friClose;
+      showSelectedDaysListvew = true;
+      openTimeCont.text = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeCont.text = businessDetailModel.data.workingDetail.sunClose;
+    }
+    if(businessDetailModel.data.workingDetail.satOpen.isNotEmpty){
+      selectedTagsList.add("Sat");
+      openTimeHashMap["Sat"] = businessDetailModel.data.workingDetail.satOpen;
+      closeTimeHashMap["Sat"] = businessDetailModel.data.workingDetail.satClose;
+      showSelectedDaysListvew = true;
+      openTimeCont.text = businessDetailModel.data.workingDetail.sunOpen;
+      closeTimeCont.text = businessDetailModel.data.workingDetail.sunClose;
+    }
+
+    selectedDaysList = selectedTagsList;
 
     setState(() {
     });

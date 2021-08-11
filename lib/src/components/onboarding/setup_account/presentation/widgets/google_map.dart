@@ -12,7 +12,8 @@ import '../business_detail_screen.dart';
 class GoogleMapScreen extends StatefulWidget {
 
   Function(int) callback;
-  GoogleMapScreen({@required this.callback});
+  int radius;
+  GoogleMapScreen({@required this.callback,this.radius});
 
   @override
   _GoogleMapScreenState createState() {
@@ -27,7 +28,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   double latitude = 45.521563;
   double longitude = -122.677433;
   LatLng _center;
-  int valueHolder = 20;
+  int valueHolder;
   Set<Circle> circles = {};
 
   void _onMapCreated(GoogleMapController controller) {
@@ -37,6 +38,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   @override
   void initState() {
     super.initState();
+    valueHolder = widget.radius;
     _center = LatLng(latitude, longitude);
     print("--radius--${(valueHolder * 1000).toDouble()}-getZoomLevel()-=${getZoomLevel(2000)}");
     widget.callback(20);
