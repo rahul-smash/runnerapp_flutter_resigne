@@ -58,24 +58,25 @@ class _HomeScreenState extends State<HomeScreen> {
     _filterOptions.add('Completed');
     _filterOptions.add('Rejected');
     _filterOptions.add('Cancelled');
-    _getDashboardSummary();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _getDashboardSummary();
+      _getMyBookingOrders();
+    });
   }
 
   void _getDashboardSummary() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!getIt.get<NetworkConnectionObserver>().offline) {
-        AppUtils.showLoader(context);
-        isDashboardApiLoading = true;
-        _dashboardResponse = await getIt
-            .get<DashboardRepository>()
-            .getDashboardSummary(userId: loginResponse.data.id);
-        AppUtils.hideLoader(context);
-        isDashboardApiLoading = false;
-        setState(() {});
-      } else {
-        AppUtils.noNetWorkDialog(context);
-      }
-    });
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      AppUtils.showLoader(context);
+      isDashboardApiLoading = true;
+      _dashboardResponse = await getIt
+          .get<DashboardRepository>()
+          .getDashboardSummary(userId: loginResponse.data.id);
+      AppUtils.hideLoader(context);
+      isDashboardApiLoading = false;
+      setState(() {});
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
   }
 
   void _getMyBookingOrders({bool isShowLoader = true}) async {
@@ -85,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: loginResponse.data.id,
           status: _getCurrentStatus(selectedFilterIndex));
+      _getFilterCount();
       AppUtils.hideLoader(context);
       isBookingApiLoading = false;
     } else {
@@ -583,6 +585,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () async {
                         setState(() {
                           selectedFilterIndex = index;
+                          _getMyBookingOrders();
                         });
                       },
                       child: Container(
@@ -684,6 +687,19 @@ class _HomeScreenState extends State<HomeScreen> {
       case 5:
         return '6';
         break; // cancelled
+    }
+  }
+
+  _getFilterCount() {
+    if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
+      _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
+      _filterOptions[1] =
+          '${_bookingResponse.bookingCounts.upcoming} | Upcoming';
+      _filterOptions[2] = '${_bookingResponse.bookingCounts.ongoing} | Ongoing';
+      _filterOptions[3] =
+          '${_bookingResponse.bookingCounts.completed} | Completed';
+      _filterOptions[4] =
+          '${_bookingResponse.bookingCounts.rejected} | Rejected';
     }
   }
 }

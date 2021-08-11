@@ -43,7 +43,7 @@ class DashboardNetworkRepository extends DioBaseService {
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
-      param['user_id'] = user_id;
+      param['user_id'] = '5';
       param['status'] = status;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
