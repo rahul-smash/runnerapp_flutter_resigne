@@ -35,6 +35,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   AnimationController _controller;
   ImagePickerHandler imagePicker;
   List<WorkDetailDocumentModel> workPhotographsDocList = [];
+  List<WorkDetailDocumentModel> certificatesAwardsDocList = [];
 
   @override
   void initState() {
@@ -292,7 +293,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           Visibility(
-                            visible: true,
+                            visible: certificatesAwardsDocList.length > 3 ? false : true,
                             child: InkWell(
                               child: DottedBorder(
                                 dashPattern: [3, 3, 3, 3],
@@ -328,11 +329,14 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                 ),
                               ),
                               onTap: (){
-                                imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
+                                imagePicker.showDialog(context,docImage1: false,profileImage: false,docImage2:true);
                               },
                             ),
                           ),
-
+                          SizedBox(
+                            height: 20,
+                          ),
+                          showCertificatesAwardsList(),
 
                           SizedBox(
                             height: 20,
@@ -380,13 +384,19 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         setState(() {
         });
       }
+      if(docImage2){
+        File file  = File(_image.path);
+        var fileSize = await AppUtils.getFileSize(file.path, 1);
+        certificatesAwardsDocList.add(WorkDetailDocumentModel(file,fileSize));
+        setState(() {
+        });
+      }
     } catch (e) {
       print(e);
     }
   }
 
   showWorkPhotoGraphsList() {
-
     return ListView.builder(
       shrinkWrap: true,
       itemCount: workPhotographsDocList.length,
@@ -425,4 +435,45 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
       },
     );
   }
+
+  showCertificatesAwardsList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: certificatesAwardsDocList.length,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context,index){
+        WorkDetailDocumentModel workDetailDocumentModel = certificatesAwardsDocList[index];
+        File file = workDetailDocumentModel.file;
+        return Container(
+          margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: shadow,
+            border: Border.all(
+              color: Colors.grey,
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          child: ListTile(
+            leading: Container(height: double.infinity,
+                child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
+            ),
+            title: Text(file == null ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
+            subtitle: Text("${workDetailDocumentModel.fileSize}"),
+            trailing: InkWell(
+              onTap: (){
+                setState(() {
+
+                });
+              },
+              child: Icon(Icons.clear),
+            ),
+            contentPadding: EdgeInsets.only(left: 10,right: 10),
+          ),
+        );
+      },
+    );
+  }
+
 }
