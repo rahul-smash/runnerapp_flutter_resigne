@@ -23,9 +23,10 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
 
   GoogleMapController myController;
   List<Marker> _markers = <Marker>[];
-  final LatLng _center = LatLng(45.521563, -122.677433);
+  double latitude = 45.521563;
+  double longitude = -122.677433;
+  LatLng _center;
   int valueHolder = 20;
-  //double radiusValue;
   Set<Circle> circles = {};
 
   void _onMapCreated(GoogleMapController controller) {
@@ -35,12 +36,13 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   @override
   void initState() {
     super.initState();
-    //radiusValue = 2000;
+    _center = LatLng(latitude, longitude);
+    print("--radius--${(valueHolder * 1000).toDouble()}-getZoomLevel()-=${getZoomLevel(2000)}");
     circles = Set.from([
       Circle(
           circleId: CircleId("myCircle"),
-          radius: 2000,
-          center: LatLng(45.521563, -122.677433),
+          radius: (valueHolder * 1000).toDouble(),
+          center: LatLng(latitude, longitude),
           fillColor: Colors.white.withOpacity(0.5),
           strokeColor: AppTheme.primaryColor,
           strokeWidth: 2,
@@ -51,7 +53,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
     _markers.add(
         Marker(
             markerId: MarkerId('1122'),
-            position: LatLng(45.521563, -122.677433),
+            position: LatLng(latitude, longitude),
         )
     );
   }
@@ -85,8 +87,8 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
                     circles = Set.from([
                       Circle(
                           circleId: CircleId("myCircle"),
-                          radius: (newValue.roundToDouble() * 100),
-                          center: LatLng(45.521563, -122.677433),
+                          radius: (newValue.roundToDouble() * 1000),
+                          center: LatLng(latitude, longitude),
                           fillColor: Colors.white.withOpacity(0.5),
                           strokeColor: AppTheme.primaryColor,
                           strokeWidth: 2,
@@ -94,7 +96,8 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
                             print('circle pressed');
                           })
                     ]);
-                    //print("====meter= ${newValue.roundToDouble()}");
+                    myController.animateCamera(CameraUpdate.newCameraPosition(
+                        CameraPosition(target: LatLng(latitude, longitude), zoom: getZoomLevel((newValue.roundToDouble() * 1000)))));
                     setState(() {
                       valueHolder = newValue.round();
                     });
@@ -109,7 +112,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
           margin: EdgeInsets.only(left: 0,top: 5,bottom: 10 ),
           child: Center(
             child: Text(
-              "${valueHolder} meters",
+              "${valueHolder} Km",
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 16.0,
@@ -120,7 +123,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
           ),
         ),
         Container(
-          height: Dimensions.getHeight(percentage: 30),
+          height: Dimensions.getHeight(percentage: 60),
           child: GoogleMap(
             onMapCreated: _onMapCreated,
             mapType: MapType.normal,
@@ -131,7 +134,8 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
             circles: circles,
             initialCameraPosition: CameraPosition(
               target: _center,
-              zoom: 12.0,
+              zoom: 10.0,
+              //zoom: getZoomLevel((valueHolder * 1000).toDouble()),
             ),
           ),
         ),
