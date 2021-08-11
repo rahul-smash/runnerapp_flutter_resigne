@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -304,7 +305,11 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
           },))
       );
     } else if(index == 2){
-
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){
+            setState(() {
+            });
+          },)));
     } else if(index == 3){
 
     }
