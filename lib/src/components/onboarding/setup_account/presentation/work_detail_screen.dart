@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/work_detail_document_model.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -28,12 +31,10 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
 
   final _key = GlobalKey<FormState>();
   bool isLoading = false;
-
   var experienceCont = TextEditingController();
-
   AnimationController _controller;
   ImagePickerHandler imagePicker;
-
+  List<WorkDetailDocumentModel> workPhotographsDocList = [];
 
   @override
   void initState() {
@@ -212,7 +213,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           Visibility(
-                            visible: true,
+                            visible: workPhotographsDocList.length > 3 ? false : true,
                             child: InkWell(
                               child: DottedBorder(
                                 dashPattern: [3, 3, 3, 3],
@@ -248,10 +249,15 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                 ),
                               ),
                               onTap: (){
-                                imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
+                                imagePicker.showDialog(context,docImage1: true, profileImage: false,docImage2: false);
                               },
                             ),
                           ),
+
+                          SizedBox(
+                            height: 20,
+                          ),
+                          showWorkPhotoGraphsList(),
 
                           SizedBox(
                             height: 20,
@@ -360,7 +366,63 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   void callApi() {}
 
   @override
-  selectedProfileImage(XFile _image, bool profileImage, bool docImage1, bool docImage2) {
+  selectedProfileImage(XFile _image, bool profileImage, bool docImage1, bool docImage2) async {
+    try {
+      if(_image == null){
+            AppUtils.showToast("Invalid Image!", true);
+            return;
+          }
+      print("XFile=${_image.path} and ${docImage1}");
+      if(docImage1){
+        File file  = File(_image.path);
+        var fileSize = await AppUtils.getFileSize(file.path, 1);
+        workPhotographsDocList.add(WorkDetailDocumentModel(file,fileSize));
+        setState(() {
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
+  showWorkPhotoGraphsList() {
+
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: workPhotographsDocList.length,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context,index){
+        WorkDetailDocumentModel workDetailDocumentModel = workPhotographsDocList[index];
+        File file = workDetailDocumentModel.file;
+        return Container(
+          margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: shadow,
+            border: Border.all(
+              color: Colors.grey,
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          child: ListTile(
+            leading: Container(height: double.infinity,
+                child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
+            ),
+            title: Text(file == null ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
+            subtitle: Text("${workDetailDocumentModel.fileSize}"),
+            trailing: InkWell(
+              onTap: (){
+                setState(() {
+
+                });
+              },
+              child: Icon(Icons.clear),
+            ),
+            contentPadding: EdgeInsets.only(left: 10,right: 10),
+          ),
+        );
+      },
+    );
   }
 }
