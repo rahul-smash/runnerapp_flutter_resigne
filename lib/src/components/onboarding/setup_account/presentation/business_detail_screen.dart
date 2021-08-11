@@ -59,6 +59,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   HashMap<String,String> map = HashMap();
   HashMap<String,String> openTimeHashMap = HashMap();
   HashMap<String,String> closeTimeHashMap = HashMap();
+  int radius;
 
   @override
   void initState() {
@@ -251,7 +252,6 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                     Expanded(
                                       child: TextFormField(
                                         controller: pinCodeCont,
-                                        readOnly: true,
                                         keyboardType: TextInputType.text,
                                         textInputAction: TextInputAction.next,
                                         validator: (val) =>
@@ -288,7 +288,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                   keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.send,
                                   validator: (val) =>
-                                  val.isEmpty ? labelErrorMobileNumber : null,
+                                  val.isEmpty ? "Enter your city" : null,
                                   onFieldSubmitted: (value) async {
 
                                   },
@@ -318,7 +318,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                   keyboardType: TextInputType.emailAddress,
                                   textInputAction: TextInputAction.send,
                                   validator: (val) =>
-                                  val.isEmpty ? labelErrorEmail : null,
+                                  val.isEmpty ? "Enter address" : null,
                                   onFieldSubmitted: (value) async {
 
                                   },
@@ -398,7 +398,9 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                           ),
 
                           Container(
-                            child: GoogleMapScreen()
+                            child: GoogleMapScreen(callback: (radius){
+                              this.radius = radius;
+                            },)
                           ),
 
                           Container(
@@ -420,6 +422,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                             child: Wrap(
                               crossAxisAlignment: WrapCrossAlignment.start,
                               spacing: 15,
+                              runSpacing: 5,
                               children: businessDetailModel.data.businessIdentityProofList.map((tag) {
                                 return InkWell(
                                     onTap: () {
@@ -592,6 +595,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                     onTap: (){
                                       setState(() {
                                         _selectedDocument = null;
+                                        docFileSize = null;
                                       });
                                     },
                                     child: Icon(Icons.clear),
@@ -1001,10 +1005,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                             width: MediaQuery.of(context).size.width,
                             child: GradientElevatedButton(
                               onPressed: () async {
-                                if(this.network.offline){
-                                  AppUtils.showToast(AppConstants.noInternetMsg, false);
-                                  return;
-                                }
+                                callApi();
                               },
                               //onPressed: validateAndSave(isSubmitPressed: true),
                               buttonText: labelSaveNext,),
@@ -1044,10 +1045,48 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         boxColor = AppTheme.grayCircle;
       }
     }
-    /*showSelectedDaysListvew
-        ? selectedTagsList.contains(tag) ? AppTheme.greenColor : AppTheme.grayCircle
-        : selectedTagsList.contains(tag) ? AppTheme.primaryColor : AppTheme.grayCircle*/
     return boxColor;
+  }
+
+  Future<void> callApi() async {
+    if(this.network.offline){
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+    final FormState form = _key.currentState;
+    if (form.validate()) {
+      if(_selectedDocument == null){
+        AppUtils.showToast("Please upload document!", true);
+        return;
+      }
+
+      String service_type;
+      for(int i = 0; i < workLocationList.length; i++){
+        if(_selectedWorkLocationTag == workLocationList[i]){
+          service_type = i.toString();
+          break;
+        }
+      }
+
+      print("service_type=${service_type}");
+      print("selectedTagsList=${selectedTagsList}");
+
+       for(int i = 0; i < selectedTagsList.length; i++){
+        print("openTimeHashMap=${openTimeHashMap[selectedTagsList[i]]}");
+        print("closeTimeHashMap=${closeTimeHashMap[selectedTagsList[i]]}");
+      }
+
+      /*await getIt.get<AccountStepsDetailRepositoryImpl>().saveBusinessDetail(loginResponse.data.id,
+      business_id: businessDetailModel.data.businessDetail.businessId,business_name:businessNameCont.text,
+      state: stateCont.text,pincode: pinCodeCont.text,city: cityCont.text,address: addressCont.text,
+      service_type: service_type,radius:this.radius.toString(),lat: " 45.521563",lng: "-122.677433",
+      business_identity_proof: _selectedProofTypeTag,business_identity_proof_number: idProofNumberCont.text,
+      business_identity_proof_image: _selectedDocument,working_id:businessDetailModel.data.workingDetail.workingId,
+      sun_open: ,sun_close: ,mon_open: ,mon_close: ,tue_open: ,tue_close: ,wed_open: ,wed_close: ,
+          thu_open:,thu_close: ,fri_open: ,fri_close: ,sat_open: ,sat_close: ,);*/
+
+
+    }
   }
 }
 

@@ -21,6 +21,7 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   static const _getProfileInfo = '/runner_authentication/getProfileInfo/';
   static const _updateProfile = '/runner_authentication/updateProfile';
   static const _getBusinessDetail = '/runner_authentication/getBusinessDetail/';
+  static const _saveBusinessDetail = '/runner_authentication/updateBusinessDetail';
 
 
   String apiPath(String storeId, String path) =>
@@ -110,6 +111,55 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
     } catch (e) {
     }
     return null;
+  }
+
+  @override
+  Future<BaseResponse> saveBusinessDetail(String userId,{String business_id,String business_name,String address,
+    String city,String state,String pincode,String lat,String lng,
+    String radius,String service_type,
+    String business_identity_proof,String business_identity_proof_number,File business_identity_proof_image,
+    String working_id,
+    String sun_open,String sun_close,String mon_open,String mon_close,
+    String tue_open,String tue_close,String wed_open,String wed_close,
+    String thu_open,String thu_close,String fri_open,String fri_close,
+    String sat_open,String sat_close}) {
+
+    Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+    FormData formData;
+
+    formData = FormData.fromMap({
+      'platform': param["platform"],
+      'device_id': param["device_id"],
+      'user_id': userId,
+      'business_id': business_id,
+      'business_name': business_name,
+      'address': address,
+      'city': city,
+      'state': state,
+      'pincode': pincode,
+      'lat': lat,
+      'lng': lng,
+      'radius': radius,
+      'service_type': service_type,
+      'business_identity_proof': business_identity_proof,
+      'business_identity_proof_number': business_identity_proof_number,
+      //'business_identity_proof_image': selectedProofTypeTag,
+      'working_id': working_id,
+      'sun_open': sun_open,
+      'sun_close': sun_close,
+      'mon_open': mon_open,
+      'mon_close': mon_close,
+      'tue_open': tue_open,
+      'tue_close': tue_close,
+      'wed_open': wed_open,
+      'wed_close': wed_close,
+      'thu_open': thu_open,
+      'thu_close': thu_close,
+      'fri_open': fri_open,
+      'fri_close': fri_close,
+      'sat_open': sat_open,
+      'sat_close': sat_close,
+        });
   }
 
 
