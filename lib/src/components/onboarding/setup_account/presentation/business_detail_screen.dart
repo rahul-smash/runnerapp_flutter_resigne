@@ -76,6 +76,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
     });
     getIt.get<AccountStepsDetailRepositoryImpl>().getBusinessDetail(loginResponse.data.id).then((value){
       businessDetailModel = value;
+      setBusinessData();
       workLocationList = businessDetailModel.data.serviceType;
       _selectedWorkLocationTag = workLocationList.first;
       _selectedProofTypeTag = businessDetailModel.data.businessIdentityProofList.first;
@@ -589,7 +590,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                   leading: Container(height: double.infinity,
                                       child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
                                   ),
-                                  title: Text(_selectedDocument == null ? "" : '${_selectedDocument.path.split('/').last}',
+                                  title: Text(_selectedDocument == null ? "" : _selectedDocument.path.isEmpty ? "${businessDetailModel.data.businessDetail.businessIdentityProofImage.split('/').last}" : '${_selectedDocument.path.split('/').last}',
                                       maxLines: 2,overflow: TextOverflow.ellipsis),
                                   subtitle: Text(docFileSize == null ? "" : '${docFileSize}'),
                                   trailing: InkWell(
@@ -1096,11 +1097,6 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
       sat_open = selectedTagsList.contains("Sat") ? openTimeHashMap[openTimeHashMap["Sat"]] : "";
       sat_close = selectedTagsList.contains("Sat") ? closeTimeHashMap[openTimeHashMap["Sat"]] : "";
 
-       for(int i = 0; i < selectedTagsList.length; i++){
-        print("openTimeHashMap=${openTimeHashMap[selectedTagsList[i]]}");
-        print("closeTimeHashMap=${closeTimeHashMap[selectedTagsList[i]]}");
-      }
-
       AppUtils.showLoader(context);
 
       BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>().saveBusinessDetail(loginResponse.data.id,
@@ -1128,6 +1124,35 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
       }
 
     }
+  }
+
+  void setBusinessData() {
+    businessNameCont.text = businessDetailModel.data.businessDetail.businessName;
+    stateCont.text = businessDetailModel.data.businessDetail.state;
+    pinCodeCont.text = businessDetailModel.data.businessDetail.pincode;
+    cityCont.text = businessDetailModel.data.businessDetail.city;
+    addressCont.text = businessDetailModel.data.businessDetail.address;
+    idProofNumberCont.text = businessDetailModel.data.businessDetail.businessIdentityProofNumber;
+
+    if(businessDetailModel.data.businessDetail.serviceType.isNotEmpty){
+      for(int i = 0; i < workLocationList.length; i++){
+        if(int.parse(businessDetailModel.data.businessDetail.serviceType) == i){
+          _selectedWorkLocationTag = workLocationList[i];
+          break;
+        }
+      }
+    }
+    if(businessDetailModel.data.businessDetail.businessIdentityProof.isNotEmpty){
+      _selectedProofTypeTag = businessDetailModel.data.businessDetail.businessIdentityProof;
+    }
+
+    if(businessDetailModel.data.businessDetail.businessIdentityProofImage.isNotEmpty){
+      _selectedDocument = File("");
+      docFileSize = "";
+    }
+
+    setState(() {
+    });
   }
 }
 
