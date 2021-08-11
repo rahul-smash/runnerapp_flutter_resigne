@@ -57,6 +57,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   List<String> selectedDaysList = [];
   bool showSelectedDaysListvew = false;
   HashMap<String,String> map = HashMap();
+  HashMap<String,String> openTimeHashMap = HashMap();
+  HashMap<String,String> closeTimeHashMap = HashMap();
 
   @override
   void initState() {
@@ -628,13 +630,21 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                       if(showSelectedDaysListvew && selectedTagsList.contains(tag)){
                                         map = new HashMap<String,String>();
                                         map[tag] = tag;
+                                        openTimeCont.text = openTimeHashMap[tag];
+                                        closeTimeCont.text = closeTimeHashMap[tag];
                                         setState(() {
                                         });
                                       }else{
                                         if(selectedTagsList.contains(tag)){
                                           selectedTagsList.remove(tag);
+                                          openTimeHashMap.remove(tag);
+                                          closeTimeHashMap.remove(tag);
                                         }else{
                                           selectedTagsList.add(tag);
+                                          if(showSelectedDaysListvew){
+                                            openTimeHashMap[tag] = openTimeCont.text;
+                                            closeTimeHashMap[tag] = closeTimeCont.text;
+                                          }
                                         }
                                         setState(() {
                                         });
@@ -789,6 +799,19 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                           AppUtils.showToast("Please close time!", true);
                                           return;
                                         }
+                                        print("map=${map.length}");
+                                        if(map.isNotEmpty){
+                                          map.forEach((k, v) {
+                                            openTimeHashMap[k] = openTimeCont.text;
+                                            closeTimeHashMap[k] = closeTimeCont.text;
+                                          });
+                                          map = new HashMap<String,String>();
+                                        }else{
+                                          for(int i = 0; i < selectedTagsList.length; i++){
+                                            openTimeHashMap[selectedTagsList[i]] = openTimeCont.text;
+                                            closeTimeHashMap[selectedTagsList[i]] = closeTimeCont.text;
+                                          }
+                                        }
                                         selectedDaysList = selectedTagsList;
                                         setState(() {
                                           showSelectedDaysListvew = true;
@@ -805,67 +828,73 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                             ),
                           ),
 
-                          Container(
-                            margin: EdgeInsets.only(left: 20, right: 20,top: 20, bottom: 20),
-                            width: double.infinity,
-                            height: 5,
-                            color: AppTheme.grayCircle,
+                          Visibility(
+                            visible: showSelectedDaysListvew,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 20, right: 20,top: 20, bottom: 20),
+                              width: double.infinity,
+                              height: 5,
+                              color: AppTheme.grayCircle,
+                            ),
                           ),
 
-                          Container(
-                            margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                                top: Dimensions.getScaledSize(20)
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Text(
-                                      "Days",
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontFamily: AppConstants.fontName,
+                          Visibility(
+                            visible: showSelectedDaysListvew,
+                            child: Container(
+                              margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                                  top: Dimensions.getScaledSize(20)
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      child: Text(
+                                        "Days",
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontFamily: AppConstants.fontName,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Text(
-                                      "Open at",
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontFamily: AppConstants.fontName,
+                                  Expanded(
+                                    child: Container(
+                                      child: Text(
+                                        "Open at",
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontFamily: AppConstants.fontName,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Text(
-                                      "Close at",
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontFamily: AppConstants.fontName,
+                                  Expanded(
+                                    child: Container(
+                                      child: Text(
+                                        "Close at",
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontFamily: AppConstants.fontName,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Icon(Icons.clear,color: Colors.white,),
+                                  Expanded(
+                                    child: Container(
+                                      child: Icon(Icons.clear,color: Colors.white,),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                              ],
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
 
@@ -900,7 +929,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                         Expanded(
                                           child: Container(
                                             child: Text(
-                                              "${openTimeCont.text}",
+                                              "${openTimeHashMap[selectedDaysList[index]]}",
                                               textAlign: TextAlign.start,
                                               style: TextStyle(
                                                 fontSize: 16.0,
@@ -916,7 +945,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                         Expanded(
                                           child: Container(
                                             child: Text(
-                                              "${closeTimeCont.text}",
+                                              "${closeTimeHashMap[selectedDaysList[index]]}",
                                               textAlign: TextAlign.start,
                                               style: TextStyle(
                                                 fontSize: 16.0,
@@ -929,7 +958,14 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                                         Expanded(
                                           child: InkWell(
                                             onTap: (){
-
+                                              print("selectedDaysList[index]=${selectedDaysList[index]}");
+                                              selectedTagsList.remove(selectedDaysList[index]);
+                                              if(selectedTagsList.isEmpty){
+                                                openTimeCont.text = "";
+                                                closeTimeCont.text = "";
+                                              }
+                                              setState(() {
+                                              });
                                             },
                                             child: Container(
                                               child: Icon(Icons.clear),
@@ -947,8 +983,18 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
                             ),
                           ),
 
+
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: Dimensions.getScaledSize(30),
+                            ),
+                            child: Image.asset("lib/src/components/onboarding/images/note.png",
+                              width: double.infinity,fit: BoxFit.fill,
+                              height: 50,),
+                          ),
+
                           SizedBox(
-                            height: 40,
+                            height: 20,
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
