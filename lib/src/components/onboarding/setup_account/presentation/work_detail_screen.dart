@@ -473,8 +473,10 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         AppUtils.showToast("Invalid Image!", true);
         return;
       }
-      print("XFile=${_image.path} docImage1=${docImage1} "
-          "docImage2=${docImage2} docImage3=${doc3} "
+      print("XFile=${_image.path}"
+          "docImage1=${docImage1}"
+          "docImage2=${docImage2}"
+          "docImage3=${doc3} "
           "docCertificateImage1=${docCertificateImage1} "
           "docCertificateImage2=${docCertificateImage2} "
           "docCertificateImage3=${docCertificateImage3}");
@@ -509,7 +511,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         certificateDoc2 = file;
         setState(() {});
       }
-      if (docCertificateImage1) {
+      if (docCertificateImage3) {
         File file = File(_image.path);
         var fileSize = await AppUtils.getFileSize(file.path, 1);
         certificateDoc3 = file;
