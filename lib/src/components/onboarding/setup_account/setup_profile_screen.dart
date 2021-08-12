@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/agreement_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -348,7 +349,11 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
             });
           },)));
     } else if(index == 3){
-
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => AgreementDetailScreen(voidCallback: (){
+            setState(() {
+            });
+          },)));
     }
   }
 

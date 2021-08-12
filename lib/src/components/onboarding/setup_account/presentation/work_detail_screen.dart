@@ -382,7 +382,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
             )
         ),
       ),
-    );;
+    );
   }
 
 
@@ -532,12 +532,38 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     experienceCont.text = experienceDetailModel.data.experience;
     qualificationCont.text = experienceDetailModel.data.qualifications;
 
-    for(int i=0; i < experienceDetailModel.data.workPhotographs.length; i++){
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),""));
+    if(experienceDetailModel.data.workPhotographImage1.isNotEmpty){
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.workPhotographImage1),"",isImageUrl: true));
+    }else{
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
-    for(int i=0; i < experienceDetailModel.data.workPhotographs.length; i++){
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),""));
+    if(experienceDetailModel.data.workPhotographImage2.isNotEmpty){
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.workPhotographImage2),"",isImageUrl: true));
+    }else{
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
+    if(experienceDetailModel.data.workPhotographImage3.isNotEmpty){
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.workPhotographImage3),"",isImageUrl: true));
+    }else{
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    }
+
+    if(experienceDetailModel.data.certificateImage1.isNotEmpty){
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.certificateImage1),"",isImageUrl: true));
+    }else{
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    }
+    if(experienceDetailModel.data.certificateImage2.isNotEmpty){
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.certificateImage2),"",isImageUrl: true));
+    }else{
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    }
+    if(experienceDetailModel.data.certificateImage3.isNotEmpty){
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.certificateImage3),"",isImageUrl: true));
+    }else{
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    }
+
   }
 }
 

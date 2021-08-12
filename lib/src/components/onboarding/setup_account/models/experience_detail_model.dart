@@ -34,8 +34,12 @@ class Data {
     this.userId,
     this.experience,
     this.qualifications,
-    this.certificate,
-    this.workPhotographs,
+    this.certificateImage1,
+    this.certificateImage2,
+    this.certificateImage3,
+    this.workPhotographImage1,
+    this.workPhotographImage2,
+    this.workPhotographImage3,
     this.experienceId,
   });
 
@@ -43,8 +47,12 @@ class Data {
   String userId;
   String experience;
   String qualifications;
-  List<String> certificate;
-  List<String> workPhotographs;
+  String certificateImage1;
+  String certificateImage2;
+  String certificateImage3;
+  String workPhotographImage1;
+  String workPhotographImage2;
+  String workPhotographImage3;
   String experienceId;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -52,8 +60,12 @@ class Data {
     userId: json["user_id"],
     experience: json["experience"],
     qualifications: json["qualifications"],
-    certificate: List<String>.from(json["certificate"].map((x) => x)),
-    workPhotographs: List<String>.from(json["work_photographs"].map((x) => x)),
+    certificateImage1: json["certificate_image1"],
+    certificateImage2: json["certificate_image2"],
+    certificateImage3: json["certificate_image3"],
+    workPhotographImage1: json["work_photograph_image1"],
+    workPhotographImage2: json["work_photograph_image2"],
+    workPhotographImage3: json["work_photograph_image3"],
     experienceId: json["experience_id"],
   );
 
@@ -62,8 +74,12 @@ class Data {
     "user_id": userId,
     "experience": experience,
     "qualifications": qualifications,
-    "certificate": List<String>.from(certificate.map((x) => x)),
-    "work_photographs": List<String>.from(workPhotographs.map((x) => x)),
+    "certificate_image1": certificateImage1,
+    "certificate_image2": certificateImage2,
+    "certificate_image3": certificateImage3,
+    "work_photograph_image1": workPhotographImage1,
+    "work_photograph_image2": workPhotographImage2,
+    "work_photograph_image3": workPhotographImage3,
     "experience_id": experienceId,
   };
 }

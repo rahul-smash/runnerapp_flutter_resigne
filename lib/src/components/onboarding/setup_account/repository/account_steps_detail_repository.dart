@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/account_steps_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/agreement_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
@@ -17,6 +18,8 @@ abstract class AccountStepsDetailRepository {
   Future<BusinessDetailModel> getBusinessDetail(String userId);
 
   Future<ExperienceDetailModel> getExperienceDetail(String userId);
+
+  Future<AgreementDetailModel> getAgreementDetail();
 
   Future<BaseResponse> saveMyProfile(File selectedProfileImg, String text,String lastName,
       String selectedGenderUpOption , String dob, String mobile, String email, String comments,

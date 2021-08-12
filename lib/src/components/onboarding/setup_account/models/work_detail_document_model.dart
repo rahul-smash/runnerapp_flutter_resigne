@@ -3,5 +3,6 @@ import 'dart:io';
 class WorkDetailDocumentModel{
   File file;
   var fileSize;
-  WorkDetailDocumentModel(this.file, this.fileSize);
+  bool isImageUrl;
+  WorkDetailDocumentModel(this.file, this.fileSize,{this.isImageUrl = false});
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/account_steps_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/agreement_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
@@ -26,6 +27,8 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   static const _saveBusinessDetail = '/runner_authentication/updateBusinessDetail';
   static const _getExperienceDetail = '/runner_authentication/getExperienceDetail/';
   static const _saveExperienceDetail = '/runner_authentication/updateExperienceDetail';
+  static const _getAgreementDetail= '/runner_authentication/getAgreementDetail/';
+
 
   String apiPath(String storeId, String path) =>
       '$storeId${AppNetworkConstants.baseRoute}$path';
@@ -201,8 +204,7 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       'experience_id': experienceId,
       'experience': workExperience,
       'qualifications': qualification,
-      'certificates': experienceDetailModel.data.certificate,
-      'work_photographs': experienceDetailModel.data.certificate,
+
     });
 
     //List<MultipartFile> multipartImageList1 = [];
@@ -225,6 +227,17 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
         null, isMultipartUploadRequest: true,formData: formData);
     BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
     return loginResponse;
+  }
+
+  @override
+  Future<AgreementDetailModel> getAgreementDetail() async {
+    try {
+      var response = await get(apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+          _getAgreementDetail), null);
+      AgreementDetailModel categoryModel = AgreementDetailModel.fromJson(jsonDecode(response));
+      return categoryModel;
+    } catch (e) {
+    }
   }
 
 
