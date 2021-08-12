@@ -23,6 +23,10 @@ class AppImages {
   static const icon_ongoing = 'lib/src/components/dashboard/images/ongoingicon.png';
   static const icon_rejected = 'lib/src/components/dashboard/images/rejectedicon.png';
   static const icon_upcoming = 'lib/src/components/dashboard/images/upcomingicon.png';
+  static const icon_account = 'lib/src/components/dashboard/images/accountgrayicon.png';
+  static const icon_gallery = 'lib/src/components/dashboard/images/gallerygrayicon.png';
+  static const icon_home = 'lib/src/components/dashboard/images/homegrayicon.png';
+  static const icon_my_booking = 'lib/src/components/dashboard/images/mybookinggrayicon.png';
 
 
   static const icon_totalbookingfullicon =
@@ -36,6 +40,7 @@ class AppImages {
   static const icon_contactus =
       'lib/src/components/side_menu/images/contactusicon.png';
   static const icon_faq = 'lib/src/components/side_menu/images/faqicon.png';
+  static const icon_fb = 'lib/src/components/side_menu/images/fbicon.png';
   static const icon_howtovideo =
       'lib/src/components/side_menu/images/howtovideoicon.png';
   static const icon_follow_us =
@@ -44,4 +49,5 @@ class AppImages {
       'lib/src/components/side_menu/images/twittericon.png';
   static const icon_youTube =
       'lib/src/components/side_menu/images/youtubeicon.png';
+  static const icon_logout='lib/src/components/side_menu/images/logouticon.png';
 }

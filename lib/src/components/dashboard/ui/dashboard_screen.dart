@@ -35,7 +35,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       HomeScreen(
         callback: () {
           setState(() {
-            _selectedTabIndex=1;
+            _selectedTabIndex = 1;
           });
         },
       ),
@@ -136,15 +136,42 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           showUnselectedLabels: true,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: new Icon(Icons.home),
+              icon: Image(
+                image: AssetImage(AppImages.icon_home),
+                height: 22,
+                color: _selectedTabIndex == 0
+                    ? AppTheme.primaryColorDark
+                    : AppTheme.subHeadingTextColor,
+              ),
               label: labelHome,
             ),
             BottomNavigationBarItem(
-                icon: new Icon(Icons.article_rounded), label: labelMyBooking),
+                icon: Image(
+                  image: AssetImage(AppImages.icon_my_booking),
+                  height: 22,
+                  color: _selectedTabIndex == 1
+                      ? AppTheme.primaryColorDark
+                      : AppTheme.subHeadingTextColor,
+                ),
+                label: labelMyBooking),
             BottomNavigationBarItem(
-                icon: new Icon(Icons.image), label: labelGallery),
+                icon: Image(
+                  image: AssetImage(AppImages.icon_gallery),
+                  height: 22,
+                  color: _selectedTabIndex == 2
+                      ? AppTheme.primaryColorDark
+                      : AppTheme.subHeadingTextColor,
+                ),
+                label: labelGallery),
             BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle_rounded), label: labelAccount),
+                icon: Image(
+                  image: AssetImage(AppImages.icon_account),
+                  height: 22,
+                  color: _selectedTabIndex == 3
+                      ? AppTheme.primaryColorDark
+                      : AppTheme.subHeadingTextColor,
+                ),
+                label: labelAccount),
           ],
         ));
   }
@@ -217,5 +244,4 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         );
     }
   }
-
 }

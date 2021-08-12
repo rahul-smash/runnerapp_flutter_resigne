@@ -77,7 +77,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                   visible: _isFollowUsExpanded,
                     child: Padding(
                   padding: EdgeInsets.only(left: 10, right: 5),
-                  child: Icon(Icons.face),
+                  child: Image.asset(AppImages.icon_fb,height: 25,),
                 )),
                 Visibility(
                   visible: _isFollowUsExpanded,
@@ -130,11 +130,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
             child: Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: ListTile(
-                  leading: Icon(
-                    Icons.logout,
-                    color: AppTheme.white,
-                    size: 25,
-                  ),
+                  leading:  Image.asset(AppImages.icon_logout, color: AppTheme.white, width: 20,height: 35,),
                   title: Text(labelLogout,
                       style: TextStyle(
                           color: AppTheme.white,

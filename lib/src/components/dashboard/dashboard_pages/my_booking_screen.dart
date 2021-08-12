@@ -123,7 +123,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                     child: Container(
                         height: 30,
                         margin: EdgeInsets.only(left: 4, right: 4),
-                        padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+                        padding: EdgeInsets.fromLTRB(20, 3, 20, 3),
                         decoration: BoxDecoration(
                             color: selectedFilterIndex == index
                                 ? AppTheme.primaryColor.withOpacity(0.1)
