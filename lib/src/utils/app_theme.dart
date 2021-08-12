@@ -55,5 +55,6 @@ class AppTheme {
   static Color optionTotalEarningColor = Color(0xff29C6C6);
   static Color optionTotalBookingBgColor = Color(0xffFD7443);
   static Color optionTotalCustomerBgColor = Color(0xffFE5767);
+  static Color errorRed = Color(0xffFC5666);
   static Color whiteDisable=Colors.white38;
 }

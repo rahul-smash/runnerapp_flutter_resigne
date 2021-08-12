@@ -36,6 +36,8 @@ dependencies:
   html: ^0.15.0                 #ANDROID IOS LINUX MACOS WEB WINDOWS
   flutter_inner_drawer: ^1.0.0+1 #ANDROID IOS LINUX MACOS WEB WINDOWS
   smooth_page_indicator: ^0.2.3  #ANDROID IOS LINUX MACOS WEB WINDOWS
+  url_launcher: ^6.0.9            #ANDROID IOS LINUX MACOS WEB WINDOWS
+  whatsapp_unilink: ^2.0.0        #ANDROID IOS LINUX MACOS WEB WINDOWS
 
 
   # The following adds the Cupertino Icons font to your application.

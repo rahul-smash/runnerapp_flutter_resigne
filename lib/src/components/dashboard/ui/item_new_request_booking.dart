@@ -9,8 +9,9 @@ import 'package:marketplace_service_provider/src/widgets/gradient_elevated_butto
 
 class ItemNewRequestBooking extends StatefulWidget {
   final BookingRequest bookingRequest;
+  Function callBackMethod;
 
-  ItemNewRequestBooking(this.bookingRequest);
+  ItemNewRequestBooking(this.bookingRequest, this.callBackMethod);
 
   @override
   _ItemNewRequestBookingState createState() => _ItemNewRequestBookingState();
@@ -205,7 +206,9 @@ class _ItemNewRequestBookingState extends State<ItemNewRequestBooking> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        widget.callBackMethod('Reject', widget.bookingRequest);
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppTheme.borderNotFocusedColor,
@@ -227,7 +230,9 @@ class _ItemNewRequestBookingState extends State<ItemNewRequestBooking> {
                       width: 10,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        widget.callBackMethod('Accept', widget.bookingRequest);
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -255,7 +260,6 @@ class _ItemNewRequestBookingState extends State<ItemNewRequestBooking> {
                                 fontWeight: FontWeight.normal)),
                       ),
                     ),
-
                   ],
                 ),
               ),

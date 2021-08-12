@@ -21,7 +21,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: appBar.automaticallyImplyLeading,
-      elevation: 0.0,
+      elevation: appBar.elevation,
       title: title,
       leading: leading,
       backgroundColor: backgroundColor,

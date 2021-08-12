@@ -6,11 +6,12 @@ import 'package:marketplace_service_provider/core/network/connectivity/network_c
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_network_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/item_booking.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_new_request_booking.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/new_request_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -21,7 +22,9 @@ import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key}) : super(key: key);
+  VoidCallback callback;
+
+  HomeScreen({Key key, this.callback}) : super(key: key);
 
   @override
   _HomeScreenState createState() {
@@ -188,45 +191,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w600),
                           ),
                         ),
-                        Flexible(
-                          child: SizedBox(
-                            width: 100,
-                            child: DropdownButtonFormField(
-                              dropdownColor: Colors.white,
-                              items: _overviewOptions.map((String options) {
-                                return DropdownMenuItem(
-                                    value: options,
-                                    child: Container(
-                                      child: Text(
-                                        options,
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                            color: AppTheme.subHeadingTextColor,
-                                            fontFamily: AppConstants.fontName,
-                                            fontSize: AppConstants.smallSize),
-                                      ),
-                                    ));
-                              }).toList(),
-                              onTap: () {},
-                              onChanged: (newValue) {
-                                // do other stuff with _category
-                                setState(
-                                    () => _selectedOverviewOption = newValue);
-                              },
-                              value: _selectedOverviewOption,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(0),
-                                filled: true,
-                                border: InputBorder.none,
-                                fillColor: AppTheme.transparent,
-                                focusColor: AppTheme.transparent,
-                                hoverColor: AppTheme.transparent,
-                              ),
-                            ),
-                          ),
-                        ),
+//TODO: handle this filter
+//                        Flexible(
+//                          child: SizedBox(
+//                            width: 100,
+//                            child: DropdownButtonFormField(
+//                              dropdownColor: Colors.white,
+//                              items: _overviewOptions.map((String options) {
+//                                return DropdownMenuItem(
+//                                    value: options,
+//                                    child: Container(
+//                                      child: Text(
+//                                        options,
+//                                        textAlign: TextAlign.end,
+//                                        style: TextStyle(
+//                                            color: AppTheme.subHeadingTextColor,
+//                                            fontFamily: AppConstants.fontName,
+//                                            fontSize: AppConstants.smallSize),
+//                                      ),
+//                                    ));
+//                              }).toList(),
+//                              onTap: () {},
+//                              onChanged: (newValue) {
+//                                // do other stuff with _category
+//                                setState(
+//                                    () => _selectedOverviewOption = newValue);
+//                              },
+//                              value: _selectedOverviewOption,
+//                              decoration: InputDecoration(
+//                                contentPadding: EdgeInsets.all(0),
+//                                filled: true,
+//                                border: InputBorder.none,
+//                                fillColor: AppTheme.transparent,
+//                                focusColor: AppTheme.transparent,
+//                                hoverColor: AppTheme.transparent,
+//                              ),
+//                            ),
+//                          ),
+//                        ),
                       ],
                     ),
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
@@ -261,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Column(
                                     children: [
                                       SizedBox(
-                                        height: 22,
+                                        height: 15,
                                       ),
                                       Text.rich(
                                           TextSpan(
@@ -281,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       '--',
                                                   style: TextStyle(
                                                       fontSize: AppConstants
-                                                          .smallSize,
+                                                          .largeSize,
                                                       color: AppTheme.white,
                                                       fontFamily:
                                                           AppConstants.fontName,
@@ -297,7 +304,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fontFamily: AppConstants.fontName,
                                             fontSize:
                                                 AppConstants.extraSmallSize),
-                                      )
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -332,14 +342,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(
-                                        height: 22,
+                                        height: 15,
                                       ),
                                       Text(
                                         _dashboardResponse
                                                 ?.summery?.totalBookings ??
                                             '--',
                                         style: TextStyle(
-                                            fontSize: AppConstants.smallSize,
+                                            fontSize: AppConstants.largeSize,
                                             fontFamily: AppConstants.fontName,
                                             fontWeight: FontWeight.bold,
                                             color: AppTheme.white),
@@ -351,7 +361,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fontFamily: AppConstants.fontName,
                                             fontSize:
                                                 AppConstants.extraSmallSize),
-                                      )
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -386,14 +399,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(
-                                        height: 22,
+                                        height: 15,
                                       ),
                                       Text(
                                         _dashboardResponse
                                                 ?.summery?.totalCustomers ??
                                             '--',
                                         style: TextStyle(
-                                            fontSize: AppConstants.smallSize,
+                                            fontSize: AppConstants.largeSize,
                                             fontFamily: AppConstants.fontName,
                                             fontWeight: FontWeight.bold,
                                             color: AppTheme.white),
@@ -405,7 +418,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fontFamily: AppConstants.fontName,
                                             fontSize:
                                                 AppConstants.extraSmallSize),
-                                      )
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -497,7 +513,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 controller: _pageController,
                                 children: _dashboardResponse.bookingRequests
                                     .map((bookingRequest) =>
-                                        ItemNewRequestBooking(bookingRequest))
+                                        ItemNewRequestBooking(bookingRequest,
+                                            _bookingRequestActionMethod))
                                     .toList(),
                               ),
                             ),
@@ -561,7 +578,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     InkWell(
                       onTap: () async {
-                        //TODO: Navigate to My Booking Screen
+                        if (widget.callback != null) widget.callback();
                       },
                       child: Text(
                         'View All',
@@ -614,7 +631,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-              _noOrderContainer(),
+              isBookingApiLoading
+                  ? Container(
+                      height: Dimensions.getHeight(percentage: 60),
+                    )
+                  : _bookingResponse != null &&
+                          _bookingResponse.bookings != null &&
+                          _bookingResponse.bookings.isNotEmpty
+                      ? Container(
+                          child: ListView.builder(
+                              padding:
+                                  EdgeInsets.all(Dimensions.getScaledSize(10)),
+                              shrinkWrap: true,
+                              itemCount: _bookingResponse.bookings.length,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (BuildContext context, int index) {
+                                return ItemBooking(
+                                    _bookingResponse.bookings[index],
+                                    _bookingAction);
+                              }),
+                        )
+                      : _noOrderContainer(),
             ],
           )),
         ),
@@ -700,6 +737,101 @@ class _HomeScreenState extends State<HomeScreen> {
           '${_bookingResponse.bookingCounts.completed} | Completed';
       _filterOptions[4] =
           '${_bookingResponse.bookingCounts.rejected} | Rejected';
+    }
+  }
+
+  Future<Function> _bookingRequestActionMethod(
+      String type, BookingRequest bookingRequest) async {
+    switch (type) {
+      case 'Accept':
+        if (!getIt.get<NetworkConnectionObserver>().offline) {
+          AppUtils.showLoader(context);
+          BaseResponse baseResponse = await getIt
+              .get<DashboardRepository>()
+              .changeBookingRequestAction(
+                  userId: loginResponse.data.id,
+                  orderId: bookingRequest.id,
+                  status: '1');
+          AppUtils.hideLoader(context);
+          if (baseResponse != null) {
+            if (baseResponse.success) {
+              bool isAccepted =
+                  _dashboardResponse.bookingRequests.remove(bookingRequest);
+              if (isAccepted) {
+                appPrintLog('Your Booking request is accepted');
+                setState(() {});
+                _getMyBookingOrders();
+              }
+            } else {
+              AppUtils.showToast(baseResponse.message, false);
+            }
+          }
+        } else {
+          AppUtils.noNetWorkDialog(context);
+        }
+        break;
+      case 'Reject':
+        if (!getIt.get<NetworkConnectionObserver>().offline) {
+          AppUtils.showLoader(context);
+          BaseResponse baseResponse = await getIt
+              .get<DashboardRepository>()
+              .changeBookingRequestAction(
+                  userId: loginResponse.data.id,
+                  orderId: bookingRequest.id,
+                  status: '2');
+          AppUtils.hideLoader(context);
+          if (baseResponse != null) {
+            if (baseResponse.success) {
+              bool isDeleted =
+                  _dashboardResponse.bookingRequests.remove(bookingRequest);
+              if (isDeleted) {
+                appPrintLog('Your Booking request is Rejected');
+                setState(() {});
+                _getMyBookingOrders();
+              }
+            } else {
+              AppUtils.showToast(baseResponse.message, false);
+            }
+          }
+        } else {
+          AppUtils.noNetWorkDialog(context);
+        }
+        break;
+    }
+  }
+
+  _bookingAction(String type, Booking booking) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      AppUtils.showLoader(context);
+      BaseResponse baseResponse = await getIt
+          .get<DashboardRepository>()
+          .changeBookingAction(
+              userId: loginResponse.data.id,
+              orderId: booking.id,
+              status: _changeBookingStatus(type));
+      AppUtils.hideLoader(context);
+      if (baseResponse != null) {
+        if (baseResponse.success) {
+          _bookingResponse.bookings[_bookingResponse.bookings.indexOf(booking)]
+              .status = _changeBookingStatus(type);
+          setState(() {});
+        } else {
+          AppUtils.showToast(baseResponse.message, false);
+        }
+      }
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
+  }
+
+  _changeBookingStatus(String type) {
+    switch (type) {
+      case 'Ongoing':
+        return '4';
+        break;
+      case 'Complete':
+        return '5';
+        break;
     }
   }
 }

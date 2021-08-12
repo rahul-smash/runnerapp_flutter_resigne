@@ -16,6 +16,15 @@ class AppImages {
       'lib/src/components/dashboard/images/menuicon_white.png';
   static const icon_no_order_graphic =
       'lib/src/components/dashboard/images/no_order_graphic.png';
+  static const icon_whatsapp =
+      'lib/src/components/dashboard/images/whatsappicon.png';
+  static const icon_call = 'lib/src/components/dashboard/images/callicon.png';
+  static const icon_complete = 'lib/src/components/dashboard/images/completeicon.png';
+  static const icon_ongoing = 'lib/src/components/dashboard/images/ongoingicon.png';
+  static const icon_rejected = 'lib/src/components/dashboard/images/rejectedicon.png';
+  static const icon_upcoming = 'lib/src/components/dashboard/images/upcomingicon.png';
+
+
   static const icon_totalbookingfullicon =
       'lib/src/components/dashboard/images/totalbookingfullicon.png';
   static const icon_totalearningfullicon =

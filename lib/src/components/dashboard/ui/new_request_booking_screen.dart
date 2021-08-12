@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_new_request_booking.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
@@ -58,23 +63,28 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding:  EdgeInsets.only(left:8.0),
+                  padding: EdgeInsets.only(left: 8.0),
                   child: Text(
                     '${_dashboardResponse.bookingRequests.length} Orders',
                     style: TextStyle(
-                      fontSize: AppConstants.smallSize,
+                        fontSize: AppConstants.smallSize,
                         color: AppTheme.subHeadingTextColor,
                         fontWeight: FontWeight.normal,
                         fontFamily: AppConstants.fontName),
                   ),
                 ),
-                SizedBox(height: Dimensions.getScaledSize(16),),
+                SizedBox(
+                  height: Dimensions.getScaledSize(16),
+                ),
                 Expanded(
                   child: ListView.separated(
-                    padding: EdgeInsets.only(bottom: Dimensions.getScaledSize(16),),
+                    padding: EdgeInsets.only(
+                      bottom: Dimensions.getScaledSize(16),
+                    ),
                     itemBuilder: (BuildContext context, int index) {
                       return ItemNewRequestBooking(
-                          _dashboardResponse.bookingRequests[index]);
+                          _dashboardResponse.bookingRequests[index],
+                          _bookingActionMethod);
                     },
                     itemCount: _dashboardResponse.bookingRequests.length,
                     separatorBuilder: (BuildContext context, int index) {
@@ -108,5 +118,63 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
             appBar: AppBar(),
           ),
         ));
+  }
+
+  Future<Function> _bookingActionMethod(
+      String type, BookingRequest bookingRequest) async {
+    switch (type) {
+      case 'Accept':
+        if (!getIt.get<NetworkConnectionObserver>().offline) {
+          AppUtils.showLoader(context);
+          BaseResponse baseResponse = await getIt
+              .get<DashboardRepository>()
+              .changeBookingRequestAction(
+                  userId: loginResponse.data.id,
+                  orderId: bookingRequest.id,
+                  status: '1');
+          AppUtils.hideLoader(context);
+          if (baseResponse != null) {
+            if (baseResponse.success) {
+              bool isAccepted = widget.dashboardResponse.bookingRequests
+                  .remove(bookingRequest);
+              setState(() {});
+              if (isAccepted) {
+                appPrintLog('Your Booking request is accepted');
+              }
+            } else {
+              AppUtils.showToast(baseResponse.message, false);
+            }
+          }
+        } else {
+          AppUtils.noNetWorkDialog(context);
+        }
+        break;
+      case 'Reject':
+        if (!getIt.get<NetworkConnectionObserver>().offline) {
+          AppUtils.showLoader(context);
+          BaseResponse baseResponse = await getIt
+              .get<DashboardRepository>()
+              .changeBookingRequestAction(
+                  userId: loginResponse.data.id,
+                  orderId: bookingRequest.id,
+                  status: '2');
+          AppUtils.hideLoader(context);
+          if (baseResponse != null) {
+            if (baseResponse.success) {
+              bool isAccepted = widget.dashboardResponse.bookingRequests
+                  .remove(bookingRequest);
+              setState(() {});
+              if (isAccepted) {
+                appPrintLog('Your Booking request is Rejected');
+              }
+            } else {
+              AppUtils.showToast(baseResponse.message, false);
+            }
+          }
+        } else {
+          AppUtils.noNetWorkDialog(context);
+        }
+        break;
+    }
   }
 }

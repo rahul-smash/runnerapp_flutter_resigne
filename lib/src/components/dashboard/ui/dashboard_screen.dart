@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -25,16 +26,23 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends BaseState<DashboardScreen> {
   int _selectedTabIndex = 0;
 
-  List _pages = [
-    HomeScreen(),
-    Text("My Booking"),
-    Text("Gallery"),
-    Text("Account"),
-  ];
+  List _pages;
 
   @override
   void initState() {
     super.initState();
+    _pages = [
+      HomeScreen(
+        callback: () {
+          setState(() {
+            _selectedTabIndex=1;
+          });
+        },
+      ),
+      MyBookingScreen(),
+      Text("Gallery"),
+      Text("Account"),
+    ];
     try {
       appPrintLog("AppConstants.isLoggedIn=${AppConstants.isLoggedIn}");
       appPrintLog(
@@ -85,39 +93,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         leftChild: SideMenuScreen(),
         scaffold: Scaffold(
           backgroundColor: AppTheme.white,
-          appBar: BaseAppBar(
-            backgroundColor: AppTheme.primaryColor,
-            title: Text(''),
-            leading: IconButton(
-              iconSize: 20,
-              color: AppTheme.white,
-              onPressed: () => _toggle(),
-              icon: Image(
-                image: AssetImage(AppImages.icon_menu),
-                height: 25,
-              ),
-            ),
-            appBar: AppBar(automaticallyImplyLeading: false),
-            widgets: <Widget>[
-              Center(
-                child: Badge(
-                  shape: BadgeShape.circle,
-                  showBadge: false,
-                  position: BadgePosition.topEnd(
-                      top: Dimensions.getScaledSize(3),
-                      end: Dimensions.getScaledSize(2)),
-                  borderRadius: BorderRadius.circular(5),
-                  child: Icon(
-                    Icons.notifications,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              )
-            ],
-          ),
+          appBar: _getAppBar(),
           body: Center(
             child: _pages[_selectedTabIndex],
           ),
@@ -179,4 +155,67 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       print("index..." + index.toString());
     });
   }
+
+  _getAppBar() {
+    switch (_selectedTabIndex) {
+      case 1:
+        return BaseAppBar(
+          backgroundColor: AppTheme.white,
+          title: Text(
+            'My Bookings',
+            style: TextStyle(color: AppTheme.black),
+          ),
+          leading: IconButton(
+            iconSize: 20,
+            color: AppTheme.white,
+            onPressed: () => _toggle(),
+            icon: Image(
+              image: AssetImage(AppImages.icon_menu),
+              height: 25,
+              color: AppTheme.black,
+            ),
+          ),
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            elevation: 4,
+          ),
+        );
+        break;
+      default:
+        return BaseAppBar(
+          backgroundColor: AppTheme.primaryColor,
+          title: Text(''),
+          leading: IconButton(
+            iconSize: 20,
+            color: AppTheme.white,
+            onPressed: () => _toggle(),
+            icon: Image(
+              image: AssetImage(AppImages.icon_menu),
+              height: 25,
+            ),
+          ),
+          appBar: AppBar(automaticallyImplyLeading: false, elevation: 0),
+          widgets: <Widget>[
+            Center(
+              child: Badge(
+                shape: BadgeShape.circle,
+                showBadge: false,
+                position: BadgePosition.topEnd(
+                    top: Dimensions.getScaledSize(3),
+                    end: Dimensions.getScaledSize(2)),
+                borderRadius: BorderRadius.circular(5),
+                child: Icon(
+                  Icons.notifications,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            )
+          ],
+        );
+    }
+  }
+
 }

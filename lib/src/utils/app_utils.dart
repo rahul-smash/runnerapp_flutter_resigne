@@ -11,6 +11,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:html/parser.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
@@ -185,4 +187,26 @@ class AppUtils {
       ),
     );
   }
+
+ static launchCaller(String call) async {
+    String url = "tel:${call}";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  // ...somewhere in your Flutter app...
+  static launchWhatsApp(String number) async {
+    final link = WhatsAppUnilink(
+      phoneNumber: number,
+      text: "",
+    );
+    // Convert the WhatsAppUnilink instance to a string.
+    // Use either Dart's string interpolation or the toString() method.
+    // The "launch" method is part of "url_launcher".
+    await launch('$link');
+  }
+
 }
