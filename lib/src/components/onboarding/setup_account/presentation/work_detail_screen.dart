@@ -799,5 +799,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     if (experienceDetailModel.data.certificateImage3.isNotEmpty) {
       certificateDoc3 = File("");
     }
+    setState(() {
+    });
   }
 }
