@@ -19,6 +19,7 @@ import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> _filterOptions = List.empty(growable: true);
   String _selectedOverviewOption = 'Today';
   final PageController _pageController = PageController(initialPage: 0);
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
 
   DashboardResponse _dashboardResponse;
   BookingResponse _bookingResponse;
@@ -67,15 +70,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _getDashboardSummary() async {
-    if (!getIt.get<NetworkConnectionObserver>().offline) {
-      AppUtils.showLoader(context);
+  void _getDashboardSummary({bool isShowLoader = true}) async {
+    if (!getIt
+        .get<NetworkConnectionObserver>()
+        .offline) {
+     if(isShowLoader) AppUtils.showLoader(context);
       isDashboardApiLoading = true;
       _dashboardResponse = await getIt
           .get<DashboardRepository>()
           .getDashboardSummary(userId: loginResponse.data.id);
       AppUtils.hideLoader(context);
       isDashboardApiLoading = false;
+      _refreshController.refreshCompleted();
       setState(() {});
     } else {
       AppUtils.noNetWorkDialog(context);
@@ -83,7 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getMyBookingOrders({bool isShowLoader = true}) async {
-    if (!getIt.get<NetworkConnectionObserver>().offline) {
+    if (!getIt
+        .get<NetworkConnectionObserver>()
+        .offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
@@ -104,38 +112,48 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController.dispose();
   }
 
+  void _onRefresh() async {
+    _getDashboardSummary(isShowLoader: false);
+    _getMyBookingOrders(isShowLoader: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: AppTheme.white,
-      body: Container(
-          child: SingleChildScrollView(
-        child: Stack(
-          children: [
-            //User Name
-            CommonWidgets.gradientContainer(
-                context,
-                -1,
-                SizeConfig.screenWidth,
-                Container(
-                  margin: EdgeInsets.only(
-                      left: Dimensions.getScaledSize(45),
-                      bottom: Dimensions.getScaledSize(45)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hi, ${loginResponse.data.fullName} ${loginResponse.data.lastName}",
-                        style: TextStyle(
-                            fontSize: Dimensions.getScaledSize(20),
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.white,
-                            fontFamily: AppConstants.fontName),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      //TODO: Handle this Date Concept
+      body: SmartRefresher(
+        enablePullDown: true,
+        controller: _refreshController,
+        onRefresh:_onRefresh,
+        child: Container(
+            child: SingleChildScrollView(
+              child: Stack(
+                children: [
+                  //User Name
+                  CommonWidgets.gradientContainer(
+                      context,
+                      -1,
+                      SizeConfig.screenWidth,
+                      Container(
+                        margin: EdgeInsets.only(
+                            left: Dimensions.getScaledSize(45),
+                            bottom: Dimensions.getScaledSize(45)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Hi, ${loginResponse.data
+                                  .fullName} ${loginResponse.data.lastName}",
+                              style: TextStyle(
+                                  fontSize: Dimensions.getScaledSize(20),
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.white,
+                                  fontFamily: AppConstants.fontName),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            //TODO: Handle this Date Concept
 //                      Text(
 //                        "Today, Thu 5 August",
 //                        style: TextStyle(
@@ -144,53 +162,53 @@ class _HomeScreenState extends State<HomeScreen> {
 //                            color: AppTheme.subHeadingTextColor,
 //                            fontFamily: AppConstants.fontName),
 //                      ),
-                    ],
-                  ),
-                ),
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [
-                  0.0,
-                  0.3,
-                  0.7,
-                  0.9
-                ],
-                colors: [
-                  AppTheme.primaryColor,
-                  AppTheme.primaryColor,
-                  AppTheme.primaryColorLight,
-                  AppTheme.primaryColorLight
-                ]),
-            Container(
-              width: SizeConfig.screenWidth,
-              decoration: new BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(30.0),
-                      topRight: const Radius.circular(30.0))),
-              margin: EdgeInsets.only(top: Dimensions.getScaledSize(60)),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        Dimensions.getScaledSize(26),
-                        Dimensions.getScaledSize(16),
-                        Dimensions.getScaledSize(26),
-                        0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Overview',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: Dimensions.getScaledSize(
-                                    AppConstants.largeSize),
-                                fontWeight: FontWeight.w600),
-                          ),
+                          ],
                         ),
+                      ),
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [
+                        0.0,
+                        0.3,
+                        0.7,
+                        0.9
+                      ],
+                      colors: [
+                        AppTheme.primaryColor,
+                        AppTheme.primaryColor,
+                        AppTheme.primaryColorLight,
+                        AppTheme.primaryColorLight
+                      ]),
+                  Container(
+                    width: SizeConfig.screenWidth,
+                    decoration: new BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: new BorderRadius.only(
+                            topLeft: const Radius.circular(30.0),
+                            topRight: const Radius.circular(30.0))),
+                    margin: EdgeInsets.only(top: Dimensions.getScaledSize(60)),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              Dimensions.getScaledSize(26),
+                              Dimensions.getScaledSize(16),
+                              Dimensions.getScaledSize(26),
+                              0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  'Overview',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: Dimensions.getScaledSize(
+                                          AppConstants.largeSize),
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
 //TODO: handle this filter
 //                        Flexible(
 //                          child: SizedBox(
@@ -229,216 +247,235 @@ class _HomeScreenState extends State<HomeScreen> {
 //                            ),
 //                          ),
 //                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        Dimensions.getScaledSize(22),
-                        0,
-                        Dimensions.getScaledSize(22),
-                        Dimensions.getScaledSize(22)),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Card(
-                            shadowColor: AppTheme.borderOnFocusedColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
-                            elevation: 4,
-                            color: AppTheme.optionTotalEarningColor,
-                            margin: EdgeInsets.fromLTRB(
-                                Dimensions.pixels_5, 0, Dimensions.pixels_5, 0),
-                            child: Stack(
-                              alignment: Alignment.topCenter,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Image.asset(
-                                    AppImages.icon_totalearningfullicon,
-                                    height: 27,
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              Dimensions.getScaledSize(22),
+                              0,
+                              Dimensions.getScaledSize(22),
+                              Dimensions.getScaledSize(10)),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Card(
+                                  shadowColor: AppTheme.borderOnFocusedColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(Dimensions.pixels_10),
-                                  child: Column(
+                                  elevation: 4,
+                                  color: AppTheme.optionTotalEarningColor,
+                                  margin: EdgeInsets.fromLTRB(
+                                      Dimensions.pixels_5, 0,
+                                      Dimensions.pixels_5, 0),
+                                  child: Stack(
+                                    alignment: Alignment.topCenter,
                                     children: [
-                                      SizedBox(
-                                        height: 15,
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Image.asset(
+                                          AppImages.icon_totalearningfullicon,
+                                          height: 27,
+                                        ),
                                       ),
-                                      Text.rich(
-                                          TextSpan(
-                                            text: '${AppConstants.currency} ',
-                                            style: TextStyle(
-                                                fontSize:
-                                                    AppConstants.extraSmallSize,
-                                                color: AppTheme.white,
-                                                fontFamily:
-                                                    AppConstants.fontName,
-                                                fontWeight: FontWeight.normal),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                  text: _dashboardResponse
-                                                          ?.summery
-                                                          ?.totalEarning ??
-                                                      '--',
+                                      Padding(
+                                        padding: EdgeInsets.all(
+                                            Dimensions.pixels_10),
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text.rich(
+                                                TextSpan(
+                                                  text: '${AppConstants
+                                                      .currency} ',
                                                   style: TextStyle(
-                                                      fontSize: AppConstants
-                                                          .largeSize,
+                                                      fontSize:
+                                                      AppConstants
+                                                          .extraSmallSize,
                                                       color: AppTheme.white,
                                                       fontFamily:
-                                                          AppConstants.fontName,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                            ],
-                                          ),
-                                          textAlign: TextAlign.center),
-                                      Text(
-                                        'Total Earnings',
-                                        style: TextStyle(
-                                            color: AppTheme.white,
-                                            fontFamily: AppConstants.fontName,
-                                            fontSize:
-                                                AppConstants.extraSmallSize),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
+                                                      AppConstants.fontName,
+                                                      fontWeight: FontWeight
+                                                          .normal),
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                        text: _dashboardResponse
+                                                            ?.summery
+                                                            ?.totalEarning ??
+                                                            '--',
+                                                        style: TextStyle(
+                                                            fontSize: AppConstants
+                                                                .largeSize,
+                                                            color: AppTheme
+                                                                .white,
+                                                            fontFamily:
+                                                            AppConstants
+                                                                .fontName,
+                                                            fontWeight:
+                                                            FontWeight.bold)),
+                                                  ],
+                                                ),
+                                                textAlign: TextAlign.center),
+                                            Text(
+                                              'Total Earnings',
+                                              style: TextStyle(
+                                                  color: AppTheme.white,
+                                                  fontFamily: AppConstants
+                                                      .fontName,
+                                                  fontSize:
+                                                  AppConstants.extraSmallSize),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Card(
-                            shadowColor: AppTheme.borderOnFocusedColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
-                            elevation: 4,
-                            color: AppTheme.optionTotalBookingBgColor,
-                            margin: EdgeInsets.fromLTRB(
-                                Dimensions.pixels_5, 0, Dimensions.pixels_5, 0),
-                            child: Stack(
-                              alignment: Alignment.topCenter,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Image.asset(
-                                    AppImages.icon_totalbookingfullicon,
-                                    height: 27,
+                              ),
+                              Expanded(
+                                child: Card(
+                                  shadowColor: AppTheme.borderOnFocusedColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(Dimensions.pixels_10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                  elevation: 4,
+                                  color: AppTheme.optionTotalBookingBgColor,
+                                  margin: EdgeInsets.fromLTRB(
+                                      Dimensions.pixels_5, 0,
+                                      Dimensions.pixels_5, 0),
+                                  child: Stack(
+                                    alignment: Alignment.topCenter,
                                     children: [
-                                      SizedBox(
-                                        height: 15,
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Image.asset(
+                                          AppImages.icon_totalbookingfullicon,
+                                          height: 27,
+                                        ),
                                       ),
-                                      Text(
-                                        _dashboardResponse
-                                                ?.summery?.totalBookings ??
-                                            '--',
-                                        style: TextStyle(
-                                            fontSize: AppConstants.largeSize,
-                                            fontFamily: AppConstants.fontName,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppTheme.white),
-                                      ),
-                                      Text(
-                                        'Total Bookings',
-                                        style: TextStyle(
-                                            color: AppTheme.white,
-                                            fontFamily: AppConstants.fontName,
-                                            fontSize:
-                                                AppConstants.extraSmallSize),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
+                                      Padding(
+                                        padding: EdgeInsets.all(
+                                            Dimensions.pixels_10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              _dashboardResponse
+                                                  ?.summery?.totalBookings ??
+                                                  '--',
+                                              style: TextStyle(
+                                                  fontSize: AppConstants
+                                                      .largeSize,
+                                                  fontFamily: AppConstants
+                                                      .fontName,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppTheme.white),
+                                            ),
+                                            Text(
+                                              'Total Bookings',
+                                              style: TextStyle(
+                                                  color: AppTheme.white,
+                                                  fontFamily: AppConstants
+                                                      .fontName,
+                                                  fontSize:
+                                                  AppConstants.extraSmallSize),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Card(
-                            shadowColor: AppTheme.borderOnFocusedColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
-                            elevation: 4,
-                            color: AppTheme.optionTotalCustomerBgColor,
-                            margin: EdgeInsets.fromLTRB(
-                                Dimensions.pixels_5, 0, Dimensions.pixels_5, 0),
-                            child: Stack(
-                              alignment: Alignment.topCenter,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Image.asset(
-                                    AppImages.icon_totalcustomerfullicon,
-                                    height: 27,
+                              ),
+                              Expanded(
+                                child: Card(
+                                  shadowColor: AppTheme.borderOnFocusedColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(Dimensions.pixels_10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                  elevation: 4,
+                                  color: AppTheme.optionTotalCustomerBgColor,
+                                  margin: EdgeInsets.fromLTRB(
+                                      Dimensions.pixels_5, 0,
+                                      Dimensions.pixels_5, 0),
+                                  child: Stack(
+                                    alignment: Alignment.topCenter,
                                     children: [
-                                      SizedBox(
-                                        height: 15,
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: Image.asset(
+                                          AppImages.icon_totalcustomerfullicon,
+                                          height: 27,
+                                        ),
                                       ),
-                                      Text(
-                                        _dashboardResponse
-                                                ?.summery?.totalCustomers ??
-                                            '--',
-                                        style: TextStyle(
-                                            fontSize: AppConstants.largeSize,
-                                            fontFamily: AppConstants.fontName,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppTheme.white),
-                                      ),
-                                      Text(
-                                        'Total Customer',
-                                        style: TextStyle(
-                                            color: AppTheme.white,
-                                            fontFamily: AppConstants.fontName,
-                                            fontSize:
-                                                AppConstants.extraSmallSize),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
+                                      Padding(
+                                        padding: EdgeInsets.all(
+                                            Dimensions.pixels_10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              _dashboardResponse
+                                                  ?.summery?.totalCustomers ??
+                                                  '--',
+                                              style: TextStyle(
+                                                  fontSize: AppConstants
+                                                      .largeSize,
+                                                  fontFamily: AppConstants
+                                                      .fontName,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppTheme.white),
+                                            ),
+                                            Text(
+                                              'Total Customer',
+                                              style: TextStyle(
+                                                  color: AppTheme.white,
+                                                  fontFamily: AppConstants
+                                                      .fontName,
+                                                  fontSize:
+                                                  AppConstants.extraSmallSize),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+                        _addNewBookingView(),
                       ],
                     ),
                   ),
-                  _addNewBookingView(),
                 ],
               ),
-            ),
-          ],
-        ),
-      )),
+            )),
+      ),
     );
   }
 
@@ -446,101 +483,102 @@ class _HomeScreenState extends State<HomeScreen> {
     return Stack(
       children: [
         !isDashboardApiLoading &&
-                _dashboardResponse != null &&
-                _dashboardResponse.bookingRequests.isNotEmpty
+            _dashboardResponse != null &&
+            _dashboardResponse.bookingRequests.isNotEmpty
             ? ClipRRect(
+          borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(30.0),
+              topRight: const Radius.circular(30.0)),
+          clipBehavior: Clip.antiAlias,
+          child: Container(
+            decoration: new BoxDecoration(
+                color: Colors.white,
                 borderRadius: new BorderRadius.only(
                     topLeft: const Radius.circular(30.0),
-                    topRight: const Radius.circular(30.0)),
-                clipBehavior: Clip.antiAlias,
-                child: Container(
-                  decoration: new BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: new BorderRadius.only(
-                          topLeft: const Radius.circular(30.0),
-                          topRight: const Radius.circular(30.0))),
-                  child: CommonWidgets.gradientContainer(
-                      context,
-                      Dimensions.getHeight(percentage: 47),
-                      SizeConfig.screenWidth,
-                      Padding(
-                        padding: EdgeInsets.all(
-                          Dimensions.getScaledSize(26),
+                    topRight: const Radius.circular(30.0))),
+            child: CommonWidgets.gradientContainer(
+                context,
+                Dimensions.getHeight(percentage: 47),
+                SizeConfig.screenWidth,
+                Padding(
+                  padding: EdgeInsets.all(
+                    Dimensions.getScaledSize(26),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'New Booking',
+                            style: TextStyle(
+                                fontSize: AppConstants.smallSize,
+                                color: AppTheme.white,
+                                fontFamily: AppConstants.fontName),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              bool refreshData =
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        NewRequestBookingScreen(
+                                            _dashboardResponse)),
+                              );
+                              if (refreshData != null && refreshData) {
+                                _getDashboardSummary();
+                              }
+                            },
+                            child: Text(
+                              'View All',
+                              style: TextStyle(
+                                  fontSize: AppConstants.smallSize,
+                                  color: AppTheme.white,
+                                  fontFamily: AppConstants.fontName),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Flexible(
+                        child: PageView(
+
+                          /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+                          /// Use [Axis.vertical] to scroll vertically.
+                          scrollDirection: Axis.horizontal,
+                          controller: _pageController,
+                          children: _dashboardResponse.bookingRequests
+                              .map((bookingRequest) =>
+                              ItemNewRequestBooking(bookingRequest,
+                                  _bookingRequestActionMethod))
+                              .toList(),
                         ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'New Booking',
-                                  style: TextStyle(
-                                      fontSize: AppConstants.smallSize,
-                                      color: AppTheme.white,
-                                      fontFamily: AppConstants.fontName),
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    bool refreshData =
-                                        await Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              NewRequestBookingScreen(
-                                                  _dashboardResponse)),
-                                    );
-                                    if (refreshData != null && refreshData) {
-                                      _getDashboardSummary();
-                                    }
-                                  },
-                                  child: Text(
-                                    'View All',
-                                    style: TextStyle(
-                                        fontSize: AppConstants.smallSize,
-                                        color: AppTheme.white,
-                                        fontFamily: AppConstants.fontName),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Flexible(
-                              child: PageView(
-                                /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-                                /// Use [Axis.vertical] to scroll vertically.
-                                scrollDirection: Axis.horizontal,
-                                controller: _pageController,
-                                children: _dashboardResponse.bookingRequests
-                                    .map((bookingRequest) =>
-                                        ItemNewRequestBooking(bookingRequest,
-                                            _bookingRequestActionMethod))
-                                    .toList(),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            SmoothPageIndicator(
-                                controller: _pageController,
-                                count:
-                                    _dashboardResponse.bookingRequests.length,
-                                effect: ExpandingDotsEffect(
-                                  radius: 8,
-                                  dotHeight: 8,
-                                  dotWidth: 8,
-                                  dotColor: AppTheme.borderOnFocusedColor,
-                                  activeDotColor: AppTheme.white,
-                                  spacing: 5,
-                                )),
-                            SizedBox(
-                              height: 16,
-                            ),
-                          ],
-                        ),
-                      )),
-                ),
-              )
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SmoothPageIndicator(
+                          controller: _pageController,
+                          count:
+                          _dashboardResponse.bookingRequests.length,
+                          effect: ExpandingDotsEffect(
+                            radius: 8,
+                            dotHeight: 8,
+                            dotWidth: 8,
+                            dotColor: AppTheme.borderOnFocusedColor,
+                            activeDotColor: AppTheme.white,
+                            spacing: 5,
+                          )),
+                      SizedBox(
+                        height: 16,
+                      ),
+                    ],
+                  ),
+                )),
+          ),
+        )
             : Container(),
         Container(
           decoration: BoxDecoration(
@@ -552,108 +590,108 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(
             top: Dimensions.getHeight(
                 percentage: _dashboardResponse != null &&
-                        _dashboardResponse.bookingRequests.isNotEmpty
+                    _dashboardResponse.bookingRequests.isNotEmpty
                     ? 43
                     : 0),
           ),
           child: Center(
               child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  Dimensions.getScaledSize(26),
-                  Dimensions.getScaledSize(30),
-                  Dimensions.getScaledSize(26),
-                  Dimensions.getScaledSize(26),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Recent Orders',
-                      style: TextStyle(
-                          fontSize: AppConstants.smallSize,
-                          color: AppTheme.subHeadingTextColor,
-                          fontFamily: AppConstants.fontName),
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      Dimensions.getScaledSize(26),
+                      Dimensions.getScaledSize(30),
+                      Dimensions.getScaledSize(26),
+                      Dimensions.getScaledSize(26),
                     ),
-                    InkWell(
-                      onTap: () async {
-                        if (widget.callback != null) widget.callback();
-                      },
-                      child: Text(
-                        'View All',
-                        style: TextStyle(
-                            fontSize: AppConstants.smallSize,
-                            color: AppTheme.primaryColor,
-                            fontFamily: AppConstants.fontName),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                height: 30,
-                child: ListView.builder(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  itemCount: _filterOptions.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () async {
-                        setState(() {
-                          selectedFilterIndex = index;
-                          _getMyBookingOrders();
-                        });
-                      },
-                      child: Container(
-                          height: 30,
-                          margin: EdgeInsets.only(left: 4, right: 4),
-                          padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
-                          decoration: BoxDecoration(
-                              color: selectedFilterIndex == index
-                                  ? AppTheme.primaryColor.withOpacity(0.1)
-                                  : AppTheme.borderNotFocusedColor,
-                              border: Border.all(
-                                  color: selectedFilterIndex == index
-                                      ? AppTheme.primaryColor
-                                      : AppTheme.borderNotFocusedColor,
-                                  width: 1),
-                              borderRadius: BorderRadius.circular(30)),
-                          child: Row(
-                            children: [
-                              Text('${_filterOptions[index]}',
-                                  style: TextStyle(
-                                      color: AppTheme.mainTextColor,
-                                      fontSize: AppConstants.smallSize)),
-                            ],
-                          )),
-                    );
-                  },
-                ),
-              ),
-              isBookingApiLoading
-                  ? Container(
-                      height: Dimensions.getHeight(percentage: 60),
-                    )
-                  : _bookingResponse != null &&
-                          _bookingResponse.bookings != null &&
-                          _bookingResponse.bookings.isNotEmpty
-                      ? Container(
-                          child: ListView.builder(
-                              padding:
-                                  EdgeInsets.all(Dimensions.getScaledSize(10)),
-                              shrinkWrap: true,
-                              itemCount: _bookingResponse.bookings.length,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (BuildContext context, int index) {
-                                return ItemBooking(
-                                    _bookingResponse.bookings[index],
-                                    _bookingAction);
-                              }),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Recent Orders',
+                          style: TextStyle(
+                              fontSize: AppConstants.smallSize,
+                              color: AppTheme.subHeadingTextColor,
+                              fontFamily: AppConstants.fontName),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            if (widget.callback != null) widget.callback();
+                          },
+                          child: Text(
+                            'View All',
+                            style: TextStyle(
+                                fontSize: AppConstants.smallSize,
+                                color: AppTheme.primaryColor,
+                                fontFamily: AppConstants.fontName),
+                          ),
                         )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 30,
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(left: 10, right: 10),
+                      itemCount: _filterOptions.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () async {
+                            setState(() {
+                              selectedFilterIndex = index;
+                              _getMyBookingOrders();
+                            });
+                          },
+                          child: Container(
+                              height: 30,
+                              margin: EdgeInsets.only(left: 4, right: 4),
+                              padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+                              decoration: BoxDecoration(
+                                  color: selectedFilterIndex == index
+                                      ? AppTheme.primaryColor.withOpacity(0.1)
+                                      : AppTheme.borderNotFocusedColor,
+                                  border: Border.all(
+                                      color: selectedFilterIndex == index
+                                          ? AppTheme.primaryColor
+                                          : AppTheme.borderNotFocusedColor,
+                                      width: 1),
+                                  borderRadius: BorderRadius.circular(30)),
+                              child: Row(
+                                children: [
+                                  Text('${_filterOptions[index]}',
+                                      style: TextStyle(
+                                          color: AppTheme.mainTextColor,
+                                          fontSize: AppConstants.smallSize)),
+                                ],
+                              )),
+                        );
+                      },
+                    ),
+                  ),
+                  isBookingApiLoading
+                      ? Container(
+                    height: Dimensions.getHeight(percentage: 60),
+                  )
+                      : _bookingResponse != null &&
+                      _bookingResponse.bookings != null &&
+                      _bookingResponse.bookings.isNotEmpty
+                      ? Container(
+                    child: ListView.builder(
+                        padding:
+                        EdgeInsets.all(Dimensions.getScaledSize(10)),
+                        shrinkWrap: true,
+                        itemCount: _bookingResponse.bookings.length,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          return ItemBooking(
+                              _bookingResponse.bookings[index],
+                              _bookingAction);
+                        }),
+                  )
                       : _noOrderContainer(),
-            ],
-          )),
+                ],
+              )),
         ),
       ],
     );
@@ -731,32 +769,34 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
       _filterOptions[1] =
-          '${_bookingResponse.bookingCounts.upcoming} | Upcoming';
+      '${_bookingResponse.bookingCounts.upcoming} | Upcoming';
       _filterOptions[2] = '${_bookingResponse.bookingCounts.ongoing} | Ongoing';
       _filterOptions[3] =
-          '${_bookingResponse.bookingCounts.completed} | Completed';
+      '${_bookingResponse.bookingCounts.completed} | Completed';
       _filterOptions[4] =
-          '${_bookingResponse.bookingCounts.rejected} | Rejected';
+      '${_bookingResponse.bookingCounts.rejected} | Rejected';
     }
   }
 
-  Future<Function> _bookingRequestActionMethod(
-      String type, BookingRequest bookingRequest) async {
+  Future<Function> _bookingRequestActionMethod(String type,
+      BookingRequest bookingRequest) async {
     switch (type) {
       case 'Accept':
-        if (!getIt.get<NetworkConnectionObserver>().offline) {
+        if (!getIt
+            .get<NetworkConnectionObserver>()
+            .offline) {
           AppUtils.showLoader(context);
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-                  userId: loginResponse.data.id,
-                  orderId: bookingRequest.id,
-                  status: '1');
+              userId: loginResponse.data.id,
+              orderId: bookingRequest.id,
+              status: '1');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
               bool isAccepted =
-                  _dashboardResponse.bookingRequests.remove(bookingRequest);
+              _dashboardResponse.bookingRequests.remove(bookingRequest);
               if (isAccepted) {
                 appPrintLog('Your Booking request is accepted');
                 setState(() {});
@@ -771,19 +811,21 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         break;
       case 'Reject':
-        if (!getIt.get<NetworkConnectionObserver>().offline) {
+        if (!getIt
+            .get<NetworkConnectionObserver>()
+            .offline) {
           AppUtils.showLoader(context);
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-                  userId: loginResponse.data.id,
-                  orderId: bookingRequest.id,
-                  status: '2');
+              userId: loginResponse.data.id,
+              orderId: bookingRequest.id,
+              status: '2');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
               bool isDeleted =
-                  _dashboardResponse.bookingRequests.remove(bookingRequest);
+              _dashboardResponse.bookingRequests.remove(bookingRequest);
               if (isDeleted) {
                 appPrintLog('Your Booking request is Rejected');
                 setState(() {});
@@ -801,14 +843,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _bookingAction(String type, Booking booking) async {
-    if (!getIt.get<NetworkConnectionObserver>().offline) {
+    if (!getIt
+        .get<NetworkConnectionObserver>()
+        .offline) {
       AppUtils.showLoader(context);
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .changeBookingAction(
-              userId: loginResponse.data.id,
-              orderId: booking.id,
-              status: _changeBookingStatus(type));
+          userId: loginResponse.data.id,
+          orderId: booking.id,
+          status: _changeBookingStatus(type));
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {

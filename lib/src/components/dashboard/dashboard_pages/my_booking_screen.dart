@@ -12,6 +12,7 @@ import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MyBookingScreen extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   BookingResponse _bookingResponse;
   int selectedFilterIndex = 0;
   List<String> _filterOptions = List.empty(growable: true);
+  RefreshController _refreshController =
+  RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -48,6 +51,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
           status: _getCurrentStatus(selectedFilterIndex));
       _getFilterCount();
       AppUtils.hideLoader(context);
+      _refreshController.refreshCompleted();
       isBookingApiLoading = false;
     } else {
       AppUtils.noNetWorkDialog(context);
@@ -96,7 +100,9 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         break; // cancelled
     }
   }
-
+  void _onRefresh() async {
+    _getMyBookingOrders(isShowLoader: false);
+  }
   @override
   Widget builder(BuildContext context) {
     return Scaffold(
@@ -146,26 +152,30 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                 },
               ),
             ),
-            isBookingApiLoading
-                ? Container(
-                    height: Dimensions.getHeight(percentage: 60),
-                  )
-                : _bookingResponse != null &&
-                        _bookingResponse.bookings != null &&
-                        _bookingResponse.bookings.isNotEmpty
-                    ? Expanded(
-                        child: ListView.builder(
-                            padding:
-                                EdgeInsets.all(Dimensions.getScaledSize(10)),
-                            shrinkWrap: true,
-                            itemCount: _bookingResponse.bookings.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ItemBooking(
-                                  _bookingResponse.bookings[index],
-                                  _bookingAction);
-                            }),
-                      )
-                    : _noOrderContainer(),
+            Expanded(
+              child: SmartRefresher( enablePullDown: true,
+                controller: _refreshController,
+                onRefresh:_onRefresh,
+              child:  isBookingApiLoading
+                  ? Container(
+                height: Dimensions.getHeight(percentage: 60),
+              )
+                  : _bookingResponse != null &&
+                  _bookingResponse.bookings != null &&
+                  _bookingResponse.bookings.isNotEmpty
+                  ? ListView.builder(
+                  padding:
+                  EdgeInsets.all(Dimensions.getScaledSize(10)),
+                  shrinkWrap: true,
+                  itemCount: _bookingResponse.bookings.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ItemBooking(
+                        _bookingResponse.bookings[index],
+                        _bookingAction);
+                  })
+                  : _noOrderContainer(),),
+            ),
+
           ],
         ),
       ),
