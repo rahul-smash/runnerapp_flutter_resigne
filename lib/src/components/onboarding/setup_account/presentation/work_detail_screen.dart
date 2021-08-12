@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/work_detail_document_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -32,6 +36,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   final _key = GlobalKey<FormState>();
   bool isLoading = false;
   var experienceCont = TextEditingController();
+  var qualificationCont = TextEditingController();
   AnimationController _controller;
   ImagePickerHandler imagePicker;
   List<WorkDetailDocumentModel> workPhotographsDocList = [];
@@ -46,6 +51,21 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     );
     imagePicker = new ImagePickerHandler(this,_controller);
     imagePicker.init();
+    getWorkDetailData();
+  }
+
+  ExperienceDetailModel experienceDetailModel;
+  void getWorkDetailData() {
+    setState(() {
+      isLoading = true;
+    });
+    getIt.get<AccountStepsDetailRepositoryImpl>().getExperienceDetail(loginResponse.data.id).then((value){
+      experienceDetailModel = value;
+      setWorkDetailData();
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
@@ -125,7 +145,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                         children: [
                           TextFormField(
                             controller: experienceCont,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
                             validator: (val) =>
                             val.isEmpty ? "Please enter experience!" : null,
@@ -154,7 +174,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           TextFormField(
-                            controller: experienceCont,
+                            controller: qualificationCont,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
                             validator: (val) =>
@@ -180,11 +200,9 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                   color: AppTheme.mainTextColor, fontSize: 16),
                             ),
                           ),
-
                           SizedBox(
                             height:30,
                           ),
-
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -214,7 +232,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           Visibility(
-                            visible: workPhotographsDocList.length > 3 ? false : true,
+                            visible: workPhotographsDocList.length >= 3 ? false : true,
                             child: InkWell(
                               child: DottedBorder(
                                 dashPattern: [3, 3, 3, 3],
@@ -293,7 +311,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           Visibility(
-                            visible: certificatesAwardsDocList.length > 3 ? false : true,
+                            visible: certificatesAwardsDocList.length >= 3 ? false : true,
                             child: InkWell(
                               child: DottedBorder(
                                 dashPattern: [3, 3, 3, 3],
@@ -367,7 +385,6 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     );;
   }
 
-  void callApi() {}
 
   @override
   selectedProfileImage(XFile _image, bool profileImage, bool docImage1, bool docImage2) async {
@@ -419,12 +436,12 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
             leading: Container(height: double.infinity,
                 child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
             ),
-            title: Text(file == null ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
+            title: Text(file == null || file.path.isEmpty ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
             subtitle: Text("${workDetailDocumentModel.fileSize}"),
             trailing: InkWell(
               onTap: (){
                 setState(() {
-
+                  workPhotographsDocList.removeAt(index);
                 });
               },
               child: Icon(Icons.clear),
@@ -459,12 +476,12 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
             leading: Container(height: double.infinity,
                 child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
             ),
-            title: Text(file == null ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
+            title: Text(file == null || file.path.isEmpty ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
             subtitle: Text("${workDetailDocumentModel.fileSize}"),
             trailing: InkWell(
               onTap: (){
                 setState(() {
-
+                  certificatesAwardsDocList.removeAt(index);
                 });
               },
               child: Icon(Icons.clear),
@@ -476,4 +493,51 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     );
   }
 
+  Future<void> callApi() async {
+    if(this.network.offline){
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+    final FormState form = _key.currentState;
+    if (form.validate()) {
+      if(workPhotographsDocList.isEmpty){
+        AppUtils.showToast("Please upload atleast one work photo document", true);
+        return;
+      }
+      if(certificatesAwardsDocList.isEmpty){
+        AppUtils.showToast("Please upload atleast one certificates or award document", true);
+        return;
+      }
+      AppUtils.showLoader(context);
+
+      BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
+          .saveWorkDetail(userId:loginResponse.data.id,experienceId: experienceDetailModel.data.experienceId,
+          workExperience: experienceCont.text,qualification: qualificationCont.text,
+          experienceDetailModel: experienceDetailModel,
+          workPhotographsDocList: workPhotographsDocList,certificatesAwardsDocList: certificatesAwardsDocList);
+
+      if(baseresponse != null){
+        AppUtils.showToast(baseresponse.message, true);
+        AppUtils.hideKeyboard(context);
+        AppUtils.hideLoader(context);
+
+
+      }
+    }
+
+  }
+
+  void setWorkDetailData() {
+    //experienceDetailModel
+    experienceCont.text = experienceDetailModel.data.experience;
+    qualificationCont.text = experienceDetailModel.data.qualifications;
+
+    for(int i=0; i < experienceDetailModel.data.workPhotographs.length; i++){
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),""));
+    }
+    for(int i=0; i < experienceDetailModel.data.workPhotographs.length; i++){
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),""));
+    }
+  }
 }
+

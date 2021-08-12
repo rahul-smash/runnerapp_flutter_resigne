@@ -6,7 +6,9 @@ import 'package:marketplace_service_provider/core/network/api/dio_base_service.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/account_steps_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/work_detail_document_model.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
@@ -22,7 +24,8 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   static const _updateProfile = '/runner_authentication/updateProfile';
   static const _getBusinessDetail = '/runner_authentication/getBusinessDetail/';
   static const _saveBusinessDetail = '/runner_authentication/updateBusinessDetail';
-
+  static const _getExperienceDetail = '/runner_authentication/getExperienceDetail/';
+  static const _saveExperienceDetail = '/runner_authentication/updateExperienceDetail';
 
   String apiPath(String storeId, String path) =>
       '$storeId${AppNetworkConstants.baseRoute}$path';
@@ -165,6 +168,55 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
         });
 
     var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _saveBusinessDetail),
+        null, isMultipartUploadRequest: true,formData: formData);
+    BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
+    return loginResponse;
+  }
+
+  @override
+  Future<ExperienceDetailModel> getExperienceDetail(String userId) async {
+    try {
+      String queryParms = "/${userId}";
+      var response = await get(apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+          _getExperienceDetail)+queryParms, null);
+      ExperienceDetailModel categoryModel = ExperienceDetailModel.fromJson(jsonDecode(response));
+      return categoryModel;
+    } catch (e) {
+    }
+    return null;
+  }
+
+  @override
+  Future<BaseResponse> saveWorkDetail({String userId, String experienceId,String workExperience, String qualification,
+    List<WorkDetailDocumentModel> workPhotographsDocList,
+    List<WorkDetailDocumentModel> certificatesAwardsDocList,ExperienceDetailModel experienceDetailModel}) async{
+
+    Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+    FormData formData;
+    formData = FormData.fromMap({
+      'platform': param["platform"],
+      'device_id': param["device_id"],
+      'user_id': userId,
+      'experience_id': experienceId,
+      'experience': workExperience,
+      'qualifications': qualification,
+      'certificates': experienceDetailModel.data.certificate,
+      'work_photographs': experienceDetailModel.data.certificate,
+    });
+
+
+    for (var workPhotographObj in workPhotographsDocList) {
+      formData.files.addAll([
+        MapEntry("work_photograph_images", await MultipartFile.fromFile(workPhotographObj.file.path,filename: workPhotographObj.file.path.split('/').last)),
+      ]);
+    }
+    for (var certificatesObj in certificatesAwardsDocList) {
+      formData.files.addAll([
+        MapEntry("certificate_images", await MultipartFile.fromFile(certificatesObj.file.path,filename: certificatesObj.file.path.split('/').last)),
+      ]);
+    }
+
+    var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _saveExperienceDetail),
         null, isMultipartUploadRequest: true,formData: formData);
     BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
     return loginResponse;

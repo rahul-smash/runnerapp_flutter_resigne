@@ -1,17 +1,22 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/account_steps_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/work_detail_document_model.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 
 abstract class AccountStepsDetailRepository {
 
-  Future<AccountStepsDetailModel> getAccountStepsDetail(String userd);
+  Future<AccountStepsDetailModel> getAccountStepsDetail(String userId);
 
-  Future<ProfileInfoModel> getProfileInfo(String userd);
+  Future<ProfileInfoModel> getProfileInfo(String userId);
 
-  Future<BusinessDetailModel> getBusinessDetail(String userd);
+  Future<BusinessDetailModel> getBusinessDetail(String userId);
+
+  Future<ExperienceDetailModel> getExperienceDetail(String userId);
 
   Future<BaseResponse> saveMyProfile(File selectedProfileImg, String text,String lastName,
       String selectedGenderUpOption , String dob, String mobile, String email, String comments,
@@ -28,4 +33,9 @@ abstract class AccountStepsDetailRepository {
     String thu_open,String thu_close,String fri_open,String fri_close,
     String sat_open,String sat_close});
 
+
+  Future<BaseResponse> saveWorkDetail({@required String userId,@required String experienceId,
+    @required String workExperience,
+    @required String qualification,List<WorkDetailDocumentModel> workPhotographsDocList,
+    List<WorkDetailDocumentModel> certificatesAwardsDocList,ExperienceDetailModel experienceDetailModel});
 }
