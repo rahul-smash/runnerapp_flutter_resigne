@@ -436,8 +436,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
             leading: Container(height: double.infinity,
                 child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
             ),
-            title: Text(file == null || file.path.isEmpty ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
-            subtitle: Text("${workDetailDocumentModel.fileSize}"),
+            title: Text(file == null || file.path.isEmpty ? "Work Document ${index}" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
+            subtitle: Text(workDetailDocumentModel.fileSize.toString().isEmpty ?  "N/A" : workDetailDocumentModel.fileSize),
             trailing: InkWell(
               onTap: (){
                 setState(() {
@@ -459,8 +459,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
       itemCount: certificatesAwardsDocList.length,
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context,index){
-        WorkDetailDocumentModel workDetailDocumentModel = certificatesAwardsDocList[index];
-        File file = workDetailDocumentModel.file;
+        WorkDetailDocumentModel certificatesDocumentModel = certificatesAwardsDocList[index];
+        File file = certificatesDocumentModel.file;
         return Container(
           margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
           decoration: BoxDecoration(
@@ -476,8 +476,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
             leading: Container(height: double.infinity,
                 child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
             ),
-            title: Text(file == null || file.path.isEmpty ? "" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
-            subtitle: Text("${workDetailDocumentModel.fileSize}"),
+            title: Text(file == null || file.path.isEmpty ? "Certificate Document ${index}" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
+            subtitle: Text(certificatesDocumentModel.fileSize.toString().isEmpty ?  "N/A" : certificatesDocumentModel.fileSize),
             trailing: InkWell(
               onTap: (){
                 setState(() {
@@ -508,7 +508,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         AppUtils.showToast("Please upload atleast one certificates or award document", true);
         return;
       }
-      AppUtils.showLoader(context);
+      //AppUtils.showLoader(context);
 
       BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
           .saveWorkDetail(userId:loginResponse.data.id,experienceId: experienceDetailModel.data.experienceId,
@@ -519,7 +519,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
       if(baseresponse != null){
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        AppUtils.hideLoader(context);
+        //AppUtils.hideLoader(context);
 
 
       }
@@ -533,33 +533,33 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     qualificationCont.text = experienceDetailModel.data.qualifications;
 
     if(experienceDetailModel.data.workPhotographImage1.isNotEmpty){
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.workPhotographImage1),"",isImageUrl: true));
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }else{
       workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
     if(experienceDetailModel.data.workPhotographImage2.isNotEmpty){
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.workPhotographImage2),"",isImageUrl: true));
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }else{
       workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
     if(experienceDetailModel.data.workPhotographImage3.isNotEmpty){
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.workPhotographImage3),"",isImageUrl: true));
+      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }else{
       workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
 
     if(experienceDetailModel.data.certificateImage1.isNotEmpty){
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.certificateImage1),"",isImageUrl: true));
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }else{
       certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
     if(experienceDetailModel.data.certificateImage2.isNotEmpty){
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.certificateImage2),"",isImageUrl: true));
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }else{
       certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
     if(experienceDetailModel.data.certificateImage3.isNotEmpty){
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(experienceDetailModel.data.certificateImage3),"",isImageUrl: true));
+      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }else{
       certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
     }
