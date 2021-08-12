@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -14,6 +15,8 @@ import 'models/account_steps_detail_model.dart';
 import 'models/setup_account_model.dart';
 import 'presentation/business_detail_screen.dart';
 import 'presentation/my_profile_screen.dart';
+import 'package:location/location.dart';
+
 
 class SetupProfileScreen extends StatefulWidget {
   SetupProfileScreen();
@@ -27,6 +30,12 @@ class SetupProfileScreen extends StatefulWidget {
 class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
 
   List<SetupAccountModel> list = [];
+  Location location = new Location();
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+
 
   @override
   void initState() {
@@ -286,7 +295,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     return status;
   }
 
-  void onListViewTap(AccountStepsDetailModel accountStepsDetailModel, int index) {
+  Future<void> onListViewTap(AccountStepsDetailModel accountStepsDetailModel, int index) async {
     var accountStepsDetail = accountStepsDetailModel.data;
     print(accountStepsDetail);
     if(index == 0){
@@ -298,12 +307,40 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
           },))
       );
     }else if(index == 1){
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
-            setState(() {
-            });
-          },))
-      );
+
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return;
+        }
+      }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return;
+        }
+      }
+      LocationAccuracy _locationAccuracy = LocationAccuracy.high;
+      await location.changeSettings(accuracy: _locationAccuracy);
+
+      _locationData = await location.getLocation();
+      LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
+      if(_locationData != null){
+        Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) => BusinessDetailScreen(
+              userlocation: userlocation,
+              voidCallback: (){
+                setState(() {
+                });
+              },))
+        );
+      }else{
+        AppUtils.showToast("Not able to find your current location!", true);
+      }
+
     } else if(index == 2){
       Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){

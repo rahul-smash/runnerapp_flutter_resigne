@@ -193,6 +193,7 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
 
     Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
     FormData formData;
+
     formData = FormData.fromMap({
       'platform': param["platform"],
       'device_id': param["device_id"],
@@ -204,13 +205,17 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       'work_photographs': experienceDetailModel.data.certificate,
     });
 
-
+    //List<MultipartFile> multipartImageList1 = [];
     for (var workPhotographObj in workPhotographsDocList) {
+      //multipartImageList1.add(await MultipartFile.fromFile(workPhotographObj.file.path,filename: workPhotographObj.file.path.split('/').last));
       formData.files.addAll([
         MapEntry("work_photograph_images", await MultipartFile.fromFile(workPhotographObj.file.path,filename: workPhotographObj.file.path.split('/').last)),
       ]);
     }
+
+    //List<MultipartFile> multipartImageList2 = [];
     for (var certificatesObj in certificatesAwardsDocList) {
+      //multipartImageList2.add(await MultipartFile.fromFile(certificatesObj.file.path,filename: certificatesObj.file.path.split('/').last));
       formData.files.addAll([
         MapEntry("certificate_images", await MultipartFile.fromFile(certificatesObj.file.path,filename: certificatesObj.file.path.split('/').last)),
       ]);

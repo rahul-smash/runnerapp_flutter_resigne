@@ -15,8 +15,9 @@ class GoogleMapScreen extends StatefulWidget {
   Function(int) callback;
   int radius;
   final BusinessDetailModel businessDetailModel;
+  final LatLng userlocation;
 
-  GoogleMapScreen({@required this.callback,this.radius,this.businessDetailModel});
+  GoogleMapScreen({@required this.callback,this.radius,this.businessDetailModel, this.userlocation});
 
   @override
   _GoogleMapScreenState createState() {
@@ -28,8 +29,8 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
 
   GoogleMapController myController;
   List<Marker> _markers = <Marker>[];
-  double latitude = 45.521563;
-  double longitude = -122.677433;
+  double latitude;
+  double longitude;
   LatLng _center;
   int valueHolder;
   Set<Circle> circles = {};
@@ -41,8 +42,11 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   @override
   void initState() {
     super.initState();
-    if(widget.businessDetailModel.data.businessDetail.lat.isNotEmpty
-        && widget.businessDetailModel.data.businessDetail.lng.isNotEmpty){
+
+    latitude = widget.userlocation.latitude;
+    longitude = widget.userlocation.longitude;
+
+    if(widget.businessDetailModel.data.businessDetail.lat.isNotEmpty && widget.businessDetailModel.data.businessDetail.lng.isNotEmpty){
        latitude = double.parse(widget.businessDetailModel.data.businessDetail.lat);
        longitude = double.parse(widget.businessDetailModel.data.businessDetail.lng);
     }

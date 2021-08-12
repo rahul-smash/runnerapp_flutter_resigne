@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
@@ -24,7 +25,8 @@ import 'widgets/google_map.dart';
 class BusinessDetailScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
-  BusinessDetailScreen({@required this.voidCallback});
+  final LatLng userlocation;
+  BusinessDetailScreen({@required this.voidCallback, @required this.userlocation});
 
   @override
   _BusinessDetailScreenState createState() {
@@ -401,6 +403,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
 
                           Container(
                             child: GoogleMapScreen(
+                              userlocation: widget.userlocation,
                               businessDetailModel: businessDetailModel,
                               radius: businessDetailModel.data.businessDetail.radius.isEmpty
                                   ? 20
