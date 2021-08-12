@@ -8,7 +8,6 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
-import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/work_detail_document_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -31,7 +30,7 @@ class WorkDetailScreen extends StatefulWidget {
 }
 
 class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerProviderStateMixin,
-    ImagePickerListener{
+    ImagePickerListener {
 
   final _key = GlobalKey<FormState>();
   bool isLoading = false;
@@ -39,8 +38,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   var qualificationCont = TextEditingController();
   AnimationController _controller;
   ImagePickerHandler imagePicker;
-  List<WorkDetailDocumentModel> workPhotographsDocList = [];
-  List<WorkDetailDocumentModel> certificatesAwardsDocList = [];
+  File workDoc1, workDoc2, workDoc3, certificateDoc1, certificateDoc2,
+      certificateDoc3;
 
   @override
   void initState() {
@@ -49,17 +48,19 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    imagePicker = new ImagePickerHandler(this,_controller);
+    imagePicker = new ImagePickerHandler(this, _controller);
     imagePicker.init();
     getWorkDetailData();
   }
 
   ExperienceDetailModel experienceDetailModel;
+
   void getWorkDetailData() {
     setState(() {
       isLoading = true;
     });
-    getIt.get<AccountStepsDetailRepositoryImpl>().getExperienceDetail(loginResponse.data.id).then((value){
+    getIt.get<AccountStepsDetailRepositoryImpl>().getExperienceDetail(
+        loginResponse.data.id).then((value) {
       experienceDetailModel = value;
       setWorkDetailData();
       setState(() {
@@ -78,12 +79,12 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     return Scaffold(
       backgroundColor: AppTheme.grayCircle,
       appBar: BaseAppBar(
-        callback: (){
+        callback: () {
           widget.voidCallback();
           Navigator.of(context).pop();
         },
         backgroundColor: AppTheme.white,
-        title: Text('Work Detail',style: TextStyle(color: Colors.black),),
+        title: Text('Work Detail', style: TextStyle(color: Colors.black),),
         appBar: AppBar(
           foregroundColor: Colors.black,
           backgroundColor: Colors.white,
@@ -103,7 +104,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         ),
         widgets: <Widget>[
           Container(
-            child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
+            child: Center(
+              child: Text("Save", style: TextStyle(color: Colors.black)),),
           ),
           SizedBox(width: 20,)
         ],
@@ -113,13 +115,15 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
             child: Container(
               color: Colors.white,
               width: double.infinity,
-              margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),right: Dimensions.getScaledSize(20)),
+              margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
+                  right: Dimensions.getScaledSize(20)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                        top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(10)
+                        top: Dimensions.getScaledSize(20),
+                        bottom: Dimensions.getScaledSize(10)
                     ),
                     child: Text(
                       "Work experience Detail",
@@ -136,7 +140,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                     key: _key,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Container(
-                      margin: EdgeInsets.only(left: Dimensions.getScaledSize(25),
+                      margin: EdgeInsets.only(
+                          left: Dimensions.getScaledSize(25),
                           right: Dimensions.getScaledSize(25),
                           bottom: Dimensions.getScaledSize(20)
                       ),
@@ -165,7 +170,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                   fontSize: AppConstants.extraXSmallSize,
                                   fontFamily: AppConstants.fontName),
                               hintStyle: TextStyle(
-                                  color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                  color: AppTheme.subHeadingTextColor,
+                                  fontSize: 16),
                               labelStyle: TextStyle(
                                   color: AppTheme.mainTextColor, fontSize: 16),
                             ),
@@ -195,13 +201,14 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                   fontSize: AppConstants.extraXSmallSize,
                                   fontFamily: AppConstants.fontName),
                               hintStyle: TextStyle(
-                                  color: AppTheme.subHeadingTextColor, fontSize: 16),
+                                  color: AppTheme.subHeadingTextColor,
+                                  fontSize: 16),
                               labelStyle: TextStyle(
                                   color: AppTheme.mainTextColor, fontSize: 16),
                             ),
                           ),
                           SizedBox(
-                            height:30,
+                            height: 30,
                           ),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -232,7 +239,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           Visibility(
-                            visible: workPhotographsDocList.length >= 3 ? false : true,
+                            visible: workDoc1 != null && workDoc2 != null && workDoc3 != null ? false : true,
                             child: InkWell(
                               child: DottedBorder(
                                 dashPattern: [3, 3, 3, 3],
@@ -242,17 +249,21 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                 //padding: EdgeInsets.all(6),
                                 color: AppTheme.subHeadingTextColor,
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(5)),
                                   child: Container(
                                     height: Dimensions.getWidth(percentage: 22),
                                     width: Dimensions.getWidth(percentage: 30),
                                     color: Color(0xffF9F9F9),
                                     child: Center(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .center,
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .center,
                                         children: [
-                                          Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
+                                          Icon(Icons.upload_rounded,
+                                            color: AppTheme.primaryColor,),
                                           Text(
                                             "Upload\nDocument",
                                             textAlign: TextAlign.center,
@@ -267,8 +278,38 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                   ),
                                 ),
                               ),
-                              onTap: (){
-                                imagePicker.showDialog(context,docImage1: true, profileImage: false,docImage2: false);
+                              onTap: () {
+                                if (workDoc1 == null) {
+                                  imagePicker.showDialog(
+                                      context,
+                                      docImage1: true,
+                                      profileImage: false,
+                                      docImage2: false,
+                                      docImage3: false,
+                                      docCertificateImage1: false,
+                                      docCertificateImage2: false,
+                                      docCertificateImage3: false);
+                                }
+                                if (workDoc2 == null) {
+                                  imagePicker.showDialog(
+                                      context, docImage1: false,
+                                      profileImage: false,
+                                      docImage2: true,
+                                      docImage3: false,
+                                      docCertificateImage1: false,
+                                      docCertificateImage2: false,
+                                      docCertificateImage3: false);
+                                }
+                                if (workDoc3 == null) {
+                                  imagePicker.showDialog(
+                                      context, docImage1: false,
+                                      profileImage: false,
+                                      docImage2: false,
+                                      docImage3: true,
+                                      docCertificateImage1: false,
+                                      docCertificateImage2: false,
+                                      docCertificateImage3: false);
+                                }
                               },
                             ),
                           ),
@@ -311,7 +352,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           Visibility(
-                            visible: certificatesAwardsDocList.length >= 3 ? false : true,
+                            visible: certificateDoc1 != null &&  certificateDoc2 != null && certificateDoc3 != null ? false : true,
                             child: InkWell(
                               child: DottedBorder(
                                 dashPattern: [3, 3, 3, 3],
@@ -321,17 +362,21 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                 //padding: EdgeInsets.all(6),
                                 color: AppTheme.subHeadingTextColor,
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(5)),
                                   child: Container(
                                     height: Dimensions.getWidth(percentage: 22),
                                     width: Dimensions.getWidth(percentage: 30),
                                     color: Color(0xffF9F9F9),
                                     child: Center(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .center,
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .center,
                                         children: [
-                                          Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
+                                          Icon(Icons.upload_rounded,
+                                            color: AppTheme.primaryColor,),
                                           Text(
                                             "Upload\nDocument",
                                             textAlign: TextAlign.center,
@@ -346,8 +391,37 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                                   ),
                                 ),
                               ),
-                              onTap: (){
-                                imagePicker.showDialog(context,docImage1: false,profileImage: false,docImage2:true);
+                              onTap: () {
+                                if (certificateDoc1 == null) {
+                                  imagePicker.showDialog(
+                                      context, docImage1: false,
+                                      profileImage: false,
+                                      docImage2: false,
+                                      docImage3: false,
+                                      docCertificateImage1: true,
+                                      docCertificateImage2: false,
+                                      docCertificateImage3: false);
+                                }
+                                if (certificateDoc2 == null) {
+                                  imagePicker.showDialog(
+                                      context, docImage1: false,
+                                      profileImage: false,
+                                      docImage2: false,
+                                      docImage3: false,
+                                      docCertificateImage1: false,
+                                      docCertificateImage2: true,
+                                      docCertificateImage3: false);
+                                }
+                                if (certificateDoc3 == null) {
+                                  imagePicker.showDialog(
+                                      context, docImage1: false,
+                                      profileImage: false,
+                                      docImage2: false,
+                                      docImage3: false,
+                                      docCertificateImage1: false,
+                                      docCertificateImage2: false,
+                                      docCertificateImage3: true);
+                                }
                               },
                             ),
                           ),
@@ -360,8 +434,12 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                             height: 20,
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
-                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.only(
+                                left: 30, right: 30, bottom: 20),
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             child: GradientElevatedButton(
                               onPressed: () async {
                                 callApi();
@@ -387,183 +465,336 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
 
 
   @override
-  selectedProfileImage(XFile _image, bool profileImage, bool docImage1, bool docImage2) async {
+  selectedProfileImage(XFile _image, bool profileImage,
+      bool docImage1, bool docImage2, bool doc3,
+      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3) async {
     try {
-      if(_image == null){
-            AppUtils.showToast("Invalid Image!", true);
-            return;
-          }
-      print("XFile=${_image.path} and ${docImage1}");
-      if(docImage1){
-        File file  = File(_image.path);
-        var fileSize = await AppUtils.getFileSize(file.path, 1);
-        workPhotographsDocList.add(WorkDetailDocumentModel(file,fileSize));
-        setState(() {
-        });
+      if (_image == null) {
+        AppUtils.showToast("Invalid Image!", true);
+        return;
       }
-      if(docImage2){
-        File file  = File(_image.path);
+      print("XFile=${_image.path} docImage1=${docImage1} "
+          "docImage2=${docImage2} docImage3=${doc3} "
+          "docCertificateImage1=${docCertificateImage1} "
+          "docCertificateImage2=${docCertificateImage2} "
+          "docCertificateImage3=${docCertificateImage3}");
+      if (docImage1) {
+        File file = File(_image.path);
         var fileSize = await AppUtils.getFileSize(file.path, 1);
-        certificatesAwardsDocList.add(WorkDetailDocumentModel(file,fileSize));
-        setState(() {
-        });
+        workDoc1 = file;
+        setState(() {});
       }
+      if (docImage2) {
+        File file = File(_image.path);
+        var fileSize = await AppUtils.getFileSize(file.path, 1);
+        workDoc2 = file;
+        setState(() {});
+      }
+      if (doc3) {
+        File file = File(_image.path);
+        var fileSize = await AppUtils.getFileSize(file.path, 1);
+        workDoc3 = file;
+        setState(() {});
+      }
+
+      if (docCertificateImage1) {
+        File file = File(_image.path);
+        var fileSize = await AppUtils.getFileSize(file.path, 1);
+        certificateDoc1 = file;
+        setState(() {});
+      }
+      if (docCertificateImage2) {
+        File file = File(_image.path);
+        var fileSize = await AppUtils.getFileSize(file.path, 1);
+        certificateDoc2 = file;
+        setState(() {});
+      }
+      if (docCertificateImage1) {
+        File file = File(_image.path);
+        var fileSize = await AppUtils.getFileSize(file.path, 1);
+        certificateDoc3 = file;
+        setState(() {});
+      }
+
     } catch (e) {
       print(e);
     }
   }
 
+
   showWorkPhotoGraphsList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: workPhotographsDocList.length,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (context,index){
-        WorkDetailDocumentModel workDetailDocumentModel = workPhotographsDocList[index];
-        File file = workDetailDocumentModel.file;
-        return Container(
-          margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: shadow,
-            border: Border.all(
-              color: Colors.grey,
-              width: 0.5,
+    return Column(
+      children: [
+        Visibility(
+          visible: workDoc1 != null ? true : false,
+          child: Container(
+            margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            child: ListTile(
+              leading: Container(height: double.infinity,
+                  child: Icon(
+                    Icons.description_outlined, color: AppTheme.primaryColor,)
+              ),
+              title: Text(workDoc1 == null || workDoc1.path.isEmpty ? "" : workDoc1.path.split('/') .last , maxLines: 2, overflow: TextOverflow.ellipsis),
+              subtitle: Text("N/A"),
+              trailing: InkWell(
+                onTap: () {
+                  setState(() {
+                    workDoc1 = null;
+                    //workPhotographsDocList.removeAt(index);
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+              contentPadding: EdgeInsets.only(left: 10, right: 10),
+            ),
           ),
-          child: ListTile(
-            leading: Container(height: double.infinity,
-                child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
+        ),
+        Visibility(
+          visible: workDoc2 != null ? true : false,
+          child: Container(
+            margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            title: Text(file == null || file.path.isEmpty ? "Work Document ${index}" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
-            subtitle: Text(workDetailDocumentModel.fileSize.toString().isEmpty ?  "N/A" : workDetailDocumentModel.fileSize),
-            trailing: InkWell(
-              onTap: (){
-                setState(() {
-                  workPhotographsDocList.removeAt(index);
-                });
-              },
-              child: Icon(Icons.clear),
+            child: ListTile(
+              leading: Container(height: double.infinity,
+                  child: Icon(
+                    Icons.description_outlined, color: AppTheme.primaryColor,)
+              ),
+              title: Text(workDoc2 == null || workDoc2.path.isEmpty ? "" : workDoc2.path.split("/").last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              subtitle: Text("N/A"),
+              trailing: InkWell(
+                onTap: () {
+                  setState(() {
+                    workDoc2= null;
+                    //workPhotographsDocList.removeAt(index);
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+              contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
-            contentPadding: EdgeInsets.only(left: 10,right: 10),
           ),
-        );
-      },
+        ),
+        Visibility(
+          visible: workDoc3 != null ? true : false,
+          child: Container(
+            margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: ListTile(
+              leading: Container(height: double.infinity,
+                  child: Icon(
+                    Icons.description_outlined, color: AppTheme.primaryColor,)
+              ),
+              title: Text(workDoc3 == null || workDoc3.path.isEmpty ? "" : workDoc3.path.split("/").last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              subtitle: Text("N/A"),
+              trailing: InkWell(
+                onTap: () {
+                  setState(() {
+                    workDoc3 = null;
+                    //workPhotographsDocList.removeAt(index);
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+              contentPadding: EdgeInsets.only(left: 10, right: 10),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   showCertificatesAwardsList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: certificatesAwardsDocList.length,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (context,index){
-        WorkDetailDocumentModel certificatesDocumentModel = certificatesAwardsDocList[index];
-        File file = certificatesDocumentModel.file;
-        return Container(
-          margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: shadow,
-            border: Border.all(
-              color: Colors.grey,
-              width: 0.5,
+    return Column(
+      children: [
+        Visibility(
+          visible: certificateDoc1 != null ? true : false,
+          child: Container(
+            margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            child: ListTile(
+              leading: Container(height: double.infinity,
+                  child: Icon(
+                    Icons.description_outlined, color: AppTheme.primaryColor,)
+              ),
+              title: Text(certificateDoc1 == null || certificateDoc1.path.isEmpty ? "" : certificateDoc1.path.split('/').last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              subtitle: Text("N/A"),
+              trailing: InkWell(
+                onTap: () {
+                  setState(() {
+                    certificateDoc1 = null;
+                    //workPhotographsDocList.removeAt(index);
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+              contentPadding: EdgeInsets.only(left: 10, right: 10),
+            ),
           ),
-          child: ListTile(
-            leading: Container(height: double.infinity,
-                child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
+        ),
+        Visibility(
+          visible: certificateDoc2 != null ? true : false,
+          child: Container(
+            margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            title: Text(file == null || file.path.isEmpty ? "Certificate Document ${index}" : '${file.path.split('/').last}',maxLines: 2,overflow: TextOverflow.ellipsis),
-            subtitle: Text(certificatesDocumentModel.fileSize.toString().isEmpty ?  "N/A" : certificatesDocumentModel.fileSize),
-            trailing: InkWell(
-              onTap: (){
-                setState(() {
-                  certificatesAwardsDocList.removeAt(index);
-                });
-              },
-              child: Icon(Icons.clear),
+            child: ListTile(
+              leading: Container(height: double.infinity,
+                  child: Icon(
+                    Icons.description_outlined, color: AppTheme.primaryColor,)
+              ),
+              title: Text(certificateDoc2 == null || certificateDoc2.path.isEmpty ? "" : certificateDoc2.path.split('/').last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              subtitle: Text("N/A"),
+              trailing: InkWell(
+                onTap: () {
+                  setState(() {
+                    certificateDoc2 = null;
+                    //workPhotographsDocList.removeAt(index);
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+              contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
-            contentPadding: EdgeInsets.only(left: 10,right: 10),
           ),
-        );
-      },
+        ),
+        Visibility(
+          visible: certificateDoc3 != null ? true : false,
+          child: Container(
+            margin: EdgeInsets.only(top: Dimensions.getScaledSize(10)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: shadow,
+              border: Border.all(
+                color: Colors.grey,
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: ListTile(
+              leading: Container(height: double.infinity,
+                  child: Icon(
+                    Icons.description_outlined, color: AppTheme.primaryColor,)
+              ),
+              title: Text(certificateDoc3 == null || certificateDoc3.path.isEmpty ? "" : certificateDoc3.path.split('/').last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              subtitle: Text("N/A"),
+              trailing: InkWell(
+                onTap: () {
+                  setState(() {
+                    certificateDoc3 = null;
+                    //workPhotographsDocList.removeAt(index);
+                  });
+                },
+                child: Icon(Icons.clear),
+              ),
+              contentPadding: EdgeInsets.only(left: 10, right: 10),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Future<void> callApi() async {
-    if(this.network.offline){
+    if (this.network.offline) {
       AppUtils.showToast(AppConstants.noInternetMsg, false);
       return;
     }
+
     final FormState form = _key.currentState;
     if (form.validate()) {
-      if(workPhotographsDocList.isEmpty){
+      if(workDoc1 == null && workDoc2 == null && workDoc3 == null){
         AppUtils.showToast("Please upload atleast one work photo document", true);
         return;
       }
-      if(certificatesAwardsDocList.isEmpty){
+      if(certificateDoc1 == null && certificateDoc2 == null && certificateDoc3 == null){
         AppUtils.showToast("Please upload atleast one certificates or award document", true);
         return;
       }
       //AppUtils.showLoader(context);
 
-      BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
+       BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
           .saveWorkDetail(userId:loginResponse.data.id,experienceId: experienceDetailModel.data.experienceId,
           workExperience: experienceCont.text,qualification: qualificationCont.text,
           experienceDetailModel: experienceDetailModel,
-          workPhotographsDocList: workPhotographsDocList,certificatesAwardsDocList: certificatesAwardsDocList);
+           workDoc1: workDoc1,
+           workDoc2: workDoc2,
+           workDoc3: workDoc3,
+           certificateDoc1:certificateDoc1,
+           certificateDoc2: certificateDoc2,
+           certificateDoc3: certificateDoc3);
 
       if(baseresponse != null){
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        //AppUtils.hideLoader(context);
+      AppUtils.hideLoader(context);
 
 
       }
     }
-
   }
 
   void setWorkDetailData() {
-    //experienceDetailModel
     experienceCont.text = experienceDetailModel.data.experience;
     qualificationCont.text = experienceDetailModel.data.qualifications;
 
-    if(experienceDetailModel.data.workPhotographImage1.isNotEmpty){
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
-    }else{
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    if (experienceDetailModel.data.workPhotographImage1.isNotEmpty) {
+      workDoc1 = File("");
     }
-    if(experienceDetailModel.data.workPhotographImage2.isNotEmpty){
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
-    }else{
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    if (experienceDetailModel.data.workPhotographImage2.isNotEmpty) {
+      workDoc2 = File("");
     }
-    if(experienceDetailModel.data.workPhotographImage3.isNotEmpty){
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
-    }else{
-      workPhotographsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    if (experienceDetailModel.data.workPhotographImage3.isNotEmpty) {
+      workDoc3 = File("");
     }
 
-    if(experienceDetailModel.data.certificateImage1.isNotEmpty){
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
-    }else{
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    if (experienceDetailModel.data.certificateImage1.isNotEmpty) {
+      certificateDoc1 = File("");
     }
-    if(experienceDetailModel.data.certificateImage2.isNotEmpty){
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
-    }else{
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    if (experienceDetailModel.data.certificateImage2.isNotEmpty) {
+      certificateDoc2 = File("");
     }
-    if(experienceDetailModel.data.certificateImage3.isNotEmpty){
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
-    }else{
-      certificatesAwardsDocList.add(WorkDetailDocumentModel(File(""),"",isImageUrl: true));
+    if (experienceDetailModel.data.certificateImage3.isNotEmpty) {
+      certificateDoc3 = File("");
     }
-
   }
 }
-

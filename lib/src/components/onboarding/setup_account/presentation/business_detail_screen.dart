@@ -94,7 +94,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   }
 
   @override
-  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2) async{
+  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool doc3,
+      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3) async{
     if(_image == null){
       AppUtils.showToast("Invalid Image!", true);
       return;

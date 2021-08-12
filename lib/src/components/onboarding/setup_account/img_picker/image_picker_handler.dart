@@ -12,6 +12,11 @@ class ImagePickerHandler {
   bool profileImage = false;
   bool docImage1 = false;
   bool docImage2 = false;
+  bool docImage3 = false;
+
+  bool docCertificateImage1 = false;
+  bool docCertificateImage2 = false;
+  bool docCertificateImage3 = false;
 
   ImagePickerHandler(this._listener, this._controller);
 
@@ -33,19 +38,29 @@ class ImagePickerHandler {
   }
 
   Future selectedImage(XFile image) async {
-    _listener.selectedProfileImage(image,this.profileImage,this.docImage1,this.docImage2);
+    _listener.selectedProfileImage(image,this.profileImage,this.docImage1,this.docImage2,this.docImage3,
+        this.docCertificateImage1,this.docCertificateImage2,this.docCertificateImage3);
   }
 
   showDialog(BuildContext context,{bool profileImage = false,
     bool docImage1= false,
-    bool docImage2= false}) {
+    bool docImage2= false,
+    bool docImage3= false,
+    bool docCertificateImage1 = false,
+    bool docCertificateImage2= false,
+    bool docCertificateImage3 = false}) {
     this.profileImage = profileImage;
     this.docImage1 = docImage1;
     this.docImage2 = docImage2;
+    this.docImage3 = docImage3;
+    this.docCertificateImage1 = docCertificateImage1;
+    this.docCertificateImage2 = docCertificateImage2;
+    this.docCertificateImage3 = docCertificateImage3;
     imagePicker.getImage(context);
   }
 }
 
 abstract class ImagePickerListener {
-  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2);
+  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool docImage3,
+      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3);
 }

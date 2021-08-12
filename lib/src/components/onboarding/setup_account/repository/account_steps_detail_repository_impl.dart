@@ -191,43 +191,12 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
 
   @override
   Future<BaseResponse> saveWorkDetail({String userId, String experienceId,String workExperience, String qualification,
-    List<WorkDetailDocumentModel> workPhotographsDocList,
-    List<WorkDetailDocumentModel> certificatesAwardsDocList,
+    File workDoc1,File workDoc2,File workDoc3,File certificateDoc1,File certificateDoc2,
+    File certificateDoc3,
     ExperienceDetailModel experienceDetailModel}) async{
 
     Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
     FormData formData;
-    print("workPhotographsDocList.length=${workPhotographsDocList.length} and ${certificatesAwardsDocList.length}");
-
-    File certificate_image1,certificate_image2,certificate_image3;
-    File workPhotographs_image1,workPhotographs_image2,workPhotographs_image3;
-
-    if(workPhotographsDocList.length == 1){
-      workPhotographs_image1 = workPhotographsDocList[0].file;
-    }
-    if(workPhotographsDocList.length == 2){
-      workPhotographs_image1 = workPhotographsDocList[0].file;
-      workPhotographs_image2 = workPhotographsDocList[1].file;
-    }
-    if(workPhotographsDocList.length  == 3){
-      workPhotographs_image1 = workPhotographsDocList[0].file;
-      workPhotographs_image2 = workPhotographsDocList[1].file;
-      workPhotographs_image3 = workPhotographsDocList[2].file;
-    }
-
-    //===========================================
-    if(certificatesAwardsDocList.length == 1){
-      certificate_image1 = certificatesAwardsDocList[0].file;
-    }
-    if(certificatesAwardsDocList.length == 2){
-      certificate_image1 = certificatesAwardsDocList[0].file;
-      certificate_image2 = certificatesAwardsDocList[1].file;
-    }
-    if(certificatesAwardsDocList.length == 3){
-      certificate_image1 = certificatesAwardsDocList[0].file;
-      certificate_image2 = certificatesAwardsDocList[1].file;
-      certificate_image3 = certificatesAwardsDocList[2].file;
-    }
 
 
     formData = FormData.fromMap({
@@ -237,33 +206,26 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       'experience_id': experienceId,
       'experience': workExperience,
       'qualifications': qualification,
-      'work_photograph_image1_delete': "",
-      'work_photograph_image2_delete': "",
-      'work_photograph_image3_delete': "",
-      'work_photograph_image1': workPhotographs_image1.path == null || workPhotographs_image1.path.isEmpty
-          ? ""
-          : await MultipartFile.fromFile(workPhotographs_image1.path,filename: workPhotographs_image1.path.isEmpty ? "" : workPhotographs_image1.path.split('/').last,),
-      'work_photograph_image2': workPhotographs_image2.path == null || workPhotographs_image2.path.isEmpty
-          ? ""
-          : await MultipartFile.fromFile(workPhotographs_image2.path,filename: workPhotographs_image2.path.isEmpty ? "" : workPhotographs_image2.path.split('/').last,),
-      'work_photograph_image3': workPhotographs_image3.path == null || workPhotographs_image3.path.isEmpty
-          ? ""
-          : await MultipartFile.fromFile(workPhotographs_image3.path,filename: workPhotographs_image3.path.isEmpty ? "" : workPhotographs_image3.path.split('/').last,),
-//------------------------------------------------------------------------------------------------------------------
-      'certificate_image1': certificate_image1.path == null || certificate_image1.path.isEmpty
-          ? ""
-          : await MultipartFile.fromFile(certificate_image1.path,filename: certificate_image1.path.isEmpty ? "" : certificate_image1.path.split('/').last,),
+      'work_photograph_image1_delete': workDoc1 == null ? "1" : "0",
+      'work_photograph_image2_delete': workDoc2 == null ? "1" : "0",
+      'work_photograph_image3_delete': workDoc3 == null ? "1" : "0",
 
-      'certificate_image2': certificate_image2.path == null || certificate_image2.path.isEmpty
-          ? ""
-          : await MultipartFile.fromFile(certificate_image2.path,filename: certificate_image2.path.isEmpty ? "" : certificate_image2.path.split('/').last,),
+      'work_photograph_image1': workDoc1 == null || workDoc1.path.isEmpty
+          ? "" : await MultipartFile.fromFile(workDoc1.path,filename:workDoc1.path == null ? "" : workDoc1.path.isEmpty ? "" : workDoc1.path.split('/').last,),
+      'work_photograph_image2': workDoc2 == null || workDoc2.path.isEmpty
+          ? "": await MultipartFile.fromFile(workDoc2.path,filename: workDoc2.path == null ? "" :workDoc2.path.isEmpty ? "" : workDoc2.path.split('/').last,),
+      'work_photograph_image3': workDoc3 == null || workDoc3.path.isEmpty
+          ? "" : await MultipartFile.fromFile(workDoc3.path,filename: workDoc3.path == null ? "" :workDoc3.path.isEmpty ? "" : workDoc3.path.split('/').last,),
+      'certificate_image1': certificateDoc1 == null || certificateDoc1.path.isEmpty
+          ? "" : await MultipartFile.fromFile(certificateDoc1.path,filename: certificateDoc1.path == null ? "" : certificateDoc1.path.isEmpty ? "" : certificateDoc1.path.split('/').last,),
+      'certificate_image2': certificateDoc2 == null || certificateDoc2.path.isEmpty
+          ? "" : await MultipartFile.fromFile(certificateDoc2.path,filename: certificateDoc2.path == null ? "" :certificateDoc2.path.isEmpty ? "" : certificateDoc2.path.split('/').last,),
+      'certificate_image3': certificateDoc3 == null || certificateDoc3.path.isEmpty
+          ? "" : await MultipartFile.fromFile(certificateDoc3.path,filename: certificateDoc3.path == null ? "" :certificateDoc3.path.isEmpty ? "" : certificateDoc3.path.split('/').last,),
 
-      'certificate_image3': certificate_image3.path == null || certificate_image3.path.isEmpty
-          ? ""
-          : await MultipartFile.fromFile(certificate_image3.path,filename: certificate_image3.path.isEmpty ? "" : certificate_image3.path.split('/').last,),
-      'certificate_image1_delete': "",
-      'certificate_image2_delete': "",
-      'certificate_image3_delete': "",
+      'certificate_image1_delete': certificateDoc1 == null ? "1" : "0",
+      'certificate_image2_delete': certificateDoc2 == null ? "1" : "0",
+      'certificate_image3_delete': certificateDoc3 == null ? "1" : "0",
     });
 
     var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _saveExperienceDetail),

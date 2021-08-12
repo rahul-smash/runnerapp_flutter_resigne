@@ -39,6 +39,6 @@ abstract class AccountStepsDetailRepository {
 
   Future<BaseResponse> saveWorkDetail({@required String userId,@required String experienceId,
     @required String workExperience,
-    @required String qualification,List<WorkDetailDocumentModel> workPhotographsDocList,
-    List<WorkDetailDocumentModel> certificatesAwardsDocList,ExperienceDetailModel experienceDetailModel});
+    @required String qualification,File workDoc1,File workDoc2,File workDoc3,File certificateDoc1,File certificateDoc2,
+    File certificateDoc3,ExperienceDetailModel experienceDetailModel});
 }
