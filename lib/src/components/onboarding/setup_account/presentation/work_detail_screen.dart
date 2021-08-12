@@ -545,7 +545,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                   child: Icon(
                     Icons.description_outlined, color: AppTheme.primaryColor,)
               ),
-              title: Text(workDoc1 == null || workDoc1.path.isEmpty ? "" : workDoc1.path.split('/') .last , maxLines: 2, overflow: TextOverflow.ellipsis),
+              title: Text(workDoc1 == null || workDoc1.path.isEmpty ? "" : workDoc1.path.split('/').last ,
+                  maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
