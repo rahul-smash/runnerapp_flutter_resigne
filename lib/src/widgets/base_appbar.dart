@@ -6,20 +6,25 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBar appBar;
   final List<Widget> widgets;
   final Widget leading;
+  final bool centerTitle;
+  final Color backBtnColor;
+  final VoidCallback callback;
 
   /// you can add more fields that meet your needs
-  const BaseAppBar(
-      {Key key,
-      this.title,
-      this.appBar,
-      this.leading,
-      this.widgets,
-      this.backgroundColor})
+  const BaseAppBar({Key key, this.title, this.appBar,this.backBtnColor = Colors.black,
+    this.widgets,this.backgroundColor,this.centerTitle = false,this.callback})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: this.backBtnColor),
+        onPressed: () {
+          this.callback();
+        },
+      ),
+      centerTitle: this.centerTitle,
       automaticallyImplyLeading: appBar.automaticallyImplyLeading,
       elevation: appBar.elevation,
       title: title,

@@ -105,7 +105,7 @@ class MainWidget extends StatelessWidget {
         AppUtils.getDeviceWidth(context), Orientation.portrait);
     SizeConfig().init(context);
     return Scaffold(
-        body: AppConstants.isLoggedIn ? DashboardScreen() : LoginScreen());
+        body: AppConstants.isLoggedIn ? LoginScreen() : LoginScreen());
   }
 }
 

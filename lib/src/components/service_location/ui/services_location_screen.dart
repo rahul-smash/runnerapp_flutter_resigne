@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/ui/select_category_screen.dart';
 import 'package:marketplace_service_provider/src/components/version_api/model/service_location_response.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
@@ -12,7 +12,6 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
-
 import '../bloc/save_location_bloc.dart';
 import '../model/location_event_data.dart';
 
@@ -210,9 +209,8 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
             AppSharedPref.instance.saveUser(loginResponse).then((value) async {
               AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
               Navigator.pop(context);
-              Navigator.push(context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => DashboardScreen())
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) => SelectCategoryScreen())
               );
             });
           }

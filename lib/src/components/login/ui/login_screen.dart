@@ -6,6 +6,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/ui/select_category_screen.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
@@ -28,7 +29,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
 
   final UserLoginBloc userLoginBloc = getIt.get<UserLoginBloc>();
   TextEditingController mobileCont = TextEditingController(text: "8847485654");
-  TextEditingController passwordCont = TextEditingController(text: "1234");
+  TextEditingController passwordCont = TextEditingController(text: "1122");
   bool _showPassword = false;
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
@@ -259,7 +260,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
             AppUtils.showToast(event.loginResponse.message, false);
           }else if(event.loginResponse.success){
             AppUtils.showToast(event.loginResponse.message, false);
-            if(event.loginResponse.location.locationId == "0"){
+            if(event.loginResponse.location.locationId == "1"){
               Navigator.pushReplacement(context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => ServicesLocationScreen(loginResponse:event.loginResponse,))

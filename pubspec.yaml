@@ -40,10 +40,18 @@ dependencies:
   whatsapp_unilink: ^2.0.0        #ANDROID IOS LINUX MACOS WEB WINDOWS
   pull_to_refresh: ^2.0.0         #ANDROID IOS LINUX MACOS WEB WINDOWS
 
+  image_picker: ^0.8.3+1     #ANDROID IOS WEB
+  intl: ^0.17.0              #ANDROID IOS LINUX MACOS WEB WINDOWS
+  dotted_border: ^2.0.0      #ANDROID IOS LINUX MACOS WEB WINDOWS
+  google_maps_flutter: ^2.0.6 #ANDROID IOS
+  event_bus: ^2.0.0          #ANDROID IOS LINUX MACOS WEB WINDOWS
+  location: ^4.3.0           #ANDROID IOS MACOS WEB
+  flutter_html: ^2.1.1     #ANDROID IOS
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +79,7 @@ flutter:
     # authentication
     - lib/src/components/login/images/
     - lib/src/components/dashboard/images/
+    - lib/src/components/onboarding/images/
     - lib/src/components/side_menu/images/
 
   #

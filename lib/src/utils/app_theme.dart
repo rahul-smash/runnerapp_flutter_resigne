@@ -59,4 +59,15 @@ class AppTheme {
   static Color whiteDisable=Colors.white38;
   static Color grayLightColor = Color(0xFFEEEEEE);
 
+  static Color grayCircle = Color(0xffECECEC);
+  static Color greenColor = Color(0xff26D990);
+
 }
+
+List<BoxShadow> shadow = <BoxShadow>[
+  BoxShadow(
+    color: Colors.black.withOpacity(0.16),
+    blurRadius: 6.0,
+    offset: Offset(0, 3),
+  ),
+];

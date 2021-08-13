@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,7 +16,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
-appPrintLog(dynamic content) {
+ appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
 }
 
@@ -40,6 +42,23 @@ class AppUtils {
     return packageInfo;
   }
 
+  static loadImageFromUrl(String imgURL){
+
+    return Image.network(imgURL, fit: BoxFit.cover,width: 100,height: 100,
+      loadingBuilder:(BuildContext context, Widget child,ImageChunkEvent loadingProgress) {
+        if (loadingProgress == null)
+          return Container();
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null ?
+            loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                : null,
+          ),
+        );
+      },
+    );
+  }
+
   static void getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = await DeviceInfoPlugin();
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
@@ -50,7 +69,7 @@ class AppUtils {
     param['device_id'] = deviceId;
     param['device_token'] = deviceToken;
     if (kIsWeb) {
-    } else {
+param['platform'] = 'web';    } else {
       if (Platform.operatingSystem == "android") {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         param['device_brand'] = androidInfo.brand;
@@ -157,6 +176,56 @@ class AppUtils {
 
   static bool equalsIgnoreCase(String string1, String string2) {
     return string1?.toLowerCase() == string2?.toLowerCase();
+  }
+  static Widget showSpinner() {
+    return Center(
+      child: CircularProgressIndicator(
+          valueColor: new AlwaysStoppedAnimation<Color>(
+              AppTheme.theme.primaryColor)),
+    );
+  }
+
+  static Future<DateTime> selectDate(
+      BuildContext context, {
+        bool isStartIndex,
+        bool isEndIndex,
+      }) async {
+    DateTime selectedDate = DateTime.now();
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        currentDate: DateTime.now(),
+        firstDate: DateTime(1970, 1),
+        lastDate: DateTime.now()
+    );
+    print(picked);
+    if (picked != null)
+      //dayName = DateFormat('DD-MM-yyyy').format(selectedDate);
+      return picked;
+  }
+  static getFileSize(String filepath, int decimals) async {
+    var file = File(filepath);
+    int bytes = await file.length();
+    if (bytes <= 0) return "0 B";
+    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + ' ' + suffixes[i];
+  }
+
+  static Future<TimeOfDay> selectTime(BuildContext context) async {
+    TimeOfDay selectedTime = TimeOfDay.now();
+    final TimeOfDay picked_s = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+        builder: (BuildContext context, Widget child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child,
+          );
+        });
+    if (picked_s != null && picked_s != selectedTime )
+      selectedTime = picked_s;
+    return selectedTime;
   }
 
   static String removeAllHtmlTags(String htmlText) {
