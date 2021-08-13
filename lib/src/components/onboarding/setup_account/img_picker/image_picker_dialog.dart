@@ -58,7 +58,8 @@ class ImagePickerDialog extends StatelessWidget {
   }
 
   void navigationPage() {
-    Navigator.pop(context);
+    //Navigator.pop(context);
+    Navigator.of(context, rootNavigator: true).pop();
   }
 
   dismissDialog() {

@@ -18,6 +18,8 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
+import 'agreement_detail_screen.dart';
+
 class WorkDetailScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
@@ -59,9 +61,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     setState(() {
       isLoading = true;
     });
-    getIt.get<AccountStepsDetailRepositoryImpl>().getExperienceDetail(
-        loginResponse.data.id).then((value) {
-      experienceDetailModel = value;
+    getIt.get<AccountStepsDetailRepositoryImpl>().getExperienceDetail(loginResponse.data.id).then((value) {
+      this.experienceDetailModel = value;
       setWorkDetailData();
       setState(() {
         isLoading = false;
@@ -545,7 +546,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                   child: Icon(
                     Icons.description_outlined, color: AppTheme.primaryColor,)
               ),
-              title: Text(workDoc1 == null || workDoc1.path.isEmpty ? "" : workDoc1.path.split('/').last ,
+              title: Text(getWorkDoc1Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
@@ -579,7 +580,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                   child: Icon(
                     Icons.description_outlined, color: AppTheme.primaryColor,)
               ),
-              title: Text(workDoc2 == null || workDoc2.path.isEmpty ? "" : workDoc2.path.split("/").last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              title: Text(getWorkDoc2Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -612,7 +613,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                   child: Icon(
                     Icons.description_outlined, color: AppTheme.primaryColor,)
               ),
-              title: Text(workDoc3 == null || workDoc3.path.isEmpty ? "" : workDoc3.path.split("/").last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              title: Text(getWorkDoc3Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -652,7 +653,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                   child: Icon(
                     Icons.description_outlined, color: AppTheme.primaryColor,)
               ),
-              title: Text(certificateDoc1 == null || certificateDoc1.path.isEmpty ? "" : certificateDoc1.path.split('/').last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              title: Text(getCertificateDoc1Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -685,7 +686,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                   child: Icon(
                     Icons.description_outlined, color: AppTheme.primaryColor,)
               ),
-              title: Text(certificateDoc2 == null || certificateDoc2.path.isEmpty ? "" : certificateDoc2.path.split('/').last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              title: Text(getCertificateDoc2Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -718,7 +719,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
                   child: Icon(
                     Icons.description_outlined, color: AppTheme.primaryColor,)
               ),
-              title: Text(certificateDoc3 == null || certificateDoc3.path.isEmpty ? "" : certificateDoc3.path.split('/').last, maxLines: 2, overflow: TextOverflow.ellipsis),
+              title: Text(getCertificateDoc3Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -753,8 +754,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         AppUtils.showToast("Please upload atleast one certificates or award document", true);
         return;
       }
-      //AppUtils.showLoader(context);
-
+      AppUtils.showLoader(context);
        BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
           .saveWorkDetail(userId:loginResponse.data.id,experienceId: experienceDetailModel.data.experienceId,
           workExperience: experienceCont.text,qualification: qualificationCont.text,
@@ -766,12 +766,15 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
            certificateDoc2: certificateDoc2,
            certificateDoc3: certificateDoc3);
 
+      AppUtils.hideLoader(context);
+
       if(baseresponse != null){
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-      AppUtils.hideLoader(context);
+        Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) => AgreementDetailScreen(voidCallback: (){
 
-
+            },)));
       }
     }
   }
@@ -799,7 +802,60 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     if (experienceDetailModel.data.certificateImage3.isNotEmpty) {
       certificateDoc3 = File("");
     }
-    setState(() {
-    });
+  }
+
+  String getWorkDoc1Name() {
+    //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
+    if(experienceDetailModel.data.workPhotographImage1.isNotEmpty){
+      return experienceDetailModel.data.workPhotographImage1.split('/').last;
+    }else if(workDoc1 != null){
+      return workDoc1.path.split('/').last;;
+    }
+    return "";
+  }
+  String getWorkDoc2Name() {
+    //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
+    if(experienceDetailModel.data.workPhotographImage2.isNotEmpty){
+      return experienceDetailModel.data.workPhotographImage2.split('/').last;
+    }else if(workDoc2 != null){
+      return workDoc2.path.split('/').last;;
+    }
+    return "";
+  }
+  String getWorkDoc3Name() {
+    //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
+    if(experienceDetailModel.data.workPhotographImage3.isNotEmpty){
+      return experienceDetailModel.data.workPhotographImage3.split('/').last;
+    }else if(workDoc3 != null){
+      return workDoc3.path.split('/').last;;
+    }
+    return "";
+  }
+  String getCertificateDoc1Name() {
+    //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
+    if(experienceDetailModel.data.certificateImage1.isNotEmpty){
+      return experienceDetailModel.data.certificateImage1.split('/').last;
+    }else if(certificateDoc1 != null){
+      return certificateDoc1.path.split('/').last;;
+    }
+    return "";
+  }
+  String getCertificateDoc2Name() {
+    //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
+    if(experienceDetailModel.data.certificateImage2.isNotEmpty){
+      return experienceDetailModel.data.certificateImage2.split('/').last;
+    }else if(certificateDoc2 != null){
+      return certificateDoc2.path.split('/').last;;
+    }
+    return "";
+  }
+  String getCertificateDoc3Name() {
+    //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
+    if(experienceDetailModel.data.certificateImage3.isNotEmpty){
+      return experienceDetailModel.data.certificateImage3..split('/').last;
+    }else if(certificateDoc3 != null){
+      return certificateDoc3.path.split('/').last;;
+    }
+    return "";
   }
 }
