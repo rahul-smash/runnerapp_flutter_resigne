@@ -144,8 +144,13 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
               preferredSize: Size.fromHeight(4.0)),
         ),
         widgets: <Widget>[
-          Container(
-            child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
+          InkWell(
+            onTap: (){
+              callApi(gotoProfileStepsScreen: true);
+            },
+            child: Container(
+              child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
+            ),
           ),
           SizedBox(width: 20,)
         ],
@@ -1073,7 +1078,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   String fri_close = '';
   String sat_open = '';
   String sat_close = '';
-  Future<void> callApi() async {
+  Future<void> callApi({bool gotoProfileStepsScreen = false}) async {
     if(this.network.offline){
       AppUtils.showToast(AppConstants.noInternetMsg, false);
       return;
@@ -1124,12 +1129,17 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
         if(baseresponse.success)
-        Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){
-              widget.voidCallback();
-              Navigator.of(context).pop();
-            },))
-        );
+          if(gotoProfileStepsScreen){
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }else{
+            Navigator.push(context, MaterialPageRoute(
+                builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){
+                  widget.voidCallback();
+
+                },))
+            );
+          }
+
       }
 
     }

@@ -2,8 +2,10 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -58,6 +60,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   File _selectedImg1,_selectedImg2;
   var resultFileImgSize1,resultFileImgSize2;
   bool isLoading = false;
+  Location location = new Location();
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
 
   @override
   void initState() {
@@ -162,8 +169,13 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
               preferredSize: Size.fromHeight(4.0)),
         ),
         widgets: <Widget>[
-          Container(
-            child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
+          InkWell(
+            onTap: (){
+              callProfileApi();
+            },
+            child: Container(
+              child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
+            ),
           ),
           SizedBox(width: 20,)
         ],
@@ -850,7 +862,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
     );
   }
 
-  Future<void> callProfileApi() async {
+  Future<void> callProfileApi({bool gotoProfileStepsScreen = false}) async {
     final FormState form = _key.currentState;
     if (form.validate()) {
       if(profileInfoModel.data.profileImage.isEmpty){
@@ -875,17 +887,44 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
           selectedDocument1:_selectedImg1,selectedDocument2: _selectedImg2,
           user_id: loginResponse.data.id,
           profile_id: profileInfoModel.data.profileId,profileInfoModel:profileInfoModel);
+      AppUtils.hideLoader(context);
       if(baseresponse != null){
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        AppUtils.hideLoader(context);
         if(baseresponse.success)
-        Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) => BusinessDetailScreen(voidCallback: (){
-              widget.voidCallback();
-              Navigator.of(context).pop();
-            },))
-        );
+          if(gotoProfileStepsScreen){
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }else{
+
+            if (!_serviceEnabled) {
+              _serviceEnabled = await location.requestService();
+              if (!_serviceEnabled) {
+                return;
+              }
+            }
+
+            _permissionGranted = await location.hasPermission();
+            if (_permissionGranted == PermissionStatus.denied) {
+              _permissionGranted = await location.requestPermission();
+              if (_permissionGranted != PermissionStatus.granted) {
+                return;
+              }
+            }
+            LocationAccuracy _locationAccuracy = LocationAccuracy.high;
+            await location.changeSettings(accuracy: _locationAccuracy);
+
+            _locationData = await location.getLocation();
+            LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
+
+            Navigator.push(context, MaterialPageRoute(
+                builder: (BuildContext context) => BusinessDetailScreen(userlocation: userlocation,
+                voidCallback: (){
+                  widget.voidCallback();
+
+                },))
+            );
+          }
+
       }
     }
   }

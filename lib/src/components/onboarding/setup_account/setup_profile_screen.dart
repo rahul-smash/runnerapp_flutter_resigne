@@ -399,11 +399,11 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
       if(baseresponse != null){
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        Navigator.pop(context);
+        /*Navigator.pop(context);
         Navigator.push(context,
             MaterialPageRoute(
                 builder: (BuildContext context) => DashboardScreen())
-        );
+        );*/
       }
     }else{
       AppUtils.showToast("Please complete your profile first!", false);

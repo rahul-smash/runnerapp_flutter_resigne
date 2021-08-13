@@ -104,9 +104,14 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
               preferredSize: Size.fromHeight(4.0)),
         ),
         widgets: <Widget>[
-          Container(
-            child: Center(
-              child: Text("Save", style: TextStyle(color: Colors.black)),),
+          InkWell(
+            onTap: (){
+              callApi(gotoProfileStepsScreen: true);
+            },
+            child: Container(
+              child: Center(
+                child: Text("Save", style: TextStyle(color: Colors.black)),),
+            ),
           ),
           SizedBox(width: 20,)
         ],
@@ -738,7 +743,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     );
   }
 
-  Future<void> callApi() async {
+  Future<void> callApi({bool gotoProfileStepsScreen = false}) async {
     if (this.network.offline) {
       AppUtils.showToast(AppConstants.noInternetMsg, false);
       return;
@@ -771,10 +776,15 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
       if(baseresponse != null){
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) => AgreementDetailScreen(voidCallback: (){
+        if(gotoProfileStepsScreen){
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }else{
+          Navigator.push(context, MaterialPageRoute(
+              builder: (BuildContext context) => AgreementDetailScreen(voidCallback: (){
 
-            },)));
+              },)));
+        }
+
       }
     }
   }
