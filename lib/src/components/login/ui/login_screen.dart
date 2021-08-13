@@ -7,6 +7,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboa
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/ui/select_category_screen.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/user_profile_status_screen.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';

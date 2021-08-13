@@ -20,6 +20,8 @@ import 'presentation/business_detail_screen.dart';
 import 'presentation/my_profile_screen.dart';
 import 'package:location/location.dart';
 
+import 'presentation/user_profile_status_screen.dart';
+
 
 class SetupProfileScreen extends StatefulWidget {
   SetupProfileScreen();
@@ -399,11 +401,11 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
       if(baseresponse != null){
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        /*Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.push(context,
             MaterialPageRoute(
-                builder: (BuildContext context) => DashboardScreen())
-        );*/
+                builder: (BuildContext context) => UserProfileStatusScreen())
+        );
       }
     }else{
       AppUtils.showToast("Please complete your profile first!", false);
