@@ -25,7 +25,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   int selectedFilterIndex = 0;
   List<String> _filterOptions = List.empty(growable: true);
   RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -100,9 +100,11 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         break; // cancelled
     }
   }
+
   void _onRefresh() async {
     _getMyBookingOrders(isShowLoader: false);
   }
+
   @override
   Widget builder(BuildContext context) {
     return Scaffold(
@@ -153,29 +155,30 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
               ),
             ),
             Expanded(
-              child: SmartRefresher( enablePullDown: true,
+              child: SmartRefresher(
+                enablePullDown: true,
                 controller: _refreshController,
-                onRefresh:_onRefresh,
-              child:  isBookingApiLoading
-                  ? Container(
-                height: Dimensions.getHeight(percentage: 60),
-              )
-                  : _bookingResponse != null &&
-                  _bookingResponse.bookings != null &&
-                  _bookingResponse.bookings.isNotEmpty
-                  ? ListView.builder(
-                  padding:
-                  EdgeInsets.all(Dimensions.getScaledSize(10)),
-                  shrinkWrap: true,
-                  itemCount: _bookingResponse.bookings.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ItemBooking(
-                        _bookingResponse.bookings[index],
-                        _bookingAction);
-                  })
-                  : _noOrderContainer(),),
+                onRefresh: _onRefresh,
+                child: isBookingApiLoading
+                    ? Container(
+                        height: Dimensions.getHeight(percentage: 60),
+                      )
+                    : _bookingResponse != null &&
+                            _bookingResponse.bookings != null &&
+                            _bookingResponse.bookings.isNotEmpty
+                        ? ListView.builder(
+                            padding:
+                                EdgeInsets.all(Dimensions.getScaledSize(10)),
+                            shrinkWrap: true,
+                            itemCount: _bookingResponse.bookings.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ItemBooking(
+                                  _bookingResponse.bookings[index],
+                                  _bookingAction);
+                            })
+                        : _noOrderContainer(),
+              ),
             ),
-
           ],
         ),
       ),
@@ -195,6 +198,10 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
 
   _bookingAction(String type, Booking booking) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
+      if (type == 'refresh') {
+          _onRefresh();
+        return;
+      }
       AppUtils.showLoader(context);
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
@@ -205,8 +212,11 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
-          _bookingResponse.bookings[_bookingResponse.bookings.indexOf(booking)]
-              .status = _changeBookingStatus(type);
+          int index = _bookingResponse.bookings.indexOf(booking);
+          _bookingResponse.bookings[index].status = _changeBookingStatus(type);
+          if (selectedFilterIndex != 0) {
+            _bookingResponse.bookings.removeAt(index);
+          }
           setState(() {});
         } else {
           AppUtils.showToast(baseResponse.message, false);

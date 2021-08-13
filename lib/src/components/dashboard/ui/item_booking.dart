@@ -40,11 +40,16 @@ class _ItemBookingState extends State<ItemBooking> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => BookingDetailsScreen(widget.booking,widget.callBackMethod)));
+                builder: (BuildContext context) =>
+                    BookingDetailsScreen(widget.booking, (status) {
+                      widget.booking.status = status;
+                      setState(() {});
+                      widget.callBackMethod('refresh', widget.booking);
+                    })));
       },
       child: Card(
         shadowColor: AppTheme.borderNotFocusedColor,

@@ -27,6 +27,7 @@ class AppImages {
   static const icon_gallery = 'lib/src/components/dashboard/images/gallerygrayicon.png';
   static const icon_home = 'lib/src/components/dashboard/images/homegrayicon.png';
   static const icon_my_booking = 'lib/src/components/dashboard/images/mybookinggrayicon.png';
+  static const icon_map = 'lib/src/components/dashboard/images/mapicon.png';
 
 
   static const icon_totalbookingfullicon =

@@ -188,7 +188,7 @@ class AppUtils {
     );
   }
 
- static launchCaller(String call) async {
+  static launchCaller(String call) async {
     String url = "tel:${call}";
     if (await canLaunch(url)) {
       await launch(url);
@@ -209,4 +209,34 @@ class AppUtils {
     await launch('$link');
   }
 
+  static launchMaps(String lat, String lng) async {
+    String googleUrl = 'comgooglemaps://?center=${lat},${lng}';
+    String appleUrl = 'https://maps.apple.com/?sll=${lat},${lng}';
+    if (await canLaunch("comgooglemaps://")) {
+      print('launching com googleUrl');
+      await launch(googleUrl);
+    } else if (await canLaunch(appleUrl)) {
+      print('launching apple url');
+      await launch(appleUrl);
+    } else {
+      throw 'Could not launch url';
+    }
+  }
+
+  static Future<void> openMap(
+      String latitude, String longitude) async {
+
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (Platform.isIOS) {
+      googleUrl = 'https://maps.apple.com/?q=$latitude,$longitude';
+    }
+
+    print("urlll ===> ${Uri.encodeFull(googleUrl)}");
+    if (await canLaunch(Uri.encodeFull(googleUrl))) {
+      print("launchedd");
+      await launch(Uri.encodeFull(googleUrl));
+    } else {
+      throw 'Could not open the map.';
+    }
+  }
 }

@@ -26,6 +26,7 @@ class NewRequestBookingScreen extends StatefulWidget {
 
 class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
   DashboardResponse _dashboardResponse;
+  bool isChangesHappened = false;
 
   _NewRequestBookingScreenState(this._dashboardResponse);
 
@@ -33,7 +34,8 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
   Widget builder(BuildContext context) {
     return WillPopScope(
         onWillPop: () {
-          return Future(() => true);
+          Navigator.pop(context, isChangesHappened);
+          return Future(() => false);
         },
         child: Scaffold(
           backgroundColor: AppTheme.white,
@@ -141,6 +143,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
               if (isAccepted) {
                 appPrintLog('Your Booking request is accepted');
               }
+              isChangesHappened = true;
             } else {
               AppUtils.showToast(baseResponse.message, false);
             }
@@ -167,6 +170,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
               if (isAccepted) {
                 appPrintLog('Your Booking request is Rejected');
               }
+              isChangesHappened = true;
             } else {
               AppUtils.showToast(baseResponse.message, false);
             }

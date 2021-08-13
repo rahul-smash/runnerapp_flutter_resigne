@@ -59,4 +59,7 @@ class AppTheme {
   static Color whiteDisable=Colors.white38;
   static Color grayLightColor = Color(0xFFEEEEEE);
 
+  static var cyanColor=Color(0xFFD3F8E9);
+  static var cyanColorDark=Color(0xFF42A27C);
+
 }
