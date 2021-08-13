@@ -29,8 +29,8 @@ void serviceLocator() {
       ServiceLocationAuthRepository());
   getIt.registerSingleton<DashboardRepository>(DashboardRepository());
   getIt.registerLazySingleton(() => CategoryBloc());
-  getIt.registerSingleton<UserAuthenticationRepository>(UserAuthenticationRepository());
-  getIt.registerSingleton<ServiceLocationAuthRepository>(ServiceLocationAuthRepository());
-  getIt.registerSingleton<CategoryListRemoteDataSourceImpl>(CategoryListRemoteDataSourceImpl());
-  getIt.registerSingleton<AccountStepsDetailRepositoryImpl>(AccountStepsDetailRepositoryImpl());
+  getIt.registerSingleton<CategoryListRemoteDataSourceImpl>(
+      CategoryListRemoteDataSourceImpl());
+  getIt.registerSingleton<AccountStepsDetailRepositoryImpl>(
+      AccountStepsDetailRepositoryImpl());
 }
