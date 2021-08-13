@@ -60,11 +60,14 @@ const labelAccept = 'Accept';
 const labelReject = 'Reject';
 const labelNoOrderYet = 'No order yet...';
 const labelNoOrderYetMsg = "Your Customers haven't ordered\n anything";
+const labelBookingOrderCancel = "Are you sure you want to\n cancel this order?";
+const labelCancelConfirm = "Cancel Confirm";
 
 const hintEnterOtp = "Enter OTP";
 const hintMPIN = "Enter 4 digit MPIN";
 const hintEnterNewMPIN = "Enter new 4 digit MPIN";
 const hintReEnterNewMPIN = "Re-Enter new 4 digit MPIN";
+const hintAddReason = "Add reason";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";

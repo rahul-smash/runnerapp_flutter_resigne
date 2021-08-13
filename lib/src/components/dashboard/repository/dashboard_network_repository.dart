@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -14,10 +15,10 @@ class DashboardNetworkRepository extends DioBaseService {
   static DashboardNetworkRepository _instance;
   static const _dashboard = '/runner_orders/dashboard/';
   static const _bookings = '/runner_orders/myBookings/';
+  static const _bookingDetails = '/runner_orders/getBookingDetail/';
   static const _bookingsRequestAction =
       '/runner_orders/changeBookingRequestStatus';
-  static const _bookingsAction =
-      '/runner_orders/changeBookingStatus';
+  static const _bookingsAction = '/runner_orders/changeBookingStatus';
 
   DashboardNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -76,13 +77,14 @@ class DashboardNetworkRepository extends DioBaseService {
               '${_bookingsRequestAction}'),
           param);
       BaseResponse bookingResponse =
-      BaseResponse.fromJson(jsonDecode(response));
+          BaseResponse.fromJson(jsonDecode(response));
       return bookingResponse;
     } catch (e) {
       debugPrint(e.toString());
     }
     return null;
   }
+
   Future<BaseResponse> changeBookingAction(
       String userId, String orderId, String status) async {
     try {
@@ -96,11 +98,34 @@ class DashboardNetworkRepository extends DioBaseService {
               '${_bookingsAction}'),
           param);
       BaseResponse bookingResponse =
-      BaseResponse.fromJson(jsonDecode(response));
+          BaseResponse.fromJson(jsonDecode(response));
       return bookingResponse;
     } catch (e) {
       debugPrint(e.toString());
     }
     return null;
   }
+
+  Future<BookingDetailsResponse> getBookingsdetails(
+    String userId,
+    String orderId,
+  ) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      param['order_id'] = orderId;
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '${_bookingDetails}${orderId}'),
+          param);
+      BookingDetailsResponse bookingResponse =
+      BookingDetailsResponse.fromJson(jsonDecode(response));
+      return bookingResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
 }

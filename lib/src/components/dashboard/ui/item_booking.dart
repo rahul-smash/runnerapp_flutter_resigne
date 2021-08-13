@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/booking_details_screen.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -38,157 +39,167 @@ class _ItemBookingState extends State<ItemBooking> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shadowColor: AppTheme.borderNotFocusedColor,
-      elevation: 8,
-      borderOnForeground: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(18.0),
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '#${widget.booking.displayOrderId} | ${widget.booking.bookingDateTime}',
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: AppTheme.subHeadingTextColor,
-                          fontWeight: FontWeight.w400),
+    return InkWell(
+      onTap: (){
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => BookingDetailsScreen(widget.booking,widget.callBackMethod)));
+      },
+      child: Card(
+        shadowColor: AppTheme.borderNotFocusedColor,
+        elevation: 8,
+        borderOnForeground: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(18.0),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '#${widget.booking.displayOrderId} | ${widget.booking.bookingDateTime}',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: AppTheme.subHeadingTextColor,
+                            fontWeight: FontWeight.w400),
+                      ),
                     ),
-                  ),
-                  Visibility(
-                    visible: widget.booking.customerPhone.isNotEmpty,
-                    child: Row(
-                      children: [
-                        InkWell(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Image(
-                                image: AssetImage(
-                                  AppImages.icon_whatsapp,
+                    Visibility(
+                      visible: widget.booking.customerPhone.isNotEmpty,
+                      child: Row(
+                        children: [
+                          InkWell(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Image(
+                                  image: AssetImage(
+                                    AppImages.icon_whatsapp,
+                                  ),
+                                  height: 25,
                                 ),
-                                height: 25,
                               ),
-                            ),
-                            onTap: () {
-                              AppUtils.launchWhatsApp(widget.booking.customerPhone);
-                            }),
-                        InkWell(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Image(
-                                image: AssetImage(AppImages.icon_call),
-                                height: 25,
+                              onTap: () {
+                                AppUtils.launchWhatsApp(
+                                    widget.booking.customerPhone);
+                              }),
+                          InkWell(
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Image(
+                                  image: AssetImage(AppImages.icon_call),
+                                  height: 25,
+                                ),
                               ),
-                            ),
-                            onTap: () {
-                              AppUtils.launchCaller(widget.booking.customerPhone);
-                            }),
+                              onTap: () {
+                                AppUtils.launchCaller(
+                                    widget.booking.customerPhone);
+                              }),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.booking.categoryTitle,
+                      style: TextStyle(
+                          fontFamily: AppConstants.fontName,
+                          fontSize: AppConstants.largeSize,
+                          color: AppTheme.mainTextColor,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      height: Dimensions.pixels_5,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: AppTheme.primaryColorDark,
+                              borderRadius: BorderRadius.circular(30)),
+                          width: 8,
+                          height: 8,
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '${widget.booking.serviceCount}${widget.booking.serviceCount == '1' ? ' Service' : ' Services'}',
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.smallSize,
+                              color: AppTheme.subHeadingTextColor,
+                              fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.booking.categoryTitle,
-                    style: TextStyle(
-                        fontFamily: AppConstants.fontName,
-                        fontSize: AppConstants.largeSize,
-                        color: AppTheme.mainTextColor,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: Dimensions.pixels_5,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            color: AppTheme.primaryColorDark,
-                            borderRadius: BorderRadius.circular(30)),
-                        width: 8,
-                        height: 8,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        '${widget.booking.serviceCount}${widget.booking.serviceCount == '1' ? ' Service' : ' Services'}',
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.smallSize,
-                            color: AppTheme.subHeadingTextColor,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppConstants.currency,
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.extraSmallSize,
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        widget.booking.total,
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.largeSize,
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Visibility(
-                        visible: widget.booking.paymentMethod != null &&
-                            widget.booking.paymentMethod.trim().isNotEmpty,
-                        child: Container(
-                            margin: EdgeInsets.only(left: 6),
-                            padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFE6E6E6)),
-                              color: Color(0xFFE6E6E6),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15.0)),
-                            ),
-                            child: Text(
-                                '${widget.booking.paymentMethod.trim().toUpperCase()}',
-                                style: TextStyle(
-                                  color: Color(0xFF39444D),
-                                  fontSize: 13,
-                                ))),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: _getWidgetAccordingToStatus(),
-              ),
-            ],
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppConstants.currency,
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.extraSmallSize,
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          widget.booking.total,
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.largeSize,
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Visibility(
+                          visible: widget.booking.paymentMethod != null &&
+                              widget.booking.paymentMethod.trim().isNotEmpty,
+                          child: Container(
+                              margin: EdgeInsets.only(left: 6),
+                              padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xFFE6E6E6)),
+                                color: Color(0xFFE6E6E6),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0)),
+                              ),
+                              child: Text(
+                                  '${widget.booking.paymentMethod.trim().toUpperCase()}',
+                                  style: TextStyle(
+                                    color: Color(0xFF39444D),
+                                    fontSize: 13,
+                                  ))),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: _getWidgetAccordingToStatus(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
