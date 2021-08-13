@@ -52,6 +52,13 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     } catch (e) {
       print(e);
     }
+    if (loginResponse.data.status == "1" &&
+        loginResponse.afterApprovalFirstTime == "1"){
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+          AppUtils.displayPickUpDialog(context);
+      });
+
+    }
   }
 
   @override

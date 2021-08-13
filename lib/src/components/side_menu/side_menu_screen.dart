@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/item_side_menu_child.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -52,46 +54,55 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
             children: [
               Container(
                 padding: EdgeInsets.fromLTRB(
-                Dimensions.getScaledSize(10),
-                Dimensions.getScaledSize(15),
-                Dimensions.getScaledSize(10),
-                Dimensions.getScaledSize(15)),
+                    Dimensions.getScaledSize(10),
+                    Dimensions.getScaledSize(15),
+                    Dimensions.getScaledSize(10),
+                    Dimensions.getScaledSize(15)),
                 decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
+                  color: AppTheme.white,
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
                 ),
                 child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Follow\nUs',
-                  style: TextStyle(
-                      fontFamily: AppConstants.fontName,
-                      fontSize: AppConstants.smallSize,
-                      color: AppTheme.primaryColor,
-                      fontWeight: FontWeight.w500),
-                ),
-                Visibility(
-                  visible: _isFollowUsExpanded,
-                    child: Padding(
-                  padding: EdgeInsets.only(left: 10, right: 5),
-                  child: Image.asset(AppImages.icon_fb,height: 25,),
-                )),
-                Visibility(
-                  visible: _isFollowUsExpanded,
-                    child: Padding(
-                  padding: EdgeInsets.only(left: 5, right: 5),
-                  child: Image.asset(AppImages.icon_twitter,height: 25,),
-                )),
-                Visibility(
-                  visible: _isFollowUsExpanded,
-                    child: Padding(
-                  padding: EdgeInsets.only(left: 5, right: 10),
-                  child: Image.asset(AppImages.icon_youTube,height: 25,),
-                )),
-              ],
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Follow\nUs',
+                      style: TextStyle(
+                          fontFamily: AppConstants.fontName,
+                          fontSize: AppConstants.smallSize,
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Visibility(
+                        visible: _isFollowUsExpanded,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 10, right: 5),
+                          child: Image.asset(
+                            AppImages.icon_fb,
+                            height: 25,
+                          ),
+                        )),
+                    Visibility(
+                        visible: _isFollowUsExpanded,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          child: Image.asset(
+                            AppImages.icon_twitter,
+                            height: 25,
+                          ),
+                        )),
+                    Visibility(
+                        visible: _isFollowUsExpanded,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5, right: 10),
+                          child: Image.asset(
+                            AppImages.icon_youTube,
+                            height: 25,
+                          ),
+                        )),
+                  ],
                 ),
               ),
               Flexible(
@@ -113,7 +124,11 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                         topRight: Radius.circular(8),
                         bottomRight: Radius.circular(8)),
                   ),
-                  child: Image.asset(AppImages.icon_follow_us,color: AppTheme.white,height: 10,),
+                  child: Image.asset(
+                    AppImages.icon_follow_us,
+                    color: AppTheme.white,
+                    height: 10,
+                  ),
                 ),
               )),
             ],
@@ -130,17 +145,59 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
             child: Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: ListTile(
-                  leading:  Image.asset(AppImages.icon_logout, color: AppTheme.white, width: 20,height: 35,),
+                  leading: Image.asset(
+                    AppImages.icon_logout,
+                    color: AppTheme.white,
+                    width: 20,
+                    height: 35,
+                  ),
                   title: Text(labelLogout,
                       style: TextStyle(
                           color: AppTheme.white,
                           fontSize: AppConstants.smallSize,
                           fontFamily: AppConstants.fontName)),
-                  onTap: () {},
+                  onTap: () async {
+                    _showDialog(context);
+                  },
                 )),
           )
         ],
       ),
+    );
+  }
+
+  void _showDialog(BuildContext sideMenuContext) {
+    // flutter defined function
+    showDialog(
+      context: sideMenuContext,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Logout"),
+          content: new Text('Are you sure you want to Logout?'),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("CANCEL"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: const Text('YES'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await AppSharedPref.instance.sharepref.clear();
+                AppConstants.isLoggedIn = false;
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (Route<dynamic> route) => false);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

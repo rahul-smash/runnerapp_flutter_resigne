@@ -28,6 +28,8 @@ class AppImages {
   static const icon_home = 'lib/src/components/dashboard/images/homegrayicon.png';
   static const icon_my_booking = 'lib/src/components/dashboard/images/mybookinggrayicon.png';
   static const icon_map = 'lib/src/components/dashboard/images/mapicon.png';
+  static const icon_thankyou_popup_bg = 'lib/src/components/dashboard/images/thankyou_popupbg.png';
+  static const icon_thankyou_content = 'lib/src/components/dashboard/images/thankyou_content.png';
 
 
   static const icon_totalbookingfullicon =

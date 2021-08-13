@@ -28,8 +28,7 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends BaseState<LoginScreen>  {
-
+class _LoginScreenState extends BaseState<LoginScreen> {
   final UserLoginBloc userLoginBloc = getIt.get<UserLoginBloc>();
   TextEditingController mobileCont = TextEditingController(text: "");
   TextEditingController passwordCont = TextEditingController(text: "");
@@ -37,7 +36,6 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
 
   @override
   void dispose() {
@@ -68,7 +66,9 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(top: Dimensions.pixels_60, bottom: Dimensions.pixels_60),
+                      margin: EdgeInsets.only(
+                          top: Dimensions.pixels_60,
+                          bottom: Dimensions.pixels_60),
                       child: Align(
                         alignment: Alignment.topCenter,
                         child: Image(
@@ -110,16 +110,17 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
                       onFieldSubmitted: (value) {
                         FocusScope.of(context).requestFocus(passWordFocusNode);
                       },
-                      validator: (value) =>
-                      value.isEmpty ? 'Mobile number cannot be blank' : null,
+                      validator: (value) => value.isEmpty
+                          ? 'Mobile number cannot be blank'
+                          : null,
                       style: TextStyle(color: AppTheme.mainTextColor),
                       decoration: InputDecoration(
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: AppTheme.borderNotFocusedColor)),
                         focusedBorder: UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppTheme.borderOnFocusedColor)),
+                            borderSide: BorderSide(
+                                color: AppTheme.borderOnFocusedColor)),
                         hintText: labelMobileNumber,
                         hintStyle: TextStyle(
                             color: AppTheme.subHeadingTextColor, fontSize: 14),
@@ -138,7 +139,7 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
                       style: TextStyle(color: AppTheme.mainTextColor),
                       maxLength: 4,
                       validator: (value) =>
-                      value.isEmpty ? 'MPIN cannot be blank' : null,
+                          value.isEmpty ? 'MPIN cannot be blank' : null,
                       decoration: InputDecoration(
                         hintText: hintMPIN,
                         counterText: "",
@@ -160,8 +161,8 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
                               size: 20),
                         ),
                         enabledBorder: UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppTheme.borderOnFocusedColor)),
+                            borderSide: BorderSide(
+                                color: AppTheme.borderOnFocusedColor)),
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: AppTheme.borderNotFocusedColor)),
@@ -175,9 +176,9 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
                           Navigator.push(
                               context,
                               new MaterialPageRoute(
-                                builder: (BuildContext context) => ResetMPINScreen(),
-                              )
-                          );
+                                builder: (BuildContext context) =>
+                                    ResetMPINScreen(),
+                              ));
                         },
                         child: Text(labelForgotPin,
                             style: TextStyle(
@@ -190,9 +191,10 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
                     Container(
                       margin: EdgeInsets.only(left: 50, right: 50),
                       width: MediaQuery.of(context).size.width,
-                      child:GradientElevatedButton(
+                      child: GradientElevatedButton(
                         onPressed: validateAndSave,
-                        buttonText: labelLogin,),
+                        buttonText: labelLogin,
+                      ),
                     ),
                     SizedBox(
                       height: 26,
@@ -219,9 +221,11 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
                             TextSpan(
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (BuildContext context) => SignUpScreen())
-                                    );
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                SignUpScreen()));
                                   },
                                 text: labelSignUp,
                                 style: TextStyle(
@@ -237,74 +241,83 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
               ),
             ),
           ),
-        )
-    );
+        ));
   }
 
   void validateAndSave() {
     final FormState form = _formKey.currentState;
     if (form.validate()) {
       print('Form is valid');
-      if(this.network.offline){
+      if (this.network.offline) {
         AppUtils.showToast(AppConstants.noInternetMsg, false);
         return;
       }
-      userLoginBloc.eventSink.add(LoginEventData(UserLoginAction.PerformLoggin,mobileCont.text,passwordCont.text));
+      userLoginBloc.eventSink.add(LoginEventData(
+          UserLoginAction.PerformLoggin, mobileCont.text, passwordCont.text));
 
       userLoginBloc.userModelStream.listen((event) async {
-        if(event.showLoader){
+        if (event.showLoader) {
           AppUtils.showLoader(context);
         }
-        if(!event.showLoader){
+        if (!event.showLoader) {
           AppUtils.hideKeyboard(context);
           AppUtils.hideLoader(context);
         }
 
-        if(event.loginResponse != null){
-          if(!event.loginResponse.success){
+        if (event.loginResponse != null) {
+          if (!event.loginResponse.success) {
             AppUtils.showToast(event.loginResponse.message, true);
-          }else if(event.loginResponse.success){
+          } else if (event.loginResponse.success) {
             AppUtils.showToast(event.loginResponse.message, false);
-            if(event.loginResponse.location.locationId == "0"){
-              Navigator.pushReplacement(context,
+            if (event.loginResponse.location.locationId == "0") {
+              Navigator.pushReplacement(
+                  context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => ServicesLocationScreen(
-                        loginResponse:event.loginResponse,
-                        redirectToLogin: true,
-                      ))
-              );
-            }else{
+                            loginResponse: event.loginResponse,
+                            redirectToLogin: true,
+                          )));
+            } else {
               LoginUserSingleton.instance.loginResponse = event.loginResponse;
               //"status": value are below,
               // 3 = under approval
               // 1 = approval
               // 2 = block
               await AppSharedPref.instance.saveUser(event.loginResponse);
-              AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
-              if(event.loginResponse.data.status == "3"){
-                Navigator.push(context,
+
+              if (event.loginResponse.data.status == "3") {
+                Navigator.push(
+                    context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => UserProfileStatusScreen(isProfileApproved: false,userId: event.loginResponse.data.id,))
-                );
+                        builder: (BuildContext context) =>
+                            UserProfileStatusScreen(
+                              isProfileApproved: false,
+                              userId: event.loginResponse.data.id,
+                            )));
               }
 
-              if(event.loginResponse.data.status == "1" && event.loginResponse.afterApprovalFirstTime == "0"){
+              if (event.loginResponse.data.status == "1" &&
+                  event.loginResponse.afterApprovalFirstTime == "0") {
+                AppConstants.isLoggedIn =
+                await AppSharedPref.instance.setLoggedIn(true);
                 Navigator.pop(context);
-                Navigator.push(context,
+                Navigator.push(
+                    context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => DashboardScreen())
-                );
+                        builder: (BuildContext context) => DashboardScreen()));
               }
 
-              if(event.loginResponse.data.status == "1" && event.loginResponse.afterApprovalFirstTime == "1"){
+              if (event.loginResponse.data.status == "1" &&
+                  event.loginResponse.afterApprovalFirstTime == "1") {
                 Navigator.pop(context);
-                Navigator.push(context,
+                Navigator.push(
+                    context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => UserProfileStatusScreen(isProfileApproved: true,userId: event.loginResponse.data.id))
-                );
+                        builder: (BuildContext context) =>
+                            UserProfileStatusScreen(
+                                isProfileApproved: true,
+                                userId: event.loginResponse.data.id)));
               }
-
-
             }
           }
         }
@@ -312,6 +325,4 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
       });
     }
   }
-
-
 }

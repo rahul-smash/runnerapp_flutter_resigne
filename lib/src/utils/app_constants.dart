@@ -17,6 +17,7 @@ class AppConstants {
 
   static double extraLargeSize = Dimensions.getScaledSize(26.0);
   static double largeSize = Dimensions.getScaledSize(18.0);
+  static double largeSize2X = Dimensions.getScaledSize(20.0);
   static double smallSize = Dimensions.getScaledSize(16.0);
   static double extraSmallSize = Dimensions.getScaledSize(14.0);
   static double extraXSmallSize = Dimensions.getScaledSize(12.0);

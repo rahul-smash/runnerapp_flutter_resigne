@@ -4,9 +4,11 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/model/device_info.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
+import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -16,7 +18,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
- appPrintLog(dynamic content) {
+appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
 }
 
@@ -42,16 +44,20 @@ class AppUtils {
     return packageInfo;
   }
 
-  static loadImageFromUrl(String imgURL){
-
-    return Image.network(imgURL, fit: BoxFit.cover,width: 100,height: 100,
-      loadingBuilder:(BuildContext context, Widget child,ImageChunkEvent loadingProgress) {
-        if (loadingProgress == null)
-          return Container();
+  static loadImageFromUrl(String imgURL) {
+    return Image.network(
+      imgURL,
+      fit: BoxFit.cover,
+      width: 100,
+      height: 100,
+      loadingBuilder: (BuildContext context, Widget child,
+          ImageChunkEvent loadingProgress) {
+        if (loadingProgress == null) return Container();
         return Center(
           child: CircularProgressIndicator(
-            value: loadingProgress.expectedTotalBytes != null ?
-            loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes
                 : null,
           ),
         );
@@ -69,7 +75,8 @@ class AppUtils {
     param['device_id'] = deviceId;
     param['device_token'] = deviceToken;
     if (kIsWeb) {
-param['platform'] = 'web';    } else {
+      param['platform'] = 'web';
+    } else {
       if (Platform.operatingSystem == "android") {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         param['device_brand'] = androidInfo.brand;
@@ -177,39 +184,42 @@ param['platform'] = 'web';    } else {
   static bool equalsIgnoreCase(String string1, String string2) {
     return string1?.toLowerCase() == string2?.toLowerCase();
   }
+
   static Widget showSpinner() {
     return Center(
       child: CircularProgressIndicator(
-          valueColor: new AlwaysStoppedAnimation<Color>(
-              AppTheme.theme.primaryColor)),
+          valueColor:
+              new AlwaysStoppedAnimation<Color>(AppTheme.theme.primaryColor)),
     );
   }
 
   static Future<DateTime> selectDate(
-      BuildContext context, {
-        bool isStartIndex,
-        bool isEndIndex,
-      }) async {
+    BuildContext context, {
+    bool isStartIndex,
+    bool isEndIndex,
+  }) async {
     DateTime selectedDate = DateTime.now();
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
         currentDate: DateTime.now(),
         firstDate: DateTime(1970, 1),
-        lastDate: DateTime.now()
-    );
+        lastDate: DateTime.now());
     print(picked);
     if (picked != null)
       //dayName = DateFormat('DD-MM-yyyy').format(selectedDate);
       return picked;
   }
+
   static getFileSize(String filepath, int decimals) async {
     var file = File(filepath);
     int bytes = await file.length();
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     var i = (log(bytes) / log(1024)).floor();
-    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + ' ' + suffixes[i];
+    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) +
+        ' ' +
+        suffixes[i];
   }
 
   static Future<TimeOfDay> selectTime(BuildContext context) async {
@@ -223,8 +233,7 @@ param['platform'] = 'web';    } else {
             child: child,
           );
         });
-    if (picked_s != null && picked_s != selectedTime )
-      selectedTime = picked_s;
+    if (picked_s != null && picked_s != selectedTime) selectedTime = picked_s;
     return selectedTime;
   }
 
@@ -292,10 +301,9 @@ param['platform'] = 'web';    } else {
     }
   }
 
-  static Future<void> openMap(
-      String latitude, String longitude) async {
-
-    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+  static Future<void> openMap(String latitude, String longitude) async {
+    String googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     if (Platform.isIOS) {
       googleUrl = 'https://maps.apple.com/?q=$latitude,$longitude';
     }
@@ -307,5 +315,44 @@ param['platform'] = 'web';    } else {
     } else {
       throw 'Could not open the map.';
     }
+  }
+
+  static Future<bool> displayPickUpDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () {
+            return Future(() => true);
+          },
+          child: Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30.0))),
+              //title: Text(title,textAlign: TextAlign.center,),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Container(
+                  height: Dimensions.getHeight(percentage: 40),
+                  width: Dimensions.getWidth(percentage: 40),
+                  decoration: BoxDecoration(
+                    color: AppTheme.white,
+                      image: DecorationImage(
+                          image: AssetImage(AppImages.icon_thankyou_popup_bg))),
+                  child: Padding(
+                    padding:  EdgeInsets.fromLTRB(16.0,16,20,16),
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Image.asset(
+                        AppImages.icon_thankyou_content,
+                        height: Dimensions.getHeight(percentage: 30),
+                      ),
+                    ),
+                  ),
+                ),
+              )),
+        );
+      },
+    );
   }
 }

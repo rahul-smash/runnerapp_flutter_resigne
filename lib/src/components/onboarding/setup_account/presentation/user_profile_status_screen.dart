@@ -153,7 +153,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                                   Text(
                                     "${underApprovalModel.success.userData.phone}",
                                     style: TextStyle(
-                                        fontSize: Dimensions.getScaledSize(20),
+                                        fontSize:AppConstants.largeSize,
                                         fontWeight: FontWeight.w600,
                                         color: AppTheme.white,
                                         fontFamily: AppConstants.fontName),
@@ -187,7 +187,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                                   Text(
                                     underApprovalModel.success.userData.experience,
                                     style: TextStyle(
-                                        fontSize: Dimensions.getScaledSize(20),
+                                        fontSize: AppConstants.largeSize,
                                         fontWeight: FontWeight.w600,
                                         color: AppTheme.white,
                                         fontFamily: AppConstants.fontName),
@@ -258,7 +258,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                           child: Text(
                             "${underApprovalModel.success.statusMessage}",
                             style: TextStyle(
-                                fontSize: Dimensions.getScaledSize(24),
+                                fontSize: AppConstants.largeSize2X,
                                 fontWeight: FontWeight.w600,
                                 color: AppTheme.primaryColor,
                                 fontFamily: AppConstants.fontName),

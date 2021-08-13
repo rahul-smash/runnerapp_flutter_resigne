@@ -21,8 +21,8 @@ import 'package:marketplace_service_provider/src/widgets/gradient_elevated_butto
 import 'agreement_detail_screen.dart';
 
 class WorkDetailScreen extends StatefulWidget {
-
   final VoidCallback voidCallback;
+
   WorkDetailScreen({@required this.voidCallback});
 
   @override
@@ -31,15 +31,18 @@ class WorkDetailScreen extends StatefulWidget {
   }
 }
 
-class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerProviderStateMixin,
-    ImagePickerListener {
-
+class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
+    with TickerProviderStateMixin, ImagePickerListener {
   final _key = GlobalKey<FormState>();
   bool isLoading = false;
   var experienceCont = TextEditingController();
   var qualificationCont = TextEditingController();
   ImagePickerHandler imagePicker;
-  File workDoc1, workDoc2, workDoc3, certificateDoc1, certificateDoc2,
+  File workDoc1,
+      workDoc2,
+      workDoc3,
+      certificateDoc1,
+      certificateDoc2,
       certificateDoc3;
 
   @override
@@ -56,7 +59,10 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     setState(() {
       isLoading = true;
     });
-    getIt.get<AccountStepsDetailRepositoryImpl>().getExperienceDetail(loginResponse.data.id).then((value) {
+    getIt
+        .get<AccountStepsDetailRepositoryImpl>()
+        .getExperienceDetail(loginResponse.data.id)
+        .then((value) {
       this.experienceDetailModel = value;
       setWorkDetailData();
       setState(() {
@@ -80,15 +86,17 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
           Navigator.of(context).pop();
         },
         backgroundColor: AppTheme.white,
-        title: Text('Work Detail', style: TextStyle(color: Colors.black),),
+        title: Text(
+          'Work Detail',
+          style: TextStyle(color: Colors.black),
+        ),
         appBar: AppBar(
           foregroundColor: Colors.black,
           backgroundColor: Colors.white,
           backwardsCompatibility: false,
           systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.white,
-              statusBarIconBrightness: Brightness.dark
-          ),
+              statusBarIconBrightness: Brightness.dark),
           elevation: 0.0,
           titleSpacing: 0.0,
           bottom: PreferredSize(
@@ -100,375 +108,389 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         ),
         widgets: <Widget>[
           InkWell(
-            onTap: (){
+            onTap: () {
               callApi(gotoProfileStepsScreen: true);
             },
             child: Container(
               child: Center(
-                child: Text("Save", style: TextStyle(color: Colors.black)),),
+                child: Text("Save", style: TextStyle(color: Colors.black)),
+              ),
             ),
           ),
-          SizedBox(width: 20,)
+          SizedBox(
+            width: 20,
+          )
         ],
       ),
       body: SafeArea(
-        child: isLoading ? AppUtils.showSpinner() : SingleChildScrollView(
-            child: Container(
-              color: Colors.white,
-              width: double.infinity,
-              margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                  right: Dimensions.getScaledSize(20)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                        top: Dimensions.getScaledSize(20),
-                        bottom: Dimensions.getScaledSize(10)
-                    ),
-                    child: Text(
-                      "Work experience Detail",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: AppTheme.subHeadingTextColor,
-                        fontFamily: AppConstants.fontName,
-                      ),
-                    ),
-                  ),
-
-                  Form(
-                    key: _key,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Container(
+        child: isLoading
+            ? AppUtils.showSpinner()
+            : SingleChildScrollView(
+                child: Container(
+                color: Colors.white,
+                width: double.infinity,
+                margin: EdgeInsets.only(
+                    left: Dimensions.getScaledSize(20),
+                    right: Dimensions.getScaledSize(20)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
                       margin: EdgeInsets.only(
-                          left: Dimensions.getScaledSize(25),
-                          right: Dimensions.getScaledSize(25),
-                          bottom: Dimensions.getScaledSize(20)
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextFormField(
-                            controller: experienceCont,
-                            keyboardType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                            validator: (val) =>
-                            val.isEmpty ? "Please enter experience!" : null,
-                            onFieldSubmitted: (value) {
-
-                            },
-                            style: TextStyle(color: AppTheme.mainTextColor),
-                            decoration: InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppTheme.borderNotFocusedColor)),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppTheme.primaryColor)),
-                              hintText: "Experience in months/years",
-                              errorStyle: TextStyle(
-                                  fontSize: AppConstants.extraXSmallSize,
-                                  fontFamily: AppConstants.fontName),
-                              hintStyle: TextStyle(
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontSize: 16),
-                              labelStyle: TextStyle(
-                                  color: AppTheme.mainTextColor, fontSize: 16),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: qualificationCont,
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.next,
-                            validator: (val) =>
-                            val.isEmpty ? "Please enter qualification" : null,
-                            onFieldSubmitted: (value) {
-
-                            },
-                            style: TextStyle(color: AppTheme.mainTextColor),
-                            decoration: InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppTheme.borderNotFocusedColor)),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppTheme.primaryColor)),
-                              hintText: "Enter your qualification",
-                              errorStyle: TextStyle(
-                                  fontSize: AppConstants.extraXSmallSize,
-                                  fontFamily: AppConstants.fontName),
-                              hintStyle: TextStyle(
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontSize: 16),
-                              labelStyle: TextStyle(
-                                  color: AppTheme.mainTextColor, fontSize: 16),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "Work Photographs",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: AppTheme.subHeadingTextColor,
-                                      fontFamily: AppConstants.fontName,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    "Max file size: 15mb",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: AppTheme.mainTextColor,
-                                      fontFamily: AppConstants.fontName,
-                                    ),
-                                  ),
-                                ),
-                              ]
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Visibility(
-                            visible: workDoc1 != null && workDoc2 != null && workDoc3 != null ? false : true,
-                            child: InkWell(
-                              child: DottedBorder(
-                                dashPattern: [3, 3, 3, 3],
-                                strokeWidth: 1,
-                                borderType: BorderType.RRect,
-                                radius: Radius.circular(12),
-                                //padding: EdgeInsets.all(6),
-                                color: AppTheme.subHeadingTextColor,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(5)),
-                                  child: Container(
-                                    height: Dimensions.getWidth(percentage: 22),
-                                    width: Dimensions.getWidth(percentage: 30),
-                                    color: Color(0xffF9F9F9),
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .center,
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .center,
-                                        children: [
-                                          Icon(Icons.upload_rounded,
-                                            color: AppTheme.primaryColor,),
-                                          Text(
-                                            "Upload\nDocument",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: AppTheme.mainTextColor,
-                                              fontFamily: AppConstants.fontName,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                if (workDoc1 == null) {
-                                  imagePicker.showDialog(
-                                      context,
-                                      docImage1: true,
-                                      profileImage: false,
-                                      docImage2: false,
-                                      docImage3: false,
-                                      docCertificateImage1: false,
-                                      docCertificateImage2: false,
-                                      docCertificateImage3: false);
-                                }
-                                if (workDoc2 == null) {
-                                  imagePicker.showDialog(
-                                      context, docImage1: false,
-                                      profileImage: false,
-                                      docImage2: true,
-                                      docImage3: false,
-                                      docCertificateImage1: false,
-                                      docCertificateImage2: false,
-                                      docCertificateImage3: false);
-                                }
-                                if (workDoc3 == null) {
-                                  imagePicker.showDialog(
-                                      context, docImage1: false,
-                                      profileImage: false,
-                                      docImage2: false,
-                                      docImage3: true,
-                                      docCertificateImage1: false,
-                                      docCertificateImage2: false,
-                                      docCertificateImage3: false);
-                                }
-                              },
-                            ),
-                          ),
-
-                          SizedBox(
-                            height: 20,
-                          ),
-                          showWorkPhotoGraphsList(),
-
-                          SizedBox(
-                            height: 20,
-                          ),
-
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "Certificates/awards",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: AppTheme.subHeadingTextColor,
-                                      fontFamily: AppConstants.fontName,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    "Max file size: 15mb",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: AppTheme.mainTextColor,
-                                      fontFamily: AppConstants.fontName,
-                                    ),
-                                  ),
-                                ),
-                              ]
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Visibility(
-                            visible: certificateDoc1 != null &&  certificateDoc2 != null && certificateDoc3 != null ? false : true,
-                            child: InkWell(
-                              child: DottedBorder(
-                                dashPattern: [3, 3, 3, 3],
-                                strokeWidth: 1,
-                                borderType: BorderType.RRect,
-                                radius: Radius.circular(12),
-                                //padding: EdgeInsets.all(6),
-                                color: AppTheme.subHeadingTextColor,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(5)),
-                                  child: Container(
-                                    height: Dimensions.getWidth(percentage: 22),
-                                    width: Dimensions.getWidth(percentage: 30),
-                                    color: Color(0xffF9F9F9),
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .center,
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .center,
-                                        children: [
-                                          Icon(Icons.upload_rounded,
-                                            color: AppTheme.primaryColor,),
-                                          Text(
-                                            "Upload\nDocument",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: AppTheme.mainTextColor,
-                                              fontFamily: AppConstants.fontName,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                if (certificateDoc1 == null) {
-                                  imagePicker.showDialog(
-                                      context, docImage1: false,
-                                      profileImage: false,
-                                      docImage2: false,
-                                      docImage3: false,
-                                      docCertificateImage1: true,
-                                      docCertificateImage2: false,
-                                      docCertificateImage3: false);
-                                }
-                                if (certificateDoc2 == null) {
-                                  imagePicker.showDialog(
-                                      context, docImage1: false,
-                                      profileImage: false,
-                                      docImage2: false,
-                                      docImage3: false,
-                                      docCertificateImage1: false,
-                                      docCertificateImage2: true,
-                                      docCertificateImage3: false);
-                                }
-                                if (certificateDoc3 == null) {
-                                  imagePicker.showDialog(
-                                      context, docImage1: false,
-                                      profileImage: false,
-                                      docImage2: false,
-                                      docImage3: false,
-                                      docCertificateImage1: false,
-                                      docCertificateImage2: false,
-                                      docCertificateImage3: true);
-                                }
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          showCertificatesAwardsList(),
-
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: 30, right: 30, bottom: 20),
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width,
-                            child: GradientElevatedButton(
-                              onPressed: () async {
-                                callApi();
-                              },
-                              //onPressed: validateAndSave(isSubmitPressed: true),
-                              buttonText: labelSaveNext,),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-
-                        ],
+                          left: Dimensions.getScaledSize(20),
+                          top: Dimensions.getScaledSize(20),
+                          bottom: Dimensions.getScaledSize(10)),
+                      child: Text(
+                        "Work experience Detail",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: AppTheme.subHeadingTextColor,
+                          fontFamily: AppConstants.fontName,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            )
-        ),
+                    Form(
+                      key: _key,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            left: Dimensions.getScaledSize(25),
+                            right: Dimensions.getScaledSize(25),
+                            bottom: Dimensions.getScaledSize(20)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextFormField(
+                              controller: experienceCont,
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              validator: (val) => val.isEmpty
+                                  ? "Please enter experience!"
+                                  : null,
+                              onFieldSubmitted: (value) {},
+                              style: TextStyle(color: AppTheme.mainTextColor),
+                              decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: AppTheme.borderNotFocusedColor)),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: AppTheme.primaryColor)),
+                                hintText: "Experience in months/years",
+                                errorStyle: TextStyle(
+                                    fontSize: AppConstants.extraXSmallSize,
+                                    fontFamily: AppConstants.fontName),
+                                hintStyle: TextStyle(
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontSize: 16),
+                                labelStyle: TextStyle(
+                                    color: AppTheme.mainTextColor,
+                                    fontSize: 16),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              controller: qualificationCont,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.next,
+                              validator: (val) => val.isEmpty
+                                  ? "Please enter qualification"
+                                  : null,
+                              onFieldSubmitted: (value) {},
+                              style: TextStyle(color: AppTheme.mainTextColor),
+                              decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: AppTheme.borderNotFocusedColor)),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: AppTheme.primaryColor)),
+                                hintText: "Enter your qualification",
+                                errorStyle: TextStyle(
+                                    fontSize: AppConstants.extraXSmallSize,
+                                    fontFamily: AppConstants.fontName),
+                                hintStyle: TextStyle(
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontSize: 16),
+                                labelStyle: TextStyle(
+                                    color: AppTheme.mainTextColor,
+                                    fontSize: 16),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Text(
+                                      "Work Photographs",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontFamily: AppConstants.fontName,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      "Max file size: 15mb",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppTheme.mainTextColor,
+                                        fontFamily: AppConstants.fontName,
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Visibility(
+                              visible: workDoc1 != null &&
+                                      workDoc2 != null &&
+                                      workDoc3 != null
+                                  ? false
+                                  : true,
+                              child: InkWell(
+                                child: DottedBorder(
+                                  dashPattern: [3, 3, 3, 3],
+                                  strokeWidth: 1,
+                                  borderType: BorderType.RRect,
+                                  radius: Radius.circular(12),
+                                  //padding: EdgeInsets.all(6),
+                                  color: AppTheme.subHeadingTextColor,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                    child: Container(
+                                      height:
+                                          Dimensions.getWidth(percentage: 22),
+                                      width:
+                                          Dimensions.getWidth(percentage: 30),
+                                      color: Color(0xffF9F9F9),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.upload_rounded,
+                                              color: AppTheme.primaryColor,
+                                            ),
+                                            Text(
+                                              "Upload\nDocument",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppTheme.mainTextColor,
+                                                fontFamily:
+                                                    AppConstants.fontName,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  if (workDoc1 == null) {
+                                    imagePicker.showDialog(context,
+                                        docImage1: true,
+                                        profileImage: false,
+                                        docImage2: false,
+                                        docImage3: false,
+                                        docCertificateImage1: false,
+                                        docCertificateImage2: false,
+                                        docCertificateImage3: false);
+                                  } else if (workDoc2 == null) {
+                                    imagePicker.showDialog(context,
+                                        docImage1: false,
+                                        profileImage: false,
+                                        docImage2: true,
+                                        docImage3: false,
+                                        docCertificateImage1: false,
+                                        docCertificateImage2: false,
+                                        docCertificateImage3: false);
+                                  } else if (workDoc3 == null) {
+                                    imagePicker.showDialog(context,
+                                        docImage1: false,
+                                        profileImage: false,
+                                        docImage2: false,
+                                        docImage3: true,
+                                        docCertificateImage1: false,
+                                        docCertificateImage2: false,
+                                        docCertificateImage3: false);
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            showWorkPhotoGraphsList(),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Text(
+                                      "Certificates/awards",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontFamily: AppConstants.fontName,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      "Max file size: 15mb",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppTheme.mainTextColor,
+                                        fontFamily: AppConstants.fontName,
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Visibility(
+                              visible: certificateDoc1 != null &&
+                                      certificateDoc2 != null &&
+                                      certificateDoc3 != null
+                                  ? false
+                                  : true,
+                              child: InkWell(
+                                child: DottedBorder(
+                                  dashPattern: [3, 3, 3, 3],
+                                  strokeWidth: 1,
+                                  borderType: BorderType.RRect,
+                                  radius: Radius.circular(12),
+                                  //padding: EdgeInsets.all(6),
+                                  color: AppTheme.subHeadingTextColor,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                    child: Container(
+                                      height:
+                                          Dimensions.getWidth(percentage: 22),
+                                      width:
+                                          Dimensions.getWidth(percentage: 30),
+                                      color: Color(0xffF9F9F9),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.upload_rounded,
+                                              color: AppTheme.primaryColor,
+                                            ),
+                                            Text(
+                                              "Upload\nDocument",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppTheme.mainTextColor,
+                                                fontFamily:
+                                                    AppConstants.fontName,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  if (certificateDoc1 == null) {
+                                    imagePicker.showDialog(context,
+                                        docImage1: false,
+                                        profileImage: false,
+                                        docImage2: false,
+                                        docImage3: false,
+                                        docCertificateImage1: true,
+                                        docCertificateImage2: false,
+                                        docCertificateImage3: false);
+                                  } else if (certificateDoc2 == null) {
+                                    imagePicker.showDialog(context,
+                                        docImage1: false,
+                                        profileImage: false,
+                                        docImage2: false,
+                                        docImage3: false,
+                                        docCertificateImage1: false,
+                                        docCertificateImage2: true,
+                                        docCertificateImage3: false);
+                                  } else if (certificateDoc3 == null) {
+                                    imagePicker.showDialog(context,
+                                        docImage1: false,
+                                        profileImage: false,
+                                        docImage2: false,
+                                        docImage3: false,
+                                        docCertificateImage1: false,
+                                        docCertificateImage2: false,
+                                        docCertificateImage3: true);
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            showCertificatesAwardsList(),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  left: 30, right: 30, bottom: 20),
+                              width: MediaQuery.of(context).size.width,
+                              child: GradientElevatedButton(
+                                onPressed: () async {
+                                  callApi();
+                                },
+                                //onPressed: validateAndSave(isSubmitPressed: true),
+                                buttonText: labelSaveNext,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
       ),
     );
   }
 
-
   @override
-  selectedProfileImage(XFile _image, bool profileImage,
-      bool docImage1, bool docImage2, bool doc3,
-      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3) async {
+  selectedProfileImage(
+      XFile _image,
+      bool profileImage,
+      bool docImage1,
+      bool docImage2,
+      bool doc3,
+      bool docCertificateImage1,
+      bool docCertificateImage2,
+      bool docCertificateImage3) async {
     try {
       if (_image == null) {
         AppUtils.showToast("Invalid Image!", true);
@@ -525,7 +547,6 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
     }
   }
 
-
   showWorkPhotoGraphsList() {
     return Column(
       children: [
@@ -543,10 +564,12 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: ListTile(
-              leading: Container(height: double.infinity,
+              leading: Container(
+                  height: double.infinity,
                   child: Icon(
-                    Icons.description_outlined, color: AppTheme.primaryColor,)
-              ),
+                    Icons.description_outlined,
+                    color: AppTheme.primaryColor,
+                  )),
               title: Text(getWorkDoc1Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
@@ -577,16 +600,19 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: ListTile(
-              leading: Container(height: double.infinity,
+              leading: Container(
+                  height: double.infinity,
                   child: Icon(
-                    Icons.description_outlined, color: AppTheme.primaryColor,)
-              ),
-              title: Text(getWorkDoc2Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Icons.description_outlined,
+                    color: AppTheme.primaryColor,
+                  )),
+              title: Text(getWorkDoc2Name(),
+                  maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
                   setState(() {
-                    workDoc2= null;
+                    workDoc2 = null;
                     //workPhotographsDocList.removeAt(index);
                   });
                 },
@@ -610,11 +636,14 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: ListTile(
-              leading: Container(height: double.infinity,
+              leading: Container(
+                  height: double.infinity,
                   child: Icon(
-                    Icons.description_outlined, color: AppTheme.primaryColor,)
-              ),
-              title: Text(getWorkDoc3Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Icons.description_outlined,
+                    color: AppTheme.primaryColor,
+                  )),
+              title: Text(getWorkDoc3Name(),
+                  maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -650,11 +679,14 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: ListTile(
-              leading: Container(height: double.infinity,
+              leading: Container(
+                  height: double.infinity,
                   child: Icon(
-                    Icons.description_outlined, color: AppTheme.primaryColor,)
-              ),
-              title: Text(getCertificateDoc1Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Icons.description_outlined,
+                    color: AppTheme.primaryColor,
+                  )),
+              title: Text(getCertificateDoc1Name(),
+                  maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -683,11 +715,14 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: ListTile(
-              leading: Container(height: double.infinity,
+              leading: Container(
+                  height: double.infinity,
                   child: Icon(
-                    Icons.description_outlined, color: AppTheme.primaryColor,)
-              ),
-              title: Text(getCertificateDoc2Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Icons.description_outlined,
+                    color: AppTheme.primaryColor,
+                  )),
+              title: Text(getCertificateDoc2Name(),
+                  maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -716,11 +751,14 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: ListTile(
-              leading: Container(height: double.infinity,
+              leading: Container(
+                  height: double.infinity,
                   child: Icon(
-                    Icons.description_outlined, color: AppTheme.primaryColor,)
-              ),
-              title: Text(getCertificateDoc3Name(), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Icons.description_outlined,
+                    color: AppTheme.primaryColor,
+                  )),
+              title: Text(getCertificateDoc3Name(),
+                  maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
               trailing: InkWell(
                 onTap: () {
@@ -747,41 +785,50 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
 
     final FormState form = _key.currentState;
     if (form.validate()) {
-      if(workDoc1 == null && workDoc2 == null && workDoc3 == null){
-        AppUtils.showToast("Please upload atleast one work photo document", true);
+      if (workDoc1 == null && workDoc2 == null && workDoc3 == null) {
+        AppUtils.showToast(
+            "Please upload atleast one work photo document", true);
         return;
       }
-      if(certificateDoc1 == null && certificateDoc2 == null && certificateDoc3 == null){
-        AppUtils.showToast("Please upload atleast one certificates or award document", true);
+      if (certificateDoc1 == null &&
+          certificateDoc2 == null &&
+          certificateDoc3 == null) {
+        AppUtils.showToast(
+            "Please upload atleast one certificates or award document", true);
         return;
       }
       AppUtils.showLoader(context);
-       BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>()
-          .saveWorkDetail(userId:loginResponse.data.id,experienceId: experienceDetailModel.data.experienceId,
-          workExperience: experienceCont.text,qualification: qualificationCont.text,
-          experienceDetailModel: experienceDetailModel,
-           workDoc1: workDoc1,
-           workDoc2: workDoc2,
-           workDoc3: workDoc3,
-           certificateDoc1:certificateDoc1,
-           certificateDoc2: certificateDoc2,
-           certificateDoc3: certificateDoc3);
+      BaseResponse baseresponse = await getIt
+          .get<AccountStepsDetailRepositoryImpl>()
+          .saveWorkDetail(
+              userId: loginResponse.data.id,
+              experienceId: experienceDetailModel.data.experienceId,
+              workExperience: experienceCont.text,
+              qualification: qualificationCont.text,
+              experienceDetailModel: experienceDetailModel,
+              workDoc1: workDoc1,
+              workDoc2: workDoc2,
+              workDoc3: workDoc3,
+              certificateDoc1: certificateDoc1,
+              certificateDoc2: certificateDoc2,
+              certificateDoc3: certificateDoc3);
 
       AppUtils.hideLoader(context);
 
-      if(baseresponse != null){
+      if (baseresponse != null) {
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        if(gotoProfileStepsScreen){
+        if (gotoProfileStepsScreen) {
           Navigator.of(context).popUntil((route) => route.isFirst);
           widget.voidCallback();
-        }else{
-          Navigator.push(context, MaterialPageRoute(
-              builder: (BuildContext context) => AgreementDetailScreen(voidCallback: (){
-
-              },)));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => AgreementDetailScreen(
+                        voidCallback: () {},
+                      )));
         }
-
       }
     }
   }
@@ -813,55 +860,66 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
 
   String getWorkDoc1Name() {
     //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
-    if(experienceDetailModel.data.workPhotographImage1.isNotEmpty){
+    if (experienceDetailModel.data.workPhotographImage1.isNotEmpty) {
       return experienceDetailModel.data.workPhotographImage1.split('/').last;
-    }else if(workDoc1 != null){
-      return workDoc1.path.split('/').last;;
+    } else if (workDoc1 != null) {
+      return workDoc1.path.split('/').last;
+      ;
     }
     return "";
   }
+
   String getWorkDoc2Name() {
     //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
-    if(experienceDetailModel.data.workPhotographImage2.isNotEmpty){
+    if (experienceDetailModel.data.workPhotographImage2.isNotEmpty) {
       return experienceDetailModel.data.workPhotographImage2.split('/').last;
-    }else if(workDoc2 != null){
-      return workDoc2.path.split('/').last;;
+    } else if (workDoc2 != null) {
+      return workDoc2.path.split('/').last;
+      ;
     }
     return "";
   }
+
   String getWorkDoc3Name() {
     //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
-    if(experienceDetailModel.data.workPhotographImage3.isNotEmpty){
+    if (experienceDetailModel.data.workPhotographImage3.isNotEmpty) {
       return experienceDetailModel.data.workPhotographImage3.split('/').last;
-    }else if(workDoc3 != null){
-      return workDoc3.path.split('/').last;;
+    } else if (workDoc3 != null) {
+      return workDoc3.path.split('/').last;
+      ;
     }
     return "";
   }
+
   String getCertificateDoc1Name() {
     //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
-    if(experienceDetailModel.data.certificateImage1.isNotEmpty){
+    if (experienceDetailModel.data.certificateImage1.isNotEmpty) {
       return experienceDetailModel.data.certificateImage1.split('/').last;
-    }else if(certificateDoc1 != null){
-      return certificateDoc1.path.split('/').last;;
+    } else if (certificateDoc1 != null) {
+      return certificateDoc1.path.split('/').last;
+      ;
     }
     return "";
   }
+
   String getCertificateDoc2Name() {
     //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
-    if(experienceDetailModel.data.certificateImage2.isNotEmpty){
+    if (experienceDetailModel.data.certificateImage2.isNotEmpty) {
       return experienceDetailModel.data.certificateImage2.split('/').last;
-    }else if(certificateDoc2 != null){
-      return certificateDoc2.path.split('/').last;;
+    } else if (certificateDoc2 != null) {
+      return certificateDoc2.path.split('/').last;
+      ;
     }
     return "";
   }
+
   String getCertificateDoc3Name() {
     //experienceDetailModel.data.workPhotographImage1.isNotEmpty ? "${experienceDetailModel.data.workPhotographImage1.split('/').last}
-    if(experienceDetailModel.data.certificateImage3.isNotEmpty){
+    if (experienceDetailModel.data.certificateImage3.isNotEmpty) {
       return experienceDetailModel.data.certificateImage3..split('/').last;
-    }else if(certificateDoc3 != null){
-      return certificateDoc3.path.split('/').last;;
+    } else if (certificateDoc3 != null) {
+      return certificateDoc3.path.split('/').last;
+      ;
     }
     return "";
   }

@@ -60,7 +60,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
   bool isLoading = false;
   Location location = new Location();
 
-  bool _serviceEnabled;
+  bool _serviceEnabled=false;
   PermissionStatus _permissionGranted;
   LocationData _locationData;
 
@@ -471,6 +471,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                             child: Wrap(
                               crossAxisAlignment: WrapCrossAlignment.start,
                               spacing: 15,
+                              runSpacing: 5,
                               children: addressProofsList.map((tag) {
                                 return InkWell(
                                     onTap: () {
