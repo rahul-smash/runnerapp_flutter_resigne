@@ -1,12 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/ui/select_category_screen.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/user_profile_status_screen.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';

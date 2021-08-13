@@ -38,7 +38,6 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   bool isLoading = false;
   var experienceCont = TextEditingController();
   var qualificationCont = TextEditingController();
-  AnimationController _controller;
   ImagePickerHandler imagePicker;
   File workDoc1, workDoc2, workDoc3, certificateDoc1, certificateDoc2,
       certificateDoc3;
@@ -46,11 +45,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   @override
   void initState() {
     super.initState();
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    imagePicker = new ImagePickerHandler(this, _controller);
+    imagePicker = new ImagePickerHandler(this);
     imagePicker.init();
     getWorkDetailData();
   }

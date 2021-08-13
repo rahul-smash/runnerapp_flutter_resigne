@@ -36,8 +36,7 @@ class MyProfileScreen extends StatefulWidget {
   }
 }
 
-class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProviderStateMixin,
-    ImagePickerListener{
+class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerListener{
 
   final _key = GlobalKey<FormState>();
   TextEditingController firstNameCont = TextEditingController();
@@ -54,7 +53,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   TextEditingController proofNameCont = TextEditingController();
   TextEditingController idProofNameCont = TextEditingController();
   ProfileInfoModel profileInfoModel;
-  AnimationController _controller;
   ImagePickerHandler imagePicker;
   File _selectedProfileImg;
   File _selectedImg1,_selectedImg2;
@@ -70,11 +68,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   void initState() {
     super.initState();
     _selectedGenderUpOption = _genderOptions.first;
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    imagePicker = new ImagePickerHandler(this,_controller);
+    imagePicker = new ImagePickerHandler(this);
     imagePicker.init();
     getProfileData();
   }
@@ -100,7 +94,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 

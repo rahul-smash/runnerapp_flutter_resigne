@@ -7,64 +7,25 @@ import 'image_picker_handler.dart';
 class ImagePickerDialog extends StatelessWidget {
 
   ImagePickerHandler _listener;
-  AnimationController _controller;
   BuildContext context;
 
-  ImagePickerDialog(this._listener, this._controller);
-
-  Animation<double> _drawerContentsOpacity;
-  Animation<Offset> _drawerDetailsPosition;
+  ImagePickerDialog(this._listener);
 
   void initState() {
-    _drawerContentsOpacity = new CurvedAnimation(
-      parent: new ReverseAnimation(_controller),
-      curve: Curves.fastOutSlowIn,
-    );
-    _drawerDetailsPosition = new Tween<Offset>(
-      begin: const Offset(0.0, 1.0),
-      end: Offset.zero,
-    ).animate(new CurvedAnimation(
-      parent: _controller,
-      curve: Curves.fastOutSlowIn,
-    ));
+
   }
 
   getImage(BuildContext context) {
-    if (_controller == null ||
-        _drawerDetailsPosition == null ||
-        _drawerContentsOpacity == null) {
-      return;
-    }
-    _controller.forward();
     showDialog(
       context: context,
-      builder: (BuildContext context) => new SlideTransition(
-            position: _drawerDetailsPosition,
-            child: FadeTransition(
-              opacity: new ReverseAnimation(_drawerContentsOpacity),
-              child: this,
-            ),
-          ),
+      builder: (BuildContext context) {
+        return this;
+      },
     );
   }
 
-  void dispose() {
-    _controller.dispose();
-  }
-
-  startTime() async {
-    var _duration = new Duration(milliseconds: 200);
-    return new Timer(_duration, navigationPage);
-  }
-
-  void navigationPage() {
-    //Navigator.pop(context);
-    Navigator.of(context, rootNavigator: true).pop();
-  }
-
   dismissDialog() {
-    _controller.reverse();
-    startTime();
+    Navigator.pop(context);
   }
 
   @override
@@ -80,7 +41,7 @@ class ImagePickerDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                new GestureDetector(
+                 GestureDetector(
                   onTap: () => _listener.openCamera(),
                   child: roundedButton(
                       "Camera",
@@ -88,7 +49,7 @@ class ImagePickerDialog extends StatelessWidget {
                       AppTheme.primaryColor,
                       const Color(0xFFFFFFFF)),
                 ),
-                new GestureDetector(
+                 GestureDetector(
                   onTap: () => _listener.openGallery(),
                   child: roundedButton(
                       "Gallery",
@@ -96,8 +57,8 @@ class ImagePickerDialog extends StatelessWidget {
                       AppTheme.primaryColor,
                       const Color(0xFFFFFFFF)),
                 ),
-                const SizedBox(height: 15.0),
-                new GestureDetector(
+                SizedBox(height: 15.0),
+                GestureDetector(
                   onTap: () => dismissDialog(),
                   child: new Padding(
                     padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),

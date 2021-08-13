@@ -7,7 +7,6 @@ class ImagePickerHandler {
 
   final ImagePicker _picker = ImagePicker();
   ImagePickerDialog imagePicker;
-  AnimationController _controller;
   ImagePickerListener _listener;
   bool profileImage = false;
   bool docImage1 = false;
@@ -18,7 +17,7 @@ class ImagePickerHandler {
   bool docCertificateImage2 = false;
   bool docCertificateImage3 = false;
 
-  ImagePickerHandler(this._listener, this._controller);
+  ImagePickerHandler(this._listener);
 
   openCamera() async {
     imagePicker.dismissDialog();
@@ -33,7 +32,7 @@ class ImagePickerHandler {
   }
 
   void init() {
-    imagePicker = new ImagePickerDialog(this, _controller);
+    imagePicker = new ImagePickerDialog(this);
     imagePicker.initState();
   }
 
