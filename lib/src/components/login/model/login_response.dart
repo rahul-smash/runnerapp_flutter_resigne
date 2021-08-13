@@ -141,7 +141,7 @@ class Data {
   String email;
   String phone;
   String gender;
-  DateTime dob;
+  String dob;
   String profileImage;
   String otpVerify;
   String userReferCode;
@@ -166,7 +166,7 @@ class Data {
     email: json["email"],
     phone: json["phone"],
     gender: json["gender"],
-    dob: DateTime.parse(json["dob"]),
+    dob: json["dob"],
     profileImage: json["profile_image"],
     otpVerify: json["otp_verify"],
     userReferCode: json["user_refer_code"],
@@ -192,7 +192,7 @@ class Data {
     "email": email,
     "phone": phone,
     "gender": gender,
-    "dob": "${dob.year.toString().padLeft(4, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}",
+    "dob": dob,
     "profile_image": profileImage,
     "otp_verify": otpVerify,
     "user_refer_code": userReferCode,

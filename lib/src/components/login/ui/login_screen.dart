@@ -272,7 +272,7 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
               );
             }else{
               LoginUserSingleton.instance.loginResponse = event.loginResponse;
-              //"status":,
+              //"status": value are below,
               // 3 = under approval
               // 1 = approval
               // 2 = block

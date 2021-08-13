@@ -45,7 +45,7 @@ abstract class AccountStepsDetailRepository {
 
   Future<BaseResponse> saveAgreementData(String userId);
 
-  Future<BaseResponse> submitForApproval(String userId);
+  Future<UnderApprovalModel> submitForApproval(String userId);
 
   Future<UnderApprovalModel> getUnderApprovalDetail(String userId);
 }

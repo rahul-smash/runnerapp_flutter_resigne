@@ -34,49 +34,6 @@ class ImagePickerDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     this.context = context;
     return dialogView();
-    /*return Material(
-        type: MaterialType.transparency,
-        child: Opacity(
-          opacity: 1.0,
-          child:  Container(
-            padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                 GestureDetector(
-                  onTap: () => _listener.openCamera(),
-                  child: roundedButton(
-                      "Camera",
-                      EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                      AppTheme.primaryColor,
-                      const Color(0xFFFFFFFF)),
-                ),
-                 GestureDetector(
-                  onTap: () => _listener.openGallery(),
-                  child: roundedButton(
-                      "Gallery",
-                      EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                      AppTheme.primaryColor,
-                      const Color(0xFFFFFFFF)),
-                ),
-                SizedBox(height: 15.0),
-                GestureDetector(
-                  onTap: () => dismissDialog(),
-                  child: new Padding(
-                    padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                    child: roundedButton(
-                        "Cancel",
-                        EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                        AppTheme.primaryColor,
-                        const Color(0xFFFFFFFF)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-    );*/
   }
 
   Widget dialogView(){

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/under_approval_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -15,9 +16,10 @@ import 'package:marketplace_service_provider/src/widgets/gradient_elevated_butto
 
 class UserProfileStatusScreen extends StatefulWidget {
 
-  bool isProfileApproved = false;
+  bool isProfileApproved;
   String userId;
-  UserProfileStatusScreen({this.isProfileApproved,this.userId});
+  UnderApprovalModel underApprovalModel;
+  UserProfileStatusScreen({this.isProfileApproved,this.userId,this.underApprovalModel});
 
   @override
   _UserProfileStatusScreenState createState() {
@@ -34,13 +36,20 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
   @override
   void initState() {
     super.initState();
-    isLoading = true;
-    getIt.get<AccountStepsDetailRepositoryImpl>().getUnderApprovalDetail(widget.userId).then((value){
-      underApprovalModel = value;
-      setState(() {
-        isLoading = false;
+    isProfileApproved = widget.isProfileApproved;
+    if(widget.underApprovalModel != null){
+      underApprovalModel = widget.underApprovalModel;
+      isLoading = false;
+    }else{
+      isLoading = true;
+      getIt.get<AccountStepsDetailRepositoryImpl>().getUnderApprovalDetail(widget.userId).then((value){
+        underApprovalModel = value;
+        setState(() {
+          isLoading = false;
+        });
       });
-    });
+    }
+
   }
 
   @override
@@ -52,7 +61,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
   Widget builder(BuildContext context) {
 
     return Scaffold(
-      appBar: BaseAppBar(
+      /*appBar: BaseAppBar(
         centerTitle: true,
         backBtnColor: Colors.white,
         callback: (){
@@ -91,7 +100,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
           ),
           SizedBox(width: 20,)
         ],
-      ),
+      ),*/
       body: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
@@ -247,7 +256,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                       Container(
                         child: Center(
                           child: Text(
-                            !isProfileApproved ? "${underApprovalModel.success.statusMessage}" : "Your Profile has been Approved",
+                            "${underApprovalModel.success.statusMessage}",
                             style: TextStyle(
                                 fontSize: Dimensions.getScaledSize(24),
                                 fontWeight: FontWeight.w600,
@@ -267,7 +276,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                       ),
 
                       Visibility(
-                        visible: isProfileApproved ? false : true,
+                        visible: true,
                         child: Container(
                           margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
                           child: Center(
@@ -290,7 +299,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                           ),
                         ),
                       ),
-                      Container(
+                      /*Container(
                         margin: EdgeInsets.fromLTRB(20, isProfileApproved ? 10 : 0, 20, 0),
                         child: Center(
                           child: Row(
@@ -307,8 +316,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                             ],
                           ),
                         ),
-                      ),
-                      //
+                      ),*/
 
                       Visibility(
                         visible: !isProfileApproved ? false : true,
@@ -317,7 +325,11 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                           width: MediaQuery.of(context).size.width,
                           child: GradientElevatedButton(
                             onPressed: () async {
-
+                              Navigator.pop(context);
+                              Navigator.push(context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) => DashboardScreen())
+                              );
                             },
                             //onPressed: validateAndSave(isSubmitPressed: true),
                             buttonText: "Click here to continue",),

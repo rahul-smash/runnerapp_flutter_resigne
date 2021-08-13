@@ -25,6 +25,10 @@ class ImagePickerHandler {
     selectedImage(image);
   }
 
+  closeDialog(){
+    imagePicker.dismissDialog();
+  }
+
   openGallery() async {
     imagePicker.dismissDialog();
     var image = await await _picker.pickImage(source: ImageSource.gallery,imageQuality: 80);

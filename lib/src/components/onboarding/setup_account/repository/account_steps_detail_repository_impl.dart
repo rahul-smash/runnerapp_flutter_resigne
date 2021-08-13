@@ -263,12 +263,12 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   }
 
   @override
-  Future<BaseResponse> submitForApproval(String userId) async {
+  Future<UnderApprovalModel> submitForApproval(String userId) async {
     try {
       Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['user_id'] = userId;
       var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _submitForApproval), param);
-      BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
+      UnderApprovalModel loginResponse = UnderApprovalModel.fromJson(jsonDecode(response));
       return loginResponse;
     } catch (e) {
       debugPrint(e.toString());

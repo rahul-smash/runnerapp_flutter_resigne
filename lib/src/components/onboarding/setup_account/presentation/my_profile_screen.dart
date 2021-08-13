@@ -164,7 +164,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
         widgets: <Widget>[
           InkWell(
             onTap: (){
-              callProfileApi();
+              callProfileApi(gotoProfileStepsScreen: true);
             },
             child: Container(
               child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
@@ -887,6 +887,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
         if(baseresponse.success)
           if(gotoProfileStepsScreen){
             Navigator.of(context).popUntil((route) => route.isFirst);
+            widget.voidCallback();
           }else{
 
             if (!_serviceEnabled) {
@@ -925,12 +926,16 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
   void setSavedProfileData() {
     firstNameCont.text = profileInfoModel.data.firstName;
     lastNameCont.text = profileInfoModel.data.lastName;
-    _selectedGenderUpOption = profileInfoModel.data.gender;
+    if(profileInfoModel.data.gender.isNotEmpty){
+      _selectedGenderUpOption = profileInfoModel.data.gender;
+    }
     ageCont.text =  profileInfoModel.data.dob;
     mobileCont.text =  profileInfoModel.data.phone;
     emailCont.text =  profileInfoModel.data.email;
     userCommentController.text = profileInfoModel.data.aboutYourself;
-    _selectedProofTypeTag = profileInfoModel.data.identityProof;
+    if(profileInfoModel.data.identityProof.isNotEmpty){
+      _selectedProofTypeTag = profileInfoModel.data.identityProof;
+    }
     proofNameCont.text =  profileInfoModel.data.identityProofMentionedName;
     idProofNameCont.text = profileInfoModel.data.identityProofNumber;
 

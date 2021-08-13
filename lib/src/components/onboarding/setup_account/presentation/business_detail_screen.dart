@@ -1125,6 +1125,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
         if(baseresponse.success)
           if(gotoProfileStepsScreen){
             Navigator.of(context).popUntil((route) => route.isFirst);
+            widget.voidCallback();
           }else{
             Navigator.push(context, MaterialPageRoute(
                 builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){

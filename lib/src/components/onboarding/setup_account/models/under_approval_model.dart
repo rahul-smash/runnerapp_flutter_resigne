@@ -11,16 +11,20 @@ String underApprovalModelToJson(UnderApprovalModel data) => json.encode(data.toJ
 class UnderApprovalModel {
   UnderApprovalModel({
     this.success,
+    this.message,
   });
 
   Success success;
+  String message;
 
   factory UnderApprovalModel.fromJson(Map<String, dynamic> json) => UnderApprovalModel(
     success: Success.fromJson(json["success"]),
+    message: json["message"],
   );
 
   Map<String, dynamic> toJson() => {
     "success": success.toJson(),
+    "message": message,
   };
 }
 
