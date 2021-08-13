@@ -775,6 +775,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (baseResponse.success) {
               bool isAccepted =
                   _dashboardResponse.bookingRequests.remove(bookingRequest);
+        _pageController.jumpToPage(0);
               if (isAccepted) {
                 appPrintLog('Your Booking request is accepted');
                 setState(() {});
@@ -802,6 +803,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (baseResponse.success) {
               bool isDeleted =
                   _dashboardResponse.bookingRequests.remove(bookingRequest);
+        _pageController.jumpToPage(0);
               if (isDeleted) {
                 appPrintLog('Your Booking request is Rejected');
                 setState(() {});
@@ -821,7 +823,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _bookingAction(String type, Booking booking) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
-          _onRefresh();
+        _onRefresh();
         setState(() {});
         return;
       }

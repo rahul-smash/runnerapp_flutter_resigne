@@ -114,7 +114,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
               color: AppTheme.black,
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, isChangesHappened);
               },
             ),
             appBar: AppBar(),
