@@ -34,8 +34,7 @@ class BusinessDetailScreen extends StatefulWidget {
   }
 }
 
-class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with TickerProviderStateMixin,
-    ImagePickerListener{
+class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with ImagePickerListener{
 
   bool isLoading = false;
   BusinessDetailModel businessDetailModel;
@@ -51,7 +50,6 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   String _selectedWorkLocationTag;
   String _selectedProofTypeTag;
   var idProofNumberCont= TextEditingController();
-  AnimationController _controller;
   ImagePickerHandler imagePicker;
   File _selectedDocument;
   var docFileSize;
@@ -67,11 +65,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
   @override
   void initState() {
     super.initState();
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    imagePicker = new ImagePickerHandler(this,_controller);
+    imagePicker = new ImagePickerHandler(this);
     imagePicker.init();
     setState(() {
       isLoading = true;
@@ -1131,6 +1125,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Ti
         if(baseresponse.success)
           if(gotoProfileStepsScreen){
             Navigator.of(context).popUntil((route) => route.isFirst);
+            widget.voidCallback();
           }else{
             Navigator.push(context, MaterialPageRoute(
                 builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){

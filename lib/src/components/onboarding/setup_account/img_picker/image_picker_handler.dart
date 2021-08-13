@@ -7,7 +7,6 @@ class ImagePickerHandler {
 
   final ImagePicker _picker = ImagePicker();
   ImagePickerDialog imagePicker;
-  AnimationController _controller;
   ImagePickerListener _listener;
   bool profileImage = false;
   bool docImage1 = false;
@@ -18,12 +17,16 @@ class ImagePickerHandler {
   bool docCertificateImage2 = false;
   bool docCertificateImage3 = false;
 
-  ImagePickerHandler(this._listener, this._controller);
+  ImagePickerHandler(this._listener);
 
   openCamera() async {
     imagePicker.dismissDialog();
     var image = await _picker.pickImage(source: ImageSource.camera,imageQuality: 80);
     selectedImage(image);
+  }
+
+  closeDialog(){
+    imagePicker.dismissDialog();
   }
 
   openGallery() async {
@@ -33,7 +36,7 @@ class ImagePickerHandler {
   }
 
   void init() {
-    imagePicker = new ImagePickerDialog(this, _controller);
+    imagePicker = new ImagePickerDialog(this);
     imagePicker.initState();
   }
 

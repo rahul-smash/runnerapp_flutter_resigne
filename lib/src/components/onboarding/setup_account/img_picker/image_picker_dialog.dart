@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 
 import 'image_picker_handler.dart';
@@ -7,111 +9,177 @@ import 'image_picker_handler.dart';
 class ImagePickerDialog extends StatelessWidget {
 
   ImagePickerHandler _listener;
-  AnimationController _controller;
   BuildContext context;
 
-  ImagePickerDialog(this._listener, this._controller);
-
-  Animation<double> _drawerContentsOpacity;
-  Animation<Offset> _drawerDetailsPosition;
+  ImagePickerDialog(this._listener);
 
   void initState() {
-    _drawerContentsOpacity = new CurvedAnimation(
-      parent: new ReverseAnimation(_controller),
-      curve: Curves.fastOutSlowIn,
-    );
-    _drawerDetailsPosition = new Tween<Offset>(
-      begin: const Offset(0.0, 1.0),
-      end: Offset.zero,
-    ).animate(new CurvedAnimation(
-      parent: _controller,
-      curve: Curves.fastOutSlowIn,
-    ));
+
   }
 
   getImage(BuildContext context) {
-    if (_controller == null ||
-        _drawerDetailsPosition == null ||
-        _drawerContentsOpacity == null) {
-      return;
-    }
-    _controller.forward();
     showDialog(
       context: context,
-      builder: (BuildContext context) => new SlideTransition(
-            position: _drawerDetailsPosition,
-            child: FadeTransition(
-              opacity: new ReverseAnimation(_drawerContentsOpacity),
-              child: this,
-            ),
-          ),
+      builder: (BuildContext context) {
+        return this;
+      },
     );
   }
 
-  void dispose() {
-    _controller.dispose();
-  }
-
-  startTime() async {
-    var _duration = new Duration(milliseconds: 200);
-    return new Timer(_duration, navigationPage);
-  }
-
-  void navigationPage() {
-    //Navigator.pop(context);
-    Navigator.of(context, rootNavigator: true).pop();
-  }
-
   dismissDialog() {
-    _controller.reverse();
-    startTime();
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     this.context = context;
-    return new Material(
+    return dialogView();
+  }
+
+  Widget dialogView(){
+
+    return Material(
         type: MaterialType.transparency,
-        child: new Opacity(
+        child: Opacity(
           opacity: 1.0,
-          child: new Container(
-            padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 20.0),
-            child: Column(
+          child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                new GestureDetector(
-                  onTap: () => _listener.openCamera(),
-                  child: roundedButton(
-                      "Camera",
-                      EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                      AppTheme.primaryColor,
-                      const Color(0xFFFFFFFF)),
-                ),
-                new GestureDetector(
-                  onTap: () => _listener.openGallery(),
-                  child: roundedButton(
-                      "Gallery",
-                      EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                      AppTheme.primaryColor,
-                      const Color(0xFFFFFFFF)),
-                ),
-                const SizedBox(height: 15.0),
-                new GestureDetector(
-                  onTap: () => dismissDialog(),
-                  child: new Padding(
-                    padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                    child: roundedButton(
-                        "Cancel",
-                        EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                        AppTheme.primaryColor,
-                        const Color(0xFFFFFFFF)),
+              children: [
+                Container(
+                  height: Dimensions.getHeight(percentage: 30),
+                  width: double.infinity,
+                  margin: EdgeInsets.only(left: 20,right: 20,bottom: 10),
+                  decoration: BoxDecoration(
+                      boxShadow: shadow,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Colors.white
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Text(
+                        "Select Image",
+                        style: TextStyle(
+                            fontSize: Dimensions.getScaledSize(18),
+                            color: AppTheme.mainTextColor,
+                            fontFamily: AppConstants.fontName),
+                      ),
+                      Text(
+                        "From one of the options",
+                        style: TextStyle(
+                            fontSize: Dimensions.getScaledSize(18),
+                            color: AppTheme.subHeadingTextColor,
+                            fontFamily: AppConstants.fontName),
+                      ),
+                      SizedBox(height: 20,),
+                      InkWell(
+                        onTap: () => _listener.openCamera(),
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20,right: 20),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                  onPressed: (){
+                                  }, icon: Icon(Icons.camera_alt,color: Color(0xff007AFF),)
+                              ),
+
+                              Expanded(
+                                child: Container(
+                                  child: Center(
+                                    child: Text(
+                                      "Camera",
+                                      style: TextStyle(
+                                          fontSize: Dimensions.getScaledSize(22),
+                                          color: Color(0xff007AFF),
+                                          fontFamily: AppConstants.fontName),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 25,),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20,),
+                      InkWell(
+                        onTap: () => _listener.openGallery(),
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20,right: 20),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                  onPressed: (){
+                                  }, icon: Icon(Icons.image,color:Color(0xff007AFF),)
+                              ),
+
+                              Expanded(
+                                child: Container(
+                                  child: Center(
+                                    child: Text(
+                                      "Gallery",
+                                      style: TextStyle(
+                                          fontSize: Dimensions.getScaledSize(22),
+                                          color: Color(0xff007AFF),
+                                          fontFamily: AppConstants.fontName),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 25,),
+                            ],
+                          ),
+                        ),
+                      )
+
+                    ],
                   ),
                 ),
+                InkWell(
+                  onTap: (){
+                    dismissDialog();
+                  },
+                  child: Container(
+                    height: Dimensions.getHeight(percentage: 8),
+                    width: double.infinity,
+                    margin: EdgeInsets.only(left: 20,right: 20,bottom: 20,top: 0),
+                    decoration: BoxDecoration(
+                        boxShadow: shadow,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: Colors.white
+                    ),
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20,right: 20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              child: Center(
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: Dimensions.getScaledSize(20),
+                                      color: AppTheme.primaryColor,
+                                      fontFamily: AppConstants.fontName),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+
               ],
             ),
-          ),
-        ));
+
+
+        )
+    );
   }
 
   Widget roundedButton(

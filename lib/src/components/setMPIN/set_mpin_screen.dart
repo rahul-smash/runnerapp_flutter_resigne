@@ -2,8 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
+import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/model/register_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -222,15 +224,17 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
         return;
       }
       AppUtils.showLoader(context);
-      BaseResponse response =
+      LoginResponse response =
       await getIt.get<UserAuthenticationRepository>().setMpin(mPin: newPinCont.text,userId: widget.registerResponse.data.id);
+      if(response != null)
       AppUtils.showToast(response.message, false);
       AppUtils.hideKeyboard(context);
       AppUtils.hideLoader(context);
 
+
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) => LoginScreen()),
+              builder: (context) => ServicesLocationScreen(loginResponse: response,)),
               (Route<dynamic> route) => false);
 
     } catch (e) {

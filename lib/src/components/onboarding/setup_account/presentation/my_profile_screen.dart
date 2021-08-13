@@ -36,8 +36,7 @@ class MyProfileScreen extends StatefulWidget {
   }
 }
 
-class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProviderStateMixin,
-    ImagePickerListener{
+class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerListener{
 
   final _key = GlobalKey<FormState>();
   TextEditingController firstNameCont = TextEditingController();
@@ -54,7 +53,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   TextEditingController proofNameCont = TextEditingController();
   TextEditingController idProofNameCont = TextEditingController();
   ProfileInfoModel profileInfoModel;
-  AnimationController _controller;
   ImagePickerHandler imagePicker;
   File _selectedProfileImg;
   File _selectedImg1,_selectedImg2;
@@ -70,11 +68,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   void initState() {
     super.initState();
     _selectedGenderUpOption = _genderOptions.first;
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    imagePicker = new ImagePickerHandler(this,_controller);
+    imagePicker = new ImagePickerHandler(this);
     imagePicker.init();
     getProfileData();
   }
@@ -100,7 +94,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
@@ -171,7 +164,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
         widgets: <Widget>[
           InkWell(
             onTap: (){
-              callProfileApi();
+              callProfileApi(gotoProfileStepsScreen: true);
             },
             child: Container(
               child: Center(child: Text("Save",style: TextStyle(color: Colors.black)),),
@@ -894,6 +887,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
         if(baseresponse.success)
           if(gotoProfileStepsScreen){
             Navigator.of(context).popUntil((route) => route.isFirst);
+            widget.voidCallback();
           }else{
 
             if (!_serviceEnabled) {
@@ -932,12 +926,16 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with TickerProvid
   void setSavedProfileData() {
     firstNameCont.text = profileInfoModel.data.firstName;
     lastNameCont.text = profileInfoModel.data.lastName;
-    _selectedGenderUpOption = profileInfoModel.data.gender;
+    if(profileInfoModel.data.gender.isNotEmpty){
+      _selectedGenderUpOption = profileInfoModel.data.gender;
+    }
     ageCont.text =  profileInfoModel.data.dob;
     mobileCont.text =  profileInfoModel.data.phone;
     emailCont.text =  profileInfoModel.data.email;
     userCommentController.text = profileInfoModel.data.aboutYourself;
-    _selectedProofTypeTag = profileInfoModel.data.identityProof;
+    if(profileInfoModel.data.identityProof.isNotEmpty){
+      _selectedProofTypeTag = profileInfoModel.data.identityProof;
+    }
     proofNameCont.text =  profileInfoModel.data.identityProofMentionedName;
     idProofNameCont.text = profileInfoModel.data.identityProofNumber;
 

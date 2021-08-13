@@ -16,9 +16,12 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'models/account_steps_detail_model.dart';
 import 'models/setup_account_model.dart';
+import 'models/under_approval_model.dart';
 import 'presentation/business_detail_screen.dart';
 import 'presentation/my_profile_screen.dart';
 import 'package:location/location.dart';
+
+import 'presentation/user_profile_status_screen.dart';
 
 
 class SetupProfileScreen extends StatefulWidget {
@@ -394,16 +397,19 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     if(accountStepsDetailModel.data.profileDetail == "1" && accountStepsDetailModel.data.businessDetail == "1"
     && accountStepsDetailModel.data.workDetail == "1" && accountStepsDetailModel.data.agreementDetail == "1"){
       AppUtils.showLoader(context);
-      BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>().submitForApproval(loginResponse.data.id);
+      UnderApprovalModel underApprovalModel = await getIt.get<AccountStepsDetailRepositoryImpl>().submitForApproval(loginResponse.data.id);
       AppUtils.hideLoader(context);
-      if(baseresponse != null){
-        AppUtils.showToast(baseresponse.message, true);
+      if(underApprovalModel != null){
+        AppUtils.showToast(underApprovalModel.message, true);
         AppUtils.hideKeyboard(context);
-        /*Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.push(context,
             MaterialPageRoute(
-                builder: (BuildContext context) => DashboardScreen())
-        );*/
+                builder: (BuildContext context) => UserProfileStatusScreen(
+                  isProfileApproved: false,
+                  underApprovalModel: underApprovalModel,
+                ))
+        );
       }
     }else{
       AppUtils.showToast("Please complete your profile first!", false);

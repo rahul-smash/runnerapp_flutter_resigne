@@ -1,12 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/ui/select_category_screen.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/user_profile_status_screen.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
@@ -25,15 +28,16 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends BaseState<LoginScreen> {
+class _LoginScreenState extends BaseState<LoginScreen>  {
 
   final UserLoginBloc userLoginBloc = getIt.get<UserLoginBloc>();
-  TextEditingController mobileCont = TextEditingController(text: "8847485654");
-  TextEditingController passwordCont = TextEditingController(text: "1122");
+  TextEditingController mobileCont = TextEditingController(text: "");
+  TextEditingController passwordCont = TextEditingController(text: "");
   bool _showPassword = false;
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 
   @override
   void dispose() {
@@ -247,7 +251,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
       }
       userLoginBloc.eventSink.add(LoginEventData(UserLoginAction.PerformLoggin,mobileCont.text,passwordCont.text));
 
-      userLoginBloc.userModelStream.listen((event) {
+      userLoginBloc.userModelStream.listen((event) async {
         if(event.showLoader){
           AppUtils.showLoader(context);
         }
@@ -255,26 +259,52 @@ class _LoginScreenState extends BaseState<LoginScreen> {
           AppUtils.hideKeyboard(context);
           AppUtils.hideLoader(context);
         }
+
         if(event.loginResponse != null){
           if(!event.loginResponse.success){
-            AppUtils.showToast(event.loginResponse.message, false);
+            AppUtils.showToast(event.loginResponse.message, true);
           }else if(event.loginResponse.success){
             AppUtils.showToast(event.loginResponse.message, false);
-            if(event.loginResponse.location.locationId == "1"){
+            if(event.loginResponse.location.locationId == "0"){
               Navigator.pushReplacement(context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => ServicesLocationScreen(loginResponse:event.loginResponse,))
+                      builder: (BuildContext context) => ServicesLocationScreen(
+                        loginResponse:event.loginResponse,
+                        redirectToLogin: true,
+                      ))
               );
             }else{
               LoginUserSingleton.instance.loginResponse = event.loginResponse;
-              AppSharedPref.instance.saveUser(event.loginResponse).then((value) async {
-                AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+              //"status": value are below,
+              // 3 = under approval
+              // 1 = approval
+              // 2 = block
+              await AppSharedPref.instance.saveUser(event.loginResponse);
+              AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+              if(event.loginResponse.data.status == "3"){
+                Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => UserProfileStatusScreen(isProfileApproved: false,userId: event.loginResponse.data.id,))
+                );
+              }
+
+              if(event.loginResponse.data.status == "1" && event.loginResponse.afterApprovalFirstTime == "0"){
                 Navigator.pop(context);
                 Navigator.push(context,
                     MaterialPageRoute(
                         builder: (BuildContext context) => DashboardScreen())
                 );
-              });
+              }
+
+              if(event.loginResponse.data.status == "1" && event.loginResponse.afterApprovalFirstTime == "1"){
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => UserProfileStatusScreen(isProfileApproved: true,userId: event.loginResponse.data.id))
+                );
+              }
+
+
             }
           }
         }
@@ -282,5 +312,6 @@ class _LoginScreenState extends BaseState<LoginScreen> {
       });
     }
   }
+
 
 }

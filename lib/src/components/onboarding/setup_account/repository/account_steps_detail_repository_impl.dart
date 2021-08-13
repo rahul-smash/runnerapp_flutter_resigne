@@ -9,6 +9,7 @@ import 'package:marketplace_service_provider/src/components/onboarding/setup_acc
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/under_approval_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/work_detail_document_model.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
@@ -30,6 +31,7 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   static const _getAgreementDetail= '/runner_authentication/getAgreementDetail/';
   static const _updateAgreementDetail= '/runner_authentication/updateAgreementDetail';
   static const _submitForApproval= '/runner_authentication/submitForApproval';
+  static const _getunderApprovalAccountDetail= '/runner_authentication/underApprovalAccountDetail/';
 
   String apiPath(String storeId, String path) =>
       '$storeId${AppNetworkConstants.baseRoute}$path';
@@ -261,17 +263,28 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   }
 
   @override
-  Future<BaseResponse> submitForApproval(String userId) async {
+  Future<UnderApprovalModel> submitForApproval(String userId) async {
     try {
       Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['user_id'] = userId;
       var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _submitForApproval), param);
-      BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
+      UnderApprovalModel loginResponse = UnderApprovalModel.fromJson(jsonDecode(response));
       return loginResponse;
     } catch (e) {
       debugPrint(e.toString());
     }
     return null;
+  }
+
+  @override
+  Future<UnderApprovalModel> getUnderApprovalDetail(String userId) async {
+    try {
+      var response = await get(apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+          _getunderApprovalAccountDetail)+userId, null);
+      UnderApprovalModel categoryModel = UnderApprovalModel.fromJson(jsonDecode(response));
+      return categoryModel;
+    } catch (e) {
+    }
   }
 
 

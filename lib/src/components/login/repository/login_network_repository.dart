@@ -92,7 +92,7 @@ class LoginNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> setMpinApi(String mPin, String userId) async {
+  Future<LoginResponse> setMpinApi(String mPin, String userId) async {
     String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
     Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
     param['pin'] = mPin;
@@ -100,7 +100,7 @@ class LoginNetworkRepository extends DioBaseService {
     param['user_id'] = userId;
     try {
       var response = await post(apiPath(storeId, _setPin), param);
-      BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
+      LoginResponse baseResponse = LoginResponse.fromJson(jsonDecode(response));
       return baseResponse;
     } catch (e) {
       debugPrint(e.toString());

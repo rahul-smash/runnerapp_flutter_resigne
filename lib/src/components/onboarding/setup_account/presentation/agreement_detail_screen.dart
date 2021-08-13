@@ -246,6 +246,7 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
       AppUtils.showToast(baseresponse.message, true);
       AppUtils.hideKeyboard(context);
       Navigator.of(context).popUntil((route) => route.isFirst);
+      widget.voidCallback();
     }
 
   }

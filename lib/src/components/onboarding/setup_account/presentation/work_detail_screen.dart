@@ -38,7 +38,6 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   bool isLoading = false;
   var experienceCont = TextEditingController();
   var qualificationCont = TextEditingController();
-  AnimationController _controller;
   ImagePickerHandler imagePicker;
   File workDoc1, workDoc2, workDoc3, certificateDoc1, certificateDoc2,
       certificateDoc3;
@@ -46,11 +45,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
   @override
   void initState() {
     super.initState();
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    imagePicker = new ImagePickerHandler(this, _controller);
+    imagePicker = new ImagePickerHandler(this);
     imagePicker.init();
     getWorkDetailData();
   }
@@ -524,6 +519,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         setState(() {});
       }
 
+      imagePicker.closeDialog();
     } catch (e) {
       print(e);
     }
@@ -778,6 +774,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>  with TickerPro
         AppUtils.hideKeyboard(context);
         if(gotoProfileStepsScreen){
           Navigator.of(context).popUntil((route) => route.isFirst);
+          widget.voidCallback();
         }else{
           Navigator.push(context, MaterialPageRoute(
               builder: (BuildContext context) => AgreementDetailScreen(voidCallback: (){

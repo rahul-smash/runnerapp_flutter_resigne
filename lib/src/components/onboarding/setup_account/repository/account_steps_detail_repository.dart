@@ -6,6 +6,7 @@ import 'package:marketplace_service_provider/src/components/onboarding/setup_acc
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/experience_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/profile_info_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/under_approval_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/work_detail_document_model.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 
@@ -44,7 +45,7 @@ abstract class AccountStepsDetailRepository {
 
   Future<BaseResponse> saveAgreementData(String userId);
 
-  Future<BaseResponse> submitForApproval(String userId);
+  Future<UnderApprovalModel> submitForApproval(String userId);
 
-
+  Future<UnderApprovalModel> getUnderApprovalDetail(String userId);
 }

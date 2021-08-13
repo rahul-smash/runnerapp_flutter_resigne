@@ -26,7 +26,7 @@ class UserAuthenticationRepository extends AuthenticationRepository {
   }
 
   @override
-  Future<BaseResponse> setMpin({String mPin, String userId}) async {
+  Future<LoginResponse> setMpin({String mPin, String userId}) async {
     return await LoginNetworkRepository.instance.setMpinApi(mPin,userId);
   }
 
