@@ -31,8 +31,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends BaseState<LoginScreen>  {
 
   final UserLoginBloc userLoginBloc = getIt.get<UserLoginBloc>();
-  TextEditingController mobileCont = TextEditingController(text: "8847485654");
-  TextEditingController passwordCont = TextEditingController(text: "1122");
+  TextEditingController mobileCont = TextEditingController(text: "");
+  TextEditingController passwordCont = TextEditingController(text: "");
   bool _showPassword = false;
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
@@ -268,7 +268,10 @@ class _LoginScreenState extends BaseState<LoginScreen>  {
             if(event.loginResponse.location.locationId == "0"){
               Navigator.pushReplacement(context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => ServicesLocationScreen(loginResponse:event.loginResponse,))
+                      builder: (BuildContext context) => ServicesLocationScreen(
+                        loginResponse:event.loginResponse,
+                        redirectToLogin: true,
+                      ))
               );
             }else{
               LoginUserSingleton.instance.loginResponse = event.loginResponse;

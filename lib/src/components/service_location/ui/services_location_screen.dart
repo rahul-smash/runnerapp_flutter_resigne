@@ -16,8 +16,11 @@ import '../bloc/save_location_bloc.dart';
 import '../model/location_event_data.dart';
 
 class ServicesLocationScreen extends StatefulWidget {
+
   final LoginResponse loginResponse;
-  ServicesLocationScreen({this.loginResponse});
+  final bool redirectToLogin;
+  ServicesLocationScreen({this.loginResponse,this.redirectToLogin = false});
+
   @override
   _ServicesLocationScreenState createState() {
     return _ServicesLocationScreenState();
@@ -206,13 +209,18 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
             loginResponse.location =location;
             LoginUserSingleton.instance.loginResponse = loginResponse;
 
-            AppSharedPref.instance.saveUser(loginResponse).then((value) async {
-              AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+            if(widget.redirectToLogin){
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) => SelectCategoryScreen())
-              );
-            });
+            }else{
+              AppSharedPref.instance.saveUser(loginResponse).then((value) async {
+                AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (BuildContext context) => SelectCategoryScreen())
+                );
+              });
+            }
+
           }
         }
       }
