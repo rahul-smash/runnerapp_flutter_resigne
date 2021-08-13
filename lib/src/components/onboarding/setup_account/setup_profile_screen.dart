@@ -3,9 +3,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/agreement_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -36,7 +38,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
   LocationData _locationData;
-
+  AccountStepsDetailModel accountStepsDetailModel;
 
   @override
   void initState() {
@@ -96,7 +98,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                                     if (snapshot.hasError){
                                       return Text('Error: ${snapshot.error}');
                                     } else{
-                                      AccountStepsDetailModel accountStepsDetailModel = snapshot.data;
+                                      accountStepsDetailModel = snapshot.data;
                                       return ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: list.length,
@@ -202,7 +204,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                           width: MediaQuery.of(context).size.width,
                           child: GradientElevatedButton(
                             onPressed: () async {
-
+                              submitApiCall();
                             },
                             //onPressed: validateAndSave(isSubmitPressed: true),
                             buttonText: labelSubmitForApproval,),
@@ -381,6 +383,33 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     if(status == "Completed"){
       return AppTheme.greenColor;
     }
+  }
+
+  Future<void> submitApiCall() async {
+    if (this.network.offline) {
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+
+    if(accountStepsDetailModel.data.profileDetail == "1" && accountStepsDetailModel.data.businessDetail == "1"
+    && accountStepsDetailModel.data.workDetail == "1" && accountStepsDetailModel.data.agreementDetail == "1"){
+      AppUtils.showLoader(context);
+      BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>().submitForApproval(loginResponse.data.id);
+      AppUtils.hideLoader(context);
+      if(baseresponse != null){
+        AppUtils.showToast(baseresponse.message, true);
+        AppUtils.hideKeyboard(context);
+        Navigator.pop(context);
+        Navigator.push(context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => DashboardScreen())
+        );
+      }
+    }else{
+      AppUtils.showToast("Please complete your profile first!", false);
+      return;
+    }
+
   }
 
 }

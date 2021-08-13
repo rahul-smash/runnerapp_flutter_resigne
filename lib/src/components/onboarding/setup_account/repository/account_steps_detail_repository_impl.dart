@@ -28,7 +28,8 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
   static const _getExperienceDetail = '/runner_authentication/getExperienceDetail/';
   static const _saveExperienceDetail = '/runner_authentication/updateExperienceDetail';
   static const _getAgreementDetail= '/runner_authentication/getAgreementDetail/';
-
+  static const _updateAgreementDetail= '/runner_authentication/updateAgreementDetail';
+  static const _submitForApproval= '/runner_authentication/submitForApproval';
 
   String apiPath(String storeId, String path) =>
       '$storeId${AppNetworkConstants.baseRoute}$path';
@@ -243,6 +244,34 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService implements Account
       return categoryModel;
     } catch (e) {
     }
+  }
+
+  @override
+  Future<BaseResponse> saveAgreementData(String userId) async {
+    try {
+      Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _updateAgreementDetail), param);
+      BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
+      return loginResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  @override
+  Future<BaseResponse> submitForApproval(String userId) async {
+    try {
+      Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _submitForApproval), param);
+      BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
+      return loginResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
   }
 
 

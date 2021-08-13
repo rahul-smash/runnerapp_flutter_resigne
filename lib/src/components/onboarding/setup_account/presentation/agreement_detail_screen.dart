@@ -7,6 +7,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/account_steps_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/agreement_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -97,7 +98,7 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
                                 children: [
                                   Container(
                                     margin: EdgeInsets.fromLTRB(20,  20, 20, 20),
-                                    child: Image.asset("lib/src/components/onboarding/images/agreement_graphic.png",
+                                    child: Image.network("${agreementDetailModel.data.image}",
                                       width: double.infinity,height: Dimensions.getScaledSize(200),
                                     ),
                                   ),
@@ -188,8 +189,8 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
                           margin: EdgeInsets.only(left: 40, right: 40,bottom: 20,top: 20),
                           width: MediaQuery.of(context).size.width,
                           child: GradientElevatedButton(
-                            onPressed: () async {
-
+                            onPressed: ()  {
+                              callApi();
                             },
                             //onPressed: validateAndSave(isSubmitPressed: true),
                             buttonText: labelSubmit,),
@@ -226,6 +227,27 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> callApi() async {
+    if (this.network.offline) {
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+    if(!isTermAndConditionSelected){
+      AppUtils.showToast("Please accept term and condition", false);
+      return;
+    }
+    AppUtils.showLoader(context);
+    BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>().saveAgreementData(loginResponse.data.id);
+    AppUtils.hideLoader(context);
+
+    if(baseresponse != null){
+      AppUtils.showToast(baseresponse.message, true);
+      AppUtils.hideKeyboard(context);
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
+
   }
 
 

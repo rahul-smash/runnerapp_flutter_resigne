@@ -41,4 +41,10 @@ abstract class AccountStepsDetailRepository {
     @required String workExperience,
     @required String qualification,File workDoc1,File workDoc2,File workDoc3,File certificateDoc1,File certificateDoc2,
     File certificateDoc3,ExperienceDetailModel experienceDetailModel});
+
+  Future<BaseResponse> saveAgreementData(String userId);
+
+  Future<BaseResponse> submitForApproval(String userId);
+
+
 }
