@@ -1,10 +1,14 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -60,8 +64,9 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
         appBar: AppBar(),
         widgets: <Widget>[
           Visibility(
-            visible: _bookingDetailsResponse?.bookings != null &&
-                showCancelButton(_bookingDetailsResponse.bookings.status),
+//            visible: _bookingDetailsResponse?.bookings != null &&
+//                showCancelButton(_bookingDetailsResponse.bookings.status),
+            visible: false,
             child: InkWell(
                 onTap: () async {
                   cancelOrderBottomSheet(
@@ -95,6 +100,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                     Card(
                       shadowColor: AppTheme.borderNotFocusedColor,
                       elevation: 8,
+                      margin: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0),
                       borderOnForeground: true,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
@@ -269,7 +275,434 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                 margin: EdgeInsets.only(top: 10, bottom: 10),
                                 color: AppTheme.borderNotFocusedColor,
                               ),
-                              Text('Date and Time of booking Request')
+                              Text(
+                                'Date and Time of booking Request',
+                                style: TextStyle(
+                                    color: AppTheme.subHeadingTextColor),
+                              ),
+                              Text(
+                                '${convertDateFormat(_bookingDetailsResponse.bookings.created)}',
+                                style: TextStyle(
+                                    color: AppTheme.subHeadingTextColor),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text('Delivery Details',
+                                  style: TextStyle(
+                                      color: AppTheme.subHeadingTextColor,
+                                      fontSize: AppConstants.smallSize)),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                            '${_bookingDetailsResponse.bookings.userAddress.firstName} ${_bookingDetailsResponse.bookings.userAddress.lastName}',
+                                            style: TextStyle(
+                                                color: AppTheme.mainTextColor,
+                                                fontSize:
+                                                    AppConstants.largeSize,
+                                                fontWeight: FontWeight.w500)),
+                                        Text(
+                                            '${_bookingDetailsResponse.bookings.userAddress.completAddress}',
+                                            style: TextStyle(
+                                                color: AppTheme
+                                                    .subHeadingTextColor,
+                                                fontSize:
+                                                    AppConstants.smallSize,
+                                                fontWeight: FontWeight.normal))
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: _bookingDetailsResponse.bookings
+                                            .userAddress.lat.isNotEmpty &&
+                                        _bookingDetailsResponse.bookings
+                                            .userAddress.lng.isNotEmpty,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        AppUtils.openMap(
+                                            _bookingDetailsResponse
+                                                .bookings.userAddress.lat,
+                                            _bookingDetailsResponse
+                                                .bookings.userAddress.lng);
+                                      },
+                                      child: Image.asset(
+                                        AppImages.icon_map,
+                                        height: 25,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Date & Time',
+                                          style: TextStyle(
+                                              color:
+                                                  AppTheme.subHeadingTextColor),
+                                        ),
+                                        Text(
+                                          '${_bookingDetailsResponse.bookings.bookingDateTime}',
+                                          style: TextStyle(
+                                              color: AppTheme.mainTextColor,
+                                              fontSize: AppConstants.largeSize,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Delivery Slot',
+                                          style: TextStyle(
+                                            color: AppTheme.subHeadingTextColor,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${convertTimeSlot(_bookingDetailsResponse.bookings.deliveryTimeSlot)}',
+                                          style: TextStyle(
+                                              color: AppTheme.mainTextColor,
+                                              fontSize: AppConstants.largeSize,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      margin: EdgeInsets.fromLTRB(4.0, 0, 4.0, 4.0),
+                      shadowColor: AppTheme.borderNotFocusedColor,
+                      elevation: 8,
+                      borderOnForeground: true,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(18.0),
+                        child: Container(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListView.separated(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: _bookingDetailsResponse
+                                    .bookings.cart.length,
+                                itemBuilder: (context, index) {
+                                  return listItem(context, index);
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(top: 8, bottom: 8),
+                                    color: Color(0xFFE1E1E1),
+                                    height: 1,
+                                  );
+                                },
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        margin:
+                                            EdgeInsets.only(top: 8, bottom: 8),
+                                        color: Color(0xFFE1E1E1),
+                                        height: 1,
+                                      ),
+                                      Visibility(
+                                          visible: _bookingDetailsResponse
+                                                      .bookings
+                                                      .shippingCharges ==
+                                                  "0.00"
+                                              ? false
+                                              : true,
+                                          child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 8, bottom: 8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                        'Delivery Charges',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        )),
+                                                  ),
+                                                  Text(
+                                                      "${AppConstants.currency} ${_bookingDetailsResponse.bookings.shippingCharges}",
+                                                      style: TextStyle(
+                                                          color: AppTheme.black,
+                                                          fontSize: AppConstants
+                                                              .smallSize,
+                                                          fontWeight:
+                                                              FontWeight.w600))
+                                                ],
+                                              ))),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 8.0, bottom: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Flexible(
+                                              child: Text('Total',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  )),
+                                            ),
+                                            Text(
+                                                "${AppConstants.currency} ${_bookingDetailsResponse.bookings.checkout}",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600))
+                                          ],
+                                        ),
+                                      ),
+                                      Visibility(
+                                          visible: _bookingDetailsResponse
+                                                      .bookings.cartSaving !=
+                                                  null &&
+                                              (_bookingDetailsResponse
+                                                      .bookings.cartSaving !=
+                                                  '0.00'),
+                                          child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 8, bottom: 8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text('MRP Discount',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Color(0xff74BA33),
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        )),
+                                                  ),
+                                                  Text(
+                                                      "${AppConstants.currency} ${_bookingDetailsResponse.bookings.cartSaving != null ? _bookingDetailsResponse.bookings.cartSaving : '0.00'}",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Color(0xff74BA33),
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600))
+                                                ],
+                                              ))),
+                                      Visibility(
+                                          visible: _bookingDetailsResponse
+                                                  .bookings.discount !=
+                                              '0.00',
+                                          child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 8, bottom: 8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text('Discount',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Color(0xff74BA33),
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        )),
+                                                  ),
+                                                  Text(
+                                                      "${AppConstants.currency} ${_bookingDetailsResponse.bookings.discount != null ? _bookingDetailsResponse.bookings.discount : '0.00'}",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Color(0xff74BA33),
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600))
+                                                ],
+                                              ))),
+                                      Visibility(
+                                          visible: _bookingDetailsResponse
+                                                      .bookings.tax ==
+                                                  "0.00"
+                                              ? false
+                                              : true,
+                                          child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 8, bottom: 8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text('Tax & Charges',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: AppConstants
+                                                              .smallSize,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        )),
+                                                  ),
+                                                  Text(
+                                                      "${AppConstants.currency} ${_bookingDetailsResponse.bookings.tax}",
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: AppConstants
+                                                              .smallSize,
+                                                          fontWeight:
+                                                              FontWeight.w600))
+                                                ],
+                                              ))),
+                                      Container(
+                                        margin:
+                                            EdgeInsets.only(top: 8, bottom: 8),
+                                        color: Color(0xFFE1E1E1),
+                                        height: 1,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Flexible(
+                                            child: Text('Payable Amount',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500,
+                                                )),
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: <Widget>[
+                                              Text(
+                                                  "${AppConstants.currency} ${_bookingDetailsResponse.bookings.total}",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.w500)),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 16, bottom: 20),
+                                        padding:
+                                            EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.cyanColor,
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Flexible(
+                                              child: Text(
+                                                  'Service Provide Payable amount',
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppTheme.cyanColorDark,
+                                                    fontSize:
+                                                        AppConstants.smallSize,
+                                                    fontWeight: FontWeight.w500,
+                                                  )),
+                                            ),
+                                            Text(
+                                                "${AppConstants.currency} ${_bookingDetailsResponse.bookings.total}",
+                                                style: TextStyle(
+                                                    color:
+                                                        AppTheme.cyanColorDark,
+                                                    fontSize:
+                                                        AppConstants.smallSize,
+                                                    fontWeight:
+                                                        FontWeight.w600))
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -279,6 +712,146 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                 ),
               ),
             ),
+    );
+  }
+
+  /// Draw a border with rectangular border
+  Widget get rectBorderWidget {
+    return DottedBorder(
+      dashPattern: [8, 4],
+      strokeWidth: 1,
+      child: Container(
+        height: 0.1,
+        color: AppTheme.black,
+      ),
+    );
+  }
+
+  Widget listItem(BuildContext context, int index) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Flexible(
+                        child: ClipRRect(
+                            borderRadius: new BorderRadius.circular(15),
+                            child: Image.network(
+                              _bookingDetailsResponse
+                                  .bookings.cart[index].image300200,
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
+                            ))),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                              '${_bookingDetailsResponse.bookings.cart[index].productName}',
+                              style: TextStyle(
+                                  color: AppTheme.mainTextColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: AppConstants.largeSize)),
+                          Container(
+                              margin: EdgeInsets.only(top: 5),
+                              padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppTheme.borderNotFocusedColor),
+                                color: AppTheme.borderNotFocusedColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0)),
+                              ),
+                              child: Text(
+                                  '${_bookingDetailsResponse.bookings.categoryTitle}',
+                                  style: TextStyle(
+                                    color: Color(0xFF39444D),
+                                    fontSize: 13,
+                                  ))),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  Text(
+                    AppConstants.currency,
+                    style: TextStyle(
+                        fontFamily: AppConstants.fontName,
+                        fontSize: AppConstants.extraSmallSize,
+                        color: AppTheme.mainTextColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 2,
+              ),
+              Text(
+                _bookingDetailsResponse.bookings.cart[index].price,
+                style: TextStyle(
+                    fontFamily: AppConstants.fontName,
+                    fontSize: AppConstants.largeSize,
+                    color: AppTheme.mainTextColor,
+                    fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Visibility(
+            visible:
+                _bookingDetailsResponse.bookings.cart[index].comment.isNotEmpty,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Comment: ',
+                  style: TextStyle(
+                      color: AppTheme.subHeadingTextColor,
+                      fontSize: AppConstants.largeSize,
+                      fontWeight: FontWeight.normal),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Flexible(
+                  child: Text(
+                    _bookingDetailsResponse.bookings.cart[index].comment,
+                    style: TextStyle(
+                        color: AppTheme.mainTextColor,
+                        fontSize: AppConstants.largeSize,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+        ],
+      ),
     );
   }
 
@@ -332,8 +905,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
             ),
             InkWell(
               onTap: () {
-                widget.callBackMethod(
-                    'Ongoing', _bookingDetailsResponse.bookings);
+                _bookingAction('Ongoing', _bookingDetailsResponse.bookings);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -433,8 +1005,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
             ),
             InkWell(
               onTap: () {
-                widget.callBackMethod(
-                    'Complete', _bookingDetailsResponse.bookings);
+                _bookingAction('Complete', _bookingDetailsResponse.bookings);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -565,11 +1136,13 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                           height: 2,
                           width: Dimensions.getScaledSize(40),
                           decoration: BoxDecoration(
-                            color: AppTheme.black,
-                            borderRadius: BorderRadius.all(Radius.circular(10))
-                          ),
+                              color: AppTheme.black,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
                         ),
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Text(
                           labelBookingOrderCancel,
                           textAlign: TextAlign.center,
@@ -669,5 +1242,58 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       AppUtils.noNetWorkDialog(context);
     }
     setState(() {});
+  }
+
+  convertDateFormat(DateTime dateObj) {
+    DateFormat formatter = new DateFormat('dd MMM, yyyy | hh:mm a');
+    String formatted = formatter.format(dateObj);
+    //print(formatted);
+    return formatted;
+  }
+
+  static convertTimeSlot(DateTime dateObj) {
+    //2021-08-06 12:30:00
+//    DateFormat dateFormat = DateFormat("yyyy-MM-dd, hh:mm:ss");
+//    DateTime dateTime = dateFormat.parse(dateObj);
+    DateFormat formatter = new DateFormat('hh:mm a');
+    String formatted = formatter.format(dateObj);
+    //print(formatted);
+    return formatted;
+  }
+
+  _bookingAction(String type, Bookings booking) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      AppUtils.showLoader(context);
+      BaseResponse baseResponse = await getIt
+          .get<DashboardRepository>()
+          .changeBookingAction(
+              userId: loginResponse.data.id,
+              orderId: booking.id,
+              status: _changeBookingStatus(type));
+      AppUtils.hideLoader(context);
+      if (baseResponse != null) {
+        if (baseResponse.success) {
+          _bookingDetailsResponse.bookings.status = _changeBookingStatus(type);
+          widget.booking.status = _changeBookingStatus(type);
+          setState(() {});
+          widget.callBackMethod(_changeBookingStatus(type));
+        } else {
+          AppUtils.showToast(baseResponse.message, false);
+        }
+      }
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
+  }
+
+  _changeBookingStatus(String type) {
+    switch (type) {
+      case 'Ongoing':
+        return '4';
+        break;
+      case 'Complete':
+        return '5';
+        break;
+    }
   }
 }

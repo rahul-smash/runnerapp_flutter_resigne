@@ -62,6 +62,9 @@ class AppTheme {
   static Color grayCircle = Color(0xffECECEC);
   static Color greenColor = Color(0xff26D990);
 
+  static var cyanColor=Color(0xFFD3F8E9);
+  static var cyanColorDark=Color(0xFF42A27C);
+
 }
 
 List<BoxShadow> shadow = <BoxShadow>[
