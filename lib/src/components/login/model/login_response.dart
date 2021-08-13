@@ -13,31 +13,35 @@ class LoginResponse {
     this.success,
     this.data,
     this.userExists,
+    this.afterApprovalFirstTime,
     this.message,
     this.brands,
     this.location,
   });
 
   bool success;
-  UserData data;
+  Data data;
   int userExists;
+  String afterApprovalFirstTime;
   String message;
   List<Brand> brands;
   Location location;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
     success: json["success"],
+    data: Data.fromJson(json["data"]),
+    userExists: json["user_exists"],
+    afterApprovalFirstTime: json["after_approval_first_time"],
     message: json["message"],
-    data: json["data"] == null ? null : UserData.fromJson(json["data"]),
-    userExists: json["user_exists"] == null ? null : json["user_exists"],
-    brands: json["brands"] == null ? null : List<Brand>.from(json["brands"].map((x) => Brand.fromJson(x))),
-    location: json["location"] == null ? null : Location.fromJson(json["location"]),
+    brands: List<Brand>.from(json["brands"].map((x) => Brand.fromJson(x))),
+    location: Location.fromJson(json["location"]),
   );
 
   Map<String, dynamic> toJson() => {
     "success": success,
     "data": data.toJson(),
     "user_exists": userExists,
+    "after_approval_first_time": afterApprovalFirstTime,
     "message": message,
     "brands": List<dynamic>.from(brands.map((x) => x.toJson())),
     "location": location.toJson(),
@@ -104,8 +108,8 @@ class Brand {
   };
 }
 
-class UserData {
-  UserData({
+class Data {
+  Data({
     this.id,
     this.fullName,
     this.lastName,
@@ -137,7 +141,7 @@ class UserData {
   String email;
   String phone;
   String gender;
-  String dob;
+  DateTime dob;
   String profileImage;
   String otpVerify;
   String userReferCode;
@@ -155,14 +159,14 @@ class UserData {
   String lng;
   String rating;
 
-  factory UserData.fromJson(Map<String, dynamic> json) => UserData(
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
     id: json["id"],
     fullName: json["full_name"],
     lastName: json["last_name"],
     email: json["email"],
     phone: json["phone"],
     gender: json["gender"],
-    dob: json["dob"],
+    dob: DateTime.parse(json["dob"]),
     profileImage: json["profile_image"],
     otpVerify: json["otp_verify"],
     userReferCode: json["user_refer_code"],
@@ -188,7 +192,7 @@ class UserData {
     "email": email,
     "phone": phone,
     "gender": gender,
-    "dob": dob,
+    "dob": "${dob.year.toString().padLeft(4, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}",
     "profile_image": profileImage,
     "otp_verify": otpVerify,
     "user_refer_code": userReferCode,
@@ -207,6 +211,7 @@ class UserData {
     "rating": rating,
   };
 }
+
 class Location {
   Location({
     this.locationId,
@@ -226,4 +231,3 @@ class Location {
     "location_name": locationName,
   };
 }
-

@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/under_approval_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class UserProfileStatusScreen extends StatefulWidget {
 
-  UserProfileStatusScreen();
+  bool isProfileApproved = false;
+  String userId;
+  UserProfileStatusScreen({this.isProfileApproved,this.userId});
 
   @override
   _UserProfileStatusScreenState createState() {
@@ -22,10 +28,19 @@ class UserProfileStatusScreen extends StatefulWidget {
 class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
 
   bool isProfileApproved = false;
+  bool isLoading;
+  UnderApprovalModel underApprovalModel;
 
   @override
   void initState() {
     super.initState();
+    isLoading = true;
+    getIt.get<AccountStepsDetailRepositoryImpl>().getUnderApprovalDetail(widget.userId).then((value){
+      underApprovalModel = value;
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
@@ -64,7 +79,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
         ),
         widgets: <Widget>[
           Visibility(
-            visible: !isProfileApproved ? true : false,
+            visible: false,
             child: InkWell(
               onTap: (){
 
@@ -80,8 +95,9 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
       body: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: Container(
-            child: Stack(
+          body: isLoading
+              ? AppUtils.showSpinner()
+              : Container(child: Stack(
               children: [
                 Container(
                   height: Dimensions.getHeight(percentage: 42),
@@ -126,7 +142,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                                         fontFamily: AppConstants.fontName),
                                   ),
                                   Text(
-                                    "9876622719",
+                                    "${underApprovalModel.success.userData.phone}",
                                     style: TextStyle(
                                         fontSize: Dimensions.getScaledSize(20),
                                         fontWeight: FontWeight.w600,
@@ -160,7 +176,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                                         fontFamily: AppConstants.fontName),
                                   ),
                                   Text(
-                                    "5.6 Years",
+                                    underApprovalModel.success.userData.experience,
                                     style: TextStyle(
                                         fontSize: Dimensions.getScaledSize(20),
                                         fontWeight: FontWeight.w600,
@@ -176,7 +192,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                       Container(
                         child: Center(
                           child: Text(
-                            "Hi, Prince Kuma",
+                            "Hi, ${underApprovalModel.success.userData.firstName} ${underApprovalModel.success.userData.lastName}",
                             style: TextStyle(
                                 fontSize: Dimensions.getScaledSize(20),
                                 fontWeight: FontWeight.w600,
@@ -198,7 +214,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                       Container(
                         child: Center(
                           child: Text(
-                            "House no 1855 G/H Kharar, Mohali",
+                            "${underApprovalModel.success.userData.addrees}",
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: AppTheme.white.withOpacity(0.7),
@@ -231,7 +247,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                       Container(
                         child: Center(
                           child: Text(
-                            !isProfileApproved ? "Your Profile is under Approval" : "Your Profile has been Approved",
+                            !isProfileApproved ? "${underApprovalModel.success.statusMessage}" : "Your Profile has been Approved",
                             style: TextStyle(
                                 fontSize: Dimensions.getScaledSize(24),
                                 fontWeight: FontWeight.w600,
@@ -250,41 +266,39 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                         ),
                       ),
 
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                        child: Center(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Value Appz",
-                                style: TextStyle(
-                                    fontSize: Dimensions.getScaledSize(18),
-                                    fontWeight: FontWeight.w600,
-                                    color: AppTheme.mainTextColor,
-                                    fontFamily: AppConstants.fontName),
-                              ),
-                              Text(
-                                " reviewing your documents.",
-                                style: TextStyle(
-                                    fontSize: Dimensions.getScaledSize(18),
-                                    color: AppTheme.mainTextColor,
-                                    fontFamily: AppConstants.fontName),
-                              ),
-                            ],
+                      Visibility(
+                        visible: isProfileApproved ? false : true,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                          child: Center(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    child: Text(
+                                  "${underApprovalModel.success.processMessage}",
+                                  maxLines: 2,textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: Dimensions.getScaledSize(18),
+                                      color: AppTheme.mainTextColor,
+                                      fontFamily: AppConstants.fontName),
+                                )
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        margin: EdgeInsets.fromLTRB(20, isProfileApproved ? 10 : 0, 20, 0),
                         child: Center(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "The process usually takes 24 hours.",
+                                isProfileApproved ? "Access the app feature by\nclicking the button below" : "",
                                 style: TextStyle(
                                     fontSize: Dimensions.getScaledSize(18),
                                     color: AppTheme.mainTextColor,
@@ -328,8 +342,9 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                   margin: EdgeInsets.only(left: 30,right: 30,top: Dimensions.getHeight(percentage:!isProfileApproved ? 60: 70)),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: 10,
+                    itemCount: underApprovalModel.success.categoryies.length,
                     itemBuilder: (context, index) {
+                      Categoryy cat = underApprovalModel.success.categoryies[index];
                       return Container(
                           width: double.infinity,
                           margin: EdgeInsets.fromLTRB(0,15,10,10),
@@ -349,7 +364,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                                         ),
                                       ),
                                     ),
-                                    Text("AC Repair Service",style: TextStyle(color: AppTheme.black,
+                                    Text("${cat.title}",style: TextStyle(color: AppTheme.black,
                                       fontWeight: FontWeight.w500,fontFamily: AppConstants.fontName,),),
                                   ],
                                 ),
@@ -360,7 +375,7 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                                 },
                                 child: Row(
                                   children: [
-                                    Text("20",style: TextStyle(color: AppTheme.black,
+                                    Text("${cat.serviceCount}",style: TextStyle(color: AppTheme.black,
                                       fontWeight: FontWeight.w700,fontFamily: AppConstants.fontName,),),
                                     SizedBox(width: Dimensions.getScaledSize(10),),
                                     Text("Services",style: TextStyle(color: AppTheme.subHeadingTextColor,
@@ -400,7 +415,9 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
         child: ClipRRect(
             clipBehavior: Clip.antiAlias,
             borderRadius: BorderRadius.all(Radius.circular(80)),
-            child: Image.network("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTncxHwv7BXAjmaSBtTzrsp1mVdUkJGEKrUuA&usqp=CAU",width: 100,height: 100,fit: BoxFit.cover,)
+            child: Image.network(
+              "${underApprovalModel.success.userData.profileImage}",
+              width: 100,height: 100,fit: BoxFit.cover,)
         )
     );
   }
