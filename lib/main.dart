@@ -81,7 +81,7 @@ class MainWidget extends StatelessWidget {
     SizeCustomConfig().init(
         AppUtils.getDeviceHeight(context), AppUtils.getDeviceWidth(context), Orientation.portrait);
     SizeConfig().init(context);
-    return Scaffold(body: AppConstants.isLoggedIn ? LoginScreen(): LoginScreen());
+    return Scaffold(body: AppConstants.isLoggedIn ? DashboardScreen(): LoginScreen());
   }
 }
 
