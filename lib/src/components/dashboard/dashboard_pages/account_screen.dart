@@ -256,18 +256,18 @@ class _AccountScreenState extends BaseState<AccountScreen> {
       );
 
     } else if(index == 2){
-      Navigator.push(context, MaterialPageRoute(
+      /*Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => WorkDetailScreen(
             isComingFromAccount: true,
             voidCallback: (){
 
-          },)));
+          },)));*/
     } else if(index == 3){
-      Navigator.push(context, MaterialPageRoute(
+      /*Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => AgreementDetailScreen(
             isComingFromAccount: true,
             voidCallback: (){
-          },)));
+          },)));*/
     }
   }
 

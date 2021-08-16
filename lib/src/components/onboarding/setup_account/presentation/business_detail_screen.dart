@@ -1129,6 +1129,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
       sun_close = selectedTagsList.contains("Sun") ? closeTimeHashMap["Sun"] : "";
       mon_open = selectedTagsList.contains("Mon") ? openTimeHashMap["Mon"] : "";
       mon_close = selectedTagsList.contains("Mon") ? closeTimeHashMap["Mon"] : "";
+      tue_open = selectedTagsList.contains("Tue") ? openTimeHashMap["Tue"] : "";
+      tue_close = selectedTagsList.contains("Tue") ? closeTimeHashMap["Tue"] : "";
       wed_open = selectedTagsList.contains("Wed") ? openTimeHashMap["Wed"] : "";
       wed_close = selectedTagsList.contains("Wed") ? closeTimeHashMap["Wed"] : "";
       thu_open = selectedTagsList.contains("Thu") ? openTimeHashMap["Thu"] : "";
