@@ -259,7 +259,7 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
                           SelectCategoryScreen()));
               //TODO: re-verify this
 //              AppSharedPref.instance.saveUser(loginResponse).then((value) async {
-//                AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
+////                AppConstants.isLoggedIn = await AppSharedPref.instance.setLoggedIn(true);
 //                Navigator.pop(context);
 //                Navigator.push(context, MaterialPageRoute(
 //                    builder: (BuildContext context) => SelectCategoryScreen())

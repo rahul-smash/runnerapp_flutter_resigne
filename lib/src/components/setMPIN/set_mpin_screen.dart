@@ -8,6 +8,7 @@ import 'package:marketplace_service_provider/src/components/login/ui/login_scree
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/model/register_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
+import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -17,8 +18,8 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class SetMPINScreen extends StatefulWidget {
-
   final RegisterResponse registerResponse;
+
   SetMPINScreen(this.registerResponse);
 
   @override
@@ -107,9 +108,9 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
                     style: TextStyle(color: AppTheme.mainTextColor),
                     decoration: InputDecoration(
                       counterText: "",
-                      suffixIcon:  (newPinCont.text == '' &&
-                          confirmPinCont.text == '') ||
-                          newPinCont.text != confirmPinCont.text
+                      suffixIcon: (newPinCont.text == '' &&
+                                  confirmPinCont.text == '') ||
+                              newPinCont.text != confirmPinCont.text
                           ? null
                           : Image(
                               image: AssetImage(AppImages.small_tick),
@@ -143,16 +144,15 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
                       keyboardType: TextInputType.number,
                       maxLength: 4,
                       onChanged: (value) {
-                          setState(() {});
+                        setState(() {});
                       },
-                      validator: (value) =>
-                      !(newPinCont.text == '' &&
-                          confirmPinCont.text == '') &&
-                          newPinCont.text != confirmPinCont.text
-                              ? labelErrorMPINNotMatched
-                              : null,
+                      validator: (value) => !(newPinCont.text == '' &&
+                                  confirmPinCont.text == '') &&
+                              newPinCont.text != confirmPinCont.text
+                          ? labelErrorMPINNotMatched
+                          : null,
                       onFieldSubmitted: (value) {
-                          setState(() {});
+                        setState(() {});
                       },
                       style: TextStyle(color: AppTheme.mainTextColor),
                       decoration: InputDecoration(
@@ -211,36 +211,36 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
 
   setPin() async {
     try {
-      if(this.network.offline){
+      if (this.network.offline) {
         AppUtils.showToast(AppConstants.noInternetMsg, false);
         return;
       }
-      if(newPinCont.text.isEmpty){
+      if (newPinCont.text.isEmpty) {
         AppUtils.showToast(newPinValidationMsg, false);
         return;
       }
-      if(!AppUtils.equalsIgnoreCase(newPinCont.text,confirmPinCont.text)){
+      if (!AppUtils.equalsIgnoreCase(newPinCont.text, confirmPinCont.text)) {
         AppUtils.showToast(confirmPinValidationMsg, false);
         return;
       }
       AppUtils.showLoader(context);
-      LoginResponse response =
-      await getIt.get<UserAuthenticationRepository>().setMpin(mPin: newPinCont.text,userId: widget.registerResponse.data.id);
-      if(response != null)
-      AppUtils.showToast(response.message, false);
+      LoginResponse response = await getIt
+          .get<UserAuthenticationRepository>()
+          .setMpin(
+              mPin: newPinCont.text, userId: widget.registerResponse.data.id);
+      if (response != null) AppUtils.showToast(response.message, false);
       AppUtils.hideKeyboard(context);
       AppUtils.hideLoader(context);
-
+      LoginUserSingleton.instance.loginResponse = response;
 
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) => ServicesLocationScreen(loginResponse: response,)),
-              (Route<dynamic> route) => false);
-
+              builder: (context) => ServicesLocationScreen(
+                    loginResponse: response,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (e) {
       print(e);
     }
   }
-
-
 }
