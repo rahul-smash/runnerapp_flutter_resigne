@@ -2,6 +2,7 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/account_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
@@ -41,7 +42,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       ),
       MyBookingScreen(),
       Text("Gallery"),
-      Text("Account"),
+      AccountScreen()
     ];
     try {
       appPrintLog("AppConstants.isLoggedIn=${AppConstants.isLoggedIn}");

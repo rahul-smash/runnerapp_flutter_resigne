@@ -23,7 +23,8 @@ import 'agreement_detail_screen.dart';
 class WorkDetailScreen extends StatefulWidget {
   final VoidCallback voidCallback;
 
-  WorkDetailScreen({@required this.voidCallback});
+  final bool isComingFromAccount;
+  WorkDetailScreen({@required this.voidCallback,this.isComingFromAccount = false});
 
   @override
   _WorkDetailScreenState createState() {

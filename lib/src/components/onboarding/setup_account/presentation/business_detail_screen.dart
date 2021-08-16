@@ -26,7 +26,8 @@ class BusinessDetailScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
   final LatLng userlocation;
-  BusinessDetailScreen({@required this.voidCallback, @required this.userlocation});
+  final bool isComingFromAccount;
+  BusinessDetailScreen({@required this.voidCallback, @required this.userlocation,this.isComingFromAccount = false});
 
   @override
   _BusinessDetailScreenState createState() {

@@ -1,5 +1,6 @@
 class SetupAccountModel{
   String title;
   String subTitle;
-  SetupAccountModel(this.title, this.subTitle);
+  String imgePath;
+  SetupAccountModel(this.title, this.subTitle,{this.imgePath});
 }

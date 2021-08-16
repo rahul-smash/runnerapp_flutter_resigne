@@ -20,7 +20,8 @@ import 'package:flutter_html/flutter_html.dart';
 class AgreementDetailScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
-  AgreementDetailScreen({@required this.voidCallback});
+  final bool isComingFromAccount;
+  AgreementDetailScreen({@required this.voidCallback,this.isComingFromAccount = false});
 
   @override
   _AgreementDetailScreenState createState() {
