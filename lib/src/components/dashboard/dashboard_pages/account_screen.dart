@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/selected_user_category_screen.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/ui/select_category_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/setup_account_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/agreement_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/business_detail_screen.dart';
@@ -246,7 +248,6 @@ class _AccountScreenState extends BaseState<AccountScreen> {
           },))
       );
     }else if(index == 1){
-
       Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => BusinessDetailScreen(
             isComingFromAccount: true,
@@ -254,20 +255,22 @@ class _AccountScreenState extends BaseState<AccountScreen> {
             voidCallback: (){
             },))
       );
-
     } else if(index == 2){
       Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => WorkDetailScreen(
             isComingFromAccount: true,
             voidCallback: (){
-
           },)));
     } else if(index == 3){
-      /*Navigator.push(context, MaterialPageRoute(
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => SelectedUserCategoryScreen())
+      );
+    }else if(index == 4){
+      Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => AgreementDetailScreen(
             isComingFromAccount: true,
             voidCallback: (){
-          },)));*/
+            },)));
     }
   }
 

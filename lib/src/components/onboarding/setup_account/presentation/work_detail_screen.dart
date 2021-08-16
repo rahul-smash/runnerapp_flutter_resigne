@@ -108,13 +108,16 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               preferredSize: Size.fromHeight(4.0)),
         ),
         widgets: <Widget>[
-          InkWell(
-            onTap: () {
-              callApi(gotoProfileStepsScreen: true);
-            },
-            child: Container(
-              child: Center(
-                child: Text("Save", style: TextStyle(color: Colors.black)),
+          Visibility(
+            visible: widget.isComingFromAccount ? false : true,
+            child: InkWell(
+              onTap: () {
+                callApi(gotoProfileStepsScreen: true);
+              },
+              child: Container(
+                child: Center(
+                  child: Text("Save", style: TextStyle(color: Colors.black)),
+                ),
               ),
             ),
           ),
