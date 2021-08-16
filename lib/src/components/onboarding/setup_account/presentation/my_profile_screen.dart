@@ -189,16 +189,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                     },
                     child: Stack(
                       children: [
-                        InkWell(
-                          onTap: (){
-
-                          },
-                          child: profileInfoModel.data.profileImage.isNotEmpty
-                              ? showImageFromUrl()
-                              : _selectedProfileImg == null
-                              ? showImgPlaceholderView()
-                              : showUserImgView() ,
-                        ),
+                        profileInfoModel.data.profileImage.isNotEmpty
+                            ? showImageFromUrl()
+                            : _selectedProfileImg == null
+                            ? showImgPlaceholderView()
+                            : showUserImgView() ,
                         Positioned.fill(
                           child: Align(
                             alignment: Alignment.bottomRight,
