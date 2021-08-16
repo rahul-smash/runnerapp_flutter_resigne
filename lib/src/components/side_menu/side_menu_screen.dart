@@ -24,11 +24,9 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
   void initState() {
     super.initState();
     _drawerItems.add(ItemSideMenuChild(labelAboutUs, AppImages.icon_aboutus));
-    _drawerItems
-        .add(ItemSideMenuChild(labelContactUs, AppImages.icon_contactus));
+    _drawerItems.add(ItemSideMenuChild(labelContactUs, AppImages.icon_contactus));
     _drawerItems.add(ItemSideMenuChild(labelFaq, AppImages.icon_faq));
-    _drawerItems
-        .add(ItemSideMenuChild(labelHowToVideo, AppImages.icon_howtovideo));
+    _drawerItems.add(ItemSideMenuChild(labelHowToVideo, AppImages.icon_howtovideo));
   }
 
   @override
