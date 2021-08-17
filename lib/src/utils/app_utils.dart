@@ -16,6 +16,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:html/parser.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
@@ -355,6 +356,10 @@ class AppUtils {
         );
       },
     );
+  }
+
+  static void share(String msg,{String subject}){
+    Share.share(msg, subject: subject);
   }
 
   static Widget getHtmlView(String html){

@@ -6,6 +6,7 @@ import 'package:marketplace_service_provider/src/components/side_menu/model/item
 import 'package:marketplace_service_provider/src/components/side_menu/pages/about_us_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/pages/contact_us_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/pages/faq_screen.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/pages/help_videos_screen.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -275,6 +276,10 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
       Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => ContactUsScreen())
       );
+    }else if(item.title == labelHowToVideo){
+        Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) => HelpVideoScreen())
+        );
     }
   }
 }

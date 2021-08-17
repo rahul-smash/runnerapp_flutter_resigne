@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/faq_model.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/model/help_videos_model.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/singleton/store_config_singleton.dart';
@@ -13,6 +14,7 @@ class MenuOptionRepositoryImpl extends DioBaseService implements MenuOptionRepos
 
   static const _contactUs = '/runner_static_contents/contactUs';
   static const _faq = '/runner_static_contents/faqs';
+  static const _helpVideos = '/runner_static_contents/helpVideos';
 
   MenuOptionRepositoryImpl() : super(AppNetworkConstants.baseUrl);
 
@@ -34,6 +36,7 @@ class MenuOptionRepositoryImpl extends DioBaseService implements MenuOptionRepos
       'user_id' : user_id,
       "image1": img1 == null ? "" : await MultipartFile.fromFile(img1.path,filename: fileName)
     });
+    print(formData.fields.toString());
     try {
       var response = await post(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _contactUs),null,
                                 isMultipartUploadRequest: true,formData:formData);
@@ -50,6 +53,17 @@ class MenuOptionRepositoryImpl extends DioBaseService implements MenuOptionRepos
     try {
       var response = await get(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _faq), null);
       FaqModel categoryModel = FaqModel.fromJson(jsonDecode(response));
+      return categoryModel;
+    } catch (e) {
+    }
+    return null;
+  }
+
+  @override
+  Future<HelpVideosModel> getHowToVideos() async{
+    try {
+      var response = await get(apiPath(StoreConfigurationSingleton.instance.configModel.storeId, _helpVideos), null);
+      HelpVideosModel categoryModel = HelpVideosModel.fromJson(jsonDecode(response));
       return categoryModel;
     } catch (e) {
     }
