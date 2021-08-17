@@ -4,6 +4,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/item_side_menu_child.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/pages/about_us_screen.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/pages/contact_us_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/pages/faq_screen.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -268,6 +269,11 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
     }else if(item.title == labelFaq){
       Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => FaqScreen())
+      );
+    }else if(item.title == labelContactUs){
+      if(AppConstants.isLoggedIn)
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => ContactUsScreen())
       );
     }
   }

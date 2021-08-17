@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
@@ -70,10 +70,11 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
               padding: EdgeInsets.all(10),
               child: Expanded(
                 child: SingleChildScrollView(
-                  child: Html(
+                  /*child: Html(
                     shrinkWrap: true,
                     data: VersionApiSingleton.instance.storeResponse.brand.aboutUs,
-                  ),
+                  ),*/
+                  child: AppUtils.getHtmlView(VersionApiSingleton.instance.storeResponse.brand.aboutUs),
                 ),
               ),
             ),

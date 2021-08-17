@@ -9,6 +9,7 @@ import 'package:marketplace_service_provider/src/components/onboarding/select_ca
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/components/service_location/bloc/save_location_bloc.dart';
 import 'package:marketplace_service_provider/src/components/service_location/repository/service_location_auth_repository.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/repository/menu_option_repository_impl.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
 import 'network/connectivity/network_connection_observer.dart';
@@ -33,4 +34,6 @@ void serviceLocator() {
       CategoryListRemoteDataSourceImpl());
   getIt.registerSingleton<AccountStepsDetailRepositoryImpl>(
       AccountStepsDetailRepositoryImpl());
+  getIt.registerSingleton<MenuOptionRepositoryImpl>(
+      MenuOptionRepositoryImpl());
 }

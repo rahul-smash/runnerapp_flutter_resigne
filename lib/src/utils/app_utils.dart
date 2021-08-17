@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
@@ -355,4 +356,13 @@ class AppUtils {
       },
     );
   }
+
+  static Widget getHtmlView(String html){
+
+    return Html(
+      shrinkWrap: true,
+      data: html,
+    );
+  }
+
 }
