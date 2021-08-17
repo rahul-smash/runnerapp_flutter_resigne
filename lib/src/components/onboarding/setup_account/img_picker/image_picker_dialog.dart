@@ -97,12 +97,11 @@ class ImagePickerDialog extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 25,),
+                              SizedBox(width: 30,),
                             ],
                           ),
                         ),
                       ),
-
                       SizedBox(height: 20,),
                       InkWell(
                         onTap: () => _listener.openGallery(),
@@ -128,7 +127,7 @@ class ImagePickerDialog extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 25,),
+                              SizedBox(width: 30,),
                             ],
                           ),
                         ),
@@ -176,8 +175,6 @@ class ImagePickerDialog extends StatelessWidget {
 
               ],
             ),
-
-
         )
     );
   }

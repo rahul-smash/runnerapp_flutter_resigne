@@ -28,7 +28,8 @@ import 'business_detail_screen.dart';
 class MyProfileScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
-  MyProfileScreen({@required this.voidCallback});
+  final bool isComingFromAccount;
+  MyProfileScreen({@required this.voidCallback,this.isComingFromAccount = false});
 
   @override
   _MyProfileScreenState createState() {
@@ -186,11 +187,33 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                     onTap: (){
                       imagePicker.showDialog(context,profileImage: true,docImage1: false,docImage2: false);
                     },
-                    child: profileInfoModel.data.profileImage.isNotEmpty
-                        ? showImageFromUrl()
-                        : _selectedProfileImg == null
-                        ? showImgPlaceholderView()
-                        : showUserImgView() ,
+                    child: Stack(
+                      children: [
+                        profileInfoModel.data.profileImage.isNotEmpty
+                            ? showImageFromUrl()
+                            : _selectedProfileImg == null
+                            ? showImgPlaceholderView()
+                            : showUserImgView() ,
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: AppTheme.white,
+                                      width: 3,
+                                    ),
+                                    shape: BoxShape.circle,
+                                    color: AppTheme.primaryColorDark
+                                ),
+                                width: 30,
+                                height: 30,
+                                child: Icon(Icons.camera_alt,color: Colors.white,size: 20,)
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
@@ -219,6 +242,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextFormField(
+                            enabled:  widget.isComingFromAccount ? false : true,
+                            readOnly: widget.isComingFromAccount,
                             controller: firstNameCont,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
@@ -249,6 +274,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                             height: 20,
                           ),
                           TextFormField(
+                            enabled:  widget.isComingFromAccount ? false : true,
+                            readOnly: widget.isComingFromAccount,
                             controller: lastNameCont,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
@@ -299,10 +326,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                                         ));
                                   }).toList(),
                                   onTap: () {},
-                                  onChanged: (newValue) {
-                                    // do other stuff with _category
-                                    setState(() => _selectedGenderUpOption = newValue);
-                                  },
+                                  onChanged: widget.isComingFromAccount
+                                      ? null
+                                      : (newValue) => setState(() => _selectedGenderUpOption = newValue),
                                   value: _selectedGenderUpOption,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.all(0),
@@ -319,6 +345,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                               ),
                               Expanded(
                                 child: TextFormField(
+                                  enabled:  widget.isComingFromAccount ? false : true,
                                   controller: ageCont,
                                   readOnly: true,
                                   keyboardType: TextInputType.text,
@@ -360,6 +387,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                             height: 20,
                           ),
                           TextFormField(
+                            enabled:  widget.isComingFromAccount ? false : true,
+                            readOnly: widget.isComingFromAccount,
                             controller: mobileCont,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.send,
@@ -391,6 +420,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                           ),
 
                           TextFormField(
+                            enabled:  widget.isComingFromAccount ? false : true,
+                            readOnly: widget.isComingFromAccount,
                             controller: emailCont,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.send,
@@ -422,6 +453,37 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                             height: 20,
                           ),
 
+                          Visibility(
+                            visible: widget.isComingFromAccount ? true : false,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("About Yourself",),
+                                  InkWell(
+                                    onTap: (){
+                                      openAboutYourSelfDialog();
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.edit,color: AppTheme.primaryColor,size: 20,),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text("Edit",style: TextStyle(
+                                            color: AppTheme.primaryColor,
+                                            fontFamily: AppConstants.fontName,
+                                            fontWeight: FontWeight.w500
+                                        ),)
+                                      ],
+                                    ),
+                                  )
+                                ]
+                            ),
+                          ),
+
+                          SizedBox(
+                            height: 5,
+                          ),
                           Container(
                             height: Dimensions.getScaledSize(100),
                             decoration: BoxDecoration(
@@ -434,6 +496,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                               child: TextFormField(
                                 //focusNode: _nodeText1,
                                 controller: userCommentController,
+                                enabled:  widget.isComingFromAccount ? false : true,
+                                readOnly: widget.isComingFromAccount,
                                 validator: (val) =>
                                 val.isEmpty ? labelErrorAboutUs : null,
                                 keyboardType: TextInputType.multiline,
@@ -475,9 +539,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                               children: addressProofsList.map((tag) {
                                 return InkWell(
                                     onTap: () {
-                                      setState(() {
-                                        _selectedProofTypeTag = tag;
-                                      });
+                                      if(!widget.isComingFromAccount){
+                                        setState(() {
+                                          _selectedProofTypeTag = tag;
+                                        });
+                                      }
+
                                     },
                                     child: Container(
                                       width: SizeConfig.screenWidth/4.1,
@@ -510,6 +577,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                             height: 10,
                           ),
                           TextFormField(
+                            enabled:  widget.isComingFromAccount ? false : true,
+                            readOnly: widget.isComingFromAccount,
                             controller: proofNameCont,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
@@ -540,6 +609,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                             height: 20,
                           ),
                           TextFormField(
+                            enabled:  widget.isComingFromAccount ? false : true,
+                            readOnly: widget.isComingFromAccount,
                             controller: idProofNameCont,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
@@ -636,7 +707,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                                     ),
                                   ),
                                   onTap: (){
-                                    imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
+                                    if(!widget.isComingFromAccount){
+                                      imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
+                                    }
                                   },
                                 ),
                               ),
@@ -679,7 +752,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                                     ),
                                   ),
                                   onTap: (){
-                                    imagePicker.showDialog(context,docImage2: true,profileImage: false,docImage1: false);
+                                    if(!widget.isComingFromAccount){
+                                      imagePicker.showDialog(context,docImage2: true,profileImage: false,docImage1: false);
+                                    }
                                   },
                                 ),
                               ),
@@ -690,19 +765,22 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                           SizedBox(
                             height: 35,
                           ),
-                          Container(
-                            margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
-                            width: MediaQuery.of(context).size.width,
-                            child: GradientElevatedButton(
-                              onPressed: () async {
-                                if(this.network.offline){
-                                  AppUtils.showToast(AppConstants.noInternetMsg, false);
-                                  return;
-                                }
-                                callProfileApi();
-                              },
-                              //onPressed: validateAndSave(isSubmitPressed: true),
-                              buttonText: labelSaveNext,),
+                          Visibility(
+                            visible: widget.isComingFromAccount ? false : true,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
+                              width: MediaQuery.of(context).size.width,
+                              child: GradientElevatedButton(
+                                onPressed: () async {
+                                  if(this.network.offline){
+                                    AppUtils.showToast(AppConstants.noInternetMsg, false);
+                                    return;
+                                  }
+                                  callProfileApi();
+                                },
+                                //onPressed: validateAndSave(isSubmitPressed: true),
+                                buttonText: labelSaveNext,),
+                            ),
                           ),
                           SizedBox(
                             height: 20,
@@ -738,7 +816,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
       margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),top: Dimensions.getScaledSize(20) ),
       decoration: BoxDecoration(
           border: Border.all(
-            color: AppTheme.primaryColor,
+            color: AppTheme.primaryColorDark,
             width: 4,
           ),
           color: Colors.grey[200],
@@ -759,7 +837,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
         margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),top: Dimensions.getScaledSize(20) ),
         decoration: BoxDecoration(
             border: Border.all(
-              color: AppTheme.primaryColor,
+              color: AppTheme.primaryColorDark,
               width: 4,
             ),
             color: Colors.grey[200],
@@ -806,10 +884,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
               subtitle: Text(resultFileImgSize1 == null ? "" : '${resultFileImgSize1}'),
               trailing: InkWell(
                 onTap: (){
-                  setState(() {
-                    _selectedImg1 = null;
-                    resultFileImgSize1 = null;
-                  });
+                  if(!widget.isComingFromAccount){
+                    setState(() {
+                      _selectedImg1 = null;
+                      resultFileImgSize1 = null;
+                    });
+                  }
                 },
                 child: Icon(Icons.clear),
               ),
@@ -841,10 +921,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
               subtitle: Text(resultFileImgSize2 == null ? "" : '${resultFileImgSize2}'),
               trailing: InkWell(
                 onTap: (){
-                  setState(() {
-                    _selectedImg2 = null;
-                    resultFileImgSize2 = null;
-                  });
+                  if(!widget.isComingFromAccount){
+                    setState(() {
+                      _selectedImg2 = null;
+                      resultFileImgSize2 = null;
+                    });
+                  }
                 },
                 child: Icon(Icons.clear),
               ),
@@ -956,5 +1038,113 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
   }
 
 
+  void openAboutYourSelfDialog() {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+
+        return AlertDialog(
+            backgroundColor: Colors.transparent,
+            contentPadding: EdgeInsets.zero,
+            insetPadding: EdgeInsets.symmetric(horizontal: 0),
+            elevation: 0.0,
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(left: 0,right: 0,bottom: 0),
+                  decoration: BoxDecoration(
+                      boxShadow: shadow,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30)),
+                      color: Colors.white
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              child: Center(
+                                child: Text(
+                                  "About Yourself",
+                                  style: TextStyle(
+                                      fontSize: Dimensions.getScaledSize(20),
+                                      fontWeight: FontWeight.w600,
+                                      color: AppTheme.mainTextColor,
+                                      fontFamily: AppConstants.fontName),
+                                ),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Icon(Icons.clear,color: AppTheme.primaryColor,size: 30,),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        height: Dimensions.getScaledSize(130),
+                        decoration: BoxDecoration(
+                          color: AppTheme.grayCircle,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        margin: EdgeInsets.only(left: 20,right: 20,bottom: 0),
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(15, 15, 10, 10),
+                          child: TextFormField(
+                            //focusNode: _nodeText1,
+                            controller: userCommentController,
+                            validator: (val) =>
+                            val.isEmpty ? labelErrorAboutUs : null,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            textAlign: TextAlign.start,
+                            decoration: new InputDecoration.collapsed(
+                              hintText: "About yourself",
+                            ),
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 45, right: 45,),
+                        width: MediaQuery.of(context).size.width,
+                        child: GradientElevatedButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                          },
+                          //onPressed: validateAndSave(isSubmitPressed: true),
+                          buttonText: labelSave,),
+                      ),
+                      SizedBox(height: 20,),
+                    ],
+                  ),
+                ),
+
+              ],
+            ));
+      },
+    );
+
+  }
 
 }

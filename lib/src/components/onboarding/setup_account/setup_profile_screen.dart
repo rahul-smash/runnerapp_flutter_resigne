@@ -263,7 +263,7 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
     SetupAccountModel setupAccountModel1 = SetupAccountModel("My Profile","View your profile and updare personal detail");
     SetupAccountModel setupAccountModel2 = SetupAccountModel("Business Detail","View and update business detail");
     SetupAccountModel setupAccountModel3 = SetupAccountModel("Work Detail","View and update work detail");
-    SetupAccountModel setupAccountModel4 = SetupAccountModel("Agreement","Read and accept agreement");
+    SetupAccountModel setupAccountModel4 = SetupAccountModel("Agreement","Please thoroughly check and accept work agreement");
     list.add(setupAccountModel1);
     list.add(setupAccountModel2);
     list.add(setupAccountModel3);

@@ -25,8 +25,9 @@ import 'widgets/google_map.dart';
 class BusinessDetailScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
-  final LatLng userlocation;
-  BusinessDetailScreen({@required this.voidCallback, @required this.userlocation});
+  LatLng userlocation;
+  final bool isComingFromAccount;
+  BusinessDetailScreen({@required this.voidCallback, @required this.userlocation,this.isComingFromAccount = false});
 
   @override
   _BusinessDetailScreenState createState() {
@@ -61,6 +62,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
   HashMap<String,String> openTimeHashMap = HashMap();
   HashMap<String,String> closeTimeHashMap = HashMap();
   int radius;
+  int defaultRadius = 20;
 
   @override
   void initState() {
@@ -190,6 +192,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextFormField(
+                                  enabled:  widget.isComingFromAccount ? false : true,
+                                  readOnly: widget.isComingFromAccount,
                                   controller: businessNameCont,
                                   keyboardType: TextInputType.text,
                                   textInputAction: TextInputAction.next,
@@ -223,6 +227,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                   children: [
                                     Expanded(
                                       child: TextFormField(
+                                        enabled:  widget.isComingFromAccount ? false : true,
+                                        readOnly: widget.isComingFromAccount,
                                         controller: stateCont,
                                         keyboardType: TextInputType.text,
                                         textInputAction: TextInputAction.next,
@@ -255,6 +261,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                     ),
                                     Expanded(
                                       child: TextFormField(
+                                        enabled:  widget.isComingFromAccount ? false : true,
+                                        readOnly: widget.isComingFromAccount,
                                         controller: pinCodeCont,
                                         keyboardType: TextInputType.text,
                                         textInputAction: TextInputAction.next,
@@ -288,6 +296,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                   height: 20,
                                 ),
                                 TextFormField(
+                                  enabled:  widget.isComingFromAccount ? false : true,
+                                  readOnly: widget.isComingFromAccount,
                                   controller: cityCont,
                                   keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.send,
@@ -318,6 +328,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                   height: 20,
                                 ),
                                 TextFormField(
+                                  enabled:  widget.isComingFromAccount ? false : true,
+                                  readOnly: widget.isComingFromAccount,
                                   controller: addressCont,
                                   keyboardType: TextInputType.emailAddress,
                                   textInputAction: TextInputAction.send,
@@ -366,7 +378,9 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                           ));
                                     }).toList(),
                                     onTap: () {},
-                                    onChanged: (newValue) {
+                                    onChanged:widget.isComingFromAccount
+                                        ? null
+                                        :  (newValue) {
                                       // do other stuff with _category
                                       setState(() => _selectedWorkLocationTag = newValue);
                                     },
@@ -406,8 +420,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                               userlocation: widget.userlocation,
                               businessDetailModel: businessDetailModel,
                               radius: businessDetailModel.data.businessDetail.radius.isEmpty
-                                  ? 20
-                                  : int.parse(businessDetailModel.data.businessDetail.radius),
+                                  ? defaultRadius
+                                  : radius,
                               callback: (radius){
                               this.radius = radius;
                             },)
@@ -436,6 +450,9 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                               children: businessDetailModel.data.businessIdentityProofList.map((tag) {
                                 return InkWell(
                                     onTap: () {
+                                      if(widget.isComingFromAccount){
+                                        return;
+                                      }
                                       setState(() {
                                         _selectedProofTypeTag = tag;
                                       });
@@ -470,6 +487,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                           Container(
                             margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
                             child: TextFormField(
+                              enabled:  widget.isComingFromAccount ? false : true,
+                              readOnly: widget.isComingFromAccount,
                               controller: idProofNumberCont,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
@@ -572,6 +591,9 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                   ),
                                 ),
                                 onTap: (){
+                                  if(widget.isComingFromAccount){
+                                    return;
+                                  }
                                   imagePicker.showDialog(context, profileImage: true, docImage1: false, docImage2: false);
                                 },
                               ),
@@ -603,10 +625,12 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                   subtitle: Text(docFileSize == null ? "" : '${docFileSize}'),
                                   trailing: InkWell(
                                     onTap: (){
-                                      setState(() {
-                                        _selectedDocument = null;
-                                        docFileSize = null;
-                                      });
+                                      if(!widget.isComingFromAccount){
+                                        setState(() {
+                                          _selectedDocument = null;
+                                          docFileSize = null;
+                                        });
+                                      }
                                     },
                                     child: Icon(Icons.clear),
                                   ),
@@ -799,40 +823,43 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                 ),
                                 Expanded(
                                   child: Container(
-                                    child: GradientElevatedButton(
-                                      onPressed: () async {
-                                        if(selectedTagsList.isEmpty){
-                                          AppUtils.showToast("Please select work days!", true);
-                                          return;
-                                        }
-                                        if(openTimeCont.text.isEmpty){
-                                          AppUtils.showToast("Please open time!", true);
-                                          return;
-                                        }
-                                        if(closeTimeCont.text.isEmpty){
-                                          AppUtils.showToast("Please close time!", true);
-                                          return;
-                                        }
-                                        print("map=${map.length}");
-                                        if(map.isNotEmpty){
-                                          map.forEach((k, v) {
-                                            openTimeHashMap[k] = openTimeCont.text;
-                                            closeTimeHashMap[k] = closeTimeCont.text;
-                                          });
-                                          map = new HashMap<String,String>();
-                                        }else{
-                                          for(int i = 0; i < selectedTagsList.length; i++){
-                                            openTimeHashMap[selectedTagsList[i]] = openTimeCont.text;
-                                            closeTimeHashMap[selectedTagsList[i]] = closeTimeCont.text;
+                                    child: Visibility(
+                                      visible: true,
+                                      child: GradientElevatedButton(
+                                        onPressed: () async {
+                                          if(selectedTagsList.isEmpty){
+                                            AppUtils.showToast("Please select work days!", true);
+                                            return;
                                           }
-                                        }
-                                        selectedDaysList = selectedTagsList;
-                                        setState(() {
-                                          showSelectedDaysListvew = true;
-                                        });
-                                      },
-                                      //onPressed: validateAndSave(isSubmitPressed: true),
-                                      buttonText: labelSave,),
+                                          if(openTimeCont.text.isEmpty){
+                                            AppUtils.showToast("Please open time!", true);
+                                            return;
+                                          }
+                                          if(closeTimeCont.text.isEmpty){
+                                            AppUtils.showToast("Please close time!", true);
+                                            return;
+                                          }
+                                          print("map=${map.length}");
+                                          if(map.isNotEmpty){
+                                            map.forEach((k, v) {
+                                              openTimeHashMap[k] = openTimeCont.text;
+                                              closeTimeHashMap[k] = closeTimeCont.text;
+                                            });
+                                            map = new HashMap<String,String>();
+                                          }else{
+                                            for(int i = 0; i < selectedTagsList.length; i++){
+                                              openTimeHashMap[selectedTagsList[i]] = openTimeCont.text;
+                                              closeTimeHashMap[selectedTagsList[i]] = closeTimeCont.text;
+                                            }
+                                          }
+                                          selectedDaysList = selectedTagsList;
+                                          setState(() {
+                                            showSelectedDaysListvew = true;
+                                          });
+                                        },
+                                        //onPressed: validateAndSave(isSubmitPressed: true),
+                                        buttonText: labelSave,),
+                                    )
                                   ),
                                 ),
                                 SizedBox(
@@ -998,27 +1025,33 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                           ),
 
 
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: Dimensions.getScaledSize(30),
+                          Visibility(
+                            visible: widget.isComingFromAccount ? false : true,
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  top: Dimensions.getScaledSize(30),
+                              ),
+                              child: Image.asset("lib/src/components/onboarding/images/note.png",
+                                width: double.infinity,fit: BoxFit.fill,
+                                height: 50,),
                             ),
-                            child: Image.asset("lib/src/components/onboarding/images/note.png",
-                              width: double.infinity,fit: BoxFit.fill,
-                              height: 50,),
                           ),
 
                           SizedBox(
                             height: 20,
                           ),
-                          Container(
-                            margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
-                            width: MediaQuery.of(context).size.width,
-                            child: GradientElevatedButton(
-                              onPressed: () async {
-                                callApi();
-                              },
-                              //onPressed: validateAndSave(isSubmitPressed: true),
-                              buttonText: labelSaveNext,),
+                          Visibility(
+                            visible: widget.isComingFromAccount ? false : true,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 30, right: 30,bottom: 20),
+                              width: MediaQuery.of(context).size.width,
+                              child: GradientElevatedButton(
+                                onPressed: () async {
+                                  callApi();
+                                },
+                                //onPressed: validateAndSave(isSubmitPressed: true),
+                                buttonText: labelSaveNext,),
+                            ),
                           ),
                           SizedBox(
                             height: 20,
@@ -1096,6 +1129,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
       sun_close = selectedTagsList.contains("Sun") ? closeTimeHashMap["Sun"] : "";
       mon_open = selectedTagsList.contains("Mon") ? openTimeHashMap["Mon"] : "";
       mon_close = selectedTagsList.contains("Mon") ? closeTimeHashMap["Mon"] : "";
+      tue_open = selectedTagsList.contains("Tue") ? openTimeHashMap["Tue"] : "";
+      tue_close = selectedTagsList.contains("Tue") ? closeTimeHashMap["Tue"] : "";
       wed_open = selectedTagsList.contains("Wed") ? openTimeHashMap["Wed"] : "";
       wed_close = selectedTagsList.contains("Wed") ? closeTimeHashMap["Wed"] : "";
       thu_open = selectedTagsList.contains("Thu") ? openTimeHashMap["Thu"] : "";
@@ -1147,6 +1182,17 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     cityCont.text = businessDetailModel.data.businessDetail.city;
     addressCont.text = businessDetailModel.data.businessDetail.address;
     idProofNumberCont.text = businessDetailModel.data.businessDetail.businessIdentityProofNumber;
+
+
+    if(businessDetailModel.data.businessDetail.radius.isNotEmpty){
+      radius = int.parse(businessDetailModel.data.businessDetail.radius);
+    }
+
+
+    if(businessDetailModel.data.businessDetail.lat.isNotEmpty){
+      widget.userlocation = new LatLng(double.parse(businessDetailModel.data.businessDetail.lat),
+          double.parse(businessDetailModel.data.businessDetail.lng));
+    }
 
     if(businessDetailModel.data.businessDetail.serviceType.isNotEmpty){
       for(int i = 0; i < workLocationList.length; i++){

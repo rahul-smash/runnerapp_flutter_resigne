@@ -3,6 +3,8 @@ import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/item_side_menu_child.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/pages/about_us_screen.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/pages/faq_screen.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -24,11 +26,9 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
   void initState() {
     super.initState();
     _drawerItems.add(ItemSideMenuChild(labelAboutUs, AppImages.icon_aboutus));
-    _drawerItems
-        .add(ItemSideMenuChild(labelContactUs, AppImages.icon_contactus));
+    _drawerItems.add(ItemSideMenuChild(labelContactUs, AppImages.icon_contactus));
     _drawerItems.add(ItemSideMenuChild(labelFaq, AppImages.icon_faq));
-    _drawerItems
-        .add(ItemSideMenuChild(labelHowToVideo, AppImages.icon_howtovideo));
+    _drawerItems.add(ItemSideMenuChild(labelHowToVideo, AppImages.icon_howtovideo));
   }
 
   @override
@@ -259,5 +259,16 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
         ));
   }
 
-  void _openPageForIndex(ItemSideMenuChild item, BuildContext context) {}
+  void _openPageForIndex(ItemSideMenuChild item, BuildContext context) {
+    print(item.title);
+    if(item.title == labelAboutUs){
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => AboutUsScreen())
+      );
+    }else if(item.title == labelFaq){
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => FaqScreen())
+      );
+    }
+  }
 }

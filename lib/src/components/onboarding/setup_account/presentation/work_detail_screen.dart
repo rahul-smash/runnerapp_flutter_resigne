@@ -23,7 +23,8 @@ import 'agreement_detail_screen.dart';
 class WorkDetailScreen extends StatefulWidget {
   final VoidCallback voidCallback;
 
-  WorkDetailScreen({@required this.voidCallback});
+  final bool isComingFromAccount;
+  WorkDetailScreen({@required this.voidCallback,this.isComingFromAccount = false});
 
   @override
   _WorkDetailScreenState createState() {
@@ -107,13 +108,16 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               preferredSize: Size.fromHeight(4.0)),
         ),
         widgets: <Widget>[
-          InkWell(
-            onTap: () {
-              callApi(gotoProfileStepsScreen: true);
-            },
-            child: Container(
-              child: Center(
-                child: Text("Save", style: TextStyle(color: Colors.black)),
+          Visibility(
+            visible: widget.isComingFromAccount ? false : true,
+            child: InkWell(
+              onTap: () {
+                callApi(gotoProfileStepsScreen: true);
+              },
+              child: Container(
+                child: Center(
+                  child: Text("Save", style: TextStyle(color: Colors.black)),
+                ),
               ),
             ),
           ),
@@ -162,6 +166,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextFormField(
+                              enabled:  widget.isComingFromAccount ? false : true,
+                              readOnly: widget.isComingFromAccount,
                               controller: experienceCont,
                               keyboardType: TextInputType.number,
                               textInputAction: TextInputAction.next,
@@ -193,6 +199,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             TextFormField(
+                              enabled:  widget.isComingFromAccount ? false : true,
+                              readOnly: widget.isComingFromAccount,
                               controller: qualificationCont,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
@@ -301,6 +309,9 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                                   ),
                                 ),
                                 onTap: () {
+                                  if(widget.isComingFromAccount){
+                                    return;
+                                  }
                                   if (workDoc1 == null) {
                                     imagePicker.showDialog(context,
                                         docImage1: true,
@@ -417,6 +428,9 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                                   ),
                                 ),
                                 onTap: () {
+                                  if(widget.isComingFromAccount){
+                                    return;
+                                  }
                                   if (certificateDoc1 == null) {
                                     imagePicker.showDialog(context,
                                         docImage1: false,
@@ -455,16 +469,19 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                             SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  left: 30, right: 30, bottom: 20),
-                              width: MediaQuery.of(context).size.width,
-                              child: GradientElevatedButton(
-                                onPressed: () async {
-                                  callApi();
-                                },
-                                //onPressed: validateAndSave(isSubmitPressed: true),
-                                buttonText: labelSaveNext,
+                            Visibility(
+                              visible: widget.isComingFromAccount ? false : true,
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                    left: 30, right: 30, bottom: 20),
+                                width: MediaQuery.of(context).size.width,
+                                child: GradientElevatedButton(
+                                  onPressed: () async {
+                                    callApi();
+                                  },
+                                  //onPressed: validateAndSave(isSubmitPressed: true),
+                                  buttonText: labelSaveNext,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -573,14 +590,20 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               title: Text(getWorkDoc1Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
-              trailing: InkWell(
-                onTap: () {
-                  setState(() {
-                    workDoc1 = null;
-                    //workPhotographsDocList.removeAt(index);
-                  });
-                },
-                child: Icon(Icons.clear),
+              trailing: Visibility(
+                visible: widget.isComingFromAccount ? false : true,
+                child: InkWell(
+                  onTap: () {
+                    if(widget.isComingFromAccount){
+                      return;
+                    }
+                    setState(() {
+                      workDoc1 = null;
+                      //workPhotographsDocList.removeAt(index);
+                    });
+                  },
+                  child: Icon(Icons.clear,),
+                ),
               ),
               contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
@@ -609,14 +632,17 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               title: Text(getWorkDoc2Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
-              trailing: InkWell(
-                onTap: () {
-                  setState(() {
-                    workDoc2 = null;
-                    //workPhotographsDocList.removeAt(index);
-                  });
-                },
-                child: Icon(Icons.clear),
+              trailing: Visibility(
+                visible: widget.isComingFromAccount ? false : true,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      workDoc2 = null;
+                      //workPhotographsDocList.removeAt(index);
+                    });
+                  },
+                  child: Icon(Icons.clear),
+                ),
               ),
               contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
@@ -645,14 +671,17 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               title: Text(getWorkDoc3Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
-              trailing: InkWell(
-                onTap: () {
-                  setState(() {
-                    workDoc3 = null;
-                    //workPhotographsDocList.removeAt(index);
-                  });
-                },
-                child: Icon(Icons.clear),
+              trailing: Visibility(
+                visible: widget.isComingFromAccount ? false : true,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      workDoc3 = null;
+                      //workPhotographsDocList.removeAt(index);
+                    });
+                  },
+                  child: Icon(Icons.clear),
+                ),
               ),
               contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
@@ -688,14 +717,17 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               title: Text(getCertificateDoc1Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
-              trailing: InkWell(
-                onTap: () {
-                  setState(() {
-                    certificateDoc1 = null;
-                    //workPhotographsDocList.removeAt(index);
-                  });
-                },
-                child: Icon(Icons.clear),
+              trailing: Visibility(
+                visible: widget.isComingFromAccount ? false : true,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      certificateDoc1 = null;
+                      //workPhotographsDocList.removeAt(index);
+                    });
+                  },
+                  child: Icon(Icons.clear),
+                ),
               ),
               contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
@@ -724,14 +756,17 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               title: Text(getCertificateDoc2Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
-              trailing: InkWell(
-                onTap: () {
-                  setState(() {
-                    certificateDoc2 = null;
-                    //workPhotographsDocList.removeAt(index);
-                  });
-                },
-                child: Icon(Icons.clear),
+              trailing: Visibility(
+                visible: widget.isComingFromAccount ? false : true,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      certificateDoc2 = null;
+                      //workPhotographsDocList.removeAt(index);
+                    });
+                  },
+                  child: Icon(Icons.clear),
+                ),
               ),
               contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
@@ -760,14 +795,17 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
               title: Text(getCertificateDoc3Name(),
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text("N/A"),
-              trailing: InkWell(
-                onTap: () {
-                  setState(() {
-                    certificateDoc3 = null;
-                    //workPhotographsDocList.removeAt(index);
-                  });
-                },
-                child: Icon(Icons.clear),
+              trailing: Visibility(
+                visible: widget.isComingFromAccount ? false : true,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      certificateDoc3 = null;
+                      //workPhotographsDocList.removeAt(index);
+                    });
+                  },
+                  child: Icon(Icons.clear),
+                ),
               ),
               contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),

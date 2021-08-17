@@ -12,6 +12,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -20,7 +21,8 @@ import 'package:flutter_html/flutter_html.dart';
 class AgreementDetailScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
-  AgreementDetailScreen({@required this.voidCallback});
+  final bool isComingFromAccount;
+  AgreementDetailScreen({@required this.voidCallback,this.isComingFromAccount = false});
 
   @override
   _AgreementDetailScreenState createState() {
@@ -55,6 +57,32 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
   Widget builder(BuildContext context) {
 
     return Scaffold(
+      appBar: BaseAppBar(
+        callback: (){
+          Navigator.of(context).pop();
+        },
+        backgroundColor: AppTheme.white,
+        title: Text('Agreement',style: TextStyle(color: Colors.black),),
+        appBar: AppBar(
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
+          backwardsCompatibility: false,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Colors.white,
+              statusBarIconBrightness: Brightness.dark
+          ),
+          elevation: 0.0,
+          titleSpacing: 0.0,
+          bottom: PreferredSize(
+              child: Container(
+                color: AppTheme.grayCircle,
+                height: 4.0,
+              ),
+              preferredSize: Size.fromHeight(4.0)),
+        ),
+        widgets: <Widget>[
+        ],
+      ),
       body: SafeArea(
         child: Scaffold(
           backgroundColor: Color(0xFFECECEC),
@@ -116,84 +144,90 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
                                     ),
                                   ),
                                   SizedBox(height: 30),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            isTermAndConditionSelected =
-                                            !isTermAndConditionSelected;
-                                          });
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child: Icon(
-                                            isTermAndConditionSelected
-                                                ? Icons.check_box
-                                                : Icons.check_box_outline_blank,
-                                            color: AppTheme.primaryColorDark,
+                                  Visibility(
+                                    visible: widget.isComingFromAccount ? false : true,
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              isTermAndConditionSelected =
+                                              !isTermAndConditionSelected;
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: EdgeInsets.only(right: 10),
+                                            child: Icon(
+                                              isTermAndConditionSelected
+                                                  ? Icons.check_box
+                                                  : Icons.check_box_outline_blank,
+                                              color: AppTheme.primaryColorDark,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            text: labelTermAndConditionString1,
-                                            style: TextStyle(
-                                                color: AppTheme.subHeadingTextColor,
-                                                fontFamily: AppConstants.fontName),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                  text: labelTermAndConditionString,
-                                                  recognizer: TapGestureRecognizer()
-                                                    ..onTap = () {
-                                                      //TODO: Handle This
-                                                      AppUtils.showToast(
-                                                          labelUnderDevelopment, true);
-                                                    },
+                                        Expanded(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              text: labelTermAndConditionString1,
+                                              style: TextStyle(
+                                                  color: AppTheme.subHeadingTextColor,
+                                                  fontFamily: AppConstants.fontName),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                    text: labelTermAndConditionString,
+                                                    recognizer: TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        //TODO: Handle This
+                                                        AppUtils.showToast(
+                                                            labelUnderDevelopment, true);
+                                                      },
+                                                    style: TextStyle(
+                                                        decoration: TextDecoration.underline,
+                                                        color: AppTheme.primaryColorDark,
+                                                        fontFamily: AppConstants.fontName)),
+                                                TextSpan(
+                                                  text: labelTermAndConditionString2,
                                                   style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: AppTheme.primaryColorDark,
-                                                      fontFamily: AppConstants.fontName)),
-                                              TextSpan(
-                                                text: labelTermAndConditionString2,
-                                                style: TextStyle(
-                                                    color: AppTheme.subHeadingTextColor,
-                                                    fontFamily: AppConstants.fontName),
-                                              ),
-                                              TextSpan(
-                                                  text: labelPrivacyPolicyString,
-                                                  recognizer: TapGestureRecognizer()
-                                                    ..onTap = () {
-                                                      //TODO: Handle This
-                                                      AppUtils.showToast(
-                                                          labelUnderDevelopment, true);
-                                                    },
-                                                  style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: AppTheme.primaryColorDark,
-                                                      fontFamily: AppConstants.fontName)),
-                                            ],
+                                                      color: AppTheme.subHeadingTextColor,
+                                                      fontFamily: AppConstants.fontName),
+                                                ),
+                                                TextSpan(
+                                                    text: labelPrivacyPolicyString,
+                                                    recognizer: TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        //TODO: Handle This
+                                                        AppUtils.showToast(
+                                                            labelUnderDevelopment, true);
+                                                      },
+                                                    style: TextStyle(
+                                                        decoration: TextDecoration.underline,
+                                                        color: AppTheme.primaryColorDark,
+                                                        fontFamily: AppConstants.fontName)),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                         ),
 
-                        Container(
-                          margin: EdgeInsets.only(left: 40, right: 40,bottom: 20,top: 20),
-                          width: MediaQuery.of(context).size.width,
-                          child: GradientElevatedButton(
-                            onPressed: ()  {
-                              callApi();
-                            },
-                            //onPressed: validateAndSave(isSubmitPressed: true),
-                            buttonText: labelSubmit,),
+                        Visibility(
+                          visible: widget.isComingFromAccount ? false : true,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 40, right: 40,bottom: 20,top: 20),
+                            width: MediaQuery.of(context).size.width,
+                            child: GradientElevatedButton(
+                              onPressed: ()  {
+                                callApi();
+                              },
+                              //onPressed: validateAndSave(isSubmitPressed: true),
+                              buttonText: labelSubmit,),
+                          ),
                         ),
                       ],
                     )

@@ -54,7 +54,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
     valueHolder = widget.radius;
     _center = LatLng(latitude, longitude);
     print("--radius--${(valueHolder * 1000).toDouble()}-getZoomLevel()-=${getZoomLevel(2000)}");
-    widget.callback(20);
+    widget.callback(widget.radius);
     circles = Set.from([
       Circle(
           circleId: CircleId("myCircle"),
