@@ -267,113 +267,115 @@ class _UserProfileStatusScreenState extends BaseState<UserProfileStatusScreen> {
                             boxShadow: shadow,
                             borderRadius: BorderRadius.all(Radius.circular(40)),
                             color: Colors.white),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Text(
-                              "Account Approval Status",
-                              style: TextStyle(
-                                  fontSize: Dimensions.getScaledSize(18),
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontFamily: AppConstants.fontName),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Container(
-                              child: Center(
-                                child: Text(
-                                  "${underApprovalModel.success.statusMessage}",
-                                  style: TextStyle(
-                                      fontSize: AppConstants.largeSize2X,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.primaryColor,
-                                      fontFamily: AppConstants.fontName),
-                                ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 30,
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                              child: Align(
-                                alignment: Alignment.topCenter,
-                                child: Container(
-                                  width: 30,
-                                  height: 3,
-                                  color: Colors.black,
-                                ),
+                              Text(
+                                "Account Approval Status",
+                                style: TextStyle(
+                                    fontSize: Dimensions.getScaledSize(18),
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontFamily: AppConstants.fontName),
                               ),
-                            ),
-                            Visibility(
-                              visible: true,
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
                                 child: Center(
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                          child: Text(
-                                        "${underApprovalModel.success.processMessage}",
-                                        maxLines: 2,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize:
-                                                Dimensions.getScaledSize(18),
-                                            color: AppTheme.mainTextColor,
-                                            fontFamily: AppConstants.fontName),
-                                      ))
-                                    ],
+                                  child: Text(
+                                    "${underApprovalModel.success.statusMessage}",
+                                    style: TextStyle(
+                                        fontSize: AppConstants.largeSize2X,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppTheme.primaryColor,
+                                        fontFamily: AppConstants.fontName),
                                   ),
                                 ),
                               ),
-                            ),
-                            /*Container(
-                        margin: EdgeInsets.fromLTRB(20, isProfileApproved ? 10 : 0, 20, 0),
-                        child: Center(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                isProfileApproved ? "Access the app feature by\nclicking the button below" : "",
-                                style: TextStyle(
-                                    fontSize: Dimensions.getScaledSize(18),
-                                    color: AppTheme.mainTextColor,
-                                    fontFamily: AppConstants.fontName),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),*/
-
-                            Visibility(
-                              visible: !isProfileApproved ? false : true,
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                    left: 40, right: 40, top: 30),
-                                width: MediaQuery.of(context).size.width,
-                                child: GradientElevatedButton(
-                                  onPressed: () async {
-                                    AppConstants.isLoggedIn =
-                                        await AppSharedPref.instance
-                                            .setLoggedIn(true);
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                DashboardScreen()));
-                                  },
-                                  //onPressed: validateAndSave(isSubmitPressed: true),
-                                  buttonText: "Click here to continue",
+                              Container(
+                                margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    width: 30,
+                                    height: 3,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
-                            )
-                          ],
+                              Visibility(
+                                visible: true,
+                                child: Container(
+                                  margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                                  child: Center(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                            child: Text(
+                                          "${underApprovalModel.success.processMessage}",
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize:
+                                                  Dimensions.getScaledSize(18),
+                                              color: AppTheme.mainTextColor,
+                                              fontFamily: AppConstants.fontName),
+                                        ))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              /*Container(
+                          margin: EdgeInsets.fromLTRB(20, isProfileApproved ? 10 : 0, 20, 0),
+                          child: Center(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isProfileApproved ? "Access the app feature by\nclicking the button below" : "",
+                                  style: TextStyle(
+                                      fontSize: Dimensions.getScaledSize(18),
+                                      color: AppTheme.mainTextColor,
+                                      fontFamily: AppConstants.fontName),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ),*/
+
+                              Visibility(
+                                visible: !isProfileApproved ? false : true,
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      left: 40, right: 40, top: 30,bottom: 30),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: GradientElevatedButton(
+                                    onPressed: () async {
+                                      AppConstants.isLoggedIn =
+                                          await AppSharedPref.instance
+                                              .setLoggedIn(true);
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  DashboardScreen()));
+                                    },
+                                    //onPressed: validateAndSave(isSubmitPressed: true),
+                                    buttonText: "Click here to continue",
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       Container(

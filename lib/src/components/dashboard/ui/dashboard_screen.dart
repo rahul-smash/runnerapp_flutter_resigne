@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
@@ -41,9 +42,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         },
       ),
       MyBookingScreen(),
-      Text("Gallery"),
       AccountScreen()
     ];
+    initFirebase();
+
     try {
       appPrintLog("AppConstants.isLoggedIn=${AppConstants.isLoggedIn}");
       appPrintLog(
@@ -54,12 +56,27 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       print(e);
     }
     if (loginResponse.data.status == "1" &&
-        loginResponse.afterApprovalFirstTime == "1"){
+        loginResponse.afterApprovalFirstTime == "1") {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-          AppUtils.displayPickUpDialog(context);
+        AppUtils.displayPickUpDialog(context);
       });
-
     }
+  }
+
+  initFirebase() async{
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
   }
 
   @override
@@ -164,18 +181,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 label: labelMyBooking),
             BottomNavigationBarItem(
                 icon: Image(
-                  image: AssetImage(AppImages.icon_gallery),
-                  height: 22,
-                  color: _selectedTabIndex == 2
-                      ? AppTheme.primaryColorDark
-                      : AppTheme.subHeadingTextColor,
-                ),
-                label: labelGallery),
-            BottomNavigationBarItem(
-                icon: Image(
                   image: AssetImage(AppImages.icon_account),
                   height: 22,
-                  color: _selectedTabIndex == 3
+                  color: _selectedTabIndex == 2
                       ? AppTheme.primaryColorDark
                       : AppTheme.subHeadingTextColor,
                 ),

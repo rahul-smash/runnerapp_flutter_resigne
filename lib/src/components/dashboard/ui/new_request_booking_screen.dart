@@ -102,6 +102,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
           ),
           appBar: BaseAppBar(
             backgroundColor: AppTheme.white,
+
             title: Text(
               'New Bookings',
               style: TextStyle(
@@ -117,7 +118,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
                 Navigator.pop(context, isChangesHappened);
               },
             ),
-            appBar: AppBar(),
+            appBar: AppBar(elevation: 0,),
           ),
         ));
   }

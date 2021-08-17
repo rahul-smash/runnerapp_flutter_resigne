@@ -278,6 +278,11 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                             redirectToLogin: true,
                           )));
             } else {
+              if (!event.loginResponse.success) {
+                AppUtils.showToast(event.loginResponse.message, false);
+                return;
+              }
+
               LoginUserSingleton.instance.loginResponse = event.loginResponse;
               //"status": value are below,
               // 3 = under approval
@@ -299,7 +304,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
               if (event.loginResponse.data.status == "1" &&
                   event.loginResponse.afterApprovalFirstTime == "0") {
                 AppConstants.isLoggedIn =
-                await AppSharedPref.instance.setLoggedIn(true);
+                    await AppSharedPref.instance.setLoggedIn(true);
                 Navigator.pop(context);
                 Navigator.push(
                     context,

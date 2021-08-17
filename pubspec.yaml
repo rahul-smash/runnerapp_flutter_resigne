@@ -47,6 +47,10 @@ dependencies:
   event_bus: ^2.0.0          #ANDROID IOS LINUX MACOS WEB WINDOWS
   location: ^4.3.0           #ANDROID IOS MACOS WEB
   flutter_html: ^2.0.0     #ANDROID IOS
+  firebase_messaging: ^10.0.4  #ANDROID IOS MACOS WEB
+  flutter_local_notifications: ^8.1.1+1   #ANDROID IOS MACOS
+  firebase_core: ^1.4.0                   #ANDROID IOS MACOS WEB
+  flutter_native_timezone: ^2.0.0          #ANDROID IOS MACOS WEB
   expandable: ^5.0.1         #ANDROID IOS MACOS WEB
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
