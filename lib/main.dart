@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -8,6 +10,7 @@ import 'package:marketplace_service_provider/src/components/login/ui/login_scree
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/notification/notification_service.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -22,11 +25,24 @@ import 'src/singleton/store_config_singleton.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   serviceLocator();
   //initialization of shared preferences
   await AppSharedPref.instance.init();
+  await Firebase.initializeApp();
+  // Set the background messaging handler early on, as a named top-level function
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  NotificationService.initialize(_navigatorKey);
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
@@ -66,9 +82,9 @@ void main() async {
     SingletonServiceLocations.instance.serviceLocationResponse =
         await getIt.get<VersionAuthRepository>().serviceLocationsApi();
     setStoreCurrency(storeResponse, configObject);
-    runApp(MyApp());
+    runApp(MyApp(_navigatorKey));
   } else {
-    runApp(NoNetworkApp());
+    runApp(NoNetworkApp(_navigatorKey));
   }
 }
 
@@ -92,9 +108,13 @@ void setStoreCurrency(StoreResponse storeResponse, ConfigModel configObject) {
 }
 
 class MyApp extends StatelessWidget {
+  GlobalKey<NavigatorState> navigatorKey;
+
+  MyApp(this.navigatorKey);
+
   @override
   Widget build(BuildContext context) {
-    return getMaterialApp(MainWidget());
+    return getMaterialApp(MainWidget(), navigatorKey);
   }
 }
 
@@ -104,14 +124,19 @@ class MainWidget extends StatelessWidget {
     SizeCustomConfig().init(AppUtils.getDeviceHeight(context),
         AppUtils.getDeviceWidth(context), Orientation.portrait);
     SizeConfig().init(context);
-    return Scaffold(body: AppConstants.isLoggedIn ? DashboardScreen(): LoginScreen());
+    return Scaffold(
+        body: AppConstants.isLoggedIn ? DashboardScreen() : LoginScreen());
   }
 }
 
-getMaterialApp(dynamic child) {
+getMaterialApp(
+  dynamic child,
+  GlobalKey<NavigatorState> navigatorKey,
+) {
   return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: appName,
+      navigatorKey: navigatorKey,
       theme: AppTheme.theme,
       home: child);
 }
@@ -121,8 +146,12 @@ Future<String> loadAsset() async {
 }
 
 class NoNetworkApp extends StatelessWidget {
+  GlobalKey<NavigatorState> navigatorKey;
+
+  NoNetworkApp(this.navigatorKey);
+
   @override
   Widget build(BuildContext context) {
-    return getMaterialApp(Scaffold(body: NoNetworkClass()));
+    return getMaterialApp(Scaffold(body: NoNetworkClass()), navigatorKey);
   }
 }

@@ -41,229 +41,231 @@ class _ItemNewRequestBookingState extends State<ItemNewRequestBooking> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Container(
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Container(
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.bookingRequest.categoryTitle,
+                            style: TextStyle(
+                                fontFamily: AppConstants.fontName,
+                                fontSize: AppConstants.largeSize,
+                                color: AppTheme.mainTextColor,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            height: Dimensions.pixels_5,
+                          ),
+                          SizedBox(
+                            height: 60,
+                            child: Scrollbar(
+                              thickness: 2.0,
+                              isAlwaysShown: true,
+                              controller: _newBookingScrollController,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: ListView.builder(
+                                    controller: _newBookingScrollController,
+                                    shrinkWrap: true,
+                                    itemCount: _services.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Wrap(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.fromLTRB(
+                                                Dimensions.pixels_18,
+                                                Dimensions.pixels_5,
+                                                Dimensions.pixels_18,
+                                                Dimensions.pixels_5),
+                                            margin: EdgeInsets.all(
+                                                Dimensions.pixels_5),
+                                            decoration: BoxDecoration(
+                                                color: AppTheme
+                                                    .containerBackgroundColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(30)),
+                                            child: Text(
+                                              _services[index].trim(),
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      AppConstants.extraSmallSize,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontFamily:
+                                                      AppConstants.fontName),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          widget.bookingRequest.categoryTitle,
+                          'Service Charges',
                           style: TextStyle(
                               fontFamily: AppConstants.fontName,
                               fontSize: AppConstants.largeSize,
                               color: AppTheme.mainTextColor,
                               fontWeight: FontWeight.w600),
                         ),
-                        SizedBox(
-                          height: Dimensions.pixels_5,
-                        ),
-                        SizedBox(
-                          height: 60,
-                          child: Scrollbar(
-                            thickness: 2.0,
-                            isAlwaysShown: true,
-                            controller: _newBookingScrollController,
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 5.0),
-                              child: ListView.builder(
-                                  controller: _newBookingScrollController,
-                                  shrinkWrap: true,
-                                  itemCount: _services.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Wrap(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.fromLTRB(
-                                              Dimensions.pixels_18,
-                                              Dimensions.pixels_5,
-                                              Dimensions.pixels_18,
-                                              Dimensions.pixels_5),
-                                          margin: EdgeInsets.all(
-                                              Dimensions.pixels_5),
-                                          decoration: BoxDecoration(
-                                              color: AppTheme
-                                                  .containerBackgroundColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(30)),
-                                          child: Text(
-                                            _services[index].trim(),
-                                            style: TextStyle(
-                                                fontSize:
-                                                    AppConstants.extraSmallSize,
-                                                fontWeight: FontWeight.normal,
-                                                fontFamily:
-                                                    AppConstants.fontName),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }),
-                            ),
-                          ),
+                        Text(
+                          widget.bookingRequest.total,
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.largeSize,
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Service Charges',
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.largeSize,
-                            color: AppTheme.mainTextColor,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        widget.bookingRequest.total,
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.largeSize,
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: Dimensions.pixels_10,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Service Date & Time',
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.smallSize,
-                            color: AppTheme.subHeadingTextColor,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        widget.bookingRequest.bookingDateTime,
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.largeSize,
-                            color: AppTheme.mainTextColor,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Estimate Time',
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.smallSize,
-                            color: AppTheme.subHeadingTextColor,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        '${widget.bookingRequest.serviceDuration} mins',
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.largeSize,
-                            color: AppTheme.mainTextColor,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: Dimensions.pixels_10,
-              ),
-              Container(
-                height: 1,
-                color: AppTheme.borderOnFocusedColor,
-              ),
-              SizedBox(
-                height: Dimensions.pixels_18,
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  ],
+                ),
+                SizedBox(
+                  height: Dimensions.pixels_10,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        widget.callBackMethod('Reject', widget.bookingRequest);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppTheme.borderNotFocusedColor,
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Service Date & Time',
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.smallSize,
+                              color: AppTheme.subHeadingTextColor,
+                              fontWeight: FontWeight.w400),
                         ),
-                        padding: EdgeInsets.fromLTRB(
-                            Dimensions.getScaledSize(15),
-                            Dimensions.getScaledSize(10),
-                            Dimensions.getScaledSize(15),
-                            Dimensions.getScaledSize(10)),
-                        child: Text(labelReject,
-                            style: TextStyle(
-                                color: AppTheme.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal)),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        widget.callBackMethod('Accept', widget.bookingRequest);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                          gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            stops: [0.1, 0.5, 0.7, 0.9],
-                            colors: [
-                              AppTheme.primaryColorDark,
-                              AppTheme.primaryColor,
-                              AppTheme.primaryColor,
-                              AppTheme.primaryColor,
-                            ],
-                          ),
+                        Text(
+                          widget.bookingRequest.bookingDateTime,
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.largeSize,
+                              color: AppTheme.mainTextColor,
+                              fontWeight: FontWeight.w500),
                         ),
-                        padding: EdgeInsets.fromLTRB(
-                            Dimensions.getScaledSize(15),
-                            Dimensions.getScaledSize(10),
-                            Dimensions.getScaledSize(15),
-                            Dimensions.getScaledSize(10)),
-                        child: Text(labelAccept,
-                            style: TextStyle(
-                                color: AppTheme.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal)),
-                      ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Estimate Time',
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.smallSize,
+                              color: AppTheme.subHeadingTextColor,
+                              fontWeight: FontWeight.w400),
+                        ),
+                        Text(
+                          '${widget.bookingRequest.serviceDuration} mins',
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: AppConstants.largeSize,
+                              color: AppTheme.mainTextColor,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: Dimensions.pixels_10,
+                ),
+                Container(
+                  height: 1,
+                  color: AppTheme.borderOnFocusedColor,
+                ),
+                SizedBox(
+                  height: Dimensions.pixels_18,
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          widget.callBackMethod('Reject', widget.bookingRequest);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.borderNotFocusedColor,
+                            borderRadius: BorderRadius.all(Radius.circular(30)),
+                          ),
+                          padding: EdgeInsets.fromLTRB(
+                              Dimensions.getScaledSize(15),
+                              Dimensions.getScaledSize(10),
+                              Dimensions.getScaledSize(15),
+                              Dimensions.getScaledSize(10)),
+                          child: Text(labelReject,
+                              style: TextStyle(
+                                  color: AppTheme.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal)),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          widget.callBackMethod('Accept', widget.bookingRequest);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(30)),
+                            gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              stops: [0.1, 0.5, 0.7, 0.9],
+                              colors: [
+                                AppTheme.primaryColorDark,
+                                AppTheme.primaryColor,
+                                AppTheme.primaryColor,
+                                AppTheme.primaryColor,
+                              ],
+                            ),
+                          ),
+                          padding: EdgeInsets.fromLTRB(
+                              Dimensions.getScaledSize(15),
+                              Dimensions.getScaledSize(10),
+                              Dimensions.getScaledSize(15),
+                              Dimensions.getScaledSize(10)),
+                          child: Text(labelAccept,
+                              style: TextStyle(
+                                  color: AppTheme.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
