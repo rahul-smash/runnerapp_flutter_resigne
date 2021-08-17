@@ -302,7 +302,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
               }
 
               if (event.loginResponse.data.status == "1" &&
-                  event.loginResponse.afterApprovalFirstTime == "0") {
+                  event.loginResponse.afterApprovalFirstTime == "2") {
                 AppConstants.isLoggedIn =
                     await AppSharedPref.instance.setLoggedIn(true);
                 Navigator.pop(context);
