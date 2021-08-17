@@ -107,12 +107,12 @@ class faqCardView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expandable(
-                collapsed: buildCollapsed1(context),
-                expanded: buildCollapsed1(context),
+                collapsed: buildQuestionCollapsedView(context),
+                expanded: buildQuestionCollapsedView(context),
               ),
               Expandable(
-                collapsed: buildCollapsed3(),
-                expanded: buildExpanded3(),
+                collapsed: buildEmptyCollapsedView(),
+                expanded: buildAnswerExpandedView(),
               ),
              Container(
                height: 1,
@@ -126,7 +126,7 @@ class faqCardView extends StatelessWidget {
     );
   }
 
-  buildCollapsed1(BuildContext context) {
+  buildQuestionCollapsedView(BuildContext context) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -171,11 +171,11 @@ class faqCardView extends StatelessWidget {
     );
   }
 
-  buildCollapsed3() {
+  buildEmptyCollapsedView() {
     return Container();
   }
 
-  buildExpanded3() {
+  buildAnswerExpandedView() {
     //answer view
     return Padding(
       padding: EdgeInsets.only(left: 30,right: 30),
