@@ -38,6 +38,8 @@ class AppImages {
       'lib/src/components/dashboard/images/totalearningfullicon.png';
   static const icon_totalcustomerfullicon =
       'lib/src/components/dashboard/images/totalcustomerfullicon.png';
+  static const icon_dropdownarrow =
+      'lib/src/components/dashboard/images/dropdownarrow.png';
   static const icon_aboutus =
       'lib/src/components/side_menu/images/aboutus icon.png';
   static const icon_contactus =

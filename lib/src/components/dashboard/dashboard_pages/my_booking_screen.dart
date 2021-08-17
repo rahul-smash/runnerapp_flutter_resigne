@@ -11,12 +11,17 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MyBookingScreen extends StatefulWidget {
   @override
   _MyBookingScreenState createState() => _MyBookingScreenState();
+
+// Function toggleMenu;
+
+// MyBookingScreen(this.toggleMenu);
 }
 
 class _MyBookingScreenState extends BaseState<MyBookingScreen> {
@@ -26,6 +31,10 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   List<String> _filterOptions = List.empty(growable: true);
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  FilterType _selectedSortingType = FilterType.Delivery_Time_Slot;
+
+  List<String> _sortingType = ['Booking Date', 'Delivery Date'];
 
   @override
   void initState() {
@@ -38,17 +47,19 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     _filterOptions.add('Rejected');
     _filterOptions.add('Cancelled');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _getMyBookingOrders();
+      _getMyBookingOrders(bookingSorting: FilterType.Delivery_Time_Slot);
     });
   }
 
-  void _getMyBookingOrders({bool isShowLoader = true}) async {
+  void _getMyBookingOrders(
+      {bool isShowLoader = true, FilterType bookingSorting}) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: loginResponse.data.id,
-          status: _getCurrentStatus(selectedFilterIndex));
+          status: _getCurrentStatus(selectedFilterIndex),
+          bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot);
       _getFilterCount();
       AppUtils.hideLoader(context);
       _refreshController.refreshCompleted();
@@ -102,12 +113,14 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   }
 
   void _onRefresh() async {
-    _getMyBookingOrders(isShowLoader: false);
+    _getMyBookingOrders(
+        isShowLoader: false, bookingSorting: _selectedSortingType);
   }
 
   @override
   Widget builder(BuildContext context) {
     return Scaffold(
+      appBar: _getAppBar(),
       body: Container(
         child: Column(
           children: [
@@ -125,7 +138,8 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                     onTap: () async {
                       setState(() {
                         selectedFilterIndex = index;
-                        _getMyBookingOrders();
+                        _getMyBookingOrders(
+                            bookingSorting: _selectedSortingType);
                       });
                     },
                     child: Container(
@@ -199,7 +213,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   _bookingAction(String type, Booking booking) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
-          _onRefresh();
+        _onRefresh();
         return;
       }
       AppUtils.showLoader(context);
@@ -264,5 +278,149 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         ],
       ),
     );
+  }
+
+  _getAppBar() {
+    return BaseAppBar(
+      backgroundColor: AppTheme.white,
+      title: Text(
+        'My Bookings',
+        style: TextStyle(color: AppTheme.black),
+      ),
+      leading: IconButton(
+        iconSize: 20,
+        color: AppTheme.white,
+        // onPressed: () => widget.toggleMenu(),
+        icon: Image(
+          image: AssetImage(AppImages.icon_menu),
+          height: 25,
+          color: AppTheme.black,
+        ),
+        onPressed: () {},
+      ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 4,
+      ),
+      widgets: [
+        // DropdownButtonFormField(
+        //   dropdownColor: Colors.white,
+        //   items: _sortingType.map((String options) {
+        //     return DropdownMenuItem(
+        //         value: options,
+        //         child: Container(
+        //           child: Text(
+        //             options,
+        //             textAlign: TextAlign.end,
+        //             style: TextStyle(
+        //                 color: AppTheme.subHeadingTextColor,
+        //                 fontFamily: AppConstants.fontName,
+        //                 fontSize: AppConstants.smallSize),
+        //           ),
+        //         ));
+        //   }).toList(),
+        //   onTap: () {},
+        //   onChanged: (newValue) {
+        //     // do other stuff with _category
+        //     setState(() {
+        //       if (newValue == 'Booking Date') {
+        //         _selectedSortingType = FilterType.Booking_Date;
+        //       } else {
+        //         _selectedSortingType = FilterType.Delivery_Time_Slot;
+        //       }
+        //     });
+        //   },
+        //   value: _selectedSortingType == FilterType.Delivery_Time_Slot
+        //       ? _sortingType[1]
+        //       : _sortingType[0],
+        //   decoration: InputDecoration(
+        //     contentPadding: EdgeInsets.all(0),
+        //     filled: true,
+        //     border: InputBorder.none,
+        //     fillColor: AppTheme.transparent,
+        //     focusColor: AppTheme.transparent,
+        //     hoverColor: AppTheme.transparent,
+        //   ),
+        // )
+        Container(
+          child: PopupMenuButton(
+            elevation: 3.2,
+            iconSize: 5.0,
+            onCanceled: () {
+              print('You have not chossed anything');
+            },
+            tooltip: 'Sorting',
+            child: Row(
+              children: [
+                Text(
+                  'Sort By',
+                  style: TextStyle(
+                      color: AppTheme.subHeadingTextColor,
+                      fontSize: AppConstants.smallSize,
+                      fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Image.asset(
+                  AppImages.icon_dropdownarrow,
+                  height: 5,
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+              ],
+            ),
+            onSelected: (value) {
+              if (value == 'Booking Date') {
+                _selectedSortingType = FilterType.Booking_Date;
+              } else {
+                _selectedSortingType = FilterType.Delivery_Time_Slot;
+              }
+              _refreshController.requestRefresh();
+            },
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+            itemBuilder: (BuildContext context) {
+              return _sortingType.map((String choice) {
+                return PopupMenuItem(
+                  value: choice,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        choice,
+                        style: TextStyle(
+                            color: _checkSelected(choice)
+                                ? AppTheme.primaryColorDark
+                                : AppTheme.mainTextColor),
+                      ),
+                      Visibility(
+                          visible: _checkSelected(choice),
+                          child: Icon(
+                            Icons.check,
+                            color: AppTheme.primaryColorDark,
+                          ))
+                    ],
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        )
+      ],
+    );
+  }
+
+  _checkSelected(String choice) {
+    if (choice == _sortingType[0] &&
+        _selectedSortingType == FilterType.Booking_Date) {
+      return true;
+    } else if (choice == _sortingType[1] &&
+        _selectedSortingType == FilterType.Delivery_Time_Slot) {
+      return true;
+    }
+    return false;
   }
 }

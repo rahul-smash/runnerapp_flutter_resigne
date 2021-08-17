@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isDashboardApiLoading = true;
   bool isBookingApiLoading = true;
 
-  int selectedFilterIndex = 0;
+  int selectedBookingFilterIndex = 0;
 
   @override
   void initState() {
@@ -70,13 +70,30 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _getDashboardSummary({bool isShowLoader = true}) async {
+  void _getDashboardSummary(
+      {bool isShowLoader = true, String selectedFilter}) async {
+    _selectedFilterParam(String selectedFilter) {
+      if (selectedFilter != null) {
+        if (selectedFilter == _overviewOptions[0]) {
+          return 'today';
+        } else if (selectedFilter == _overviewOptions[1]) {
+          return 'yesterday';
+        } else if (selectedFilter == _overviewOptions[2]) {
+          return 'sevendays';
+        }
+      } else {
+        return 'today';
+      }
+    }
+
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isDashboardApiLoading = true;
       _dashboardResponse = await getIt
           .get<DashboardRepository>()
-          .getDashboardSummary(userId: loginResponse.data.id);
+          .getDashboardSummary(
+              userId: loginResponse.data.id,
+              filterOption: _selectedFilterParam(selectedFilter));
       AppUtils.hideLoader(context);
       isDashboardApiLoading = false;
       _refreshController.refreshCompleted();
@@ -92,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: loginResponse.data.id,
-          status: _getCurrentStatus(selectedFilterIndex));
+          status: _getCurrentStatus(selectedBookingFilterIndex));
       _getFilterCount();
       AppUtils.hideLoader(context);
       isBookingApiLoading = false;
@@ -109,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onRefresh() async {
-    _getDashboardSummary(isShowLoader: false);
+    _getDashboardSummary(isShowLoader: false,selectedFilter: _selectedOverviewOption);
     _getMyBookingOrders(isShowLoader: false);
   }
 
@@ -204,44 +221,107 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontWeight: FontWeight.w600),
                             ),
                           ),
-//TODO: handle this filter
-//                        Flexible(
-//                          child: SizedBox(
-//                            width: 100,
-//                            child: DropdownButtonFormField(
-//                              dropdownColor: Colors.white,
-//                              items: _overviewOptions.map((String options) {
-//                                return DropdownMenuItem(
-//                                    value: options,
-//                                    child: Container(
-//                                      child: Text(
-//                                        options,
-//                                        textAlign: TextAlign.end,
-//                                        style: TextStyle(
-//                                            color: AppTheme.subHeadingTextColor,
-//                                            fontFamily: AppConstants.fontName,
-//                                            fontSize: AppConstants.smallSize),
-//                                      ),
-//                                    ));
-//                              }).toList(),
-//                              onTap: () {},
-//                              onChanged: (newValue) {
-//                                // do other stuff with _category
-//                                setState(
-//                                    () => _selectedOverviewOption = newValue);
-//                              },
-//                              value: _selectedOverviewOption,
-//                              decoration: InputDecoration(
-//                                contentPadding: EdgeInsets.all(0),
-//                                filled: true,
-//                                border: InputBorder.none,
-//                                fillColor: AppTheme.transparent,
-//                                focusColor: AppTheme.transparent,
-//                                hoverColor: AppTheme.transparent,
-//                              ),
-//                            ),
-//                          ),
-//                        ),
+                          Container(
+                            child: PopupMenuButton(
+                              elevation: 3.2,
+                              iconSize: 5.0,
+                              tooltip: 'Sorting',
+                              child: Row(
+                                children: [
+                                  Text(
+                                    _selectedOverviewOption,
+                                    style: TextStyle(
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontSize: AppConstants.smallSize,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Image.asset(
+                                    AppImages.icon_dropdownarrow,
+                                    height: 5,
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                ],
+                              ),
+                              onSelected: (value) {
+                                _selectedOverviewOption = value;
+                                _refreshController.requestRefresh();
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15.0))),
+                              itemBuilder: (BuildContext context) {
+                                return _overviewOptions.map((String choice) {
+                                  return PopupMenuItem(
+                                    value: choice,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          choice,
+                                          style: TextStyle(
+                                              color: _selectedOverviewOption ==
+                                                      choice
+                                                  ? AppTheme.primaryColorDark
+                                                  : AppTheme.mainTextColor),
+                                        ),
+                                        Visibility(
+                                            visible: _selectedOverviewOption ==
+                                                choice,
+                                            child: Icon(
+                                              Icons.check,
+                                              color: AppTheme.primaryColorDark,
+                                            ))
+                                      ],
+                                    ),
+                                  );
+                                }).toList();
+                              },
+                            ),
+                          ),
+                          // Flexible(
+                          //   child: SizedBox(
+                          //     width: 100,
+                          //     child: DropdownButtonFormField(
+                          //       dropdownColor: Colors.white,
+                          //       items: _overviewOptions.map((String options) {
+                          //         return DropdownMenuItem(
+                          //             value: options,
+                          //             child: Container(
+                          //               child: Text(
+                          //                 options,
+                          //                 textAlign: TextAlign.end,
+                          //                 style: TextStyle(
+                          //                     color: AppTheme.subHeadingTextColor,
+                          //                     fontFamily: AppConstants.fontName,
+                          //                     fontSize: AppConstants.smallSize),
+                          //               ),
+                          //             ));
+                          //       }).toList(),
+                          //       onTap: () {},
+                          //       onChanged: (newValue) {
+                          //         // do other stuff with _category
+                          //         setState(
+                          //             () => _selectedOverviewOption = newValue);
+                          //       },
+                          //       value: _selectedOverviewOption,
+                          //       decoration: InputDecoration(
+                          //         contentPadding: EdgeInsets.all(0),
+                          //         filled: true,
+                          //         border: InputBorder.none,
+                          //         fillColor: AppTheme.transparent,
+                          //         focusColor: AppTheme.transparent,
+                          //         hoverColor: AppTheme.transparent,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -465,6 +545,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         !isDashboardApiLoading &&
                 _dashboardResponse != null &&
+                _dashboardResponse.bookingRequests != null &&
                 _dashboardResponse.bookingRequests.isNotEmpty
             ? ClipRRect(
                 borderRadius: new BorderRadius.only(
@@ -570,6 +651,7 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(
             top: Dimensions.getHeight(
                 percentage: _dashboardResponse != null &&
+                        _dashboardResponse.bookingRequests != null &&
                         _dashboardResponse.bookingRequests.isNotEmpty
                     ? 43
                     : 0),
@@ -619,7 +701,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return InkWell(
                       onTap: () async {
                         setState(() {
-                          selectedFilterIndex = index;
+                          selectedBookingFilterIndex = index;
                           _getMyBookingOrders();
                         });
                       },
@@ -628,11 +710,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           margin: EdgeInsets.only(left: 4, right: 4),
                           padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
                           decoration: BoxDecoration(
-                              color: selectedFilterIndex == index
+                              color: selectedBookingFilterIndex == index
                                   ? AppTheme.primaryColor.withOpacity(0.1)
                                   : AppTheme.borderNotFocusedColor,
                               border: Border.all(
-                                  color: selectedFilterIndex == index
+                                  color: selectedBookingFilterIndex == index
                                       ? AppTheme.primaryColor
                                       : AppTheme.borderNotFocusedColor,
                                   width: 1),
@@ -775,7 +857,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (baseResponse.success) {
               bool isAccepted =
                   _dashboardResponse.bookingRequests.remove(bookingRequest);
-        _pageController.jumpToPage(0);
+              _pageController.jumpToPage(0);
               if (isAccepted) {
                 appPrintLog('Your Booking request is accepted');
                 setState(() {});
@@ -803,7 +885,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (baseResponse.success) {
               bool isDeleted =
                   _dashboardResponse.bookingRequests.remove(bookingRequest);
-        _pageController.jumpToPage(0);
+              _pageController.jumpToPage(0);
               if (isDeleted) {
                 appPrintLog('Your Booking request is Rejected');
                 setState(() {});
@@ -839,7 +921,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (baseResponse.success) {
           int index = _bookingResponse.bookings.indexOf(booking);
           _bookingResponse.bookings[index].status = _changeBookingStatus(type);
-          if (selectedFilterIndex != 0) {
+          if (selectedBookingFilterIndex != 0) {
             _bookingResponse.bookings.removeAt(index);
           }
           setState(() {});

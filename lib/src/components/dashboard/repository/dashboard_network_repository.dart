@@ -10,6 +10,7 @@ import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
 import 'package:marketplace_service_provider/src/singleton/store_config_singleton.dart';
+import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 
 class DashboardNetworkRepository extends DioBaseService {
   static DashboardNetworkRepository _instance;
@@ -28,13 +29,14 @@ class DashboardNetworkRepository extends DioBaseService {
   String apiPath(String storeId, String path) =>
       '$storeId${AppNetworkConstants.baseRoute}$path';
 
-  Future<DashboardResponse> getDashboardSummary(String user_id) async {
+  Future<DashboardResponse> getDashboardSummary(
+      String user_id, String filterOption) async {
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
-              '${_dashboard}/${user_id}'),
+              '${_dashboard}/${user_id}/${filterOption}'),
           param);
       DashboardResponse dashboardResponse =
           DashboardResponse.fromJson(jsonDecode(response));
@@ -45,12 +47,25 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BookingResponse> getBookings(String user_id, status) async {
+  Future<BookingResponse> getBookings(
+      String user_id, status, FilterType bookingSorting) async {
+    _bookingSorting(FilterType bookingSorting) {
+      switch (bookingSorting) {
+        case FilterType.Booking_Date:
+          return 'booking_date';
+          break;
+        default:
+          return 'delivery_time_slot';
+          break;
+      }
+    }
+
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['user_id'] = user_id;
       param['status'] = status;
+      param['filter'] = _bookingSorting;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_bookings}/${1}/100'),
@@ -120,12 +135,11 @@ class DashboardNetworkRepository extends DioBaseService {
               '${_bookingDetails}${orderId}'),
           param);
       BookingDetailsResponse bookingResponse =
-      BookingDetailsResponse.fromJson(jsonDecode(response));
+          BookingDetailsResponse.fromJson(jsonDecode(response));
       return bookingResponse;
     } catch (e) {
       debugPrint(e.toString());
     }
     return null;
   }
-
 }

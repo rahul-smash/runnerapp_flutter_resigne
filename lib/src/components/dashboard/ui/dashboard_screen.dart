@@ -63,7 +63,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     }
   }
 
-  initFirebase() async{
+  initFirebase() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     NotificationSettings settings = await messaging.requestPermission(
@@ -130,7 +130,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   final GlobalKey<InnerDrawerState> _innerDrawerKey =
       GlobalKey<InnerDrawerState>();
 
-  void _toggle() {
+  _toggle() {
     _innerDrawerKey.currentState.toggle(
         // direction is optional
         // if not set, the last direction will be used
@@ -202,27 +202,28 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   _getAppBar() {
     switch (_selectedTabIndex) {
       case 1:
-        return BaseAppBar(
-          backgroundColor: AppTheme.white,
-          title: Text(
-            'My Bookings',
-            style: TextStyle(color: AppTheme.black),
-          ),
-          leading: IconButton(
-            iconSize: 20,
-            color: AppTheme.white,
-            onPressed: () => _toggle(),
-            icon: Image(
-              image: AssetImage(AppImages.icon_menu),
-              height: 25,
-              color: AppTheme.black,
-            ),
-          ),
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            elevation: 4,
-          ),
-        );
+        // return BaseAppBar(
+        //   backgroundColor: AppTheme.white,
+        //   title: Text(
+        //     'My Bookings',
+        //     style: TextStyle(color: AppTheme.black),
+        //   ),
+        //   leading: IconButton(
+        //     iconSize: 20,
+        //     color: AppTheme.white,
+        //     onPressed: () => _toggle(),
+        //     icon: Image(
+        //       image: AssetImage(AppImages.icon_menu),
+        //       height: 25,
+        //       color: AppTheme.black,
+        //     ),
+        //   ),
+        //   appBar: AppBar(
+        //     automaticallyImplyLeading: false,
+        //     elevation: 4,
+        //   ),
+        // );
+        return null;
         break;
       default:
         return BaseAppBar(
