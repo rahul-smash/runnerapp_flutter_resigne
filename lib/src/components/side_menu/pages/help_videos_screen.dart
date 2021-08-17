@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/help_videos_model.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/pages/video_view_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/repository/menu_option_repository_impl.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -22,16 +23,6 @@ class HelpVideoScreen extends StatefulWidget {
 }
 
 class _HelpVideoScreenState extends BaseState<HelpVideoScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget builder(BuildContext context) {
@@ -90,7 +81,15 @@ class _HelpVideoScreenState extends BaseState<HelpVideoScreen> {
 
                                 return InkWell(
                                   onTap: (){
-
+                                    /*showDialog(
+                                      context: context,
+                                      barrierColor: Color(0x00ffffff), //this works
+                                      builder: (context) => VideoPlayerScreen(
+                                        videoUrl: snapshot.data.data[index].videoUrl,
+                                        title: snapshot.data.data[index].title,
+                                      ),
+                                    );*/
+                                    AppUtils.launchURL(snapshot.data.data[index].videoUrl);
                                   },
                                   child: Container(
                                     margin: EdgeInsets.fromLTRB(0,10,0,0),
