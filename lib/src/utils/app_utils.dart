@@ -370,11 +370,9 @@ class AppUtils {
     );
   }
 
-  static launchURL(String videoUrl) async {
-    void _launchURL() async =>
-        await canLaunch(videoUrl)
-            ? await launch(videoUrl)
-            : throw 'Could not launch $videoUrl';
-  }
+  static void launchURL(String videoUrl) async =>
+      await canLaunch(videoUrl)
+          ? await launch(videoUrl)
+          : throw 'Could not launch $videoUrl';
 
 }
