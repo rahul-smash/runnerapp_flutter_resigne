@@ -42,7 +42,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         },
       ),
       MyBookingScreen(),
-      Text("Gallery"),
       AccountScreen()
     ];
     initFirebase();
@@ -182,18 +181,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 label: labelMyBooking),
             BottomNavigationBarItem(
                 icon: Image(
-                  image: AssetImage(AppImages.icon_gallery),
-                  height: 22,
-                  color: _selectedTabIndex == 2
-                      ? AppTheme.primaryColorDark
-                      : AppTheme.subHeadingTextColor,
-                ),
-                label: labelGallery),
-            BottomNavigationBarItem(
-                icon: Image(
                   image: AssetImage(AppImages.icon_account),
                   height: 22,
-                  color: _selectedTabIndex == 3
+                  color: _selectedTabIndex == 2
                       ? AppTheme.primaryColorDark
                       : AppTheme.subHeadingTextColor,
                 ),
