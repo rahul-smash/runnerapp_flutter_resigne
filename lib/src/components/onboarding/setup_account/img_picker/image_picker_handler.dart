@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'image_picker_dialog.dart';
@@ -12,7 +13,7 @@ class ImagePickerHandler {
   bool docImage1 = false;
   bool docImage2 = false;
   bool docImage3 = false;
-
+  BuildContext context;
   bool docCertificateImage1 = false;
   bool docCertificateImage2 = false;
   bool docCertificateImage3 = false;
@@ -52,6 +53,7 @@ class ImagePickerHandler {
     bool docCertificateImage1 = false,
     bool docCertificateImage2= false,
     bool docCertificateImage3 = false}) {
+    this.context = context;
     this.profileImage = profileImage;
     this.docImage1 = docImage1;
     this.docImage2 = docImage2;
@@ -61,6 +63,7 @@ class ImagePickerHandler {
     this.docCertificateImage3 = docCertificateImage3;
     imagePicker.getImage(context);
   }
+
 }
 
 abstract class ImagePickerListener {

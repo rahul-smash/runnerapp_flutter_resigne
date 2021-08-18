@@ -12,4 +12,6 @@ abstract class MenuOptionRepository {
 
   Future<HelpVideosModel> getHowToVideos();
 
+  Future<BaseResponse> updateDutyStatus({String status,String userId,String lat,String lng,String address});
+
 }

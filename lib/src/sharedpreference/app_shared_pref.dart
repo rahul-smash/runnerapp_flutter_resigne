@@ -113,4 +113,15 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
     LoginUserSingleton.instance.loginResponse = user;
     return user;
   }
+
+  @override
+  String getDutyStatus() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppGetDutyStatus);
+  }
+
+  @override
+  Future<bool> saveDutyStatus(String status) async{
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppSaveDutyStatus, status);
+  }
 }

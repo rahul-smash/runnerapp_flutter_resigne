@@ -7,6 +7,7 @@ import 'package:marketplace_service_provider/src/components/side_menu/pages/abou
 import 'package:marketplace_service_provider/src/components/side_menu/pages/contact_us_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/pages/faq_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/pages/help_videos_screen.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/widgets/duty_switch.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -15,13 +16,15 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class SideMenuScreen extends StatefulWidget {
+
   @override
   _SideMenuScreenState createState() => _SideMenuScreenState();
+
 }
 
 class _SideMenuScreenState extends BaseState<SideMenuScreen> {
-  List<dynamic> _drawerItems = List.empty(growable: true);
 
+  List<dynamic> _drawerItems = List.empty(growable: true);
   bool _isFollowUsExpanded = false;
 
   @override
@@ -35,135 +38,138 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
 
   @override
   Widget builder(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          createHeaderInfoItem(),
-          SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            child: ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: _drawerItems.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return (createDrawerItem(_drawerItems[index], context));
-                }),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(
-                    Dimensions.getScaledSize(10),
-                    Dimensions.getScaledSize(15),
-                    Dimensions.getScaledSize(10),
-                    Dimensions.getScaledSize(15)),
-                decoration: BoxDecoration(
-                  color: AppTheme.white,
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Follow\nUs',
-                      style: TextStyle(
-                          fontFamily: AppConstants.fontName,
-                          fontSize: AppConstants.smallSize,
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Visibility(
-                        visible: _isFollowUsExpanded,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 5),
-                          child: Image.asset(
-                            AppImages.icon_fb,
-                            height: 25,
-                          ),
-                        )),
-                    Visibility(
-                        visible: _isFollowUsExpanded,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5, right: 5),
-                          child: Image.asset(
-                            AppImages.icon_twitter,
-                            height: 25,
-                          ),
-                        )),
-                    Visibility(
-                        visible: _isFollowUsExpanded,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5, right: 10),
-                          child: Image.asset(
-                            AppImages.icon_youTube,
-                            height: 25,
-                          ),
-                        )),
-                  ],
-                ),
-              ),
-              Flexible(
-                  child: InkWell(
-                onTap: () {
-                  setState(() {
-                    _isFollowUsExpanded = !_isFollowUsExpanded;
-                  });
-                },
-                child: Container(
+    return SafeArea(
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DutySwitchScreen(),
+            createHeaderInfoItem(),
+            SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: _drawerItems.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return (createDrawerItem(_drawerItems[index], context));
+                  }),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
                   padding: EdgeInsets.fromLTRB(
-                      Dimensions.getScaledSize(5),
-                      Dimensions.getScaledSize(18),
-                      Dimensions.getScaledSize(5),
-                      Dimensions.getScaledSize(18)),
+                      Dimensions.getScaledSize(10),
+                      Dimensions.getScaledSize(15),
+                      Dimensions.getScaledSize(10),
+                      Dimensions.getScaledSize(15)),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(8),
-                        bottomRight: Radius.circular(8)),
-                  ),
-                  child: Image.asset(
-                    AppImages.icon_follow_us,
                     color: AppTheme.white,
-                    height: 10,
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Follow\nUs',
+                        style: TextStyle(
+                            fontFamily: AppConstants.fontName,
+                            fontSize: AppConstants.smallSize,
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Visibility(
+                          visible: _isFollowUsExpanded,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10, right: 5),
+                            child: Image.asset(
+                              AppImages.icon_fb,
+                              height: 25,
+                            ),
+                          )),
+                      Visibility(
+                          visible: _isFollowUsExpanded,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 5, right: 5),
+                            child: Image.asset(
+                              AppImages.icon_twitter,
+                              height: 25,
+                            ),
+                          )),
+                      Visibility(
+                          visible: _isFollowUsExpanded,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 5, right: 10),
+                            child: Image.asset(
+                              AppImages.icon_youTube,
+                              height: 25,
+                            ),
+                          )),
+                    ],
                   ),
                 ),
-              )),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            height: 1,
-            color: AppTheme.primaryColorLight,
-          ),
-          Container(
-            color: AppTheme.primaryColorDark,
-            child: Padding(
-                padding: EdgeInsets.only(left: 20),
-                child: ListTile(
-                  leading: Image.asset(
-                    AppImages.icon_logout,
-                    color: AppTheme.white,
-                    width: 20,
-                    height: 35,
-                  ),
-                  title: Text(labelLogout,
-                      style: TextStyle(
-                          color: AppTheme.white,
-                          fontSize: AppConstants.smallSize,
-                          fontFamily: AppConstants.fontName)),
-                  onTap: () async {
-                    _showDialog(context);
+                Flexible(
+                    child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isFollowUsExpanded = !_isFollowUsExpanded;
+                    });
                   },
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(
+                        Dimensions.getScaledSize(5),
+                        Dimensions.getScaledSize(18),
+                        Dimensions.getScaledSize(5),
+                        Dimensions.getScaledSize(18)),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8),
+                          bottomRight: Radius.circular(8)),
+                    ),
+                    child: Image.asset(
+                      AppImages.icon_follow_us,
+                      color: AppTheme.white,
+                      height: 10,
+                    ),
+                  ),
                 )),
-          )
-        ],
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              height: 1,
+              color: AppTheme.primaryColorLight,
+            ),
+            Container(
+              color: AppTheme.primaryColorDark,
+              child: Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: ListTile(
+                    leading: Image.asset(
+                      AppImages.icon_logout,
+                      color: AppTheme.white,
+                      width: 20,
+                      height: 35,
+                    ),
+                    title: Text(labelLogout,
+                        style: TextStyle(
+                            color: AppTheme.white,
+                            fontSize: AppConstants.smallSize,
+                            fontFamily: AppConstants.fontName)),
+                    onTap: () async {
+                      _showDialog(context);
+                    },
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -173,13 +179,11 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
     showDialog(
       context: sideMenuContext,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           title: new Text("Logout"),
           content: new Text('Are you sure you want to Logout?'),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
+            FlatButton(
               child: new Text("CANCEL"),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -206,8 +210,8 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
   Widget createHeaderInfoItem() {
     return Container(
         padding: EdgeInsets.only(
-            top: Dimensions.getScaledSize(40),
-            bottom: Dimensions.getScaledSize(40),
+            top: Dimensions.getScaledSize(10),
+            bottom: Dimensions.getScaledSize(20),
             left: Dimensions.getScaledSize(20),
             right: Dimensions.getScaledSize(20)),
         child: Row(

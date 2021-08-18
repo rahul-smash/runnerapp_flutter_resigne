@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/faq_model.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/help_videos_model.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
+import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
 import 'package:marketplace_service_provider/src/singleton/store_config_singleton.dart';
 import 'menu_options_repository.dart';
 
@@ -15,6 +17,7 @@ class MenuOptionRepositoryImpl extends DioBaseService implements MenuOptionRepos
   static const _contactUs = '/runner_static_contents/contactUs';
   static const _faq = '/runner_static_contents/faqs';
   static const _helpVideos = '/runner_static_contents/helpVideos';
+  static const _toggleDuty = '/runner_authentication/toggleDuty';
 
   MenuOptionRepositoryImpl() : super(AppNetworkConstants.baseUrl);
 
@@ -66,6 +69,25 @@ class MenuOptionRepositoryImpl extends DioBaseService implements MenuOptionRepos
       HelpVideosModel categoryModel = HelpVideosModel.fromJson(jsonDecode(response));
       return categoryModel;
     } catch (e) {
+    }
+    return null;
+  }
+
+  @override
+  Future<BaseResponse> updateDutyStatus({String status, String userId, String lat, String lng, String address}) async{
+    String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
+    Map<String, dynamic> param = getIt.get<CommonNetworkUtils>().getDeviceParams();
+    param['user_id'] = userId;
+    param['duty'] = status;
+    param['lat'] = lat;
+    param['lng'] = lng;
+    param['address'] = address;
+    try {
+      var response = await post(apiPath(storeId, _toggleDuty), param);
+      BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
+      return baseResponse;
+    } catch (e) {
+      debugPrint(e.toString());
     }
     return null;
   }
