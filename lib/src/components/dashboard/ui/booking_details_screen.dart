@@ -16,6 +16,7 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
+import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class BookingDetailsScreen extends StatefulWidget {
@@ -1005,7 +1006,15 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
             ),
             InkWell(
               onTap: () {
-                _bookingAction('Complete', _bookingDetailsResponse.bookings);
+                if (widget.booking.paymentMethod
+                    .toLowerCase()
+                    .trim()
+                    .contains('cod')) {
+                  CashCollectionBottomSheet(context, widget.booking,
+                      widget.callBackMethod, 'Complete', '1');
+                } else {
+                  _bookingAction('Complete', _bookingDetailsResponse.bookings);
+                }
               },
               child: Container(
                 decoration: BoxDecoration(

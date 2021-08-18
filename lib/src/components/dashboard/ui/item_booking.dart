@@ -9,6 +9,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class ItemBooking extends StatefulWidget {
@@ -361,7 +362,15 @@ class _ItemBookingState extends State<ItemBooking> {
             ),
             InkWell(
               onTap: () {
-                widget.callBackMethod('Complete', widget.booking);
+                if (widget.booking.paymentMethod
+                    .toLowerCase()
+                    .trim()
+                    .contains('cod')) {
+                  CashCollectionBottomSheet(context, widget.booking,
+                      widget.callBackMethod, 'Complete', '0');
+                } else {
+                  widget.callBackMethod('Complete', widget.booking);
+                }
               },
               child: Container(
                 decoration: BoxDecoration(

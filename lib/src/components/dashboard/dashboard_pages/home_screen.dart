@@ -902,7 +902,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  _bookingAction(String type, Booking booking) async {
+  _bookingAction(String type, Booking booking,) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
