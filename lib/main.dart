@@ -47,9 +47,9 @@ void main() async {
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-  /*if(AppConstants.isLoggedIn){
+  if(AppConstants.isLoggedIn){
     getIt.get<DutyStatusObserver>().changeStatus(AppSharedPref.instance.getDutyStatus());
-  }*/
+  }
   if (kIsWeb) {
     await AppSharedPref.instance.setDevicePlatform(AppConstants.web);
   } else {

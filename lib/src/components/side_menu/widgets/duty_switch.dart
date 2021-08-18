@@ -23,9 +23,7 @@ class DutySwitchState extends BaseState<DutySwitchScreen> {
   @override
   void initState() {
     super.initState();
-    print("----dutyStatusObserver.status---=${dutyStatusObserver.status}");
     isSwitched = dutyStatusObserver.status == "1" ? true : false;
-    print("AppSharedPref.instance.getDutyStatus()=${AppSharedPref.instance.getDutyStatus()}");
   }
 
   @override
@@ -44,11 +42,7 @@ class DutySwitchState extends BaseState<DutySwitchScreen> {
             value: isSwitched,
             activeColor: AppTheme.greenColor,
             onChanged: (value) async {
-              print("VALUE:$value");
-
-              print("----dutyStatusObserver.status---=${dutyStatusObserver.status}");
-
-              /*AppUtils.showLoader(context);
+              AppUtils.showLoader(context);
               BaseResponse baseresponse = await getIt.get<MenuOptionRepositoryImpl>()
                   .updateDutyStatus(
                   userId:loginResponse.data.id, status: value ? "1" : "0",
@@ -62,7 +56,7 @@ class DutySwitchState extends BaseState<DutySwitchScreen> {
               await AppSharedPref.instance.saveDutyStatus(baseresponse.newDuty.toString());
               setState(() {
                 isSwitched = value;
-              });*/
+              });
             },
           ),
         ],

@@ -291,14 +291,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
               // 2 = block
 
               await AppSharedPref.instance.saveUser(event.loginResponse);
-              print("==event.loginResponse.data.onDuty===${event.loginResponse.data.onDuty}");
-
-              bool dutyStatus = await AppSharedPref.instance.saveDutyStatus(event.loginResponse.data.onDuty);
-              print("====dutyStatus====${dutyStatus}");
-
-              String status = AppSharedPref.instance.getDutyStatus();
-              print("====getDutyStatus====${status}");
-
+              await AppSharedPref.instance.saveDutyStatus(event.loginResponse.data.onDuty);
               getIt.get<DutyStatusObserver>().changeStatus(event.loginResponse.data.onDuty);
 
               if (event.loginResponse.data.status == "3") {
