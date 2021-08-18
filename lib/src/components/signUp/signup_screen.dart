@@ -481,13 +481,17 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
               first_name: firstNameCont.text.trim(),last_name: lastNameCont.text.trim(),
               otp: otpCont.text.trim(),phone: mobileCont.text.trim(),registeredAs: _selectedSignUpOption
             );
+        AppUtils.hideLoader(context);
         AppUtils.showToast(response.message, false);
         AppUtils.hideKeyboard(context);
-        AppUtils.hideLoader(context);
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (context) => RegistrationCompleteScreen(registerResponse: response,)),
-                (Route<dynamic> route) => false);
+        if(response != null){
+          if(response.success){
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => RegistrationCompleteScreen(registerResponse: response,)),
+                    (Route<dynamic> route) => false);
+          }
+        }
       }
     }
   }

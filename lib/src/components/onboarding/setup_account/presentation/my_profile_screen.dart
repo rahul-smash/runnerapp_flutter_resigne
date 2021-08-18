@@ -968,40 +968,43 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
         if(baseresponse.success)
-          if(gotoProfileStepsScreen){
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            widget.voidCallback();
+
+          if(widget.isComingFromAccount){
+            Navigator.pop(context);
           }else{
+            if(gotoProfileStepsScreen){
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              widget.voidCallback();
+            }else{
 
-            if (!_serviceEnabled) {
-              _serviceEnabled = await location.requestService();
               if (!_serviceEnabled) {
-                return;
+                _serviceEnabled = await location.requestService();
+                if (!_serviceEnabled) {
+                  return;
+                }
               }
-            }
 
-            _permissionGranted = await location.hasPermission();
-            if (_permissionGranted == PermissionStatus.denied) {
-              _permissionGranted = await location.requestPermission();
-              if (_permissionGranted != PermissionStatus.granted) {
-                return;
+              _permissionGranted = await location.hasPermission();
+              if (_permissionGranted == PermissionStatus.denied) {
+                _permissionGranted = await location.requestPermission();
+                if (_permissionGranted != PermissionStatus.granted) {
+                  return;
+                }
               }
+              LocationAccuracy _locationAccuracy = LocationAccuracy.high;
+              await location.changeSettings(accuracy: _locationAccuracy);
+
+              _locationData = await location.getLocation();
+              LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
+
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) => BusinessDetailScreen(userlocation: userlocation,
+                    voidCallback: (){
+                      widget.voidCallback();
+                    },))
+              );
             }
-            LocationAccuracy _locationAccuracy = LocationAccuracy.high;
-            await location.changeSettings(accuracy: _locationAccuracy);
-
-            _locationData = await location.getLocation();
-            LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
-
-            Navigator.push(context, MaterialPageRoute(
-                builder: (BuildContext context) => BusinessDetailScreen(userlocation: userlocation,
-                voidCallback: (){
-                  widget.voidCallback();
-
-                },))
-            );
           }
-
       }
     }
   }

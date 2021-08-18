@@ -270,6 +270,7 @@ class _AccountScreenState extends BaseState<AccountScreen> {
           builder: (BuildContext context) => AgreementDetailScreen(
             isComingFromAccount: true,
             voidCallback: (){
+
             },)));
     }
   }

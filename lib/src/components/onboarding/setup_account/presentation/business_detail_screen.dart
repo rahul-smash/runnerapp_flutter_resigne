@@ -1158,20 +1158,23 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
         if(baseresponse.success)
-          if(gotoProfileStepsScreen){
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            widget.voidCallback();
+
+          if(widget.isComingFromAccount){
+            Navigator.pop(context);
           }else{
-            Navigator.push(context, MaterialPageRoute(
-                builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){
-                  widget.voidCallback();
+            if(gotoProfileStepsScreen){
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              widget.voidCallback();
+            }else{
 
-                },))
-            );
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) => WorkDetailScreen(voidCallback: (){
+                    widget.voidCallback();
+                  },))
+              );
+            }
           }
-
       }
-
     }
   }
 

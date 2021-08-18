@@ -228,17 +228,20 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
           .get<UserAuthenticationRepository>()
           .setMpin(
               mPin: newPinCont.text, userId: widget.registerResponse.data.id);
-      if (response != null) AppUtils.showToast(response.message, false);
+      if (response != null)
       AppUtils.hideKeyboard(context);
       AppUtils.hideLoader(context);
-      LoginUserSingleton.instance.loginResponse = response;
+      if(response.success){
+        AppUtils.showToast(response.message, false);
+        LoginUserSingleton.instance.loginResponse = response;
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (context) => ServicesLocationScreen(
+                  loginResponse: response,
+                )),
+                (Route<dynamic> route) => false);
+      }
 
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => ServicesLocationScreen(
-                    loginResponse: response,
-                  )),
-          (Route<dynamic> route) => false);
     } catch (e) {
       print(e);
     }

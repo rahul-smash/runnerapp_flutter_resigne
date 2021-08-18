@@ -856,17 +856,26 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
       if (baseresponse != null) {
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        if (gotoProfileStepsScreen) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          widget.voidCallback();
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => AgreementDetailScreen(
-                        voidCallback: () {},
-                      )));
+        if(widget.isComingFromAccount){
+          Navigator.pop(context);
+        }else{
+          if (gotoProfileStepsScreen) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            widget.voidCallback();
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => AgreementDetailScreen(
+                      voidCallback: () {
+                        widget.voidCallback();
+                      },
+                    )
+                )
+            );
+          }
         }
+
       }
     }
   }
