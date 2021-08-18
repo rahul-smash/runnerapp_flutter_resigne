@@ -9,6 +9,8 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/book
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -33,10 +35,12 @@ class BookingDetailsScreen extends StatefulWidget {
 class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
   bool isBookingDetailsApiLoading = true;
   BookingDetailsResponse _bookingDetailsResponse;
+  StoreResponse storeResponse;
 
   @override
   void initState() {
     super.initState();
+    storeResponse = VersionApiSingleton.instance.storeResponse;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getBookingdetails(widget.booking, isShowLoader: false);
     });
@@ -66,8 +70,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
         appBar: AppBar(),
         widgets: <Widget>[
           Visibility(
-//            visible: _bookingDetailsResponse?.bookings != null &&
-//                showCancelButton(_bookingDetailsResponse.bookings.status),
+            // visible: _bookingDetailsResponse?.bookings != null &&
+            //     showCancelButton(_bookingDetailsResponse.bookings.status),
             visible: false,
             child: InkWell(
                 onTap: () async {
@@ -1011,8 +1015,12 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                     .toLowerCase()
                     .trim()
                     .contains('cod')) {
-                  CashCollectionBottomSheet(context, _bookingDetailsResponse.bookings,
-                      _bookingAction, 'Complete', '1');
+                  CashCollectionBottomSheet(
+                      context,
+                      _bookingDetailsResponse.bookings,
+                      _bookingAction,
+                      'Complete',
+                      '1');
                 } else {
                   _bookingAction('Complete', _bookingDetailsResponse.bookings);
                 }
@@ -1116,6 +1124,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
     final commentController = TextEditingController();
     await showModalBottomSheet(
         context: context,
+        backgroundColor: AppTheme.transparent,
         isScrollControlled: true,
         builder: (BuildContext bc) {
           return StatefulBuilder(
@@ -1125,9 +1134,12 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: Container(
-                  color: Colors.white,
-                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(30.0),
+                          topRight: const Radius.circular(30.0))),
                   child: Wrap(children: <Widget>[
                     Column(
                       children: <Widget>[
