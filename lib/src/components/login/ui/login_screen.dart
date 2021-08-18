@@ -12,6 +12,7 @@ import 'package:marketplace_service_provider/src/components/onboarding/setup_acc
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/user_profile_status_screen.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
@@ -288,7 +289,10 @@ class _LoginScreenState extends BaseState<LoginScreen> {
               // 3 = under approval
               // 1 = approval
               // 2 = block
+
               await AppSharedPref.instance.saveUser(event.loginResponse);
+              await AppSharedPref.instance.saveDutyStatus(event.loginResponse.data.onDuty);
+              getIt.get<DutyStatusObserver>().changeStatus(event.loginResponse.data.onDuty);
 
               if (event.loginResponse.data.status == "3") {
                 Navigator.push(
@@ -302,7 +306,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
               }
 
               if (event.loginResponse.data.status == "1" &&
-                  event.loginResponse.afterApprovalFirstTime == "0") {
+                  event.loginResponse.afterApprovalFirstTime == "2") {
                 AppConstants.isLoggedIn =
                     await AppSharedPref.instance.setLoggedIn(true);
                 Navigator.pop(context);

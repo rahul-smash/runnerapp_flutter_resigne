@@ -31,4 +31,8 @@ abstract class AppSharePrefInterface {
 
   Future<bool> saveUser(LoginResponse userJson);
 
+  Future<bool> saveDutyStatus(String status);
+
+  String getDutyStatus();
+
 }

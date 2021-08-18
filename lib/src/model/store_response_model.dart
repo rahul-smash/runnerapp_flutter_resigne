@@ -82,6 +82,7 @@ class Brand {
     this.banner300200,
     this.domain,
     this.signupAs,
+    this.contactusOptions,
   });
 
   String id;
@@ -127,6 +128,7 @@ class Brand {
   String banner300200;
   String domain;
   List<String> signupAs;
+  List<String> contactusOptions;
 
   Brand copyWith({
     String id,
@@ -172,6 +174,7 @@ class Brand {
     String banner300200,
     String domain,
     List<String> signupAs,
+    List<String> contactusOptions,
   }) =>
       Brand(
         id: id ?? this.id,
@@ -217,6 +220,7 @@ class Brand {
         banner300200: banner300200 ?? this.banner300200,
         domain: domain ?? this.domain,
         signupAs: signupAs ?? this.signupAs,
+        contactusOptions: signupAs ?? this.contactusOptions,
       );
 
   factory Brand.fromRawJson(String str) => Brand.fromJson(json.decode(str));
@@ -267,6 +271,7 @@ class Brand {
     banner300200: json["banner_300_200"] == null ? null : json["banner_300_200"],
     domain: json["domain"] == null ? null : json["domain"],
     signupAs: json["signupAs"] == null ? null : List<String>.from(json["signupAs"].map((x) => x)),
+    contactusOptions: json["contactus_options"] == null ? null : List<String>.from(json["contactus_options"].map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
@@ -313,6 +318,7 @@ class Brand {
     "banner_300_200": banner300200 == null ? null : banner300200,
     "domain": domain == null ? null : domain,
     "signupAs": signupAs == null ? null : List<dynamic>.from(signupAs.map((x) => x)),
+    "contactus_options": contactusOptions == null ? null : List<dynamic>.from(contactusOptions.map((x) => x)),
   };
 }
 

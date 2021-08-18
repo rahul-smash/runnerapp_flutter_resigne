@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/account_steps_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/agreement_detail_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -15,8 +14,6 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
-import 'package:flutter_html/flutter_html.dart';
-
 
 class AgreementDetailScreen extends StatefulWidget {
 
@@ -137,10 +134,11 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
                                   ),
                                   Expanded(
                                     child: SingleChildScrollView(
-                                      child: Html(
+                                      /*child: Html(
                                         shrinkWrap: true,
                                         data: agreementDetailModel.data.message,
-                                      ),
+                                      ),*/
+                                      child: AppUtils.getHtmlView(agreementDetailModel.data.message),
                                     ),
                                   ),
                                   SizedBox(height: 30),

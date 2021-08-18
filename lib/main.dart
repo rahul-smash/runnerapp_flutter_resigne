@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
@@ -46,6 +47,9 @@ void main() async {
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  if(AppConstants.isLoggedIn){
+    getIt.get<DutyStatusObserver>().changeStatus(AppSharedPref.instance.getDutyStatus());
+  }
   if (kIsWeb) {
     await AppSharedPref.instance.setDevicePlatform(AppConstants.web);
   } else {

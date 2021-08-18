@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:expandable/expandable.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/model/faq_model.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/repository/menu_option_repository_impl.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class FaqScreen extends StatefulWidget {
+
   FaqScreen();
 
   @override
@@ -67,22 +72,36 @@ class _FaqScreenState extends BaseState<FaqScreen> {
         padding: EdgeInsets.only(top: 5,bottom: 5),
         child: Column(
           children: [
-            Expanded(
-                child: ExpandableTheme(
-                  data: const ExpandableThemeData(
-                    iconPlacement: ExpandablePanelIconPlacement.right
-                  ),
-                  child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return faqCardView();
-                      },
-                      itemCount: 5,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true
-                  ),
-                )
+            FutureBuilder<FaqModel>(
+              future: getIt.get<MenuOptionRepositoryImpl>().getFaqData(), // async work
+              builder: (BuildContext context, AsyncSnapshot<FaqModel> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return AppUtils.showSpinner();
+                  default:
+                    if (snapshot.hasError)
+                      return Text('Error: ${snapshot.error}');
+                    else
+                      return Expanded(
+                          child: ExpandableTheme(
+                            data: const ExpandableThemeData(
+                                iconPlacement: ExpandablePanelIconPlacement.right
+                            ),
+                            child: ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return faqCardView(snapshot.data.data[index]);
+                                },
+                                itemCount: snapshot.data.data.length,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true
+                            ),
+                          )
+                      );
+                }
+              },
             ),
+
           ],
         ),
       ),
@@ -93,8 +112,8 @@ class _FaqScreenState extends BaseState<FaqScreen> {
 
 class faqCardView extends StatelessWidget {
 
-  //FaqList questionAnserlist;
-  faqCardView();
+  FaqData faqData;
+  faqCardView(this.faqData);
 
   @override
   Widget build(BuildContext context) {
@@ -107,12 +126,12 @@ class faqCardView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expandable(
-                collapsed: buildCollapsed1(context),
-                expanded: buildCollapsed1(context),
+                collapsed: buildQuestionCollapsedView(context,faqData),
+                expanded: buildQuestionCollapsedView(context,faqData),
               ),
               Expandable(
-                collapsed: buildCollapsed3(),
-                expanded: buildExpanded3(),
+                collapsed: buildEmptyCollapsedView(faqData),
+                expanded: buildAnswerExpandedView(faqData),
               ),
              Container(
                height: 1,
@@ -126,12 +145,12 @@ class faqCardView extends StatelessWidget {
     );
   }
 
-  buildCollapsed1(BuildContext context) {
+  buildQuestionCollapsedView(BuildContext context, FaqData faqData) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
@@ -140,7 +159,7 @@ class faqCardView extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Center(
-                          child: Text("Which of the following numbers is farthest from the number 1 on the number line?",
+                          child: Text("${faqData.question}",
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.black,
                                 fontFamily:AppConstants.fontName),
@@ -171,11 +190,11 @@ class faqCardView extends StatelessWidget {
     );
   }
 
-  buildCollapsed3() {
+  buildEmptyCollapsedView(FaqData faqData) {
     return Container();
   }
 
-  buildExpanded3() {
+  buildAnswerExpandedView(FaqData faqData) {
     //answer view
     return Padding(
       padding: EdgeInsets.only(left: 30,right: 30),
@@ -183,12 +202,13 @@ class faqCardView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Center(
-            child: Text(
-              "Which of the following numbers is farthest from the number 1 on the number line?",
+            /*child: Text(
+              "${faqData.answer}",
               softWrap: true,
               style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: AppTheme.subHeadingTextColor,
                   fontFamily: AppConstants.fontName),
-            ),
+            ),*/
+            child: AppUtils.getHtmlView(faqData.answer),
           )
         ],
       ),

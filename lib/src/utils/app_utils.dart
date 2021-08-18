@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
@@ -15,6 +16,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:html/parser.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
@@ -355,4 +357,22 @@ class AppUtils {
       },
     );
   }
+
+  static void share(String msg,{String subject}){
+    Share.share(msg, subject: subject);
+  }
+
+  static Widget getHtmlView(String html){
+
+    return Html(
+      shrinkWrap: true,
+      data: html,
+    );
+  }
+
+  static void launchURL(String videoUrl) async =>
+      await canLaunch(videoUrl)
+          ? await launch(videoUrl)
+          : throw 'Could not launch $videoUrl';
+
 }
