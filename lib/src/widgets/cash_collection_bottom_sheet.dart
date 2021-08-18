@@ -10,6 +10,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class CashCollectionBottomSheet {
@@ -18,13 +19,13 @@ class CashCollectionBottomSheet {
   //typeScreen ==0 //Dashboard and other listing
   //typeScreen ==1 //Booking details
   // type== 'complete or Ongoing
-  CashCollectionBottomSheet(BuildContext context, Booking booking,
+  CashCollectionBottomSheet(BuildContext context, dynamic booking,
       Function callBackMethod, String type, String typeScreen) {
     openCashCollectorBottomSheet(
         context, booking, callBackMethod, type, typeScreen);
   }
 
-  openCashCollectorBottomSheet(context, Booking booking,
+  openCashCollectorBottomSheet(context, dynamic booking,
       Function callBackMethod, String type, String typeScreen) async {
     await showModalBottomSheet(
         context: context,
@@ -243,7 +244,7 @@ class CashCollectionBottomSheet {
     }
   }
 
-  void _callCashCollectedApi(BuildContext context, Booking booking, String type,
+  void _callCashCollectedApi(BuildContext context, dynamic booking, String type,
       String typeScreen, Function callBackMethod) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       AppUtils.showLoader(context);
@@ -259,10 +260,11 @@ class CashCollectionBottomSheet {
       if (baseResponse != null) {
         if (baseResponse.success) {
           if (typeScreen == '1')
-            callBackMethod(_changeBookingStatus(type));
+            callBackMethod('Complete', booking);
           else if (typeScreen == '0') callBackMethod('Complete', booking);
 
           Navigator.pop(context);
+          AddImageBottomSheet(context, booking, 'cod');
           openCashCollectedBottomSheet(context, booking.total);
         } else {
           AppUtils.showToast(baseResponse.message, false);

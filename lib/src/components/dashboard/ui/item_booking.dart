@@ -9,7 +9,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/add_image_bottom_sheet.dart';
+import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
@@ -43,16 +43,15 @@ class _ItemBookingState extends State<ItemBooking> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        AddImageBottomSheet(context);
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (BuildContext context) =>
-        //             BookingDetailsScreen(widget.booking, (status) {
-        //               widget.booking.status = status;
-        //               setState(() {});
-        //               widget.callBackMethod('refresh', widget.booking);
-        //             })));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    BookingDetailsScreen(widget.booking, (status) {
+                      widget.booking.status = status;
+                      setState(() {});
+                      widget.callBackMethod('refresh', widget.booking);
+                    })));
       },
       child: Card(
         shadowColor: AppTheme.borderNotFocusedColor,
@@ -372,6 +371,7 @@ class _ItemBookingState extends State<ItemBooking> {
                       widget.callBackMethod, 'Complete', '0');
                 } else {
                   widget.callBackMethod('Complete', widget.booking);
+                  AddImageBottomSheet(context, widget.booking, 'online');
                 }
               },
               child: Container(

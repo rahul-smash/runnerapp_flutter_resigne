@@ -116,7 +116,7 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
 
   @override
   String getDutyStatus() {
-    return sharepref?.getString(AppSharePrefConstants.prefKeyAppGetDutyStatus);
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppSaveDutyStatus);
   }
 
   @override

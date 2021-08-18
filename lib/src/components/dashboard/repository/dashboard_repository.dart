@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
@@ -44,5 +46,14 @@ class DashboardRepository {
     return await DashboardNetworkRepository.instance
         .changeBookingCashCollectionAction(
             userId, orderId, total, paymentMethod);
+  }
+  Future<BaseResponse> addBookingWorkImages(
+      {String userId,
+      String orderId,
+      String total,
+      String paymentMethod,List<File> imageList}) async {
+    return await DashboardNetworkRepository.instance
+        .addBookingWorkImages(
+            userId, orderId, total, paymentMethod,imageList);
   }
 }

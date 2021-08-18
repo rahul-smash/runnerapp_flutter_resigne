@@ -14,6 +14,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
@@ -1010,8 +1011,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                     .toLowerCase()
                     .trim()
                     .contains('cod')) {
-                  CashCollectionBottomSheet(context, widget.booking,
-                      widget.callBackMethod, 'Complete', '1');
+                  CashCollectionBottomSheet(context, _bookingDetailsResponse.bookings,
+                      _bookingAction, 'Complete', '1');
                 } else {
                   _bookingAction('Complete', _bookingDetailsResponse.bookings);
                 }

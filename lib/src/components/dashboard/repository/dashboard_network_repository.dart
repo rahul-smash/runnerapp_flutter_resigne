@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -122,8 +124,8 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> changeBookingCashCollectionAction(String userId,
-      String orderId, String total, String paymentMethod) async {
+  Future<BaseResponse> changeBookingCashCollectionAction(
+      String userId, String orderId, String total, String paymentMethod) async {
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
@@ -135,6 +137,77 @@ class DashboardNetworkRepository extends DioBaseService {
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_bookingsCashCollection}'),
           param);
+      BaseResponse bookingResponse =
+          BaseResponse.fromJson(jsonDecode(response));
+      return bookingResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<BaseResponse> addBookingWorkImages(String userId, String orderId,
+      String total, String paymentMethod, List<File> images) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      FormData formData = FormData.fromMap({
+        'platform': param["platform"],
+        'device_id': param["device_id"],
+        'user_id': userId,
+        'order_id': orderId,
+        'total': total,
+        'payment_method': paymentMethod,
+        'image1': images.length >= 1 && images[0] != null
+            ? await MultipartFile.fromFile(
+                images[0].path,
+                filename: images[0].path == null
+                    ? ""
+                    : images[0].path.isEmpty
+                        ? ""
+                        : images[0].path.split('/').last,
+              )
+            : '',
+        'image2': images.length >= 2 && images[1] != null
+            ? await MultipartFile.fromFile(
+                images[1].path,
+                filename: images[1].path == null
+                    ? ""
+                    : images[1].path.isEmpty
+                        ? ""
+                        : images[1].path.split('/').last,
+              )
+            : "",
+        'image3': images.length >= 3 && images[2] != null
+            ? await MultipartFile.fromFile(
+                images[2].path,
+                filename: images[2].path == null
+                    ? ""
+                    : images[2].path.isEmpty
+                        ? ""
+                        : images[2].path.split('/').last,
+              )
+            : "",
+        'image4': images.length >= 4 && images[3] != null
+            ? await MultipartFile.fromFile(
+                images[3].path,
+                filename: images[3].path == null
+                    ? ""
+                    : images[3].path.isEmpty
+                        ? ""
+                        : images[3].path.split('/').last,
+              )
+            : "",
+      });
+
+      var response = await post(
+          apiPath(
+            StoreConfigurationSingleton.instance.configModel.storeId,
+            '${_bookingsCashCollection}',
+          ),
+          null,
+          isMultipartUploadRequest: true,
+          formData: formData);
       BaseResponse bookingResponse =
           BaseResponse.fromJson(jsonDecode(response));
       return bookingResponse;
