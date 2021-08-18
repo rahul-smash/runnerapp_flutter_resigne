@@ -260,11 +260,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible: workDoc1 != null &&
-                                      workDoc2 != null &&
-                                      workDoc3 != null
-                                  ? false
-                                  : true,
+                              visible: widget.isComingFromAccount ? false : workDoc1 != null &&  workDoc2 != null &&  workDoc3 != null  ? false : true,
                               child: InkWell(
                                 child: DottedBorder(
                                   dashPattern: [3, 3, 3, 3],
@@ -379,7 +375,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible: certificateDoc1 != null &&
+                              visible: widget.isComingFromAccount ? false : certificateDoc1 != null &&
                                       certificateDoc2 != null &&
                                       certificateDoc3 != null
                                   ? false

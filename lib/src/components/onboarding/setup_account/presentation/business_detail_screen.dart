@@ -555,7 +555,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                 right: Dimensions.getScaledSize(30),top: 10
                             ),
                             child: Visibility(
-                              visible: _selectedDocument == null ? true : false,
+                              visible: widget.isComingFromAccount ? false : _selectedDocument == null ? true : false,
                               child: InkWell(
                                 child: DottedBorder(
                                   dashPattern: [3, 3, 3, 3],
@@ -632,7 +632,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                         });
                                       }
                                     },
-                                    child: Icon(Icons.clear),
+                                    child: Icon(Icons.clear, color: widget.isComingFromAccount ? Colors.white : Colors.black,),
                                   ),
                                   contentPadding: EdgeInsets.only(left: 10,right: 10),
                                 ),

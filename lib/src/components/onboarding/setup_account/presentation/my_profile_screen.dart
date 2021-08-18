@@ -671,7 +671,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                           Row(
                             children: [
                               Visibility(
-                                visible: _selectedImg1 == null ? true : false,
+                                //visible: _selectedImg1 == null ? true : false,
+                                visible: widget.isComingFromAccount ? false : _selectedImg1 == null ? true : false,
                                 child: InkWell(
                                   child: DottedBorder(
                                     dashPattern: [3, 3, 3, 3],
@@ -717,7 +718,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                                 width: 20,
                               ),
                               Visibility(
-                                visible: _selectedImg2 == null ? true : false,
+                                visible: widget.isComingFromAccount ? false : _selectedImg2 == null ? true : false,
                                 child: InkWell(
                                   child: DottedBorder(
                                     dashPattern: [3, 3, 3, 3],
@@ -891,7 +892,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                     });
                   }
                 },
-                child: Icon(Icons.clear),
+                child: Icon(Icons.clear,color: widget.isComingFromAccount ? Colors.white : Colors.black,),
               ),
               contentPadding: EdgeInsets.only(left: 10,right: 10),
             ),
@@ -928,7 +929,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                     });
                   }
                 },
-                child: Icon(Icons.clear),
+                child: Icon(Icons.clear, color: widget.isComingFromAccount ? Colors.white : Colors.black),
               ),
             ),
           ),
