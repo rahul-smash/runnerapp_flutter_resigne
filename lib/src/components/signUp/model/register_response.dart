@@ -22,7 +22,7 @@ class RegisterResponse {
   factory RegisterResponse.fromJson(Map<String, dynamic> json) => RegisterResponse(
     success: json["success"],
     message: json["message"],
-    data: UserRegisterData.fromJson(json["data"]),
+    data: json["data"] == null ? null : UserRegisterData.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {

@@ -671,7 +671,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                           Row(
                             children: [
                               Visibility(
-                                visible: _selectedImg1 == null ? true : false,
+                                //visible: _selectedImg1 == null ? true : false,
+                                visible: widget.isComingFromAccount ? false : _selectedImg1 == null ? true : false,
                                 child: InkWell(
                                   child: DottedBorder(
                                     dashPattern: [3, 3, 3, 3],
@@ -717,7 +718,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                                 width: 20,
                               ),
                               Visibility(
-                                visible: _selectedImg2 == null ? true : false,
+                                visible: widget.isComingFromAccount ? false : _selectedImg2 == null ? true : false,
                                 child: InkWell(
                                   child: DottedBorder(
                                     dashPattern: [3, 3, 3, 3],
@@ -891,7 +892,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                     });
                   }
                 },
-                child: Icon(Icons.clear),
+                child: Icon(Icons.clear,color: widget.isComingFromAccount ? Colors.white : Colors.black,),
               ),
               contentPadding: EdgeInsets.only(left: 10,right: 10),
             ),
@@ -928,7 +929,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                     });
                   }
                 },
-                child: Icon(Icons.clear),
+                child: Icon(Icons.clear, color: widget.isComingFromAccount ? Colors.white : Colors.black),
               ),
             ),
           ),
@@ -968,40 +969,43 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
         if(baseresponse.success)
-          if(gotoProfileStepsScreen){
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            widget.voidCallback();
+
+          if(widget.isComingFromAccount){
+            Navigator.pop(context);
           }else{
+            if(gotoProfileStepsScreen){
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              widget.voidCallback();
+            }else{
 
-            if (!_serviceEnabled) {
-              _serviceEnabled = await location.requestService();
               if (!_serviceEnabled) {
-                return;
+                _serviceEnabled = await location.requestService();
+                if (!_serviceEnabled) {
+                  return;
+                }
               }
-            }
 
-            _permissionGranted = await location.hasPermission();
-            if (_permissionGranted == PermissionStatus.denied) {
-              _permissionGranted = await location.requestPermission();
-              if (_permissionGranted != PermissionStatus.granted) {
-                return;
+              _permissionGranted = await location.hasPermission();
+              if (_permissionGranted == PermissionStatus.denied) {
+                _permissionGranted = await location.requestPermission();
+                if (_permissionGranted != PermissionStatus.granted) {
+                  return;
+                }
               }
+              LocationAccuracy _locationAccuracy = LocationAccuracy.high;
+              await location.changeSettings(accuracy: _locationAccuracy);
+
+              _locationData = await location.getLocation();
+              LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
+
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) => BusinessDetailScreen(userlocation: userlocation,
+                    voidCallback: (){
+                      widget.voidCallback();
+                    },))
+              );
             }
-            LocationAccuracy _locationAccuracy = LocationAccuracy.high;
-            await location.changeSettings(accuracy: _locationAccuracy);
-
-            _locationData = await location.getLocation();
-            LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
-
-            Navigator.push(context, MaterialPageRoute(
-                builder: (BuildContext context) => BusinessDetailScreen(userlocation: userlocation,
-                voidCallback: (){
-                  widget.voidCallback();
-
-                },))
-            );
           }
-
       }
     }
   }

@@ -29,12 +29,12 @@ class LoginResponse {
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
     success: json["success"],
-    data: Data.fromJson(json["data"]),
-    userExists: json["user_exists"],
-    afterApprovalFirstTime: json["after_approval_first_time"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    userExists: json["user_exists"] == null ? null : json["user_exists"],
+    afterApprovalFirstTime: json["after_approval_first_time"] == null ? null : json["after_approval_first_time"],
     message: json["message"],
-    brands: List<Brand>.from(json["brands"].map((x) => Brand.fromJson(x))),
-    location: Location.fromJson(json["location"]),
+    brands: json["brands"] == null ? null : List<Brand>.from(json["brands"].map((x) => Brand.fromJson(x))),
+    location: json["location"] == null ? null : Location.fromJson(json["location"]),
   );
 
   Map<String, dynamic> toJson() => {

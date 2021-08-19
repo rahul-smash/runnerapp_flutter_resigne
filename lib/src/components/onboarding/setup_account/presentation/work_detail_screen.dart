@@ -260,11 +260,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible: workDoc1 != null &&
-                                      workDoc2 != null &&
-                                      workDoc3 != null
-                                  ? false
-                                  : true,
+                              visible: widget.isComingFromAccount ? false : workDoc1 != null &&  workDoc2 != null &&  workDoc3 != null  ? false : true,
                               child: InkWell(
                                 child: DottedBorder(
                                   dashPattern: [3, 3, 3, 3],
@@ -379,7 +375,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible: certificateDoc1 != null &&
+                              visible: widget.isComingFromAccount ? false : certificateDoc1 != null &&
                                       certificateDoc2 != null &&
                                       certificateDoc3 != null
                                   ? false
@@ -856,17 +852,26 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
       if (baseresponse != null) {
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        if (gotoProfileStepsScreen) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          widget.voidCallback();
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => AgreementDetailScreen(
-                        voidCallback: () {},
-                      )));
+        if(widget.isComingFromAccount){
+          Navigator.pop(context);
+        }else{
+          if (gotoProfileStepsScreen) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            widget.voidCallback();
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => AgreementDetailScreen(
+                      voidCallback: () {
+                        widget.voidCallback();
+                      },
+                    )
+                )
+            );
+          }
         }
+
       }
     }
   }
