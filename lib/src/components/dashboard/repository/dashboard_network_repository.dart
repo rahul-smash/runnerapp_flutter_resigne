@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -10,6 +12,7 @@ import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
 import 'package:marketplace_service_provider/src/singleton/store_config_singleton.dart';
+import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 
 class DashboardNetworkRepository extends DioBaseService {
   static DashboardNetworkRepository _instance;
@@ -19,6 +22,9 @@ class DashboardNetworkRepository extends DioBaseService {
   static const _bookingsRequestAction =
       '/runner_orders/changeBookingRequestStatus';
   static const _bookingsAction = '/runner_orders/changeBookingStatus';
+  static const _bookingsCashCollection = '/runner_orders/cashCollection';
+  static const _bookingscancelBookingByRunner =
+      '/runner_orders/cancelBookingByRunner';
 
   DashboardNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -28,13 +34,14 @@ class DashboardNetworkRepository extends DioBaseService {
   String apiPath(String storeId, String path) =>
       '$storeId${AppNetworkConstants.baseRoute}$path';
 
-  Future<DashboardResponse> getDashboardSummary(String user_id) async {
+  Future<DashboardResponse> getDashboardSummary(
+      String user_id, String filterOption) async {
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
-              '${_dashboard}/${user_id}'),
+              '${_dashboard}/${user_id}/${filterOption}'),
           param);
       DashboardResponse dashboardResponse =
           DashboardResponse.fromJson(jsonDecode(response));
@@ -45,12 +52,25 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BookingResponse> getBookings(String user_id, status) async {
+  Future<BookingResponse> getBookings(
+      String user_id, status, FilterType bookingSorting) async {
+    _bookingSorting(FilterType bookingSorting) {
+      switch (bookingSorting) {
+        case FilterType.Booking_Date:
+          return 'booking_date';
+          break;
+        default:
+          return 'delivery_time_slot';
+          break;
+      }
+    }
+
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['user_id'] = user_id;
       param['status'] = status;
+      param['filter'] = _bookingSorting;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_bookings}/${1}/100'),
@@ -106,6 +126,99 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
+  Future<BaseResponse> changeBookingCashCollectionAction(
+      String userId, String orderId, String total, String paymentMethod) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      param['order_id'] = orderId;
+      param['total'] = total;
+      param['payment_method'] = paymentMethod;
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '${_bookingsCashCollection}'),
+          param);
+      BaseResponse bookingResponse =
+          BaseResponse.fromJson(jsonDecode(response));
+      return bookingResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<BaseResponse> addBookingWorkImages(String userId, String orderId,
+      String total, String paymentMethod, List<File> images) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      FormData formData = FormData.fromMap({
+        'platform': param["platform"],
+        'device_id': param["device_id"],
+        'user_id': userId,
+        'order_id': orderId,
+        'total': total,
+        'payment_method': paymentMethod,
+        'image1': images.length >= 1 && images[0] != null
+            ? await MultipartFile.fromFile(
+                images[0].path,
+                filename: images[0].path == null
+                    ? ""
+                    : images[0].path.isEmpty
+                        ? ""
+                        : images[0].path.split('/').last,
+              )
+            : '',
+        'image2': images.length >= 2 && images[1] != null
+            ? await MultipartFile.fromFile(
+                images[1].path,
+                filename: images[1].path == null
+                    ? ""
+                    : images[1].path.isEmpty
+                        ? ""
+                        : images[1].path.split('/').last,
+              )
+            : "",
+        'image3': images.length >= 3 && images[2] != null
+            ? await MultipartFile.fromFile(
+                images[2].path,
+                filename: images[2].path == null
+                    ? ""
+                    : images[2].path.isEmpty
+                        ? ""
+                        : images[2].path.split('/').last,
+              )
+            : "",
+        'image4': images.length >= 4 && images[3] != null
+            ? await MultipartFile.fromFile(
+                images[3].path,
+                filename: images[3].path == null
+                    ? ""
+                    : images[3].path.isEmpty
+                        ? ""
+                        : images[3].path.split('/').last,
+              )
+            : "",
+      });
+
+      var response = await post(
+          apiPath(
+            StoreConfigurationSingleton.instance.configModel.storeId,
+            '${_bookingsCashCollection}',
+          ),
+          null,
+          isMultipartUploadRequest: true,
+          formData: formData);
+      BaseResponse bookingResponse =
+          BaseResponse.fromJson(jsonDecode(response));
+      return bookingResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
   Future<BookingDetailsResponse> getBookingsdetails(
     String userId,
     String orderId,
@@ -120,7 +233,7 @@ class DashboardNetworkRepository extends DioBaseService {
               '${_bookingDetails}${orderId}'),
           param);
       BookingDetailsResponse bookingResponse =
-      BookingDetailsResponse.fromJson(jsonDecode(response));
+          BookingDetailsResponse.fromJson(jsonDecode(response));
       return bookingResponse;
     } catch (e) {
       debugPrint(e.toString());
@@ -128,4 +241,24 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
+  Future<BaseResponse> bookingsCancelBookingByRunner(String userId,
+      String orderId, String reasonOption, String reason) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      param['order_id'] = orderId;
+      param['reason_option'] = reasonOption;
+      param['reason'] = reason;
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '${_bookingscancelBookingByRunner}'),
+          param);
+      BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
+      return baseResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
 }

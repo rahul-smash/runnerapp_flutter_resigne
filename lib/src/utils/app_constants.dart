@@ -27,3 +27,6 @@ class AppConstants {
 
   static String currency = '';
 }
+
+//Booking sorting type
+enum FilterType { Delivery_Time_Slot, Booking_Date }

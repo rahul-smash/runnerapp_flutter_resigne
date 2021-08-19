@@ -30,6 +30,9 @@ class AppImages {
   static const icon_map = 'lib/src/components/dashboard/images/mapicon.png';
   static const icon_thankyou_popup_bg = 'lib/src/components/dashboard/images/thankyou_popupbg.png';
   static const icon_thankyou_content = 'lib/src/components/dashboard/images/thankyou_content.png';
+  static const icon_small_tick = 'lib/src/components/dashboard/images/small_tick.png';
+  static const icon_popupcancelicon = 'lib/src/components/dashboard/images/popupcancelicon.png';
+  static const icon_img_place_holder = 'lib/src/components/dashboard/images/img_place_holder.png';
 
 
   static const icon_totalbookingfullicon =
@@ -38,6 +41,8 @@ class AppImages {
       'lib/src/components/dashboard/images/totalearningfullicon.png';
   static const icon_totalcustomerfullicon =
       'lib/src/components/dashboard/images/totalcustomerfullicon.png';
+  static const icon_dropdownarrow =
+      'lib/src/components/dashboard/images/dropdownarrow.png';
   static const icon_aboutus =
       'lib/src/components/side_menu/images/aboutus icon.png';
   static const icon_contactus =

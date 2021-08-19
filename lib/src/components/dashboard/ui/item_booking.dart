@@ -9,6 +9,8 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
+import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class ItemBooking extends StatefulWidget {
@@ -203,6 +205,41 @@ class _ItemBookingState extends State<ItemBooking> {
                   alignment: Alignment.bottomRight,
                   child: _getWidgetAccordingToStatus(),
                 ),
+                widget.booking.completionImages!=null&&widget.booking.completionImages.isNotEmpty?
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 1,
+                      color: AppTheme.subHeadingTextColor,
+                    ),
+                    Container(
+                      height: 100,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: widget.booking.completionImages.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  left: 5, right: 5, top: 10, bottom: 10),
+                              child: ClipRRect(
+                                  borderRadius: new BorderRadius.circular(15),
+                                  child: widget
+                                      .booking.completionImages[index].isNotEmpty
+                                      ? Image.network(
+                                    widget.booking.completionImages[index],
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.cover,
+                                  )
+                                      : Image.asset(AppImages.icon_img_place_holder,
+                                      height: 80, width: 80, fit: BoxFit.cover)),
+                            );
+                          }),
+                    )
+                  ],
+                ):Container(),
               ],
             ),
           ),
@@ -361,7 +398,16 @@ class _ItemBookingState extends State<ItemBooking> {
             ),
             InkWell(
               onTap: () {
-                widget.callBackMethod('Complete', widget.booking);
+                if (widget.booking.paymentMethod
+                    .toLowerCase()
+                    .trim()
+                    .contains('cod')) {
+                  CashCollectionBottomSheet(context, widget.booking,
+                      widget.callBackMethod, 'Complete', '0');
+                } else {
+                  widget.callBackMethod('Complete', widget.booking);
+                  AddImageBottomSheet(context, widget.booking, 'online');
+                }
               },
               child: Container(
                 decoration: BoxDecoration(

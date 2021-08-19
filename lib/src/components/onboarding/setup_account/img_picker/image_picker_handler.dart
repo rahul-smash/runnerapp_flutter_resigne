@@ -68,5 +68,5 @@ class ImagePickerHandler {
 
 abstract class ImagePickerListener {
   selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool docImage3,
-      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3);
+      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3,);
 }

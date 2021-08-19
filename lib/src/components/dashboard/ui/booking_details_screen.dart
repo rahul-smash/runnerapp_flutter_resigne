@@ -9,13 +9,17 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/book
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
+import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class BookingDetailsScreen extends StatefulWidget {
@@ -31,10 +35,12 @@ class BookingDetailsScreen extends StatefulWidget {
 class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
   bool isBookingDetailsApiLoading = true;
   BookingDetailsResponse _bookingDetailsResponse;
+  StoreResponse storeResponse;
 
   @override
   void initState() {
     super.initState();
+    storeResponse = VersionApiSingleton.instance.storeResponse;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getBookingdetails(widget.booking, isShowLoader: false);
     });
@@ -64,9 +70,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
         appBar: AppBar(),
         widgets: <Widget>[
           Visibility(
-//            visible: _bookingDetailsResponse?.bookings != null &&
-//                showCancelButton(_bookingDetailsResponse.bookings.status),
-            visible: false,
+            visible: _bookingDetailsResponse?.bookings != null &&
+                showCancelButton(_bookingDetailsResponse.bookings.status),
             child: InkWell(
                 onTap: () async {
                   cancelOrderBottomSheet(
@@ -553,8 +558,12 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                               ))),
                                       Visibility(
                                           visible: _bookingDetailsResponse
-                                                  .bookings.discount !=
-                                              '0.00',
+                                                  .bookings
+                                                  .discount
+                                                  .isNotEmpty &&
+                                              _bookingDetailsResponse
+                                                      .bookings.discount !=
+                                                  '0.00',
                                           child: Padding(
                                               padding: EdgeInsets.only(
                                                   top: 8, bottom: 8),
@@ -745,13 +754,17 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                     Flexible(
                         child: ClipRRect(
                             borderRadius: new BorderRadius.circular(15),
-                            child: Image.network(
-                              _bookingDetailsResponse
-                                  .bookings.cart[index].image300200,
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            ))),
+                            child: _bookingDetailsResponse
+                                    .bookings.cart[index].image300200.isNotEmpty
+                                ? Image.network(
+                                    _bookingDetailsResponse
+                                        .bookings.cart[index].image300200,
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(AppImages.icon_img_place_holder,
+                                    height: 80, width: 80, fit: BoxFit.cover))),
                     SizedBox(
                       width: 10,
                     ),
@@ -862,6 +875,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
 //    4 =>'ongoing',
 //    5 =>'completed',
 //    6 => 'cancelled' // cancelled by customer\
+//    7 => 'cancelled // cancelled by runner\
 
     //ongoing
     //Complete
@@ -1005,7 +1019,19 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
             ),
             InkWell(
               onTap: () {
-                _bookingAction('Complete', _bookingDetailsResponse.bookings);
+                if (widget.booking.paymentMethod
+                    .toLowerCase()
+                    .trim()
+                    .contains('cod')) {
+                  CashCollectionBottomSheet(
+                      context,
+                      _bookingDetailsResponse.bookings,
+                      _bookingAction,
+                      'Complete',
+                      '1');
+                } else {
+                  _bookingAction('Complete', _bookingDetailsResponse.bookings);
+                }
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -1070,6 +1096,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
         );
         break;
       case '6':
+      case '7':
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1104,8 +1131,15 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
 
   cancelOrderBottomSheet(context, Bookings booking) async {
     final commentController = TextEditingController();
+
+    String _selectedReason = '';
+    if (storeResponse.brand.bookingCancelReason != null &&
+        storeResponse.brand.bookingCancelReason.isNotEmpty)
+      _selectedReason = storeResponse.brand.bookingCancelReason.first;
+
     await showModalBottomSheet(
         context: context,
+        backgroundColor: AppTheme.transparent,
         isScrollControlled: true,
         builder: (BuildContext bc) {
           return StatefulBuilder(
@@ -1115,9 +1149,12 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: Container(
-                  color: Colors.white,
-                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(30.0),
+                          topRight: const Radius.circular(30.0))),
                   child: Wrap(children: <Widget>[
                     Column(
                       children: <Widget>[
@@ -1151,31 +1188,53 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                               fontSize: 16,
                               fontWeight: FontWeight.w400),
                         ),
-                        Container(
-                          height: 130,
-                          margin: EdgeInsets.fromLTRB(10, 25, 10, 10),
-                          decoration: new BoxDecoration(
-                            color: AppTheme.grayLightColor,
-                            borderRadius:
-                                new BorderRadius.all(new Radius.circular(5.0)),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 3),
-                            child: TextField(
-                              textAlign: TextAlign.left,
-                              maxLength: 250,
-                              keyboardType: TextInputType.text,
-                              maxLines: null,
-                              textCapitalization: TextCapitalization.sentences,
-                              controller: commentController,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(10.0),
-                                  border: InputBorder.none,
-                                  fillColor: AppTheme.grayLightColor,
-                                  hintText: hintAddReason),
-                            ),
-                          ),
+                        SizedBox(
+                          height: 10,
                         ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount:
+                              storeResponse.brand.bookingCancelReason.length,
+                          itemBuilder: (context, index) {
+                            String label =
+                                storeResponse.brand.bookingCancelReason[index];
+                            return RadioListTile<String>(
+                              title: Text(label),
+                              value: label,
+                              groupValue: _selectedReason,
+                              onChanged: (String value) {
+                                setState(() {
+                                  _selectedReason = value;
+                                });
+                              },
+                            );
+                          },
+                        ),
+                        // Container(
+                        //   height: 130,
+                        //   margin: EdgeInsets.fromLTRB(10, 25, 10, 10),
+                        //   decoration: new BoxDecoration(
+                        //     color: AppTheme.grayLightColor,
+                        //     borderRadius:
+                        //         new BorderRadius.all(new Radius.circular(5.0)),
+                        //   ),
+                        //   child: Padding(
+                        //     padding: EdgeInsets.fromLTRB(0, 0, 0, 3),
+                        //     child: TextField(
+                        //       textAlign: TextAlign.left,
+                        //       maxLength: 250,
+                        //       keyboardType: TextInputType.text,
+                        //       maxLines: null,
+                        //       textCapitalization: TextCapitalization.sentences,
+                        //       controller: commentController,
+                        //       decoration: InputDecoration(
+                        //           contentPadding: EdgeInsets.all(10.0),
+                        //           border: InputBorder.none,
+                        //           fillColor: AppTheme.grayLightColor,
+                        //           hintText: hintAddReason),
+                        //     ),
+                        //   ),
+                        // ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                           child: Row(
@@ -1195,7 +1254,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     String comment = commentController.text;
                                     AppUtils.hideKeyboard(context);
                                     Navigator.pop(context);
-                                    //TODO: hit Api
+                                    _cancelOrderApi(booking, _selectedReason,
+                                        _selectedReason);
                                   },
                                 ),
                               ))
@@ -1244,6 +1304,28 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
     setState(() {});
   }
 
+  void _cancelOrderApi(Bookings booking, String reasonOption, String reason,
+      {bool isShowLoader = true}) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      if (isShowLoader) AppUtils.showLoader(context);
+      BaseResponse baseResponse = await getIt
+          .get<DashboardRepository>()
+          .bookingsCancelBookingByRunner(
+              userId: loginResponse.data.id,
+              orderId: booking.id,
+              reasonOption: reasonOption,
+              reason: reason);
+      AppUtils.hideLoader(context);
+      if (baseResponse != null && baseResponse.success) {
+        widget.callBackMethod(_changeBookingStatus('cancel'));
+        _getBookingdetails(widget.booking);
+      }
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
+    setState(() {});
+  }
+
   convertDateFormat(DateTime dateObj) {
     DateFormat formatter = new DateFormat('dd MMM, yyyy | hh:mm a');
     String formatted = formatter.format(dateObj);
@@ -1275,8 +1357,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
         if (baseResponse.success) {
           _bookingDetailsResponse.bookings.status = _changeBookingStatus(type);
           widget.booking.status = _changeBookingStatus(type);
-          setState(() {});
           widget.callBackMethod(_changeBookingStatus(type));
+          setState(() {});
         } else {
           AppUtils.showToast(baseResponse.message, false);
         }
@@ -1293,6 +1375,9 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
         break;
       case 'Complete':
         return '5';
+        break;
+      case 'cancel':
+        return '7';
         break;
     }
   }

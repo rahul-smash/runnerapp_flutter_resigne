@@ -8,32 +8,36 @@ import 'package:marketplace_service_provider/src/components/side_menu/pages/cont
 import 'package:marketplace_service_provider/src/components/side_menu/pages/faq_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/pages/help_videos_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/widgets/duty_switch.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class SideMenuScreen extends StatefulWidget {
-
   @override
   _SideMenuScreenState createState() => _SideMenuScreenState();
-
 }
 
 class _SideMenuScreenState extends BaseState<SideMenuScreen> {
-
   List<dynamic> _drawerItems = List.empty(growable: true);
   bool _isFollowUsExpanded = false;
+  StoreResponse storeResponse;
 
   @override
   void initState() {
     super.initState();
+    storeResponse = VersionApiSingleton.instance.storeResponse;
     _drawerItems.add(ItemSideMenuChild(labelAboutUs, AppImages.icon_aboutus));
-    _drawerItems.add(ItemSideMenuChild(labelContactUs, AppImages.icon_contactus));
+    _drawerItems
+        .add(ItemSideMenuChild(labelContactUs, AppImages.icon_contactus));
     _drawerItems.add(ItemSideMenuChild(labelFaq, AppImages.icon_faq));
-    _drawerItems.add(ItemSideMenuChild(labelHowToVideo, AppImages.icon_howtovideo));
+    _drawerItems
+        .add(ItemSideMenuChild(labelHowToVideo, AppImages.icon_howtovideo));
   }
 
   @override
@@ -86,27 +90,45 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                           visible: _isFollowUsExpanded,
                           child: Padding(
                             padding: EdgeInsets.only(left: 10, right: 5),
-                            child: Image.asset(
-                              AppImages.icon_fb,
-                              height: 25,
+                            child: InkWell(
+                              onTap: () {
+                                AppUtils.launchURL(
+                                    storeResponse.brand.socialLinking.facebook);
+                              },
+                              child: Image.asset(
+                                AppImages.icon_fb,
+                                height: 25,
+                              ),
                             ),
                           )),
                       Visibility(
                           visible: _isFollowUsExpanded,
                           child: Padding(
                             padding: EdgeInsets.only(left: 5, right: 5),
-                            child: Image.asset(
-                              AppImages.icon_twitter,
-                              height: 25,
+                            child: InkWell(
+                              onTap: () {
+                                AppUtils.launchURL(
+                                    storeResponse.brand.socialLinking.twitter);
+                              },
+                              child: Image.asset(
+                                AppImages.icon_twitter,
+                                height: 25,
+                              ),
                             ),
                           )),
                       Visibility(
                           visible: _isFollowUsExpanded,
                           child: Padding(
                             padding: EdgeInsets.only(left: 5, right: 10),
-                            child: Image.asset(
-                              AppImages.icon_youTube,
-                              height: 25,
+                            child: InkWell(
+                              onTap: () {
+                                AppUtils.launchURL(
+                                    storeResponse.brand.socialLinking.youtube);
+                              },
+                              child: Image.asset(
+                                AppImages.icon_youTube,
+                                height: 25,
+                              ),
                             ),
                           )),
                     ],
@@ -267,23 +289,25 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
 
   void _openPageForIndex(ItemSideMenuChild item, BuildContext context) {
     print(item.title);
-    if(item.title == labelAboutUs){
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => AboutUsScreen())
-      );
-    }else if(item.title == labelFaq){
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => FaqScreen())
-      );
-    }else if(item.title == labelContactUs){
-      if(AppConstants.isLoggedIn)
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => ContactUsScreen())
-      );
-    }else if(item.title == labelHowToVideo){
-        Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) => HelpVideoScreen())
-        );
+    if (item.title == labelAboutUs) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => AboutUsScreen()));
+    } else if (item.title == labelFaq) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) => FaqScreen()));
+    } else if (item.title == labelContactUs) {
+      if (AppConstants.isLoggedIn)
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => ContactUsScreen()));
+    } else if (item.title == labelHowToVideo) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => HelpVideoScreen()));
     }
   }
 }

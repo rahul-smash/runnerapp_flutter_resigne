@@ -97,6 +97,7 @@ class BookingCounts {
 class Booking {
   Booking({
     this.id,
+    this.rating,
     this.displayOrderId,
     this.userId,
     this.userAddress,
@@ -110,9 +111,11 @@ class Booking {
     this.serviceCount,
     this.serviceDuration,
     this.services,
+    this.completionImages,
   });
 
   String id;
+  String rating;
   String displayOrderId;
   String userId;
   String userAddress;
@@ -126,9 +129,11 @@ class Booking {
   String serviceCount;
   String serviceDuration;
   String services;
+  List<String> completionImages;
 
   Booking copyWith({
     String id,
+    String rating,
     String displayOrderId,
     String userId,
     String userAddress,
@@ -142,9 +147,11 @@ class Booking {
     String serviceCount,
     String serviceDuration,
     String services,
+    List<String> completionImages,
   }) =>
       Booking(
         id: id ?? this.id,
+        rating: rating ?? this.rating,
         displayOrderId: displayOrderId ?? this.displayOrderId,
         userId: userId ?? this.userId,
         userAddress: userAddress ?? this.userAddress,
@@ -158,6 +165,7 @@ class Booking {
         serviceCount: serviceCount ?? this.serviceCount,
         serviceDuration: serviceDuration ?? this.serviceDuration,
         services: services ?? this.services,
+        completionImages: completionImages ?? this.completionImages,
       );
 
   factory Booking.fromRawJson(String str) => Booking.fromJson(json.decode(str));
@@ -166,6 +174,7 @@ class Booking {
 
   factory Booking.fromJson(Map<String, dynamic> json) => Booking(
     id: json["id"] == null ? null : json["id"],
+    rating: json["rating"] == null ? null : json["rating"],
     displayOrderId: json["display_order_id"] == null ? null : json["display_order_id"],
     userId: json["user_id"] == null ? null : json["user_id"],
     userAddress: json["user_address"] == null ? null : json["user_address"],
@@ -179,10 +188,12 @@ class Booking {
     serviceCount: json["service_count"] == null ? null : json["service_count"],
     serviceDuration: json["service_duration"] == null ? null : json["service_duration"],
     services: json["services"] == null ? null : json["services"],
+    completionImages: json["completion_images"] == null ? null : List<String>.from(json["completion_images"].map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id == null ? null : id,
+    "rating": rating == null ? null : rating,
     "display_order_id": displayOrderId == null ? null : displayOrderId,
     "user_id": userId == null ? null : userId,
     "user_address": userAddress == null ? null : userAddress,
@@ -196,5 +207,6 @@ class Booking {
     "service_count": serviceCount == null ? null : serviceCount,
     "service_duration": serviceDuration == null ? null : serviceDuration,
     "services": services == null ? null : services,
+    "completion_images": completionImages == null ? null : List<dynamic>.from(completionImages.map((x) => x)),
   };
 }
