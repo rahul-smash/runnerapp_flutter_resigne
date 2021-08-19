@@ -299,7 +299,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                   enabled:  widget.isComingFromAccount ? false : true,
                                   readOnly: widget.isComingFromAccount,
                                   controller: cityCont,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.text,
                                   textInputAction: TextInputAction.send,
                                   validator: (val) =>
                                   val.isEmpty ? "Enter your city" : null,
