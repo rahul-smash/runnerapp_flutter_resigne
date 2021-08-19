@@ -135,7 +135,7 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
                       child: InkWell(
                         onTap: () {
                           AppUtils.launchURL(
-                              storeResponse.brand.socialLinking.facebook);
+                              storeResponse.brand.socialLinking.twitter);
                         },
                         child: Image.asset(
                           AppImages.icon_twitter,
@@ -153,7 +153,7 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
                       child: InkWell(
                         onTap: () {
                           AppUtils.launchURL(
-                              storeResponse.brand.socialLinking.facebook);
+                              storeResponse.brand.socialLinking.youtube);
                         },
                         child: Image.asset(
                           AppImages.icon_youTube,

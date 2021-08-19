@@ -280,7 +280,7 @@ class AppUtils {
   // ...somewhere in your Flutter app...
   static launchWhatsApp(String number) async {
     final link = WhatsAppUnilink(
-      phoneNumber: number,
+      phoneNumber: '+91$number',
       text: "",
     );
     // Convert the WhatsAppUnilink instance to a string.
