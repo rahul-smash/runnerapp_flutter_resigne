@@ -238,7 +238,7 @@ class _AccountScreenState extends BaseState<AccountScreen> {
   }
 
   void onListViewTap(int index) {
-    print(index);
+    //print(index);
     if(index == 0){
       //Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(
