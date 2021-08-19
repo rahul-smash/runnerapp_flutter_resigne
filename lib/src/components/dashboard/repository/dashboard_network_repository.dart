@@ -23,6 +23,8 @@ class DashboardNetworkRepository extends DioBaseService {
       '/runner_orders/changeBookingRequestStatus';
   static const _bookingsAction = '/runner_orders/changeBookingStatus';
   static const _bookingsCashCollection = '/runner_orders/cashCollection';
+  static const _bookingscancelBookingByRunner =
+      '/runner_orders/cancelBookingByRunner';
 
   DashboardNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -233,6 +235,27 @@ class DashboardNetworkRepository extends DioBaseService {
       BookingDetailsResponse bookingResponse =
           BookingDetailsResponse.fromJson(jsonDecode(response));
       return bookingResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<BaseResponse> bookingsCancelBookingByRunner(String userId,
+      String orderId, String reasonOption, String reason) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      param['order_id'] = orderId;
+      param['reason_option'] = reasonOption;
+      param['reason'] = reason;
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '${_bookingscancelBookingByRunner}'),
+          param);
+      BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
+      return baseResponse;
     } catch (e) {
       debugPrint(e.toString());
     }

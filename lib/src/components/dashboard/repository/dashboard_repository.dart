@@ -47,13 +47,23 @@ class DashboardRepository {
         .changeBookingCashCollectionAction(
             userId, orderId, total, paymentMethod);
   }
+
   Future<BaseResponse> addBookingWorkImages(
       {String userId,
       String orderId,
       String total,
-      String paymentMethod,List<File> imageList}) async {
+      String paymentMethod,
+      List<File> imageList}) async {
     return await DashboardNetworkRepository.instance
-        .addBookingWorkImages(
-            userId, orderId, total, paymentMethod,imageList);
+        .addBookingWorkImages(userId, orderId, total, paymentMethod, imageList);
+  }
+
+  Future<BaseResponse> bookingsCancelBookingByRunner(
+      {String userId,
+      String orderId,
+      String reasonOption,
+      String reason}) async {
+    return await DashboardNetworkRepository.instance
+        .bookingsCancelBookingByRunner(userId, orderId, reasonOption, reason);
   }
 }

@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _filterOptions.add('Ongoing');
     _filterOptions.add('Completed');
     _filterOptions.add('Rejected');
-    _filterOptions.add('Cancelled');
+    // _filterOptions.add('Cancelled');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getDashboardSummary();
       _getMyBookingOrders();
@@ -112,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
           userId: loginResponse.data.id,
           status: _getCurrentStatus(selectedBookingFilterIndex));
       _getFilterCount();
+      setState(() {});
       AppUtils.hideLoader(context);
       isBookingApiLoading = false;
     } else {
@@ -127,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onRefresh() async {
-    _getDashboardSummary(isShowLoader: false,selectedFilter: _selectedOverviewOption);
+    _getDashboardSummary(
+        isShowLoader: false, selectedFilter: _selectedOverviewOption);
     _getMyBookingOrders(isShowLoader: false);
   }
 
@@ -903,7 +905,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  _bookingAction(String type, Booking booking,) async {
+  _bookingAction(
+    String type,
+    Booking booking,
+  ) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
@@ -921,6 +926,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (baseResponse != null) {
         if (baseResponse.success) {
           int index = _bookingResponse.bookings.indexOf(booking);
+          _changeCounterStatus(type);
           _bookingResponse.bookings[index].status = _changeBookingStatus(type);
           if (selectedBookingFilterIndex != 0) {
             _bookingResponse.bookings.removeAt(index);
@@ -944,5 +950,30 @@ class _HomeScreenState extends State<HomeScreen> {
         return '5';
         break;
     }
+  }
+
+  _changeCounterStatus(String type) {
+    switch (type) {
+      case 'Ongoing':
+        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.ongoing);
+        ongoingCounter = ongoingCounter + 1;
+        _bookingResponse.bookingCounts.ongoing = ongoingCounter.toString();
+        int upcomingCounter =
+            int.parse(_bookingResponse.bookingCounts.upcoming);
+        upcomingCounter = upcomingCounter - 1;
+        _bookingResponse.bookingCounts.upcoming = upcomingCounter.toString();
+        break;
+      case 'Complete':
+        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.ongoing);
+        ongoingCounter = ongoingCounter - 1;
+        _bookingResponse.bookingCounts.ongoing = ongoingCounter.toString();
+
+        int completedCounter =
+            int.parse(_bookingResponse.bookingCounts.completed);
+        completedCounter = completedCounter + 1;
+        _bookingResponse.bookingCounts.completed = completedCounter.toString();
+        break;
+    }
+    _getFilterCount();
   }
 }

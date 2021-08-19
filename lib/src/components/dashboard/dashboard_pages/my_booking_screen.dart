@@ -45,7 +45,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     _filterOptions.add('Ongoing');
     _filterOptions.add('Completed');
     _filterOptions.add('Rejected');
-    _filterOptions.add('Cancelled');
+    // _filterOptions.add('Cancelled');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getMyBookingOrders(bookingSorting: FilterType.Delivery_Time_Slot);
     });
@@ -303,45 +303,6 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         elevation: 4,
       ),
       widgets: [
-        // DropdownButtonFormField(
-        //   dropdownColor: Colors.white,
-        //   items: _sortingType.map((String options) {
-        //     return DropdownMenuItem(
-        //         value: options,
-        //         child: Container(
-        //           child: Text(
-        //             options,
-        //             textAlign: TextAlign.end,
-        //             style: TextStyle(
-        //                 color: AppTheme.subHeadingTextColor,
-        //                 fontFamily: AppConstants.fontName,
-        //                 fontSize: AppConstants.smallSize),
-        //           ),
-        //         ));
-        //   }).toList(),
-        //   onTap: () {},
-        //   onChanged: (newValue) {
-        //     // do other stuff with _category
-        //     setState(() {
-        //       if (newValue == 'Booking Date') {
-        //         _selectedSortingType = FilterType.Booking_Date;
-        //       } else {
-        //         _selectedSortingType = FilterType.Delivery_Time_Slot;
-        //       }
-        //     });
-        //   },
-        //   value: _selectedSortingType == FilterType.Delivery_Time_Slot
-        //       ? _sortingType[1]
-        //       : _sortingType[0],
-        //   decoration: InputDecoration(
-        //     contentPadding: EdgeInsets.all(0),
-        //     filled: true,
-        //     border: InputBorder.none,
-        //     fillColor: AppTheme.transparent,
-        //     focusColor: AppTheme.transparent,
-        //     hoverColor: AppTheme.transparent,
-        //   ),
-        // )
         Container(
           child: PopupMenuButton(
             elevation: 3.2,

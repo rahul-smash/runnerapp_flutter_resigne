@@ -84,6 +84,7 @@ class Brand {
     this.signupAs,
     this.contactusOptions,
     this.bookingCancelReason,
+    this.socialLinking,
   });
 
   String id;
@@ -131,6 +132,7 @@ class Brand {
   List<String> signupAs;
   List<String> contactusOptions;
   List<String> bookingCancelReason;
+  SocialLinking socialLinking;
 
   Brand copyWith({
     String id,
@@ -178,6 +180,7 @@ class Brand {
     List<String> signupAs,
     List<String> contactusOptions,
     List<String> bookingCancelReason,
+    SocialLinking socialLinking,
   }) =>
       Brand(
         id: id ?? this.id,
@@ -225,6 +228,7 @@ class Brand {
         signupAs: signupAs ?? this.signupAs,
         contactusOptions: contactusOptions ?? this.contactusOptions,
         bookingCancelReason: bookingCancelReason ?? this.bookingCancelReason,
+        socialLinking: socialLinking ?? this.socialLinking,
       );
 
   factory Brand.fromRawJson(String str) => Brand.fromJson(json.decode(str));
@@ -277,6 +281,7 @@ class Brand {
     signupAs: json["signupAs"] == null ? null : List<String>.from(json["signupAs"].map((x) => x)),
     contactusOptions: json["contactus_options"] == null ? null : List<String>.from(json["contactus_options"].map((x) => x)),
     bookingCancelReason: json["booking_cancel_reason"] == null ? null : List<String>.from(json["booking_cancel_reason"].map((x) => x)),
+    socialLinking: json["social_linking"] == null ? null : SocialLinking.fromJson(json["social_linking"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -325,6 +330,7 @@ class Brand {
     "signupAs": signupAs == null ? null : List<dynamic>.from(signupAs.map((x) => x)),
     "contactus_options": contactusOptions == null ? null : List<dynamic>.from(contactusOptions.map((x) => x)),
     "booking_cancel_reason": bookingCancelReason == null ? null : List<dynamic>.from(bookingCancelReason.map((x) => x)),
+    "social_linking": socialLinking == null ? null : socialLinking.toJson(),
   };
 }
 
@@ -370,5 +376,74 @@ class ForceDownload {
     "android_app_verison": androidAppVerison == null ? null : androidAppVerison,
     "force_download": forceDownload == null ? null : forceDownload,
     "force_download_message": forceDownloadMessage == null ? null : forceDownloadMessage,
+  };
+}
+
+class SocialLinking {
+  SocialLinking({
+    this.id,
+    this.facebook,
+    this.twitter,
+    this.instagram,
+    this.linkedin,
+    this.youtube,
+    this.heading1,
+    this.heading2,
+  });
+
+  String id;
+  String facebook;
+  String twitter;
+  String instagram;
+  String linkedin;
+  String youtube;
+  String heading1;
+  String heading2;
+
+  SocialLinking copyWith({
+    String id,
+    String facebook,
+    String twitter,
+    String instagram,
+    String linkedin,
+    String youtube,
+    String heading1,
+    String heading2,
+  }) =>
+      SocialLinking(
+        id: id ?? this.id,
+        facebook: facebook ?? this.facebook,
+        twitter: twitter ?? this.twitter,
+        instagram: instagram ?? this.instagram,
+        linkedin: linkedin ?? this.linkedin,
+        youtube: youtube ?? this.youtube,
+        heading1: heading1 ?? this.heading1,
+        heading2: heading2 ?? this.heading2,
+      );
+
+  factory SocialLinking.fromRawJson(String str) => SocialLinking.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory SocialLinking.fromJson(Map<String, dynamic> json) => SocialLinking(
+    id: json["id"] == null ? null : json["id"],
+    facebook: json["facebook"] == null ? null : json["facebook"],
+    twitter: json["twitter"] == null ? null : json["twitter"],
+    instagram: json["instagram"] == null ? null : json["instagram"],
+    linkedin: json["linkedin"] == null ? null : json["linkedin"],
+    youtube: json["youtube"] == null ? null : json["youtube"],
+    heading1: json["heading1"] == null ? null : json["heading1"],
+    heading2: json["heading2"] == null ? null : json["heading2"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "facebook": facebook == null ? null : facebook,
+    "twitter": twitter == null ? null : twitter,
+    "instagram": instagram == null ? null : instagram,
+    "linkedin": linkedin == null ? null : linkedin,
+    "youtube": youtube == null ? null : youtube,
+    "heading1": heading1 == null ? null : heading1,
+    "heading2": heading2 == null ? null : heading2,
   };
 }

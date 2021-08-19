@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -18,10 +19,12 @@ class AboutUsScreen extends StatefulWidget {
 }
 
 class _AboutUsScreenState extends BaseState<AboutUsScreen> {
+  StoreResponse storeResponse;
 
   @override
   void initState() {
     super.initState();
+    storeResponse = VersionApiSingleton.instance.storeResponse;
   }
 
   @override
@@ -31,23 +34,24 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
 
   @override
   Widget builder(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppTheme.grayCircle,
       appBar: BaseAppBar(
-        callback: (){
+        callback: () {
           Navigator.of(context).pop();
         },
         backgroundColor: AppTheme.white,
-        title: Text('About Us',style: TextStyle(color: Colors.black),),
+        title: Text(
+          'About Us',
+          style: TextStyle(color: Colors.black),
+        ),
         appBar: AppBar(
           foregroundColor: Colors.black,
           backgroundColor: Colors.white,
           backwardsCompatibility: false,
           systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.white,
-              statusBarIconBrightness: Brightness.dark
-          ),
+              statusBarIconBrightness: Brightness.dark),
           elevation: 0.0,
           titleSpacing: 0.0,
           bottom: PreferredSize(
@@ -57,11 +61,10 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
               ),
               preferredSize: Size.fromHeight(4.0)),
         ),
-        widgets: <Widget>[
-        ],
+        widgets: <Widget>[],
       ),
       body: Container(
-        margin: EdgeInsets.only(left: 20,right: 20),
+        margin: EdgeInsets.only(left: 20, right: 20),
         color: Colors.white,
         child: Column(
           children: [
@@ -74,7 +77,8 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
                     shrinkWrap: true,
                     data: VersionApiSingleton.instance.storeResponse.brand.aboutUs,
                   ),*/
-                  child: AppUtils.getHtmlView(VersionApiSingleton.instance.storeResponse.brand.aboutUs),
+                  child: AppUtils.getHtmlView(
+                      VersionApiSingleton.instance.storeResponse.brand.aboutUs),
                 ),
               ),
             ),
@@ -82,7 +86,7 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        margin: EdgeInsets.only(left: 20,right: 20),
+        margin: EdgeInsets.only(left: 20, right: 20),
         color: AppTheme.white,
         height: 100,
         child: Column(
@@ -90,40 +94,71 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              child: Text("Follow Us",style: TextStyle(color: AppTheme.mainTextColor,
-                fontSize: 18,fontWeight: FontWeight.w600,fontFamily: AppConstants.fontName,),),
+              child: Text(
+                "Follow Us",
+                style: TextStyle(
+                  color: AppTheme.mainTextColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppConstants.fontName,
+                ),
+              ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Visibility(
                     visible: true,
                     child: Padding(
                       padding: EdgeInsets.only(left: 10, right: 5),
-                      child: Image.asset(
-                        AppImages.icon_fb,
-                        height: 25,
+                      child: InkWell(
+                        onTap: () {
+                          AppUtils.launchURL(
+                              storeResponse.brand.socialLinking.facebook);
+                        },
+                        child: Image.asset(
+                          AppImages.icon_fb,
+                          height: 25,
+                        ),
                       ),
                     )),
-                SizedBox(width: 20,),
+                SizedBox(
+                  width: 20,
+                ),
                 Visibility(
                     visible: true,
                     child: Padding(
                       padding: EdgeInsets.only(left: 5, right: 5),
-                      child: Image.asset(
-                        AppImages.icon_twitter,
-                        height: 25,
+                      child: InkWell(
+                        onTap: () {
+                          AppUtils.launchURL(
+                              storeResponse.brand.socialLinking.facebook);
+                        },
+                        child: Image.asset(
+                          AppImages.icon_twitter,
+                          height: 25,
+                        ),
                       ),
                     )),
-                SizedBox(width: 20,),
+                SizedBox(
+                  width: 20,
+                ),
                 Visibility(
                     visible: true,
                     child: Padding(
                       padding: EdgeInsets.only(left: 5, right: 10),
-                      child: Image.asset(
-                        AppImages.icon_youTube,
-                        height: 25,
+                      child: InkWell(
+                        onTap: () {
+                          AppUtils.launchURL(
+                              storeResponse.brand.socialLinking.facebook);
+                        },
+                        child: Image.asset(
+                          AppImages.icon_youTube,
+                          height: 25,
+                        ),
                       ),
                     )),
               ],
@@ -133,5 +168,4 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
       ),
     );
   }
-
 }
