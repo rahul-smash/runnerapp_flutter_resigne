@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
@@ -10,6 +11,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/widgets/AutoSearch.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -141,7 +143,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
         ),
         widgets: <Widget>[
           InkWell(
-            onTap: (){
+            onTap: ()  {
               callApi(gotoProfileStepsScreen: true);
             },
             child: Container(
@@ -162,16 +164,55 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                        top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(10)
+                        top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(10),
+                      right: 15
                     ),
-                    child: Text(
-                      "Business Detail",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: AppTheme.subHeadingTextColor,
-                        fontFamily: AppConstants.fontName,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Business Detail",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: AppTheme.subHeadingTextColor,
+                            fontFamily: AppConstants.fontName,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: AppTheme.grayCircle,
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(35.0)),
+                              border: Border.all(
+                                color: AppTheme.grayCircle,
+                              )
+                          ),
+                          child: InkWell(
+                            onTap: openLocationSearchView,
+                            child: Row(
+                              children: [
+                                SizedBox(width: 5,),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                  child: Icon(Icons.search,size: 20,
+                                      color: AppTheme.primaryColor),
+                                ),
+                                Text(
+                                  "Search Address",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontFamily: AppConstants.fontName,
+                                  ),
+                                ),
+                                SizedBox(width: 15,)
+                              ],
+                            ),
+                          )
+                        ),
+                      ],
                     ),
                   ),
 
@@ -1069,6 +1110,20 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     );
   }
 
+  void openLocationSearchView() async{
+    if(this.network.offline){
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+    print("${loginResponse.location.locationName}");
+    var addresses = await Geocoder.local.findAddressesFromQuery(loginResponse.location.locationName);
+    var first = addresses.first;
+    //print("${first.featureName} : ${first.coordinates}");
+    LatLng center = new LatLng(first.coordinates.latitude,first.coordinates.longitude);
+    LatLng selectedLocation = new LatLng(first.coordinates.latitude,first.coordinates.longitude);
+    showBottomSheet(context, center, selectedLocation, "${loginResponse.location.locationName}");
+  }
+
   getBoxColor(String tag) {
     Color boxColor;
     if(showSelectedDaysListvew){
@@ -1279,6 +1334,259 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     setState(() {
     });
   }
+
+
+  void showBottomSheet(context, LatLng center, LatLng selectedLocation, String address) {
+    LatLng localCenter, localSelectedLocation;
+    GoogleMapController _mapController;
+    localCenter = center;
+    localSelectedLocation = selectedLocation;
+    Set<Marker> markers = Set();
+    String localAddress = address;
+    getAddressFromLocationFromMap(double latitude, double longitude,
+        {StateSetter setState}) async {
+      try {
+        localCenter = LatLng(latitude, longitude);
+        localSelectedLocation = LatLng(latitude, longitude);
+        Coordinates coordinates = new Coordinates(latitude, longitude);
+        var addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        localAddress = first.addressLine;
+        if (setState != null)
+          setState(() {
+            localAddress = first.addressLine;
+          });
+      } catch (e) {
+        print(e);
+        address = "No address found!";
+      }
+    }
+
+    markers.addAll([
+      Marker(
+          draggable: true,
+          icon: BitmapDescriptor.defaultMarker,
+          markerId: MarkerId('value'),
+          position: localCenter,
+          onDragEnd: (value) {
+            getAddressFromLocationFromMap(value.latitude, value.longitude);
+          })
+    ]);
+    getAddressFromLocationFromMap(localCenter.latitude, localCenter.longitude);
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10),
+          ),
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        context: context,
+        builder: (BuildContext bc) {
+          return StatefulBuilder(builder: (BuildContext context, setState) {
+            return Wrap(children: <Widget>[
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
+                          child: Icon(
+                            Icons.cancel,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      child: Text(
+                        'Set Location',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        //padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: AppTheme.grayCircle,
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(5.0)),
+                            border: Border.all(
+                              color: AppTheme.grayCircle,
+                            )),
+                        child: InkWell(
+                            onTap: () async {
+                              var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return CustomSearchScaffold();
+                                    },
+                                    fullscreenDialog: true,
+                                  ));
+                              if (result != null) {
+                                LatLng detail = result;
+                                double lat = detail.latitude;
+                                double lng = detail.longitude;
+                                print("location = ${lat},${lng}");
+
+                                localCenter = LatLng(lat, lng);
+                                localSelectedLocation = LatLng(lat, lng);
+                                getAddressFromLocationFromMap(lat, lng,
+                                    setState: setState);
+                                markers.clear();
+                                markers.addAll([
+                                  Marker(
+                                      draggable: true,
+                                      icon: BitmapDescriptor.defaultMarker,
+                                      markerId: MarkerId('value'),
+                                      position: localCenter,
+                                      onDragEnd: (value) {
+                                        getAddressFromLocationFromMap(
+                                            value.latitude, value.longitude,
+                                            setState: setState);
+                                      })
+                                ]);
+                                setState(() {
+                                  _mapController.moveCamera(
+                                      CameraUpdate.newLatLng(localCenter));
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Center(
+                                child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding:
+                                          EdgeInsets.fromLTRB(3, 3, 10, 3),
+                                          /*child: Image.asset(
+                                              'images/searchicon.png',
+                                              width: 20,
+                                              fit: BoxFit.scaleDown,
+                                              color: AppTheme.primaryColor)*/
+                                        child: Icon(Icons.search,size: 20,
+                                            color: AppTheme.primaryColor),
+                                      ),
+                                      Expanded(
+                                        child: RichText(
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          text: TextSpan(
+                                            text: "${localAddress}",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      )
+                                    ]),
+                              ),
+                            ))),
+                    Container(
+                        height: AppUtils.getDeviceHeight(context) >
+                            AppUtils.getDeviceWidth(context)
+                            ? AppUtils.getDeviceWidth(context) - 50
+                            : AppUtils.getDeviceHeight(context) / 2 - 50,
+                        margin:
+                        EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: GoogleMap(
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController = controller;
+                          },
+                          myLocationEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                            target: localCenter,
+                            zoom: 15.0,
+                          ),
+                          mapType: MapType.normal,
+                          markers: markers,
+                          onTap: (latLng) {
+                            if (markers.length >= 1) {
+                              markers.clear();
+                            }
+                            setState(() {
+                              markers.add(Marker(
+                                  draggable: true,
+                                  icon: BitmapDescriptor.defaultMarker,
+                                  markerId: MarkerId('value'),
+                                  position: latLng,
+                                  onDragEnd: (value) {
+                                    print(value.latitude);
+                                    print(value.longitude);
+                                    getAddressFromLocationFromMap(
+                                        value.latitude, value.longitude,
+                                        setState: setState);
+                                  }));
+                              getAddressFromLocationFromMap(
+                                  latLng.latitude, latLng.longitude,
+                                  setState: setState);
+                            });
+                          },
+                          onCameraMove: (CameraPosition position) {
+                            CameraPosition newPos =
+                            CameraPosition(target: position.target);
+                            Marker marker = markers.first;
+
+                            setState(() {
+                              markers.first
+                                  .copyWith(positionParam: newPos.target);
+                            });
+                          },
+                          //onCameraMove: _onCameraMove,
+                        )),
+                    Align(
+                      alignment: Alignment.center,
+                      child: ButtonTheme(
+                        minWidth: 180.0,
+                        height: 40.0,
+                        child: RaisedButton(
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(25.0),
+                              side: BorderSide(color: AppTheme.primaryColor)),
+                          onPressed: () async {
+                            /*widget.initialPosition = localSelectedLocation;
+                            locationAddress = localAddress;
+                            eventBus.fire(
+                                onLocationChanged(widget.initialPosition));
+                            Navigator.pop(context);*/
+                          },
+                          color: AppTheme.primaryColor,
+                          padding: EdgeInsets.all(5.0),
+                          textColor: Colors.white,
+                          child: Text("Submit"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    )
+                  ],
+                ),
+              )
+            ]);
+          });
+        });
+  }
+
 }
 
 class CustomTrackShape extends RoundedRectSliderTrackShape {
