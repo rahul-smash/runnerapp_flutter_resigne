@@ -17,8 +17,10 @@ class _LocationServiceCheckingState extends State<LocationServiceChecking> {
     return Scaffold(
       body: Center(
           child: InkWell(
-              onTap: () {
+              onTap: () async{
                 AppUtils.showToast('Pressed', false);
+                String data = await platform.invokeMethod("startService");
+                debugPrint(data);
               },
               child: Text('Start Service'))),
     );

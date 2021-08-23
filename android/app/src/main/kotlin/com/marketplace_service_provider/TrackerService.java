@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.dexterous.flutterlocalnotifications.ForegroundService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -34,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class TrackerService extends Service {
+public class TrackerService extends ForegroundService {
 
     private static final String TAG = TrackerService.class.getSimpleName();
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
@@ -91,7 +92,7 @@ public class TrackerService extends Service {
         Log.d(TAG, "onStartCommand: ");
         prepareForegroundNotification();
         startLocationUpdates();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void startLocationUpdates() {
@@ -174,6 +175,12 @@ public class TrackerService extends Service {
                     }
                 }, null);*/
         }
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        Log.d(TAG, "onTaskRemoved: ");
     }
 
     @Override
