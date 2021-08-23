@@ -1280,7 +1280,6 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
       addressCont.text = placemarkModel == null || placemarkModel.address == null? "" : placemarkModel.address;
       cityCont.text = placemarkModel == null || placemarkModel.locality == null? "" : placemarkModel.locality;
       stateCont.text = placemarkModel == null || placemarkModel.administrativeArea == null? "" : placemarkModel.administrativeArea;
-
     }
 
     idProofNumberCont.text = businessDetailModel.data.businessDetail.businessIdentityProofNumber;
@@ -1597,9 +1596,17 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                               borderRadius: new BorderRadius.circular(25.0),
                               side: BorderSide(color: AppTheme.primaryColor)),
                           onPressed: () async {
+                            widget.userlocation = localSelectedLocation;
+                            PlacemarkModel placemarkModel = await _getPlace(widget.userlocation.latitude,widget.userlocation.longitude);
+                            pinCodeCont.text = placemarkModel == null || placemarkModel.postalCode == null? "" : placemarkModel.postalCode;
+                            addressCont.text = placemarkModel == null || placemarkModel.address == null? "" : placemarkModel.address;
+                            cityCont.text = placemarkModel == null || placemarkModel.locality == null? "" : placemarkModel.locality;
+                            stateCont.text = placemarkModel == null || placemarkModel.administrativeArea == null? "" : placemarkModel.administrativeArea;
                             print("---localSelectedLocation--=${localSelectedLocation}");
                             print("---localAddress---=${localAddress}");
                             Navigator.pop(context);
+                            setState(() {
+                            });
                           },
                           color: AppTheme.primaryColor,
                           padding: EdgeInsets.all(5.0),
