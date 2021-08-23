@@ -16,8 +16,9 @@ class GoogleMapScreen extends StatefulWidget {
   int radius;
   final BusinessDetailModel businessDetailModel;
   final LatLng userlocation;
+  bool isComingFromAccount;
 
-  GoogleMapScreen({@required this.callback,this.radius,this.businessDetailModel, this.userlocation});
+  GoogleMapScreen({@required this.callback,this.radius,this.businessDetailModel, this.userlocation, this.isComingFromAccount});
 
   @override
   _GoogleMapScreenState createState() {
@@ -46,7 +47,7 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
     latitude = widget.userlocation.latitude;
     longitude = widget.userlocation.longitude;
 
-    if(widget.businessDetailModel.data.businessDetail.lat.isNotEmpty && widget.businessDetailModel.data.businessDetail.lng.isNotEmpty){
+    if(widget.isComingFromAccount && widget.businessDetailModel.data.businessDetail.lat.isNotEmpty && widget.businessDetailModel.data.businessDetail.lng.isNotEmpty){
        latitude = double.parse(widget.businessDetailModel.data.businessDetail.lat);
        longitude = double.parse(widget.businessDetailModel.data.businessDetail.lng);
     }

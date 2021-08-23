@@ -3,7 +3,6 @@ import 'package:location/location.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/selected_user_category_screen.dart';
-import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/ui/select_category_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/setup_account_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/agreement_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/business_detail_screen.dart';
@@ -252,7 +251,6 @@ class _AccountScreenState extends BaseState<AccountScreen> {
       Navigator.push(context, MaterialPageRoute(
           builder: (BuildContext context) => BusinessDetailScreen(
             isComingFromAccount: true,
-            userlocation: null,
             voidCallback: (){
             },))
       );

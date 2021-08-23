@@ -60,6 +60,7 @@ dependencies:
   custom_switch: ^0.0.1
   geocoder: ^0.2.1
   flutter_google_places: ^0.3.0
+  geocoding: ^2.0.0
 
 
 dev_dependencies:

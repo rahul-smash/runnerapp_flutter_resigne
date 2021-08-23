@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/agreement_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -19,8 +16,6 @@ import 'models/setup_account_model.dart';
 import 'models/under_approval_model.dart';
 import 'presentation/business_detail_screen.dart';
 import 'presentation/my_profile_screen.dart';
-import 'package:location/location.dart';
-
 import 'presentation/user_profile_status_screen.dart';
 
 
@@ -36,11 +31,6 @@ class SetupProfileScreen extends StatefulWidget {
 class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
 
   List<SetupAccountModel> list = [];
-  Location location = new Location();
-
-  bool _serviceEnabled;
-  PermissionStatus _permissionGranted;
-  LocationData _locationData;
   AccountStepsDetailModel accountStepsDetailModel;
 
   @override
@@ -108,6 +98,10 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                                         itemBuilder: (context, index) {
                                           return InkWell(
                                             onTap: (){
+                                              if(this.network.offline){
+                                                AppUtils.showToast(AppConstants.noInternetMsg, false);
+                                                return;
+                                              }
                                               onListViewTap(accountStepsDetailModel,index);
                                             },
                                             child: Card(
@@ -314,38 +308,13 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
       );
     }else if(index == 1){
 
-      _serviceEnabled = await location.serviceEnabled();
-      if (!_serviceEnabled) {
-        _serviceEnabled = await location.requestService();
-        if (!_serviceEnabled) {
-          return;
-        }
-      }
-
-      _permissionGranted = await location.hasPermission();
-      if (_permissionGranted == PermissionStatus.denied) {
-        _permissionGranted = await location.requestPermission();
-        if (_permissionGranted != PermissionStatus.granted) {
-          return;
-        }
-      }
-      LocationAccuracy _locationAccuracy = LocationAccuracy.high;
-      await location.changeSettings(accuracy: _locationAccuracy);
-
-      _locationData = await location.getLocation();
-      LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
-      if(_locationData != null){
-        Navigator.push(context, MaterialPageRoute(
-            builder: (BuildContext context) => BusinessDetailScreen(
-              userlocation: userlocation,
-              voidCallback: (){
-                setState(() {
-                });
-              },))
-        );
-      }else{
-        AppUtils.showToast("Not able to find your current location!", true);
-      }
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) => BusinessDetailScreen(
+            voidCallback: (){
+              setState(() {
+              });
+            },))
+      );
 
     } else if(index == 2){
       Navigator.push(context, MaterialPageRoute(

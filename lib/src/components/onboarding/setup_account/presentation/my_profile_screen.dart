@@ -2,10 +2,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -19,10 +17,8 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'dart:io';
-
 import 'business_detail_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -59,11 +55,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
   File _selectedImg1,_selectedImg2;
   var resultFileImgSize1,resultFileImgSize2;
   bool isLoading = false;
-  Location location = new Location();
-
-  bool _serviceEnabled=false;
-  PermissionStatus _permissionGranted;
-  LocationData _locationData;
 
   @override
   void initState() {
@@ -978,28 +969,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
               widget.voidCallback();
             }else{
 
-              if (!_serviceEnabled) {
-                _serviceEnabled = await location.requestService();
-                if (!_serviceEnabled) {
-                  return;
-                }
-              }
-
-              _permissionGranted = await location.hasPermission();
-              if (_permissionGranted == PermissionStatus.denied) {
-                _permissionGranted = await location.requestPermission();
-                if (_permissionGranted != PermissionStatus.granted) {
-                  return;
-                }
-              }
-              LocationAccuracy _locationAccuracy = LocationAccuracy.high;
-              await location.changeSettings(accuracy: _locationAccuracy);
-
-              _locationData = await location.getLocation();
-              LatLng userlocation = LatLng(_locationData.latitude,_locationData.longitude);
-
               Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) => BusinessDetailScreen(userlocation: userlocation,
+                  builder: (BuildContext context) => BusinessDetailScreen(
                     voidCallback: (){
                       widget.voidCallback();
                     },))

@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/widgets/AutoSearch.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
@@ -23,13 +24,14 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'widgets/google_map.dart';
+import 'package:geocoding/geocoding.dart';
 
 class BusinessDetailScreen extends StatefulWidget {
 
   final VoidCallback voidCallback;
   LatLng userlocation;
   final bool isComingFromAccount;
-  BusinessDetailScreen({@required this.voidCallback, @required this.userlocation,this.isComingFromAccount = false});
+  BusinessDetailScreen({@required this.voidCallback, this.isComingFromAccount = false});
 
   @override
   _BusinessDetailScreenState createState() {
@@ -65,6 +67,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
   HashMap<String,String> closeTimeHashMap = HashMap();
   int radius;
   int defaultRadius = 20;
+  LatLng center;
 
   @override
   void initState() {
@@ -74,9 +77,16 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     setState(() {
       isLoading = true;
     });
-    getIt.get<AccountStepsDetailRepositoryImpl>().getBusinessDetail(loginResponse.data.id).then((value){
+    getIt.get<AccountStepsDetailRepositoryImpl>().getBusinessDetail(loginResponse.data.id).then((value) async {
       businessDetailModel = value;
-      setBusinessData();
+
+      print("${loginResponse.location.locationName}");
+      var addresses = await Geocoder.local.findAddressesFromQuery(loginResponse.location.locationName);
+      var first = addresses.first;
+      center = new LatLng(first.coordinates.latitude,first.coordinates.longitude);
+      widget.userlocation = center;
+      PlacemarkModel placemarkModel = await _getPlace(first.coordinates.latitude,first.coordinates.longitude);
+      setBusinessData(placemarkModel: placemarkModel);
       workLocationList = businessDetailModel.data.serviceType;
       _selectedWorkLocationTag = workLocationList.first;
       _selectedProofTypeTag = businessDetailModel.data.businessIdentityProofList.first;
@@ -84,32 +94,6 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
         isLoading = false;
       });
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool doc3,
-      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3) async{
-    if(_image == null){
-      AppUtils.showToast("Invalid Image!", true);
-      return;
-    }
-    try {
-      print("XFile=${_image.path}");
-      print("XFile=${_image.path}");
-      if(profileImage){
-        _selectedDocument = File(_image.path);
-        docFileSize = await AppUtils.getFileSize(_selectedDocument.path, 1);
-        setState(() {
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
   }
 
   @override
@@ -189,7 +173,9 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                               )
                           ),
                           child: InkWell(
-                            onTap: openLocationSearchView,
+                            onTap: (){
+                              showBottomSheet(context, center, center, "${loginResponse.location.locationName}");
+                            },
                             child: Row(
                               children: [
                                 SizedBox(width: 5,),
@@ -458,6 +444,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
 
                           Container(
                             child: GoogleMapScreen(
+                              isComingFromAccount: widget.isComingFromAccount,
                               userlocation: widget.userlocation,
                               businessDetailModel: businessDetailModel,
                               radius: businessDetailModel.data.businessDetail.radius.isEmpty
@@ -1110,18 +1097,63 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     );
   }
 
-  void openLocationSearchView() async{
-    if(this.network.offline){
-      AppUtils.showToast(AppConstants.noInternetMsg, false);
+
+  Future<PlacemarkModel> _getPlace(double latitude, double longitude) async {
+    PlacemarkModel placemarkModel;
+    try {
+      List<Placemark> newPlace = await placemarkFromCoordinates(latitude, longitude);
+      // this is all you need
+      Placemark placeMark  = newPlace[0];
+      String name = placeMark.name;
+      String subLocality = placeMark.subLocality;
+      String locality = placeMark.locality;
+      String administrativeArea = placeMark.administrativeArea;
+      String postalCode = placeMark.postalCode;
+      String country = placeMark.country;
+      String street = placeMark.street;
+      String mainAddress =
+          "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+
+      String address = "name=${name},"
+          "\nsubLocality=${subLocality},"
+          "\nLocality=${locality},"
+          "\nadministrativeArea=${administrativeArea},"
+          "\npostalCode=${postalCode},"
+          "\nstreet=${street},"
+          "\ncountry=${country}";
+      placemarkModel = new PlacemarkModel(name: name,subLocality: subLocality, locality:locality,address: mainAddress,
+          administrativeArea: administrativeArea, postalCode: postalCode, country: country, street:street);
+      print(address);
+    } catch (e) {
+      print(e);
+    }
+    return placemarkModel;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool doc3,
+      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3) async{
+    if(_image == null){
+      AppUtils.showToast("Invalid Image!", true);
       return;
     }
-    print("${loginResponse.location.locationName}");
-    var addresses = await Geocoder.local.findAddressesFromQuery(loginResponse.location.locationName);
-    var first = addresses.first;
-    //print("${first.featureName} : ${first.coordinates}");
-    LatLng center = new LatLng(first.coordinates.latitude,first.coordinates.longitude);
-    LatLng selectedLocation = new LatLng(first.coordinates.latitude,first.coordinates.longitude);
-    showBottomSheet(context, center, selectedLocation, "${loginResponse.location.locationName}");
+    try {
+      print("XFile=${_image.path}");
+      print("XFile=${_image.path}");
+      if(profileImage){
+        _selectedDocument = File(_image.path);
+        docFileSize = await AppUtils.getFileSize(_selectedDocument.path, 1);
+        setState(() {
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   getBoxColor(String tag) {
@@ -1235,21 +1267,29 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     }
   }
 
-  void setBusinessData() {
+  void setBusinessData({PlacemarkModel placemarkModel}) {
     businessNameCont.text = businessDetailModel.data.businessDetail.businessName;
-    stateCont.text = businessDetailModel.data.businessDetail.state;
-    pinCodeCont.text = businessDetailModel.data.businessDetail.pincode;
-    cityCont.text = businessDetailModel.data.businessDetail.city;
-    addressCont.text = businessDetailModel.data.businessDetail.address;
-    idProofNumberCont.text = businessDetailModel.data.businessDetail.businessIdentityProofNumber;
 
+    if(widget.isComingFromAccount){
+      stateCont.text = businessDetailModel.data.businessDetail.state;
+      pinCodeCont.text = businessDetailModel.data.businessDetail.pincode;
+      cityCont.text = businessDetailModel.data.businessDetail.city;
+      addressCont.text = businessDetailModel.data.businessDetail.address;
+    }else{
+      pinCodeCont.text = placemarkModel == null || placemarkModel.postalCode == null? "" : placemarkModel.postalCode;
+      addressCont.text = placemarkModel == null || placemarkModel.address == null? "" : placemarkModel.address;
+      cityCont.text = placemarkModel == null || placemarkModel.locality == null? "" : placemarkModel.locality;
+      stateCont.text = placemarkModel == null || placemarkModel.administrativeArea == null? "" : placemarkModel.administrativeArea;
+
+    }
+
+    idProofNumberCont.text = businessDetailModel.data.businessDetail.businessIdentityProofNumber;
 
     if(businessDetailModel.data.businessDetail.radius.isNotEmpty){
       radius = int.parse(businessDetailModel.data.businessDetail.radius);
     }
 
-
-    if(businessDetailModel.data.businessDetail.lat.isNotEmpty){
+    if(businessDetailModel.data.businessDetail.lat.isNotEmpty && widget.isComingFromAccount){
       widget.userlocation = new LatLng(double.parse(businessDetailModel.data.businessDetail.lat),
           double.parse(businessDetailModel.data.businessDetail.lng));
     }
@@ -1557,11 +1597,9 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                               borderRadius: new BorderRadius.circular(25.0),
                               side: BorderSide(color: AppTheme.primaryColor)),
                           onPressed: () async {
-                            /*widget.initialPosition = localSelectedLocation;
-                            locationAddress = localAddress;
-                            eventBus.fire(
-                                onLocationChanged(widget.initialPosition));
-                            Navigator.pop(context);*/
+                            print("---localSelectedLocation--=${localSelectedLocation}");
+                            print("---localAddress---=${localAddress}");
+                            Navigator.pop(context);
                           },
                           color: AppTheme.primaryColor,
                           padding: EdgeInsets.all(5.0),
