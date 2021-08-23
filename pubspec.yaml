@@ -45,7 +45,7 @@ dependencies:
   dotted_border: ^2.0.0      #ANDROID IOS LINUX MACOS WEB WINDOWS
   google_maps_flutter: ^2.0.6 #ANDROID IOS
   event_bus: ^2.0.0          #ANDROID IOS LINUX MACOS WEB WINDOWS
-  location: ^4.3.0           #ANDROID IOS MACOS WEB
+  #location: ^4.3.0           #ANDROID IOS MACOS WEB
   flutter_html: ^2.0.0     #ANDROID IOS
   firebase_messaging: ^10.0.4  #ANDROID IOS MACOS WEB
   flutter_local_notifications: ^8.1.1+1   #ANDROID IOS MACOS
