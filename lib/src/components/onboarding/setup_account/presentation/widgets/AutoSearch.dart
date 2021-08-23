@@ -18,7 +18,15 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 // basically your widget need to extends [GooglePlacesAutocompleteWidget]
 // and your state [GooglePlacesAutocompleteState]
 class CustomSearchScaffold extends PlacesAutocompleteWidget {
-  CustomSearchScaffold() : super(apiKey: kGoogleApiKey);
+  CustomSearchScaffold() :
+        super(
+          apiKey: kGoogleApiKey,
+        sessionToken: Uuid().generateV4(),
+        language: "en",
+        components: [Component(Component.country, "in")],
+        types: [],
+        strictbounds: false
+      );
 
   @override
   CustomSearchScaffoldState createState() => CustomSearchScaffoldState();

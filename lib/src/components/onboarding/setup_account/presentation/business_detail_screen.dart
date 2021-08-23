@@ -1343,8 +1343,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     localSelectedLocation = selectedLocation;
     Set<Marker> markers = Set();
     String localAddress = address;
-    getAddressFromLocationFromMap(double latitude, double longitude,
-        {StateSetter setState}) async {
+
+    getAddressFromLocationFromMap(double latitude, double longitude, {StateSetter setState}) async {
       try {
         localCenter = LatLng(latitude, longitude);
         localSelectedLocation = LatLng(latitude, longitude);
@@ -1441,12 +1441,11 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                 LatLng detail = result;
                                 double lat = detail.latitude;
                                 double lng = detail.longitude;
-                                print("location = ${lat},${lng}");
+                                print("----result.location = ${lat},${lng}");
 
                                 localCenter = LatLng(lat, lng);
                                 localSelectedLocation = LatLng(lat, lng);
-                                getAddressFromLocationFromMap(lat, lng,
-                                    setState: setState);
+                                getAddressFromLocationFromMap(lat, lng, setState: setState);
                                 markers.clear();
                                 markers.addAll([
                                   Marker(
@@ -1478,11 +1477,6 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                                       Padding(
                                           padding:
                                           EdgeInsets.fromLTRB(3, 3, 10, 3),
-                                          /*child: Image.asset(
-                                              'images/searchicon.png',
-                                              width: 20,
-                                              fit: BoxFit.scaleDown,
-                                              color: AppTheme.primaryColor)*/
                                         child: Icon(Icons.search,size: 20,
                                             color: AppTheme.primaryColor),
                                       ),
