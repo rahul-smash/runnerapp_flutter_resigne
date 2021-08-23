@@ -20,6 +20,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
@@ -174,6 +175,9 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                           ),
                           child: InkWell(
                             onTap: (){
+                              if(widget.isComingFromAccount){
+                                return;
+                              }
                               showBottomSheet(context, center, center, "${loginResponse.location.locationName}");
                             },
                             child: Row(
@@ -1596,7 +1600,11 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                               borderRadius: new BorderRadius.circular(25.0),
                               side: BorderSide(color: AppTheme.primaryColor)),
                           onPressed: () async {
+                            if(widget.isComingFromAccount){
+                              return;
+                            }
                             widget.userlocation = localSelectedLocation;
+                            eventBus.fire(OnLocationUpdate(selectedLocation: widget.userlocation));
                             PlacemarkModel placemarkModel = await _getPlace(widget.userlocation.latitude,widget.userlocation.longitude);
                             pinCodeCont.text = placemarkModel == null || placemarkModel.postalCode == null? "" : placemarkModel.postalCode;
                             addressCont.text = placemarkModel == null || placemarkModel.address == null? "" : placemarkModel.address;
