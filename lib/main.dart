@@ -17,6 +17,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/location_service_checking.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
@@ -33,6 +34,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   print("Handling a background message: ${message.messageId}");
 }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   serviceLocator();
@@ -47,8 +49,10 @@ void main() async {
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-  if(AppConstants.isLoggedIn){
-    getIt.get<DutyStatusObserver>().changeStatus(AppSharedPref.instance.getDutyStatus());
+  if (AppConstants.isLoggedIn) {
+    getIt
+        .get<DutyStatusObserver>()
+        .changeStatus(AppSharedPref.instance.getDutyStatus());
   }
   if (kIsWeb) {
     await AppSharedPref.instance.setDevicePlatform(AppConstants.web);
@@ -118,7 +122,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return getMaterialApp(MainWidget(), navigatorKey);
+    // return getMaterialApp(MainWidget(), navigatorKey);
+    return getMaterialApp(LocationServiceChecking(), navigatorKey);
   }
 }
 

@@ -1,4 +1,4 @@
-package com.valueappz.marketplace_service_provider;
+package com.marketplace_service_provider;
 
 import android.Manifest;
 import android.app.Notification;
@@ -18,15 +18,18 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +56,7 @@ public class TrackerService extends Service {
             callNetworkServiceUpdateLocation(String.valueOf(currentLocation.getLatitude()), String.valueOf(currentLocation.getLongitude()));
         }
     };
+
     public boolean isNetworkAvailable() {
         ConnectivityManager cm =
                 (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -122,23 +126,23 @@ public class TrackerService extends Service {
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
-        }/*
+        }
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 1,
                 notificationIntent, 0);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         Notification notification = new NotificationCompat.Builder(this, "Channel_001")
                 .setContentTitle("Service Provide")
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_notification))
                 .setContentIntent(pendingIntent).
-                        setVibrate(new long[] { 1000, 1000}).
+                        setVibrate(new long[]{1000, 1000}).
                         setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
 
                 .build();
-        startForeground(12, notification);*/
+        startForeground(12, notification);
     }
 
     private void requestLocationUpdates() {
@@ -158,17 +162,17 @@ public class TrackerService extends Service {
         if (permission == PackageManager.PERMISSION_GRANTED) {
             // Request location updates and when an update is
             // received, store the location in Firebase
-           /* client.requestLocationUpdates(request, new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
-                    Location location = locationResult.getLastLocation();
-                    if (location != null) {
-                       // Log.d(TAG, "location update " + location);
-                        ref.setValue(location);
+               /* client.requestLocationUpdates(request, new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
+                        Location location = locationResult.getLastLocation();
+                        if (location != null) {
+                           // Log.d(TAG, "location update " + location);
+                            ref.setValue(location);
+                        }
                     }
-                }
-            }, null);*/
+                }, null);*/
         }
     }
 
