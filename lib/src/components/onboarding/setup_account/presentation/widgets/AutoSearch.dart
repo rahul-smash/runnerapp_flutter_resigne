@@ -9,7 +9,7 @@ import 'dart:math';
 
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 
-const kGoogleApiKey = "AIzaSyD-8uwiLIZNzkxEu0rNDA8cLOpsM3qRpWc";
+const kGoogleApiKey = "AIzaSyB8zvCo1IuOri4ZfyJB8e_T097-k_7FF60";
 
 // to get places detail (lat/lng) AIzaSyD-8uwiLIZNzkxEu0rNDA8cLOpsM3qRpWc
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
