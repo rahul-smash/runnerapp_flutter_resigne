@@ -23,7 +23,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import com.dexterous.flutterlocalnotifications.ForegroundService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class TrackerService extends ForegroundService {
+public class TrackerService extends Service {
 
     private static final String TAG = TrackerService.class.getSimpleName();
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
