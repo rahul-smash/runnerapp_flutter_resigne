@@ -189,6 +189,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> with ImagePickerL
                           child: Align(
                             alignment: Alignment.bottomRight,
                             child: Container(
+                              margin: EdgeInsets.only(bottom: 10),
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                       color: AppTheme.white,

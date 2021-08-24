@@ -25,7 +25,6 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'widgets/google_map.dart';
-import 'package:geocoding/geocoding.dart';
 
 class BusinessDetailScreen extends StatefulWidget {
 
@@ -80,13 +79,12 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     });
     getIt.get<AccountStepsDetailRepositoryImpl>().getBusinessDetail(loginResponse.data.id).then((value) async {
       businessDetailModel = value;
-
       print("${loginResponse.location.locationName}");
       var addresses = await Geocoder.local.findAddressesFromQuery(loginResponse.location.locationName);
       var first = addresses.first;
       center = new LatLng(first.coordinates.latitude,first.coordinates.longitude);
       widget.userlocation = center;
-      PlacemarkModel placemarkModel = await _getPlace(first.coordinates.latitude,first.coordinates.longitude);
+      PlacemarkModel placemarkModel = await AppUtils.getPlace(first.coordinates.latitude,first.coordinates.longitude);
       setBusinessData(placemarkModel: placemarkModel);
       workLocationList = businessDetailModel.data.serviceType;
       _selectedWorkLocationTag = workLocationList.first;
@@ -1102,37 +1100,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
   }
 
 
-  Future<PlacemarkModel> _getPlace(double latitude, double longitude) async {
-    PlacemarkModel placemarkModel;
-    try {
-      List<Placemark> newPlace = await placemarkFromCoordinates(latitude, longitude);
-      // this is all you need
-      Placemark placeMark  = newPlace[0];
-      String name = placeMark.name;
-      String subLocality = placeMark.subLocality;
-      String locality = placeMark.locality;
-      String administrativeArea = placeMark.administrativeArea;
-      String postalCode = placeMark.postalCode;
-      String country = placeMark.country;
-      String street = placeMark.street;
-      String mainAddress =
-          "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
 
-      String address = "name=${name},"
-          "\nsubLocality=${subLocality},"
-          "\nLocality=${locality},"
-          "\nadministrativeArea=${administrativeArea},"
-          "\npostalCode=${postalCode},"
-          "\nstreet=${street},"
-          "\ncountry=${country}";
-      placemarkModel = new PlacemarkModel(name: name,subLocality: subLocality, locality:locality,address: mainAddress,
-          administrativeArea: administrativeArea, postalCode: postalCode, country: country, street:street);
-      print(address);
-    } catch (e) {
-      print(e);
-    }
-    return placemarkModel;
-  }
 
   @override
   void dispose() {
@@ -1605,7 +1573,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                             }
                             widget.userlocation = localSelectedLocation;
                             eventBus.fire(OnLocationUpdate(selectedLocation: widget.userlocation));
-                            PlacemarkModel placemarkModel = await _getPlace(widget.userlocation.latitude,widget.userlocation.longitude);
+                            PlacemarkModel placemarkModel = await AppUtils.getPlace(widget.userlocation.latitude,widget.userlocation.longitude);
                             pinCodeCont.text = placemarkModel == null || placemarkModel.postalCode == null? "" : placemarkModel.postalCode;
                             addressCont.text = placemarkModel == null || placemarkModel.address == null? "" : placemarkModel.address;
                             cityCont.text = placemarkModel == null || placemarkModel.locality == null? "" : placemarkModel.locality;
