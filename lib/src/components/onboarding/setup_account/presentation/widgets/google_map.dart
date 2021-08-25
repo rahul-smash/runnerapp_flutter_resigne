@@ -5,6 +5,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -16,8 +17,9 @@ class GoogleMapScreen extends StatefulWidget {
   int radius;
   final BusinessDetailModel businessDetailModel;
   final LatLng userlocation;
+  bool isComingFromAccount;
 
-  GoogleMapScreen({@required this.callback,this.radius,this.businessDetailModel, this.userlocation});
+  GoogleMapScreen({@required this.callback,this.radius,this.businessDetailModel, this.userlocation, this.isComingFromAccount});
 
   @override
   _GoogleMapScreenState createState() {
@@ -43,10 +45,25 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
   void initState() {
     super.initState();
 
+    eventBus.on<OnLocationUpdate>().listen((event) {
+      print("event.selectedLocation=${event.selectedLocation}");
+      if(event.selectedLocation != null)
+      setState(() {
+        latitude = event.selectedLocation.latitude;
+        longitude = event.selectedLocation.longitude;
+        _center = LatLng(latitude, longitude);
+        circles.clear();
+        _markers.clear();
+        addCircle();
+        myController.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(target: LatLng(latitude, longitude), zoom: getZoomLevel((valueHolder.roundToDouble() * 1000)))));
+      });
+    });
+
     latitude = widget.userlocation.latitude;
     longitude = widget.userlocation.longitude;
 
-    if(widget.businessDetailModel.data.businessDetail.lat.isNotEmpty && widget.businessDetailModel.data.businessDetail.lng.isNotEmpty){
+    if(widget.isComingFromAccount && widget.businessDetailModel.data.businessDetail.lat.isNotEmpty && widget.businessDetailModel.data.businessDetail.lng.isNotEmpty){
        latitude = double.parse(widget.businessDetailModel.data.businessDetail.lat);
        longitude = double.parse(widget.businessDetailModel.data.businessDetail.lng);
     }
@@ -55,6 +72,10 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
     _center = LatLng(latitude, longitude);
     //print("--radius--${(valueHolder * 1000).toDouble()}-getZoomLevel()-=${getZoomLevel(2000)}");
     widget.callback(widget.radius);
+    addCircle();
+  }
+
+  void addCircle(){
     circles = Set.from([
       Circle(
           circleId: CircleId("myCircle"),
@@ -69,8 +90,8 @@ class _GoogleMapScreenState extends BaseState<GoogleMapScreen> {
     ]);
     _markers.add(
         Marker(
-            markerId: MarkerId('1122'),
-            position: LatLng(latitude, longitude),
+          markerId: MarkerId('1122'),
+          position: LatLng(latitude, longitude),
         )
     );
   }

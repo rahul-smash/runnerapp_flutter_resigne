@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
@@ -10,6 +11,8 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/business_detail_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/widgets/AutoSearch.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/work_detail_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -17,6 +20,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
@@ -27,7 +31,7 @@ class BusinessDetailScreen extends StatefulWidget {
   final VoidCallback voidCallback;
   LatLng userlocation;
   final bool isComingFromAccount;
-  BusinessDetailScreen({@required this.voidCallback, @required this.userlocation,this.isComingFromAccount = false});
+  BusinessDetailScreen({@required this.voidCallback, this.isComingFromAccount = false});
 
   @override
   _BusinessDetailScreenState createState() {
@@ -63,6 +67,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
   HashMap<String,String> closeTimeHashMap = HashMap();
   int radius;
   int defaultRadius = 20;
+  LatLng center;
 
   @override
   void initState() {
@@ -72,9 +77,15 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     setState(() {
       isLoading = true;
     });
-    getIt.get<AccountStepsDetailRepositoryImpl>().getBusinessDetail(loginResponse.data.id).then((value){
+    getIt.get<AccountStepsDetailRepositoryImpl>().getBusinessDetail(loginResponse.data.id).then((value) async {
       businessDetailModel = value;
-      setBusinessData();
+      print("${loginResponse.location.locationName}");
+      var addresses = await Geocoder.local.findAddressesFromQuery(loginResponse.location.locationName);
+      var first = addresses.first;
+      center = new LatLng(first.coordinates.latitude,first.coordinates.longitude);
+      widget.userlocation = center;
+      PlacemarkModel placemarkModel = await AppUtils.getPlace(first.coordinates.latitude,first.coordinates.longitude);
+      setBusinessData(placemarkModel: placemarkModel);
       workLocationList = businessDetailModel.data.serviceType;
       _selectedWorkLocationTag = workLocationList.first;
       _selectedProofTypeTag = businessDetailModel.data.businessIdentityProofList.first;
@@ -82,32 +93,6 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
         isLoading = false;
       });
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool doc3,
-      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3) async{
-    if(_image == null){
-      AppUtils.showToast("Invalid Image!", true);
-      return;
-    }
-    try {
-      print("XFile=${_image.path}");
-      print("XFile=${_image.path}");
-      if(profileImage){
-        _selectedDocument = File(_image.path);
-        docFileSize = await AppUtils.getFileSize(_selectedDocument.path, 1);
-        setState(() {
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
   }
 
   @override
@@ -141,7 +126,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
         ),
         widgets: <Widget>[
           InkWell(
-            onTap: (){
+            onTap: ()  {
               callApi(gotoProfileStepsScreen: true);
             },
             child: Container(
@@ -162,16 +147,60 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: Dimensions.getScaledSize(20),
-                        top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(10)
+                        top: Dimensions.getScaledSize(20),bottom: Dimensions.getScaledSize(10),
+                      right: 15
                     ),
-                    child: Text(
-                      "Business Detail",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: AppTheme.subHeadingTextColor,
-                        fontFamily: AppConstants.fontName,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Business Detail",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: AppTheme.subHeadingTextColor,
+                            fontFamily: AppConstants.fontName,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: AppTheme.grayCircle,
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(35.0)),
+                              border: Border.all(
+                                color: AppTheme.grayCircle,
+                              )
+                          ),
+                          child: InkWell(
+                            onTap: (){
+                              if(widget.isComingFromAccount){
+                                return;
+                              }
+                              showBottomSheet(context, center, center, "${loginResponse.location.locationName}");
+                            },
+                            child: Row(
+                              children: [
+                                SizedBox(width: 5,),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                  child: Icon(Icons.search,size: 20,
+                                      color: AppTheme.primaryColor),
+                                ),
+                                Text(
+                                  "Search Address",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontFamily: AppConstants.fontName,
+                                  ),
+                                ),
+                                SizedBox(width: 15,)
+                              ],
+                            ),
+                          )
+                        ),
+                      ],
                     ),
                   ),
 
@@ -417,6 +446,7 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
 
                           Container(
                             child: GoogleMapScreen(
+                              isComingFromAccount: widget.isComingFromAccount,
                               userlocation: widget.userlocation,
                               businessDetailModel: businessDetailModel,
                               radius: businessDetailModel.data.businessDetail.radius.isEmpty
@@ -1069,6 +1099,35 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     );
   }
 
+
+
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool doc3,
+      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3) async{
+    if(_image == null){
+      AppUtils.showToast("Invalid Image!", true);
+      return;
+    }
+    try {
+      print("XFile=${_image.path}");
+      print("XFile=${_image.path}");
+      if(profileImage){
+        _selectedDocument = File(_image.path);
+        docFileSize = await AppUtils.getFileSize(_selectedDocument.path, 1);
+        setState(() {
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   getBoxColor(String tag) {
     Color boxColor;
     if(showSelectedDaysListvew){
@@ -1146,8 +1205,8 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
       business_id: businessDetailModel.data.businessDetail.businessId,business_name:businessNameCont.text,
       state: stateCont.text,pincode: pinCodeCont.text,city: cityCont.text,address: addressCont.text,
       service_type: service_type,
-        radius:this.radius.toString(),
-        lat: "${widget.userlocation.latitude}",lng: "${widget.userlocation.longitude}",
+      radius:this.radius.toString(),
+      lat: "${widget.userlocation.latitude}", lng: "${widget.userlocation.longitude}",
       business_identity_proof: _selectedProofTypeTag,business_identity_proof_number: idProofNumberCont.text,
       business_identity_proof_image: _selectedDocument,working_id:businessDetailModel.data.workingDetail.workingId,
       sun_open: this.sun_open ,sun_close: this.sun_open ,mon_open: this.mon_open,mon_close:this.mon_close ,
@@ -1180,21 +1239,28 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     }
   }
 
-  void setBusinessData() {
+  void setBusinessData({PlacemarkModel placemarkModel}) {
     businessNameCont.text = businessDetailModel.data.businessDetail.businessName;
-    stateCont.text = businessDetailModel.data.businessDetail.state;
-    pinCodeCont.text = businessDetailModel.data.businessDetail.pincode;
-    cityCont.text = businessDetailModel.data.businessDetail.city;
-    addressCont.text = businessDetailModel.data.businessDetail.address;
-    idProofNumberCont.text = businessDetailModel.data.businessDetail.businessIdentityProofNumber;
 
+    if(widget.isComingFromAccount){
+      stateCont.text = businessDetailModel.data.businessDetail.state;
+      pinCodeCont.text = businessDetailModel.data.businessDetail.pincode;
+      cityCont.text = businessDetailModel.data.businessDetail.city;
+      addressCont.text = businessDetailModel.data.businessDetail.address;
+    }else{
+      pinCodeCont.text = placemarkModel == null || placemarkModel.postalCode == null? "" : placemarkModel.postalCode;
+      addressCont.text = placemarkModel == null || placemarkModel.address == null? "" : placemarkModel.address;
+      cityCont.text = placemarkModel == null || placemarkModel.locality == null? "" : placemarkModel.locality;
+      stateCont.text = placemarkModel == null || placemarkModel.administrativeArea == null? "" : placemarkModel.administrativeArea;
+    }
+
+    idProofNumberCont.text = businessDetailModel.data.businessDetail.businessIdentityProofNumber;
 
     if(businessDetailModel.data.businessDetail.radius.isNotEmpty){
       radius = int.parse(businessDetailModel.data.businessDetail.radius);
     }
 
-
-    if(businessDetailModel.data.businessDetail.lat.isNotEmpty){
+    if(businessDetailModel.data.businessDetail.lat.isNotEmpty && widget.isComingFromAccount){
       widget.userlocation = new LatLng(double.parse(businessDetailModel.data.businessDetail.lat),
           double.parse(businessDetailModel.data.businessDetail.lng));
     }
@@ -1279,6 +1345,263 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen> with Im
     setState(() {
     });
   }
+
+
+  void showBottomSheet(context, LatLng center, LatLng selectedLocation, String address) {
+    LatLng localCenter, localSelectedLocation;
+    GoogleMapController _mapController;
+    localCenter = center;
+    localSelectedLocation = selectedLocation;
+    Set<Marker> markers = Set();
+    String localAddress = address;
+
+    getAddressFromLocationFromMap(double latitude, double longitude, {StateSetter setState}) async {
+      try {
+        localCenter = LatLng(latitude, longitude);
+        localSelectedLocation = LatLng(latitude, longitude);
+        Coordinates coordinates = new Coordinates(latitude, longitude);
+        var addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        localAddress = first.addressLine;
+        if (setState != null)
+          setState(() {
+            localAddress = first.addressLine;
+          });
+      } catch (e) {
+        print(e);
+        address = "No address found!";
+      }
+    }
+
+    markers.addAll([
+      Marker(
+          draggable: true,
+          icon: BitmapDescriptor.defaultMarker,
+          markerId: MarkerId('value'),
+          position: localCenter,
+          onDragEnd: (value) {
+            getAddressFromLocationFromMap(value.latitude, value.longitude);
+          })
+    ]);
+    getAddressFromLocationFromMap(localCenter.latitude, localCenter.longitude);
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10),
+          ),
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        context: context,
+        builder: (BuildContext bc) {
+          return StatefulBuilder(builder: (BuildContext context, setState) {
+            return Wrap(children: <Widget>[
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
+                          child: Icon(
+                            Icons.cancel,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      child: Text(
+                        'Set Location',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        //padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                            color: AppTheme.grayCircle,
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(5.0)),
+                            border: Border.all(
+                              color: AppTheme.grayCircle,
+                            )),
+                        child: InkWell(
+                            onTap: () async {
+                              var result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return CustomSearchScaffold();
+                                    },
+                                    fullscreenDialog: true,
+                                  ));
+                              if (result != null) {
+                                LatLng detail = result;
+                                double lat = detail.latitude;
+                                double lng = detail.longitude;
+                                print("----result.location = ${lat},${lng}");
+
+                                localCenter = LatLng(lat, lng);
+                                localSelectedLocation = LatLng(lat, lng);
+                                getAddressFromLocationFromMap(lat, lng, setState: setState);
+                                markers.clear();
+                                markers.addAll([
+                                  Marker(
+                                      draggable: true,
+                                      icon: BitmapDescriptor.defaultMarker,
+                                      markerId: MarkerId('value'),
+                                      position: localCenter,
+                                      onDragEnd: (value) {
+                                        getAddressFromLocationFromMap(
+                                            value.latitude, value.longitude,
+                                            setState: setState);
+                                      })
+                                ]);
+                                setState(() {
+                                  _mapController.moveCamera(
+                                      CameraUpdate.newLatLng(localCenter));
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Center(
+                                child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding:
+                                          EdgeInsets.fromLTRB(3, 3, 10, 3),
+                                        child: Icon(Icons.search,size: 20,
+                                            color: AppTheme.primaryColor),
+                                      ),
+                                      Expanded(
+                                        child: RichText(
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          text: TextSpan(
+                                            text: "${localAddress}",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      )
+                                    ]),
+                              ),
+                            ))),
+                    Container(
+                        height: AppUtils.getDeviceHeight(context) >
+                            AppUtils.getDeviceWidth(context)
+                            ? AppUtils.getDeviceWidth(context) - 50
+                            : AppUtils.getDeviceHeight(context) / 2 - 50,
+                        margin:
+                        EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: GoogleMap(
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController = controller;
+                          },
+                          myLocationEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                            target: localCenter,
+                            zoom: 15.0,
+                          ),
+                          mapType: MapType.normal,
+                          markers: markers,
+                          onTap: (latLng) {
+                            if (markers.length >= 1) {
+                              markers.clear();
+                            }
+                            setState(() {
+                              markers.add(Marker(
+                                  draggable: true,
+                                  icon: BitmapDescriptor.defaultMarker,
+                                  markerId: MarkerId('value'),
+                                  position: latLng,
+                                  onDragEnd: (value) {
+                                    print(value.latitude);
+                                    print(value.longitude);
+                                    getAddressFromLocationFromMap(
+                                        value.latitude, value.longitude,
+                                        setState: setState);
+                                  }));
+                              getAddressFromLocationFromMap(
+                                  latLng.latitude, latLng.longitude,
+                                  setState: setState);
+                            });
+                          },
+                          onCameraMove: (CameraPosition position) {
+                            CameraPosition newPos =
+                            CameraPosition(target: position.target);
+                            Marker marker = markers.first;
+
+                            setState(() {
+                              markers.first
+                                  .copyWith(positionParam: newPos.target);
+                            });
+                          },
+                          //onCameraMove: _onCameraMove,
+                        )),
+                    Align(
+                      alignment: Alignment.center,
+                      child: ButtonTheme(
+                        minWidth: 180.0,
+                        height: 40.0,
+                        child: RaisedButton(
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(25.0),
+                              side: BorderSide(color: AppTheme.primaryColor)),
+                          onPressed: () async {
+                            if(widget.isComingFromAccount){
+                              return;
+                            }
+                            widget.userlocation = localSelectedLocation;
+                            eventBus.fire(OnLocationUpdate(selectedLocation: widget.userlocation));
+                            PlacemarkModel placemarkModel = await AppUtils.getPlace(widget.userlocation.latitude,widget.userlocation.longitude);
+                            pinCodeCont.text = placemarkModel == null || placemarkModel.postalCode == null? "" : placemarkModel.postalCode;
+                            addressCont.text = placemarkModel == null || placemarkModel.address == null? "" : placemarkModel.address;
+                            cityCont.text = placemarkModel == null || placemarkModel.locality == null? "" : placemarkModel.locality;
+                            stateCont.text = placemarkModel == null || placemarkModel.administrativeArea == null? "" : placemarkModel.administrativeArea;
+                            print("---localSelectedLocation--=${localSelectedLocation}");
+                            print("---localAddress---=${localAddress}");
+                            Navigator.pop(context);
+                            setState(() {
+                            });
+                          },
+                          color: AppTheme.primaryColor,
+                          padding: EdgeInsets.all(5.0),
+                          textColor: Colors.white,
+                          child: Text("Submit"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    )
+                  ],
+                ),
+              )
+            ]);
+          });
+        });
+  }
+
 }
 
 class CustomTrackShape extends RoundedRectSliderTrackShape {
