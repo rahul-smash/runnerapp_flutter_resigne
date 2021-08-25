@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
@@ -17,15 +20,19 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/location_service_checking.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
+import 'src/components/dashboard/repository/dashboard_repository.dart';
+import 'src/components/login/model/login_response.dart';
+import 'src/singleton/login_user_singleton.dart';
 import 'src/singleton/singleton_service_locations.dart';
 import 'src/singleton/store_config_singleton.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -35,8 +42,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
+/// The name associated with the UI isolate's [SendPort].
+const String isolateName = 'isolate';
+
+/// A port used to communicate from a background isolate to the UI isolate.
+final ReceivePort port = ReceivePort();
+
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  testAlarm();
+  //WidgetsFlutterBinding.ensureInitialized();
   serviceLocator();
   //initialization of shared preferences
   await AppSharedPref.instance.init();
@@ -94,6 +108,51 @@ void main() async {
   } else {
     runApp(NoNetworkApp(_navigatorKey));
   }
+}
+
+Future<void> testAlarm() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Register the UI isolate's SendPort to allow for communication from the
+  // background isolate.
+  IsolateNameServer.registerPortWithName(
+    port.sendPort,
+    isolateName,
+  );
+  await AndroidAlarmManager.initialize();
+  // Register for events from the background isolate. These messages will
+  // always coincide with an alarm firing.
+  try {
+    port.listen((_) async {
+      print("-------port.listen-------------");
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      debugPrint("----getCurrentPosition----- $position");
+      if (AppConstants.isLoggedIn) {
+        LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
+        await getIt.get<DashboardRepository>()
+            .updateRunnerLatlng(userId: loginResponse.data.id,
+            lat: '${position.latitude}', lng: '${position.longitude}',
+            address: "address");
+      }
+    });
+  } catch (e) {
+    print(e);
+  }
+  await AndroidAlarmManager.periodic(Duration(seconds: 20), 0, printHello,rescheduleOnReboot: true,wakeup: true);
+}
+
+// The background
+SendPort uiSendPort;
+Future<void> printHello() async {
+  final DateTime now = DateTime.now();
+  final int isolateId = Isolate.current.hashCode;
+  print("======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
+
+  Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  debugPrint("----getCurrentPosition----- $position");
+  // This will be null if we're running in the background.
+  uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
+  uiSendPort?.send("");
+
 }
 
 /*Setting Store Currency*/

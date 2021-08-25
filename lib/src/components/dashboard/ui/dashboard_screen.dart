@@ -2,7 +2,6 @@ import 'package:badges/badges.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
-import 'package:foreground_service/foreground_service.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/account_screen.dart';
@@ -75,7 +74,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         // LocationPermission permission = await Geolocator.requestPermission();
         print('permission-> $permission');
       } else if (permission == LocationPermission.always) {
-        _toggleForegroundServiceOnOff();
       }
     });
   }
@@ -277,82 +275,5 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           ],
         );
     }
-  }
-
-  void _toggleForegroundServiceOnOff() async {
-    final fgsIsRunning = await ForegroundService.foregroundServiceIsStarted();
-    String appMessage;
-
-    if (fgsIsRunning) {
-      await ForegroundService.stopForegroundService();
-      appMessage = "Stopped foreground service.";
-    } else {
-      maybeStartFGS();
-      appMessage = "Started foreground service.";
-    }
-
-    setState(() {
-      // _appMessage = appMessage;
-    });
-  }
-
-  //use an async method so we can await
-  void maybeStartFGS() async {
-    ///if the app was killed+relaunched, this function will be executed again
-    ///but if the foreground service stayed alive,
-    ///this does not need to be re-done
-    if (!(await ForegroundService.foregroundServiceIsStarted())) {
-      await ForegroundService.setServiceIntervalSeconds(30);
-
-      //necessity of editMode is dubious (see function comments)
-      await ForegroundService.notification.startEditMode();
-
-      await ForegroundService.notification
-          .setTitle("Service Provider ${DateTime.now()}");
-      await ForegroundService.notification.setText("");
-
-      await ForegroundService.notification.finishEditMode();
-
-      await ForegroundService.startForegroundService(foregroundServiceFunction);
-      await ForegroundService.getWakeLock();
-    }
-
-    ///this exists solely in the main app/isolate,
-    ///so needs to be redone after every app kill+relaunch
-    await ForegroundService.setupIsolateCommunication((data) {
-      debugPrint("main received: $data");
-    });
-  }
-
-  void foregroundServiceFunction() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    debugPrint("----getCurrentPosition----- $position");
-    ForegroundService.notification.setText("$position");
-    // PlacemarkModel address =
-    //     await AppUtils.getPlace(position.latitude, position.longitude);
-    // if (address != null) {
-    //   //TODO: Hit Service
-    //   if (!network.offline) {
-    //     BaseResponse baseResponse = await getIt
-    //         .get<DashboardRepository>()
-    //         .updateRunnerLatlng(
-    //             userId: loginResponse.data.id,
-    //             lat: '${position.latitude}',
-    //             lng: '${position.longitude}',
-    //             address: address.address);
-    //     if (baseResponse != null && baseResponse.success) {
-    //       print('Lat Lng Response--> ${baseResponse.message}');
-    //     }
-    //   }
-    // }
-
-    if (!ForegroundService.isIsolateCommunicationSetup) {
-      ForegroundService.setupIsolateCommunication((data) {
-        debugPrint("bg isolate received: $data");
-      });
-    }
-
-    ForegroundService.sendToPort("message from bg isolate");
   }
 }

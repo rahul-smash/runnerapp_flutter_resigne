@@ -7,9 +7,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <!-- Start Alarm Manager -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- End Alarm Manager -->
+
    <application
         android:label="@string/app_name"
-       android:name=".MyApplication"
+       android:name = "io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
        tools:ignore="Instantiatable">
        <service android:name="com.marketplace_service_provider.TrackerService" android:exported="true" android:enabled="true"/>
@@ -53,5 +58,21 @@
        <meta-data
            android:name="com.google.firebase.messaging.default_notification_icon"
            android:resource="@mipmap/ic_notification" />
+       <!-- Start Alarm Manager -->
+       <service
+           android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmService"
+           android:exported="false"
+           android:permission="android.permission.BIND_JOB_SERVICE" />
+       <receiver
+           android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmBroadcastReceiver"
+           android:exported="false" />
+       <receiver
+           android:name="dev.fluttercommunity.plus.androidalarmmanager.RebootBroadcastReceiver"
+           android:enabled="false">
+           <intent-filter>
+               <action android:name="android.intent.action.BOOT_COMPLETED"/>
+           </intent-filter>
+       </receiver>
+       <!-- End Alarm Manager -->
     </application>
 </manifest>
