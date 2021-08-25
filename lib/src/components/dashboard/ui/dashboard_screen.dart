@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:foreground_service/foreground_service.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/account_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -66,11 +70,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       LocationPermission permission = await Geolocator.checkPermission();
-      if (permission != LocationPermission.whileInUse) {
+      if (permission != LocationPermission.whileInUse&&permission != LocationPermission.always) {
         //TODO: handle this case
         // LocationPermission permission = await Geolocator.requestPermission();
         print('permission-> $permission');
-      } else if (permission != LocationPermission.always) {
+      } else if (permission == LocationPermission.always) {
         _toggleForegroundServiceOnOff();
       }
     });
@@ -298,14 +302,14 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     ///but if the foreground service stayed alive,
     ///this does not need to be re-done
     if (!(await ForegroundService.foregroundServiceIsStarted())) {
-      await ForegroundService.setServiceIntervalSeconds(15);
+      await ForegroundService.setServiceIntervalSeconds(30);
 
       //necessity of editMode is dubious (see function comments)
       await ForegroundService.notification.startEditMode();
 
       await ForegroundService.notification
           .setTitle("Service Provider ${DateTime.now()}");
-      await ForegroundService.notification.setText("Mo");
+      await ForegroundService.notification.setText("");
 
       await ForegroundService.notification.finishEditMode();
 
@@ -325,7 +329,23 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         desiredAccuracy: LocationAccuracy.high);
     debugPrint("----getCurrentPosition----- $position");
     ForegroundService.notification.setText("$position");
-    //TODO: Hit Service
+    // PlacemarkModel address =
+    //     await AppUtils.getPlace(position.latitude, position.longitude);
+    // if (address != null) {
+    //   //TODO: Hit Service
+    //   if (!network.offline) {
+    //     BaseResponse baseResponse = await getIt
+    //         .get<DashboardRepository>()
+    //         .updateRunnerLatlng(
+    //             userId: loginResponse.data.id,
+    //             lat: '${position.latitude}',
+    //             lng: '${position.longitude}',
+    //             address: address.address);
+    //     if (baseResponse != null && baseResponse.success) {
+    //       print('Lat Lng Response--> ${baseResponse.message}');
+    //     }
+    //   }
+    // }
 
     if (!ForegroundService.isIsolateCommunicationSetup) {
       ForegroundService.setupIsolateCommunication((data) {

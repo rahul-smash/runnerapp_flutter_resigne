@@ -66,4 +66,13 @@ class DashboardRepository {
     return await DashboardNetworkRepository.instance
         .bookingsCancelBookingByRunner(userId, orderId, reasonOption, reason);
   }
+
+  Future<BaseResponse> updateRunnerLatlng(
+      {String userId,
+      String lat,
+      String lng,
+      String address}) async {
+    return await DashboardNetworkRepository.instance
+        .updateRunnerLatlng(userId, lat, lng, address);
+  }
 }

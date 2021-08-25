@@ -63,6 +63,7 @@ dependencies:
   geocoder: ^0.2.1
   flutter_google_places: ^0.3.0
   geocoding: ^2.0.0
+  foreground_service: ^2.0.1+1
 
 
 dev_dependencies:
