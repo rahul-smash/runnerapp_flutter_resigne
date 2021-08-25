@@ -122,8 +122,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return getMaterialApp(MainWidget(), navigatorKey);
-    return getMaterialApp(LocationServiceChecking(), navigatorKey);
+    return getMaterialApp(MainWidget(), navigatorKey);
+    // return getMaterialApp(LocationServiceChecking(), navigatorKey);
   }
 }
 

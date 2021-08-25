@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/model/device_info.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -375,4 +377,36 @@ class AppUtils {
           ? await launch(videoUrl)
           : throw 'Could not launch $videoUrl';
 
+
+  static Future<PlacemarkModel> getPlace(double latitude, double longitude) async {
+    PlacemarkModel placemarkModel;
+    try {
+      List<Placemark> newPlace = await placemarkFromCoordinates(latitude, longitude);
+      // this is all you need
+      Placemark placeMark  = newPlace[0];
+      String name = placeMark.name;
+      String subLocality = placeMark.subLocality;
+      String locality = placeMark.locality;
+      String administrativeArea = placeMark.administrativeArea;
+      String postalCode = placeMark.postalCode;
+      String country = placeMark.country;
+      String street = placeMark.street;
+      String mainAddress =
+          "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+
+      String address = "name=${name},"
+          "\nsubLocality=${subLocality},"
+          "\nLocality=${locality},"
+          "\nadministrativeArea=${administrativeArea},"
+          "\npostalCode=${postalCode},"
+          "\nstreet=${street},"
+          "\ncountry=${country}";
+      placemarkModel = new PlacemarkModel(name: name,subLocality: subLocality, locality:locality,address: mainAddress,
+          administrativeArea: administrativeArea, postalCode: postalCode, country: country, street:street);
+      print(address);
+    } catch (e) {
+      print(e);
+    }
+    return placemarkModel;
+  }
 }
