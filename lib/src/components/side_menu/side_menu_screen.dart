@@ -16,6 +16,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class SideMenuScreen extends StatefulWidget {
@@ -216,6 +217,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 await AppSharedPref.instance.sharepref.clear();
+                eventBus.fire(AlarmEvent.cancelAllAlarm('cancel'));
                 AppConstants.isLoggedIn = false;
                 Navigator.pushAndRemoveUntil(
                     context,

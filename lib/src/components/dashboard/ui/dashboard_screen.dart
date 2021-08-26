@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:badges/badges.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/dashboard_
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -66,24 +69,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           loginResponse.afterApprovalFirstTime == "1") {
         AppUtils.displayPickUpDialog(context);
       }
-      startLocationSetup();
+      startLocationSetup(context, loginResponse);
     });
-  }
-
-  startLocationSetup() async {
-    //TODO: manage location permission //check Duty is on
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.whileInUse ||
-        permission == LocationPermission.always) {
-      if (permission == LocationPermission.whileInUse) {
-        //TODO: Show better performance dialog
-        AppUtils.displayCommonDialog(context);
-      }
-      eventBus.fire(AlarmEvent.startPeriodicAlarm('start'));
-    } else if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      //TODO: Show Dialog
-    }
   }
 
   initFirebase() async {
@@ -283,5 +270,38 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           ],
         );
     }
+  }
+}
+
+startLocationSetup(BuildContext context, LoginResponse loginResponse) async {
+  //TODO: manage location permission //check Duty is on
+  bool isServiceEnable = await Geolocator.isLocationServiceEnabled();
+  if (isServiceEnable) {
+    LocationPermission permission = await Geolocator.checkPermission();
+    await Geolocator.requestPermission();
+    if (Platform.isAndroid && loginResponse.data.onDuty == '1') {
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        if (permission == LocationPermission.whileInUse) {
+          //TODO: Show better performance dialog
+          AppUtils.displayCommonDialog(context,
+              title: labelErrorAlert,
+              massage: labelBatterPerformanceMsg, positiveOnPressed: () async {
+            await Geolocator.requestPermission();
+          });
+        }
+        eventBus.fire(AlarmEvent.startPeriodicAlarm('start'));
+      } else if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        //TODO: Show Dialog
+        AppUtils.displayCommonDialog(
+          context,
+          title: labelErrorAlert,
+          massage: labelNeedPermission,
+        );
+      }
+    }
+  } else {
+    Geolocator.openAppSettings();
   }
 }

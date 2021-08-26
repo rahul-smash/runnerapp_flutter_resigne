@@ -117,8 +117,9 @@ Future<void> initAlarm() async {
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
   //TODO: check user is login or not
   LocationPermission permissionStatus = await Geolocator.checkPermission();
-  if (AppConstants.isLoggedIn &&
-      permissionStatus == LocationPermission.always ||
+  if (Platform.isAndroid &&
+          AppConstants.isLoggedIn &&
+          permissionStatus == LocationPermission.always ||
       permissionStatus == LocationPermission.whileInUse) {
     // Register the UI isolate's SendPort to allow for communication from the
     // background isolate.
@@ -155,7 +156,7 @@ Future<void> initAlarm() async {
 }
 
 cancelAllAlarm() {
-  AndroidAlarmManager.cancel(0);
+  if (Platform.isAndroid) AndroidAlarmManager.cancel(0);
 }
 
 // The background

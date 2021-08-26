@@ -68,6 +68,8 @@ const labelNoOrderYet = 'No order yet...';
 const labelNoOrderYetMsg = "Your Customers haven't ordered\n anything";
 const labelBookingOrderCancel = "Are you sure you want to\n cancel this order?";
 const labelCancelConfirm = "Cancel Confirm";
+const labelBatterPerformanceMsg = "For better performance please allow us for background permission";
+const labelNeedPermission = "Need Permission for batter performance";
 
 const hintEnterOtp = "Enter OTP";
 const hintMPIN = "Enter 4 digit MPIN";

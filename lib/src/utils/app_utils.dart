@@ -280,8 +280,8 @@ class AppUtils {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(labelErrorAlert),
-        content: Text(labelErrorNoInternet),
+        title: Text(title),
+        content: Text(massage),
         actions: <Widget>[
           Visibility(
             visible: negativeButtonEnable,
