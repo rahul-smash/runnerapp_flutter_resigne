@@ -49,8 +49,8 @@ const String isolateName = 'isolate';
 final ReceivePort port = ReceivePort();
 
 void main() async {
-  testAlarm();
-  //WidgetsFlutterBinding.ensureInitialized();
+  // testAlarm();
+  WidgetsFlutterBinding.ensureInitialized();
   serviceLocator();
   //initialization of shared preferences
   await AppSharedPref.instance.init();
