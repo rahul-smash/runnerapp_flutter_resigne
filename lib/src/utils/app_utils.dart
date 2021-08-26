@@ -270,6 +270,42 @@ class AppUtils {
     );
   }
 
+  static String displayCommonDialog(BuildContext context,
+      {String title = '',
+      String massage = '',
+      bool positiveButtonEnable = true,
+      bool negativeButtonEnable = false,
+      Function positiveOnPressed,
+      Function negativeOnPressed}) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(massage),
+        actions: <Widget>[
+          Visibility(
+            visible: negativeButtonEnable,
+            child: TextButton(
+                child: Text(labelCancel),
+                onPressed: negativeOnPressed ??
+                    () {
+                      Navigator.pop(context);
+                    }),
+          ),
+          Visibility(
+            visible: positiveButtonEnable,
+            child: TextButton(
+                child: Text(labelOk),
+                onPressed: positiveOnPressed ??
+                    () {
+                      Navigator.pop(context);
+                    }),
+          )
+        ],
+      ),
+    );
+  }
+
   static launchCaller(String call) async {
     String url = "tel:${call}";
     if (await canLaunch(url)) {
@@ -340,11 +376,11 @@ class AppUtils {
                   height: Dimensions.getHeight(percentage: 40),
                   width: Dimensions.getWidth(percentage: 40),
                   decoration: BoxDecoration(
-                    color: AppTheme.white,
+                      color: AppTheme.white,
                       image: DecorationImage(
                           image: AssetImage(AppImages.icon_thankyou_popup_bg))),
                   child: Padding(
-                    padding:  EdgeInsets.fromLTRB(16.0,16,20,16),
+                    padding: EdgeInsets.fromLTRB(16.0, 16, 20, 16),
                     child: Align(
                       alignment: Alignment.bottomLeft,
                       child: Image.asset(
@@ -360,30 +396,29 @@ class AppUtils {
     );
   }
 
-  static void share(String msg,{String subject}){
+  static void share(String msg, {String subject}) {
     Share.share(msg, subject: subject);
   }
 
-  static Widget getHtmlView(String html){
-
+  static Widget getHtmlView(String html) {
     return Html(
       shrinkWrap: true,
       data: html,
     );
   }
 
-  static void launchURL(String videoUrl) async =>
-      await canLaunch(videoUrl)
-          ? await launch(videoUrl)
-          : throw 'Could not launch $videoUrl';
+  static void launchURL(String videoUrl) async => await canLaunch(videoUrl)
+      ? await launch(videoUrl)
+      : throw 'Could not launch $videoUrl';
 
-
-  static Future<PlacemarkModel> getPlace(double latitude, double longitude) async {
+  static Future<PlacemarkModel> getPlace(
+      double latitude, double longitude) async {
     PlacemarkModel placemarkModel;
     try {
-      List<Placemark> newPlace = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> newPlace =
+          await placemarkFromCoordinates(latitude, longitude);
       // this is all you need
-      Placemark placeMark  = newPlace[0];
+      Placemark placeMark = newPlace[0];
       String name = placeMark.name;
       String subLocality = placeMark.subLocality;
       String locality = placeMark.locality;
@@ -401,8 +436,15 @@ class AppUtils {
           "\npostalCode=${postalCode},"
           "\nstreet=${street},"
           "\ncountry=${country}";
-      placemarkModel = new PlacemarkModel(name: name,subLocality: subLocality, locality:locality,address: mainAddress,
-          administrativeArea: administrativeArea, postalCode: postalCode, country: country, street:street);
+      placemarkModel = new PlacemarkModel(
+          name: name,
+          subLocality: subLocality,
+          locality: locality,
+          address: mainAddress,
+          administrativeArea: administrativeArea,
+          postalCode: postalCode,
+          country: country,
+          street: street);
       print(address);
     } catch (e) {
       print(e);

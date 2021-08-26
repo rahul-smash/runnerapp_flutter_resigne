@@ -12,6 +12,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboa
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/notification/notification_service.dart';
@@ -20,6 +21,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/dimensions/size_config.dart';
@@ -49,8 +51,8 @@ const String isolateName = 'isolate';
 final ReceivePort port = ReceivePort();
 
 void main() async {
-  // testAlarm();
   WidgetsFlutterBinding.ensureInitialized();
+  initAlarm();
   serviceLocator();
   //initialization of shared preferences
   await AppSharedPref.instance.init();
@@ -110,49 +112,85 @@ void main() async {
   }
 }
 
-Future<void> testAlarm() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Register the UI isolate's SendPort to allow for communication from the
-  // background isolate.
-  IsolateNameServer.registerPortWithName(
-    port.sendPort,
-    isolateName,
-  );
-  await AndroidAlarmManager.initialize();
-  // Register for events from the background isolate. These messages will
-  // always coincide with an alarm firing.
-  try {
-    port.listen((_) async {
-      print("-------port.listen-------------");
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      debugPrint("----getCurrentPosition----- $position");
-      if (AppConstants.isLoggedIn) {
-        LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
-        await getIt.get<DashboardRepository>()
-            .updateRunnerLatlng(userId: loginResponse.data.id,
-            lat: '${position.latitude}', lng: '${position.longitude}',
-            address: "address");
-      }
-    });
-  } catch (e) {
-    print(e);
+Future<void> initAlarm() async {
+  await AppSharedPref.instance.init();
+  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  //TODO: check user is login or not
+  LocationPermission permissionStatus = await Geolocator.checkPermission();
+  if (Platform.isAndroid &&
+          AppConstants.isLoggedIn &&
+          permissionStatus == LocationPermission.always ||
+      permissionStatus == LocationPermission.whileInUse) {
+    // Register the UI isolate's SendPort to allow for communication from the
+    // background isolate.
+    IsolateNameServer.registerPortWithName(
+      port.sendPort,
+      isolateName,
+    );
+    await AndroidAlarmManager.initialize();
+    // Register for events from the background isolate. These messages will
+    // always coincide with an alarm firing.
+    try {
+      port.listen((_) async {
+        print("-------port.listen-------------");
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        debugPrint("----getCurrentPosition----- $position");
+        // await AppSharedPref.instance.isLoggedIn();
+        // if (AppConstants.isLoggedIn) {
+        //   LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
+        //   await getIt.get<DashboardRepository>().updateRunnerLatlng(
+        //       userId: loginResponse.data.id,
+        //       lat: '${position.latitude}',
+        //       lng: '${position.longitude}',
+        //       address: "address");
+        // }
+      });
+    } catch (e) {
+      print(e);
+    }
+    await AndroidAlarmManager.periodic(
+        Duration(seconds: 20), 0, handleBackgroundFunction,
+        rescheduleOnReboot: true, wakeup: true);
   }
-  await AndroidAlarmManager.periodic(Duration(seconds: 20), 0, printHello,rescheduleOnReboot: true,wakeup: true);
+}
+
+cancelAllAlarm() {
+  if (Platform.isAndroid) AndroidAlarmManager.cancel(0);
 }
 
 // The background
 SendPort uiSendPort;
-Future<void> printHello() async {
+//Only for use android Platform
+Future<void> handleBackgroundFunction() async {
+  await AppSharedPref.instance.init();
   final DateTime now = DateTime.now();
   final int isolateId = Isolate.current.hashCode;
-  print("======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
-
-  Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  // if(LocationPermission.always==Geolocator.checkPermission()){
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
   debugPrint("----getCurrentPosition----- $position");
   // This will be null if we're running in the background.
   uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
   uiSendPort?.send("");
+  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  print(
+      "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
+  if (AppConstants.isLoggedIn) {
+    LoginResponse loginResponse = await AppSharedPref.instance.getUser();
+    DashboardRepository repository = DashboardRepository();
+    BaseResponse baseResponse = await repository.updateRunnerLatlng(
+        userId: loginResponse.data.id,
+        lat: '${position.latitude}',
+        lng: '${position.longitude}',
+        address: "address");
+    if (baseResponse != null && baseResponse.success) {
+      print(
+          'getCurrentPosition ===reseResponse updating lat lng====${baseResponse}');
+    }
+  }
 
+  // }
 }
 
 /*Setting Store Currency*/
@@ -186,7 +224,24 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainWidget extends StatelessWidget {
+class MainWidget extends StatefulWidget {
+  @override
+  _MainWidgetState createState() => _MainWidgetState();
+}
+
+class _MainWidgetState extends State<MainWidget> {
+  @override
+  void initState() {
+    super.initState();
+    eventBus.on<AlarmEvent>().listen((event) {
+      if (event.event == 'start') {
+        initAlarm();
+      } else if (event.event == 'cancel') {
+        cancelAllAlarm();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeCustomConfig().init(AppUtils.getDeviceHeight(context),
