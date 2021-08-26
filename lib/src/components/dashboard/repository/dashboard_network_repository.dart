@@ -273,8 +273,6 @@ class DashboardNetworkRepository extends DioBaseService {
 
       // CommonNetworkUtils commonNetworkUtils = CommonNetworkUtils();
       Map<String, dynamic> param = {
-        'device_id': 'a92806383dd9d6b1',
-        'device_token': 'eA87FszkS6WP-jx-Lar823:APA91bHdMOxkK0-ILHmbCY73TS_dQdAcEpyR8vIW5gd0h6t0G1ROTrenYoHX-HU7ubVNC97Yi9BQe7V7ZDHg_MbrIgx7oPrJaCy3ZY4kqBYQ0XaQkAjyjgH6yhWFt19_f3EB40FZDNer',
         'platform': 'android'
       };
       param['user_id'] = userId;
