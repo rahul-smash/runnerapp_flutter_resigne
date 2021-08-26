@@ -243,8 +243,8 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> bookingsCancelBookingByRunner(String userId,
-      String orderId, String reasonOption, String reason) async {
+  Future<BaseResponse> bookingsCancelBookingByRunner(
+      String userId, String orderId, String reasonOption, String reason) async {
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
@@ -264,20 +264,30 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> updateRunnerLatlng(String userId,
-      String lat, String lng, String address) async {
+  Future<BaseResponse> updateRunnerLatlng(
+      String userId, String lat, String lng, String address) async {
+    print('getCurrentPosition ===start updating lat lng====');
     try {
-      Map<String, dynamic> param =
-          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      // Map<String, dynamic> param =
+      // getIt.get<CommonNetworkUtils>().getDeviceParams();
+
+      // CommonNetworkUtils commonNetworkUtils = CommonNetworkUtils();
+      Map<String, dynamic> param = {
+        'device_id': 'a92806383dd9d6b1',
+        'device_token': 'eA87FszkS6WP-jx-Lar823:APA91bHdMOxkK0-ILHmbCY73TS_dQdAcEpyR8vIW5gd0h6t0G1ROTrenYoHX-HU7ubVNC97Yi9BQe7V7ZDHg_MbrIgx7oPrJaCy3ZY4kqBYQ0XaQkAjyjgH6yhWFt19_f3EB40FZDNer',
+        'platform': 'android'
+      };
       param['user_id'] = userId;
       param['lat'] = lat;
       param['lng'] = lng;
       param['address'] = address;
-      var response = await post(
-          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
-              '${_updateRunnerLatlng}'),
-          param);
+      print(" param... $param");
+      var response = await post(apiPath('2', '${_updateRunnerLatlng}'), param);
+      print('getCurrentPosition ===hit updating lat lng====');
+
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
+      print('getCurrentPosition ===response updating lat lng====');
+
       return baseResponse;
     } catch (e) {
       debugPrint(e.toString());

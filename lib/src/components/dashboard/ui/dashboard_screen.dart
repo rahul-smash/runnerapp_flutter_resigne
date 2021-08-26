@@ -17,6 +17,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:geolocator/geolocator.dart';
@@ -65,17 +66,24 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           loginResponse.afterApprovalFirstTime == "1") {
         AppUtils.displayPickUpDialog(context);
       }
-      //TODO: manage location permission
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission != LocationPermission.whileInUse&&permission != LocationPermission.always) {
-        //TODO: handle this case
-        // LocationPermission permission = await Geolocator.requestPermission();
-        print('permission-> $permission');
-      } else if (permission == LocationPermission.always) {
-      }
+      startLocationSetup();
     });
+  }
+
+  startLocationSetup() async {
+    //TODO: manage location permission //check Duty is on
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      if (permission == LocationPermission.whileInUse) {
+        //TODO: Show better performance dialog
+        AppUtils.displayCommonDialog(context);
+      }
+      eventBus.fire(AlarmEvent.startPeriodicAlarm('start'));
+    } else if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      //TODO: Show Dialog
+    }
   }
 
   initFirebase() async {
@@ -141,7 +149,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         ));
   }
 
-  //  Current State of InnerDrawerState
+//  Current State of InnerDrawerState
   final GlobalKey<InnerDrawerState> _innerDrawerKey =
       GlobalKey<InnerDrawerState>();
 

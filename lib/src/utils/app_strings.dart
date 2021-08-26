@@ -61,6 +61,7 @@ const labelLogout = 'Logout';
 const labelErrorNoInternet = 'No internet connection';
 const labelErrorAlert = 'Alert';
 const labelOk = 'Ok';
+const labelCancel = 'Cancel';
 const labelAccept = 'Accept';
 const labelReject = 'Reject';
 const labelNoOrderYet = 'No order yet...';
