@@ -25,6 +25,10 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../payout_completed.dart';
+import '../../payout_completed_details.dart';
+import '../../pending_payouts.dart';
+
 class DashboardScreen extends StatefulWidget {
   DashboardScreen({Key key}) : super(key: key);
 
@@ -258,10 +262,15 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                     top: Dimensions.getScaledSize(3),
                     end: Dimensions.getScaledSize(2)),
                 borderRadius: BorderRadius.circular(5),
-                child: Icon(
-                  Icons.notifications,
-                  color: Colors.white,
-                ),
+                child: InkWell(
+                  onTap: (){
+
+                  },
+                  child: Icon(
+                    Icons.notifications,
+                    color: Colors.white,
+                  ),
+                )
               ),
             ),
             SizedBox(

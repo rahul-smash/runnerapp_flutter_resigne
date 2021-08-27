@@ -9,6 +9,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool centerTitle;
   final Color backBtnColor;
   final VoidCallback callback;
+  final bool removeTitleSpacing;
 
   /// you can add more fields that meet your needs
   BaseAppBar(
@@ -20,6 +21,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.widgets,
       this.backgroundColor,
       this.centerTitle = false,
+      this.removeTitleSpacing = false,
       this.callback})
       : super(key: key) {
     if (leading == null) {
@@ -40,6 +42,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: appBar.elevation,
       title: title,
       leading: leading,
+      titleSpacing: this.removeTitleSpacing ? 0.0 : null,
       backgroundColor: backgroundColor,
       actions: widgets,
     );
