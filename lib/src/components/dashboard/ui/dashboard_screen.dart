@@ -9,6 +9,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/account_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/payment_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
@@ -51,6 +52,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         },
       ),
       MyBookingScreen(),
+      PaymentScreen(),
       AccountScreen()
     ];
     initFirebase();
@@ -191,9 +193,18 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 label: labelMyBooking),
             BottomNavigationBarItem(
                 icon: Image(
-                  image: AssetImage(AppImages.icon_account),
+                  image: AssetImage(AppImages.icon_bottom_payment),
                   height: 22,
                   color: _selectedTabIndex == 2
+                      ? AppTheme.primaryColorDark
+                      : AppTheme.subHeadingTextColor,
+                ),
+                label: labelPayments),
+            BottomNavigationBarItem(
+                icon: Image(
+                  image: AssetImage(AppImages.icon_account),
+                  height: 22,
+                  color: _selectedTabIndex == 3
                       ? AppTheme.primaryColorDark
                       : AppTheme.subHeadingTextColor,
                 ),
@@ -205,35 +216,16 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   _changeIndex(int index) {
     setState(() {
       _selectedTabIndex = index;
-      print("index..." + index.toString());
     });
   }
 
   _getAppBar() {
     switch (_selectedTabIndex) {
       case 1:
-        // return BaseAppBar(
-        //   backgroundColor: AppTheme.white,
-        //   title: Text(
-        //     'My Bookings',
-        //     style: TextStyle(color: AppTheme.black),
-        //   ),
-        //   leading: IconButton(
-        //     iconSize: 20,
-        //     color: AppTheme.white,
-        //     onPressed: () => _toggle(),
-        //     icon: Image(
-        //       image: AssetImage(AppImages.icon_menu),
-        //       height: 25,
-        //       color: AppTheme.black,
-        //     ),
-        //   ),
-        //   appBar: AppBar(
-        //     automaticallyImplyLeading: false,
-        //     elevation: 4,
-        //   ),
-        // );
         return null;
+        break;
+      case 2:
+      return null;
         break;
       default:
         return BaseAppBar(

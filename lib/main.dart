@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
+import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -179,11 +180,19 @@ Future<void> handleBackgroundFunction() async {
   if (AppConstants.isLoggedIn) {
     LoginResponse loginResponse = await AppSharedPref.instance.getUser();
     DashboardRepository repository = DashboardRepository();
+    String address = 'N/A';
+    try {
+      PlacemarkModel placemarkModel =
+          await AppUtils.getPlace(position.latitude, position.longitude);
+      address = placemarkModel.address;
+    } catch (e) {
+      debugPrint(e);
+    }
     BaseResponse baseResponse = await repository.updateRunnerLatlng(
         userId: loginResponse.data.id,
         lat: '${position.latitude}',
         lng: '${position.longitude}',
-        address: "address");
+        address: address);
     if (baseResponse != null && baseResponse.success) {
       print(
           'getCurrentPosition ===reseResponse updating lat lng====${baseResponse}');

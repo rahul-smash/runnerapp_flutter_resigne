@@ -53,6 +53,7 @@ const labelHome = 'Home';
 const labelMyBooking = 'My Booking';
 const labelGallery = 'Gallery';
 const labelAccount = 'Account';
+const labelPayments = 'Payments';
 const labelAboutUs = 'About Us';
 const labelContactUs = 'Contact Us';
 const labelFaq = 'FAQ';

@@ -27,6 +27,10 @@ class DashboardNetworkRepository extends DioBaseService {
       '/runner_orders/cancelBookingByRunner';
   static const _updateRunnerLatlng =
       '/runner_authentication/updateRunnerLatlng';
+  // Payment Summery
+  // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/paymentSummery/31
+  // Pending Payout
+  // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/pendingPayouts/31
 
   DashboardNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
