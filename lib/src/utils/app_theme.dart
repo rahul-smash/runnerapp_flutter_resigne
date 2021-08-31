@@ -58,6 +58,7 @@ class AppTheme {
   static Color errorRed = Color(0xffFC5666);
   static Color whiteDisable=Colors.white38;
   static Color grayLightColor = Color(0xFFEEEEEE);
+  static Color payoutCompleteGreen = Color(0xFF29C7C7);
 
   static Color grayCircle = Color(0xffECECEC);
   static Color greenColor = Color(0xff26D990);
