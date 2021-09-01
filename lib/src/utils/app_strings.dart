@@ -71,12 +71,21 @@ const labelBookingOrderCancel = "Are you sure you want to\n cancel this order?";
 const labelCancelConfirm = "Cancel Confirm";
 const labelBatterPerformanceMsg = "For better performance please allow us for background permission";
 const labelNeedPermission = "Need Permission for batter performance";
-
+const labelPayout='Payout';
+const labelDeposits='Deposits';
+const labelDepositHistory='Deposit History';
+const labelNumberOfOrder='Number of Orders';
+const labelPayoutPendingTitle='Payout Pending';
+const labelReceivedPendingTitle='Payout Received';
+const labelUpdatedAt='Updated at ';
 const hintEnterOtp = "Enter OTP";
 const hintMPIN = "Enter 4 digit MPIN";
 const hintEnterNewMPIN = "Enter new 4 digit MPIN";
 const hintReEnterNewMPIN = "Re-Enter new 4 digit MPIN";
 const hintAddReason = "Add reason";
+const labelDepositCash = "Deposit Cash";
+const labelCashInHand = "Cash in hand";
+const labelCashLimit = "Cash Limit";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";

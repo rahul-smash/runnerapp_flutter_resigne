@@ -42,23 +42,9 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends BaseState<DashboardScreen> {
   int _selectedTabIndex = 0;
 
-  List _pages;
-
   @override
   void initState() {
     super.initState();
-    _pages = [
-      HomeScreen(
-        callback: () {
-          setState(() {
-            _selectedTabIndex = 1;
-          });
-        },
-      ),
-      MyBookingScreen(),
-      PaymentScreen(),
-      AccountScreen()
-    ];
     initFirebase();
 
     try {
@@ -136,10 +122,35 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           backgroundColor: AppTheme.white,
           appBar: _getAppBar(),
           body: Center(
-            child: _pages[_selectedTabIndex],
+            child: _getMainView(),
           ),
           bottomNavigationBar: bottomNavigationBar,
         ));
+  }
+
+  _getMainView() {
+    switch (_selectedTabIndex) {
+      case 0:
+        return HomeScreen(
+          callback: () {
+            setState(() {
+              _selectedTabIndex = 1;
+            });
+          },
+        );
+        break;
+      case 1:
+        return MyBookingScreen();
+        break;
+      case 2:
+        return PaymentScreen(() {
+          _toggle();
+        });
+        break;
+      case 3:
+        return AccountScreen();
+        break;
+    }
   }
 
 //  Current State of InnerDrawerState
@@ -229,7 +240,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         return null;
         break;
       case 2:
-      return null;
+        return null;
         break;
       default:
         return BaseAppBar(
@@ -248,22 +259,19 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           widgets: <Widget>[
             Center(
               child: Badge(
-                shape: BadgeShape.circle,
-                showBadge: false,
-                position: BadgePosition.topEnd(
-                    top: Dimensions.getScaledSize(3),
-                    end: Dimensions.getScaledSize(2)),
-                borderRadius: BorderRadius.circular(5),
-                child: InkWell(
-                  onTap: (){
-
-                  },
-                  child: Icon(
-                    Icons.notifications,
-                    color: Colors.white,
-                  ),
-                )
-              ),
+                  shape: BadgeShape.circle,
+                  showBadge: false,
+                  position: BadgePosition.topEnd(
+                      top: Dimensions.getScaledSize(3),
+                      end: Dimensions.getScaledSize(2)),
+                  borderRadius: BorderRadius.circular(5),
+                  child: InkWell(
+                    onTap: () {},
+                    child: Icon(
+                      Icons.notifications,
+                      color: Colors.white,
+                    ),
+                  )),
             ),
             SizedBox(
               width: 20,
