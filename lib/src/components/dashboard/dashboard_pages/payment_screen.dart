@@ -5,6 +5,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/pending_payouts.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -303,26 +304,44 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: _createTopCard(
-                                  AppTheme.optionTotalCustomerBgColor,
-                                  AppImages.icon_pending_graphics,
-                                  '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.pendingPayout.bookingCount}',
-                                  labelPayoutPendingTitle,
-                                  '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.pendingPayout.bookingPayout}',
-                                  '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.pendingPayout.lastUpdated}',
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (builder) =>
+                                                PendingPayouts()));
+                                  },
+                                  child: _createTopCard(
+                                    AppTheme.optionTotalCustomerBgColor,
+                                    AppImages.icon_pending_graphics,
+                                    '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.pendingPayout.bookingCount}',
+                                    labelPayoutPendingTitle,
+                                    '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.pendingPayout.bookingPayout}',
+                                    '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.pendingPayout.lastUpdated}',
+                                  ),
                                 ),
                               ),
                               SizedBox(
                                 width: 15,
                               ),
                               Expanded(
-                                child: _createTopCard(
-                                  AppTheme.optionTotalEarningColor,
-                                  AppImages.icon_received_graphics,
-                                  '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.completedPayout.bookingCount}',
-                                  labelReceivedPendingTitle,
-                                  '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.completedPayout.bookingPayout}',
-                                  '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.completedPayout.lastUpdated}',
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (builder) =>
+                                                PendingPayouts()));
+                                  },
+                                  child: _createTopCard(
+                                    AppTheme.optionTotalEarningColor,
+                                    AppImages.icon_received_graphics,
+                                    '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.completedPayout.bookingCount}',
+                                    labelReceivedPendingTitle,
+                                    '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.completedPayout.bookingPayout}',
+                                    '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.completedPayout.lastUpdated}',
+                                  ),
                                 ),
                               ),
                             ],

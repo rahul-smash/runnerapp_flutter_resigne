@@ -86,6 +86,9 @@ const hintAddReason = "Add reason";
 const labelDepositCash = "Deposit Cash";
 const labelCashInHand = "Cash in hand";
 const labelCashLimit = "Cash Limit";
+const labelCashHasBeenDeposited = "Cash has been deposited";
+const labelYourPendingAmount = "Your Pending Amount";
+const labelCash = "Cash";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";

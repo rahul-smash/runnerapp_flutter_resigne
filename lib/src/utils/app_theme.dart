@@ -43,6 +43,7 @@ class AppTheme {
   static Color primaryColorDark = Color(0xff8A6BF9);
   static Color primaryColorDark2 = Color(0xff8F75F9);
   static Color backgroundColor = Colors.white;
+  static Color backgroundGeryColor = Color(0xFFECECEC);
   static Color white = Colors.white;
   static Color toastbgColor = Color(0xff656565);
   static Color mainTextColor = Color(0xff23212B);

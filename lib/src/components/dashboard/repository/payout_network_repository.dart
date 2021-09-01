@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
@@ -39,7 +40,7 @@ class PayoutNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> getPendingPayout(String user_id) async {
+  Future<PendingSummaryResponse> getPendingPayout(String user_id, String filterOption) async {
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
@@ -47,9 +48,9 @@ class PayoutNetworkRepository extends DioBaseService {
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_pendingPayout}/${user_id}'),
           param);
-      BaseResponse dashboardResponse =
-          BaseResponse.fromJson(jsonDecode(response));
-      return dashboardResponse;
+      PendingSummaryResponse pendingSummaryResponse =
+      PendingSummaryResponse.fromJson(jsonDecode(response));
+      return pendingSummaryResponse;
     } catch (e) {
       print(e);
     }
