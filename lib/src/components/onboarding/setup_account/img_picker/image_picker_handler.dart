@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'image_picker_dialog.dart';
@@ -40,6 +39,7 @@ class ImagePickerHandler {
     imagePicker = new ImagePickerDialog(this);
     imagePicker.initState();
   }
+
 
   Future selectedImage(XFile image) async {
     _listener.selectedProfileImage(image,this.profileImage,this.docImage1,this.docImage2,this.docImage3,
