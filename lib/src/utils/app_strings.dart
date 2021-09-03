@@ -90,6 +90,7 @@ const labelCashLimit = "Cash Limit";
 const labelCashHasBeenDeposited = "Cash has been deposited";
 const labelYourPendingAmount = "Your Pending Amount";
 const labelCash = "Cash";
+const labelDepositConfirmed = "Deposit confirmed";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";
