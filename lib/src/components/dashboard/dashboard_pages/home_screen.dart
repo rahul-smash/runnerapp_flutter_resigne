@@ -288,43 +288,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                           ),
-                          // Flexible(
-                          //   child: SizedBox(
-                          //     width: 100,
-                          //     child: DropdownButtonFormField(
-                          //       dropdownColor: Colors.white,
-                          //       items: _overviewOptions.map((String options) {
-                          //         return DropdownMenuItem(
-                          //             value: options,
-                          //             child: Container(
-                          //               child: Text(
-                          //                 options,
-                          //                 textAlign: TextAlign.end,
-                          //                 style: TextStyle(
-                          //                     color: AppTheme.subHeadingTextColor,
-                          //                     fontFamily: AppConstants.fontName,
-                          //                     fontSize: AppConstants.smallSize),
-                          //               ),
-                          //             ));
-                          //       }).toList(),
-                          //       onTap: () {},
-                          //       onChanged: (newValue) {
-                          //         // do other stuff with _category
-                          //         setState(
-                          //             () => _selectedOverviewOption = newValue);
-                          //       },
-                          //       value: _selectedOverviewOption,
-                          //       decoration: InputDecoration(
-                          //         contentPadding: EdgeInsets.all(0),
-                          //         filled: true,
-                          //         border: InputBorder.none,
-                          //         fillColor: AppTheme.transparent,
-                          //         focusColor: AppTheme.transparent,
-                          //         hoverColor: AppTheme.transparent,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),

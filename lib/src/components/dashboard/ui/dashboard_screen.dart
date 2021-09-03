@@ -9,6 +9,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/account_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/payment_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
@@ -25,9 +26,9 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../../payout_completed.dart';
-import '../../payout_completed_details.dart';
-import '../../pending_payouts.dart';
+import '../payout_pages/payout_completed.dart';
+import '../payout_pages/payout_completed_details.dart';
+import '../payout_pages/pending_payouts.dart';
 
 class DashboardScreen extends StatefulWidget {
   DashboardScreen({Key key}) : super(key: key);
@@ -41,22 +42,9 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends BaseState<DashboardScreen> {
   int _selectedTabIndex = 0;
 
-  List _pages;
-
   @override
   void initState() {
     super.initState();
-    _pages = [
-      HomeScreen(
-        callback: () {
-          setState(() {
-            _selectedTabIndex = 1;
-          });
-        },
-      ),
-      MyBookingScreen(),
-      AccountScreen()
-    ];
     initFirebase();
 
     try {
@@ -134,10 +122,35 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           backgroundColor: AppTheme.white,
           appBar: _getAppBar(),
           body: Center(
-            child: _pages[_selectedTabIndex],
+            child: _getMainView(),
           ),
           bottomNavigationBar: bottomNavigationBar,
         ));
+  }
+
+  _getMainView() {
+    switch (_selectedTabIndex) {
+      case 0:
+        return HomeScreen(
+          callback: () {
+            setState(() {
+              _selectedTabIndex = 1;
+            });
+          },
+        );
+        break;
+      case 1:
+        return MyBookingScreen();
+        break;
+      case 2:
+        return PaymentScreen(() {
+          _toggle();
+        });
+        break;
+      case 3:
+        return AccountScreen();
+        break;
+    }
   }
 
 //  Current State of InnerDrawerState
@@ -195,9 +208,18 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 label: labelMyBooking),
             BottomNavigationBarItem(
                 icon: Image(
-                  image: AssetImage(AppImages.icon_account),
+                  image: AssetImage(AppImages.icon_bottom_payment),
                   height: 22,
                   color: _selectedTabIndex == 2
+                      ? AppTheme.primaryColorDark
+                      : AppTheme.subHeadingTextColor,
+                ),
+                label: labelPayments),
+            BottomNavigationBarItem(
+                icon: Image(
+                  image: AssetImage(AppImages.icon_account),
+                  height: 22,
+                  color: _selectedTabIndex == 3
                       ? AppTheme.primaryColorDark
                       : AppTheme.subHeadingTextColor,
                 ),
@@ -209,34 +231,15 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   _changeIndex(int index) {
     setState(() {
       _selectedTabIndex = index;
-      print("index..." + index.toString());
     });
   }
 
   _getAppBar() {
     switch (_selectedTabIndex) {
       case 1:
-        // return BaseAppBar(
-        //   backgroundColor: AppTheme.white,
-        //   title: Text(
-        //     'My Bookings',
-        //     style: TextStyle(color: AppTheme.black),
-        //   ),
-        //   leading: IconButton(
-        //     iconSize: 20,
-        //     color: AppTheme.white,
-        //     onPressed: () => _toggle(),
-        //     icon: Image(
-        //       image: AssetImage(AppImages.icon_menu),
-        //       height: 25,
-        //       color: AppTheme.black,
-        //     ),
-        //   ),
-        //   appBar: AppBar(
-        //     automaticallyImplyLeading: false,
-        //     elevation: 4,
-        //   ),
-        // );
+        return null;
+        break;
+      case 2:
         return null;
         break;
       default:
@@ -256,22 +259,19 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           widgets: <Widget>[
             Center(
               child: Badge(
-                shape: BadgeShape.circle,
-                showBadge: false,
-                position: BadgePosition.topEnd(
-                    top: Dimensions.getScaledSize(3),
-                    end: Dimensions.getScaledSize(2)),
-                borderRadius: BorderRadius.circular(5),
-                child: InkWell(
-                  onTap: (){
-
-                  },
-                  child: Icon(
-                    Icons.notifications,
-                    color: Colors.white,
-                  ),
-                )
-              ),
+                  shape: BadgeShape.circle,
+                  showBadge: false,
+                  position: BadgePosition.topEnd(
+                      top: Dimensions.getScaledSize(3),
+                      end: Dimensions.getScaledSize(2)),
+                  borderRadius: BorderRadius.circular(5),
+                  child: InkWell(
+                    onTap: () {},
+                    child: Icon(
+                      Icons.notifications,
+                      color: Colors.white,
+                    ),
+                  )),
             ),
             SizedBox(
               width: 20,

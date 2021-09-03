@@ -286,7 +286,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     color: AppTheme.subHeadingTextColor),
                               ),
                               Text(
-                                '${convertDateFormat(_bookingDetailsResponse.bookings.created)}',
+                                '${AppUtils.convertDateFormat(_bookingDetailsResponse.bookings.created)}',
                                 style: TextStyle(
                                     color: AppTheme.subHeadingTextColor),
                               ),
@@ -391,7 +391,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          '${convertTimeSlot(_bookingDetailsResponse.bookings.deliveryTimeSlot)}',
+                                          '${AppUtils.convertTimeSlot(_bookingDetailsResponse.bookings.deliveryTimeSlot)}',
                                           style: TextStyle(
                                               color: AppTheme.mainTextColor,
                                               fontSize: AppConstants.largeSize,
@@ -1324,23 +1324,6 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       AppUtils.noNetWorkDialog(context);
     }
     setState(() {});
-  }
-
-  convertDateFormat(DateTime dateObj) {
-    DateFormat formatter = new DateFormat('dd MMM, yyyy | hh:mm a');
-    String formatted = formatter.format(dateObj);
-    //print(formatted);
-    return formatted;
-  }
-
-  static convertTimeSlot(DateTime dateObj) {
-    //2021-08-06 12:30:00
-//    DateFormat dateFormat = DateFormat("yyyy-MM-dd, hh:mm:ss");
-//    DateTime dateTime = dateFormat.parse(dateObj);
-    DateFormat formatter = new DateFormat('hh:mm a');
-    String formatted = formatter.format(dateObj);
-    //print(formatted);
-    return formatted;
   }
 
   _bookingAction(String type, Bookings booking) async {
