@@ -76,6 +76,7 @@ const labelDeposits='Deposits';
 const labelDepositHistory='Deposit History';
 const labelNumberOfOrder='Number of Orders';
 const labelPayoutPendingTitle='Payout Pending';
+const labelChoosePaymentMethodTitle='Choose Your\nPayment Method';
 const labelReceivedPendingTitle='Payout Received';
 const labelUpdatedAt='Updated at ';
 const hintEnterOtp = "Enter OTP";

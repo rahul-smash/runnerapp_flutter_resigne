@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'image_picker_dialog.dart';
-import 'package:image_cropper/image_cropper.dart';
 
 class ImagePickerHandler {
 
@@ -42,15 +40,6 @@ class ImagePickerHandler {
     imagePicker.initState();
   }
 
-  Future cropImage(File image) async {
-    File croppedFile = await ImageCropper.cropImage(
-      sourcePath: image.path,
-      ratioX: 1.0,
-      ratioY: 1.0,
-      maxWidth: 512,
-      maxHeight: 512,
-    );
-  }
 
   Future selectedImage(XFile image) async {
     _listener.selectedProfileImage(image,this.profileImage,this.docImage1,this.docImage2,this.docImage3,

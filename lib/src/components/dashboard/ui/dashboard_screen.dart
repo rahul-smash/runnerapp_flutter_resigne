@@ -10,6 +10,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/dashboard_
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/payment_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/choose_payment_methods.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
@@ -266,7 +267,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                       end: Dimensions.getScaledSize(2)),
                   borderRadius: BorderRadius.circular(5),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                    },
                     child: Icon(
                       Icons.notifications,
                       color: Colors.white,
