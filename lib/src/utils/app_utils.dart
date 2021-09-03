@@ -465,6 +465,7 @@ class AppUtils {
   static const dateOnlyServerPattern = 'yyyy-MM-dd';
   static const dateTimeAppDisplayPattern = 'dd MMM, yyyy | hh:mm a';
   static const dateTimeAppDisplayPattern_1 = 'dd MMM yyyy, hh:mm a';
+  static const dateTimeAppDisplayPattern_2 = 'dd MMM yyyy';
   static const timeAppPattern = 'hh:mm a';
 
   static convertDateFromFormat(String stringDate,

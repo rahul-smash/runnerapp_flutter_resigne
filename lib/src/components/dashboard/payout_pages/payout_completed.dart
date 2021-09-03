@@ -4,10 +4,13 @@ import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/payout_completed_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
+import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
@@ -26,6 +29,7 @@ class PayoutCompleted extends StatefulWidget {
 class _PayoutCompletedState extends BaseState<PayoutCompleted> {
   String _selectedOverviewOption = 'Monthly';
   List<String> _overviewOptions = List.empty(growable: true);
+  CompleteSummaryResponse completeSummaryResponse;
 
   bool isApiLoading = false;
 
@@ -82,9 +86,9 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isApiLoading = true;
-     BaseResponse pendingSummaryResponse = await getIt
+      completeSummaryResponse = await getIt
           .get<PayoutRepository>()
-          .getPendingPayout(
+          .getCompletePayoutList(
               userId: loginResponse.data.id,
               filterOption: _selectedFilterParam(_selectedOverviewOption));
       setState(() {});
@@ -113,7 +117,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
           backBtnColor: Colors.white,
           backgroundColor: AppTheme.payoutCompleteGreen,
           title: Text(
-            'Payout Complete',
+            '$labelPayoutComplete',
             style: TextStyle(color: Colors.white),
           ),
           appBar: AppBar(
@@ -138,7 +142,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
               child: PopupMenuButton(
                 elevation: 3.2,
                 iconSize: 5.0,
-                tooltip: 'Sorting',
+                tooltip: labelSorting,
                 child: Row(
                   children: [
                     Text(
@@ -163,6 +167,8 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                 ),
                 onSelected: (value) {
                   _selectedOverviewOption = value;
+                  _onRefresh();
+                  setState(() {});
                 },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0))),
@@ -201,7 +207,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
           child: Stack(
             children: [
               Container(
-                height: 150,
+                height: Dimensions.getScaledSize(160),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -227,275 +233,52 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                       borderRadius: new BorderRadius.only(
                           topLeft: const Radius.circular(35.0),
                           topRight: const Radius.circular(35.0))),
-                  margin: EdgeInsets.fromLTRB(25, 100, 25, 0),
+                  margin: EdgeInsets.fromLTRB(
+                      25, Dimensions.getScaledSize(110), 25, 0),
                   padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: Column(
                     children: <Widget>[
                       SizedBox(
                         height: Dimensions.getScaledSize(10),
                       ),
-                      Expanded(
-                          child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: 10,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              if (this.network.offline) {
-                                AppUtils.showToast(
-                                    AppConstants.noInternetMsg, false);
-                                return;
-                              }
-                            },
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
-                              decoration: new BoxDecoration(
-                                  boxShadow: shadow,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(35)),
-                                  color: Colors.white),
-                              child: Container(
-                                  width: double.infinity,
-                                  //height: 140,
-                                  margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(15, 15, 5, 5),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  Text("Batch id: ",
-                                                      style: TextStyle(
-                                                        color: AppTheme
-                                                            .mainTextColor,
-                                                        fontFamily: AppConstants
-                                                            .fontName,
-                                                      )),
-                                                  Text("1855 to 1121",
-                                                      style: TextStyle(
-                                                        color: AppTheme
-                                                            .subHeadingTextColor,
-                                                        fontFamily: AppConstants
-                                                            .fontName,
-                                                      )),
-                                                ],
-                                              ),
-                                            ),
-                                            Text("29 July, 2021, 3:30 PM",
-                                                style: TextStyle(
-                                                  color: AppTheme
-                                                      .subHeadingTextColor,
-                                                  fontFamily:
-                                                      AppConstants.fontName,
-                                                )),
-                                            Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: Colors.grey,
-                                              size: 20,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 2, 10, 2),
-                                        height: 1,
-                                        width: double.infinity,
-                                        color: AppTheme.borderOnFocusedColor,
-                                      ),
-                                      Container(
-                                        height: 45,
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "No. of Orders",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        color: AppTheme
-                                                            .mainTextColor,
-                                                        fontFamily: AppConstants
-                                                            .fontName,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text("54",
-                                                          style: TextStyle(
-                                                              color: AppTheme
-                                                                  .mainTextColor,
-                                                              fontSize:
-                                                                  AppConstants
-                                                                      .largeSize2X,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700)),
-                                                    ],
-                                                  ),
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.only(top: 3),
-                                                    width: 30,
-                                                    height: 2,
-                                                    color:
-                                                        AppTheme.primaryColor,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Your Received Amount",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      color:
-                                                          AppTheme.primaryColor,
-                                                      fontFamily:
-                                                          AppConstants.fontName,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        "${AppConstants.currency} ",
-                                                        style: TextStyle(
-                                                            color: AppTheme
-                                                                .primaryColor,
-                                                            fontSize:
-                                                                AppConstants
-                                                                    .smallSize,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600)),
-                                                    Text("23000",
-                                                        style: TextStyle(
-                                                            color: AppTheme
-                                                                .primaryColor,
-                                                            fontSize:
-                                                                AppConstants
-                                                                    .largeSize2X,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                                margin: EdgeInsets.fromLTRB(
-                                                    10, 10, 10, 20),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        "${AppConstants.currency} ",
-                                                        style: TextStyle(
-                                                            color: AppTheme
-                                                                .subHeadingTextColor,
-                                                            fontSize:
-                                                                AppConstants
-                                                                    .smallSize,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600)),
-                                                    Text("2300",
-                                                        style: TextStyle(
-                                                            color: AppTheme
-                                                                .subHeadingTextColor,
-                                                            fontSize:
-                                                                AppConstants
-                                                                    .largeSize2X,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600)),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Container(
-                                                      decoration: new BoxDecoration(
-                                                          color: AppTheme
-                                                              .containerBackgroundColor,
-                                                          borderRadius:
-                                                              new BorderRadius
-                                                                      .all(
-                                                                  Radius.circular(
-                                                                      25.0))),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 10,
-                                                                right: 10,
-                                                                top: 3,
-                                                                bottom: 3),
-                                                        child: Center(
-                                                            child: Text(
-                                                          "Cash",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                              color: AppTheme
-                                                                  .mainTextColor),
-                                                        )),
-                                                      ),
-                                                    )
-                                                  ],
-                                                )),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              left: 5,
-                                              right: 20,
-                                            ),
-                                            width:
-                                                Dimensions.getScaledSize(150),
-                                            child: GradientElevatedButton(
-                                              onPressed: () {},
-                                              buttonText: "Download PDF",
-                                            ),
-                                            height: 40,
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      )
-                                    ],
-                                  )),
-                            ),
-                          );
-                        },
-                      )),
+                      isApiLoading || completeSummaryResponse == null
+                          ? Container()
+                          : Expanded(
+                              child: ListView.builder(
+                              padding: EdgeInsets.only(bottom: 40),
+                              shrinkWrap: true,
+                              itemCount: completeSummaryResponse.keysList.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(completeSummaryResponse.keysList[index],
+                                        style: TextStyle(
+                                            color: AppTheme.mainTextColor,
+                                            fontSize: 16)),
+                                    ListView.builder(
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets.zero,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: completeSummaryResponse
+                                            .completedPayouts[
+                                                completeSummaryResponse
+                                                    .keysList[index]]
+                                            .length,
+                                        itemBuilder: (BuildContext context,
+                                            int subIndex) {
+                                          return _cardItem(
+                                              completeSummaryResponse
+                                                          .completedPayouts[
+                                                      completeSummaryResponse
+                                                          .keysList[index]]
+                                                  [subIndex]);
+                                        }),
+                                  ],
+                                );
+                              },
+                            )),
                     ],
                   )),
               Align(
@@ -513,7 +296,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Payout Received",
+                                  "$labelReceivedPendingTitle",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 14.0,
@@ -530,7 +313,8 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                                                 Colors.white.withOpacity(0.8),
                                             fontSize: AppConstants.smallSize,
                                             fontWeight: FontWeight.w600)),
-                                    Text("23000",
+                                    Text(
+                                        "${isApiLoading || completeSummaryResponse == null ? '--' : '${completeSummaryResponse.summery.totalEarning}'}",
                                         style: TextStyle(
                                             color: AppTheme.white,
                                             fontSize: AppConstants.largeSize2X,
@@ -540,8 +324,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                               ],
                             ),
                           ),
-                          Image.asset(
-                              "lib/src/components/dashboard/images/top_header_tick.png")
+                          Image.asset(AppImages.icon_top_header_tick)
                         ],
                       ),
                     ),
@@ -552,7 +335,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "4 Results",
+                            "${isApiLoading || completeSummaryResponse == null ? '--' : int.parse(completeSummaryResponse.totalRecord) > 0 ? int.parse(completeSummaryResponse.totalRecord) > 1 ? '${completeSummaryResponse.totalRecord} $labelResults' : '${completeSummaryResponse.totalRecord} $labelResult' : labelNoResultFound}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14.0,
@@ -560,27 +343,27 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                               fontFamily: AppConstants.fontName,
                             ),
                           ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.keyboard_arrow_left,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                "Aug 2021",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.white,
-                                  fontFamily: AppConstants.fontName,
-                                ),
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_right,
-                                color: Colors.white,
-                              ),
-                            ],
-                          )
+                          // Row(
+                          //   children: [
+                          //     Icon(
+                          //       Icons.keyboard_arrow_left,
+                          //       color: Colors.white,
+                          //     ),
+                          //     Text(
+                          //       "Aug 2021",
+                          //       textAlign: TextAlign.center,
+                          //       style: TextStyle(
+                          //         fontSize: 14.0,
+                          //         color: Colors.white,
+                          //         fontFamily: AppConstants.fontName,
+                          //       ),
+                          //     ),
+                          //     Icon(
+                          //       Icons.keyboard_arrow_right,
+                          //       color: Colors.white,
+                          //     ),
+                          //   ],
+                          // )
                         ],
                       ),
                     )
@@ -612,6 +395,186 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _cardItem(CompletedPayouts completePayout) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (builder) => PayoutCompletedDetails(completePayout)));
+      },
+      child: Stack(
+        alignment: Alignment.centerRight,
+        children: [
+          Container(
+            margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
+            decoration: new BoxDecoration(
+                boxShadow: shadow,
+                borderRadius: BorderRadius.all(Radius.circular(35)),
+                color: Colors.white),
+            child: Container(
+                width: double.infinity,
+                margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 15, 5, 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Text("$labelBatchID: ",
+                                    style: TextStyle(
+                                      color: AppTheme.mainTextColor,
+                                      fontFamily: AppConstants.fontName,
+                                    )),
+                                Text("${completePayout.id}",
+                                    style: TextStyle(
+                                      color: AppTheme.subHeadingTextColor,
+                                      fontFamily: AppConstants.fontName,
+                                    )),
+                              ],
+                            ),
+                          ),
+                          Text(
+                              AppUtils.convertDateFormat(
+                                  completePayout.payoutCompletedDate,
+                                  parsingPattern:
+                                      AppUtils.dateTimeAppDisplayPattern_2),
+                              style: TextStyle(
+                                color: AppTheme.subHeadingTextColor,
+                                fontFamily: AppConstants.fontName,
+                              )),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Image.asset(
+                            AppImages.icon_next_arrow,
+                            color: Colors.grey,
+                            height: 15,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 2, 10, 2),
+                      height: 1,
+                      width: double.infinity,
+                      color: AppTheme.borderOnFocusedColor,
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "$labelNoOfOrders",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: AppConstants.smallSize,
+                                      color: AppTheme.mainTextColor,
+                                      fontFamily: AppConstants.fontName,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${completePayout.totalOrders}",
+                                        style: TextStyle(
+                                            color: AppTheme.mainTextColor,
+                                            fontSize: AppConstants.largeSize,
+                                            fontWeight: FontWeight.w700)),
+                                  ],
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 3),
+                                  width: 30,
+                                  height: 2,
+                                  color: AppTheme.primaryColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${labelYourReceivedAmount}",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      fontSize: AppConstants.smallSize,
+                                      color: AppTheme.primaryColor,
+                                      fontFamily: AppConstants.fontName,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${AppConstants.currency} ",
+                                        style: TextStyle(
+                                            color: AppTheme.primaryColor,
+                                            fontSize: AppConstants.smallSize,
+                                            fontWeight: FontWeight.w600)),
+                                    Expanded(
+                                      child: Text(
+                                          "${completePayout.totalPayout}",
+                                          style: TextStyle(
+                                              color: AppTheme.primaryColor,
+                                              fontSize:
+                                                  AppConstants.largeSize2X,
+                                              fontWeight: FontWeight.w600)),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: Container()),
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 5,
+                            right: 20,
+                          ),
+                          width: Dimensions.getScaledSize(150),
+                          child: GradientElevatedButton(
+                            onPressed: () {},
+                            buttonText: labelDownloadPDF,
+                          ),
+                          height: 40,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    )
+                  ],
+                )),
+          ),
+          Image.asset(
+            AppImages.icon_tick_shade_on_tile,
+            height: 80,
+          ),
+        ],
       ),
     );
   }
