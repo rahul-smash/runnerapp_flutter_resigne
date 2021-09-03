@@ -10,27 +10,31 @@ class PendingSummaryResponse {
     this.summery,
     this.pendingPayouts,
     this.totalRecord,
+    this.displayDate,
     this.keysList,
   });
 
   bool success;
   Summery summery;
   Map<String, List<PendingPayout>> pendingPayouts;
-  int totalRecord;
+  String totalRecord;
+  String displayDate;
   List<String> keysList;
 
   PendingSummaryResponse copyWith({
     bool success,
     Summery summery,
     Map<String, List<PendingPayout>> pendingPayouts,
-    int totalRecord,
-    int keysList,
+    String totalRecord,
+    String displayDate,
+    List<String> keysList,
   }) =>
       PendingSummaryResponse(
         success: success ?? this.success,
         summery: summery ?? this.summery,
         pendingPayouts: pendingPayouts ?? this.pendingPayouts,
         totalRecord: totalRecord ?? this.totalRecord,
+        displayDate: displayDate ?? this.displayDate,
         keysList: keysList ?? this.keysList,
       );
 
@@ -45,16 +49,18 @@ class PendingSummaryResponse {
       success: json["success"] == null ? null : json["success"],
       summery:
           json["summery"] == null ? null : Summery.fromJson(json["summery"]),
-      pendingPayouts: json["pendingPayouts"] == null
-          ? null
-          : Map.from(json["pendingPayouts"]).map((k, v) {
-              keysList.add(k);
-              return MapEntry<String, List<PendingPayout>>(
-                  k,
-                  List<PendingPayout>.from(
-                      v.map((x) => PendingPayout.fromJson(x))));
-            }),
-      totalRecord: json["totalRecord"] == null ? null : json["totalRecord"],
+      pendingPayouts:
+          json["pendingPayouts"] == null || json["pendingPayouts"] is List
+              ? null
+              : Map.from(json["pendingPayouts"]).map((k, v) {
+                  keysList.add(k);
+                  return MapEntry<String, List<PendingPayout>>(
+                      k,
+                      List<PendingPayout>.from(
+                          v.map((x) => PendingPayout.fromJson(x))));
+                }),
+      totalRecord: json["totalRecord"] == null ? null : json["totalRecord"].toString() ,
+      displayDate: json["display_date"] == null ? null : json["display_date"].toString(),
       keysList: keysList,
     );
   }
@@ -67,6 +73,7 @@ class PendingSummaryResponse {
             : Map.from(pendingPayouts).map((k, v) => MapEntry<String, dynamic>(
                 k, List<dynamic>.from(v.map((x) => x.toJson())))),
         "totalRecord": totalRecord == null ? null : totalRecord,
+        "display_date": displayDate == null ? null : displayDate,
       };
 }
 

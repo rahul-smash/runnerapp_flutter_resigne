@@ -5,8 +5,8 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/payout_completed.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/pending_payouts.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -332,7 +332,7 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (builder) =>
-                                                PendingPayouts()));
+                                                PayoutCompleted()));
                                   },
                                   child: _createTopCard(
                                     AppTheme.optionTotalEarningColor,

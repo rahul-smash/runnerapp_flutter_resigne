@@ -14,6 +14,7 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PendingPayouts extends StatefulWidget {
   PendingPayouts();
@@ -31,16 +32,13 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
   bool isApiLoading = false;
   PendingSummaryResponse pendingSummaryResponse;
 
+  void _onRefresh() async {
+    _getPendingPayoutSummary(isShowLoader: true);
+  }
+
   @override
   void initState() {
     super.initState();
-    // today
-    // yesterday
-    // weekly
-    // monthly //default
-    // quarterly
-    // yearly
-    // all
     _overviewOptions.add('All');
     _overviewOptions.add('Today');
     _overviewOptions.add('Yesterday');
@@ -94,7 +92,6 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
               filterOption: _selectedFilterParam(_selectedOverviewOption));
       setState(() {});
       AppUtils.hideLoader(context);
-      // _refreshController.refreshCompleted();
       isApiLoading = false;
     } else {
       AppUtils.noNetWorkDialog(context);
@@ -169,6 +166,8 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                 ),
                 onSelected: (value) {
                   _selectedOverviewOption = value;
+                  _onRefresh();
+                  setState(() {});
                 },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0))),
@@ -370,7 +369,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "10 Results",
+                            "${isApiLoading || pendingSummaryResponse == null ? '--' : int.parse(pendingSummaryResponse.totalRecord) > 0 ? int.parse(pendingSummaryResponse.totalRecord) > 1 ? '${pendingSummaryResponse.totalRecord} $labelResults': '${pendingSummaryResponse.totalRecord} $labelResult' : labelNoResultFound}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14.0,
@@ -448,154 +447,150 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
             boxShadow: shadow,
             borderRadius: BorderRadius.all(Radius.circular(35)),
             color: Colors.white),
-        child: Container(
-            width: double.infinity,
-            //height: 140,
-            margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(15, 15, 5, 5),
-                  child: Text(
-                      "#${pendingPayout.orderId} | ${AppUtils.convertDateFormat(pendingPayout.bookingDateTime, parsingPattern: AppUtils.dateTimeAppDisplayPattern_1)}",
-                      style: TextStyle(
-                        color: AppTheme.subHeadingTextColor,
-                        fontSize: AppConstants.extraSmallSize,
-                        fontFamily: AppConstants.fontName,
-                      )),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(10, 2, 10, 2),
-                  height: 1,
-                  width: double.maxFinite,
-                  color: AppTheme.borderOnFocusedColor,
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${pendingPayout.categoryTitle}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: AppConstants.largeSize,
-                                  color: AppTheme.mainTextColor,
-                                  fontFamily: AppConstants.fontName,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            Wrap(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("${AppConstants.currency} ",
-                                    style: TextStyle(
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontSize: AppConstants.smallSize,
-                                        fontWeight: FontWeight.w600)),
-                                Text("${pendingPayout.totalAmount}",
-                                    style: TextStyle(
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontSize: AppConstants.largeSize,
-                                        fontWeight: FontWeight.w600)),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      decoration: new BoxDecoration(
-                                          color:
-                                              AppTheme.containerBackgroundColor,
-                                          borderRadius: new BorderRadius.all(
-                                              Radius.circular(25.0))),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 10,
-                                            right: 10,
-                                            top: 3,
-                                            bottom: 3),
-                                        child: Center(
-                                            child: Text(
-                                          '${pendingPayout.paymentMethod.toUpperCase()}',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: AppTheme.mainTextColor),
-                                        )),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            )
-                          ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(15, 15, 5, 5),
+              child: Text(
+                  "#${pendingPayout.orderId} | ${AppUtils.convertDateFormat(pendingPayout.bookingDateTime, parsingPattern: AppUtils.dateTimeAppDisplayPattern_1)}",
+                  style: TextStyle(
+                    color: AppTheme.subHeadingTextColor,
+                    fontSize: AppConstants.extraSmallSize,
+                    fontFamily: AppConstants.fontName,
+                  )),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(10, 2, 10, 2),
+              height: 1,
+              width: double.maxFinite,
+              color: AppTheme.borderOnFocusedColor,
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${pendingPayout.categoryTitle}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: AppConstants.largeSize,
+                              color: AppTheme.mainTextColor,
+                              fontFamily: AppConstants.fontName,
+                              fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Wrap(
+                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              labelYourPendingAmount,
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: AppTheme.mainTextColor,
-                                  fontFamily: AppConstants.fontName,
-                                  fontWeight: FontWeight.w600),
+                            Text("${AppConstants.currency} ",
+                                style: TextStyle(
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontSize: AppConstants.smallSize,
+                                    fontWeight: FontWeight.w600)),
+                            Text("${pendingPayout.totalAmount}",
+                                style: TextStyle(
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontSize: AppConstants.largeSize,
+                                    fontWeight: FontWeight.w600)),
+                            SizedBox(
+                              width: 5,
                             ),
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("${AppConstants.currency} ",
-                                    style: TextStyle(
-                                        color: AppTheme.primaryColor,
-                                        fontSize: AppConstants.smallSize,
-                                        fontWeight: FontWeight.w600)),
-                                Text("--",
-                                    style: TextStyle(
-                                        color: AppTheme.primaryColor,
-                                        fontSize: AppConstants.largeSize2X,
-                                        fontWeight: FontWeight.w600))
+                                Container(
+                                  decoration: new BoxDecoration(
+                                      color: AppTheme.containerBackgroundColor,
+                                      borderRadius: new BorderRadius.all(
+                                          Radius.circular(25.0))),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 3, bottom: 3),
+                                    child: Center(
+                                        child: Text(
+                                      '${pendingPayout.paymentMethod.toUpperCase()}',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: AppTheme.mainTextColor),
+                                    )),
+                                  ),
+                                ),
                               ],
                             )
                           ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Visibility(
-                  visible: pendingPayout.cashDeposit != '0',
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.done_all,
-                          color: AppTheme.primaryColorDark,
-                          size: 20,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          labelCashHasBeenDeposited,
-                          style: TextStyle(color: AppTheme.primaryColorDark),
                         )
                       ],
                     ),
                   ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          labelYourPendingAmount,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              color: AppTheme.mainTextColor,
+                              fontFamily: AppConstants.fontName,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("${AppConstants.currency} ",
+                                style: TextStyle(
+                                    color: AppTheme.primaryColor,
+                                    fontSize: AppConstants.smallSize,
+                                    fontWeight: FontWeight.w600)),
+                            Text("--",
+                                style: TextStyle(
+                                    color: AppTheme.primaryColor,
+                                    fontSize: AppConstants.largeSize2X,
+                                    fontWeight: FontWeight.w600))
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Visibility(
+              visible: pendingPayout.cashDeposit != '0',
+              child: Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.done_all,
+                      color: AppTheme.primaryColorDark,
+                      size: 20,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      labelCashHasBeenDeposited,
+                      style: TextStyle(color: AppTheme.primaryColorDark),
+                    )
+                  ],
                 ),
-                SizedBox(height: 20,),
-              ],
-            )),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+          ],
+        ),
       ),
     );
   }

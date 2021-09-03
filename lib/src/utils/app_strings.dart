@@ -89,6 +89,9 @@ const labelCashLimit = "Cash Limit";
 const labelCashHasBeenDeposited = "Cash has been deposited";
 const labelYourPendingAmount = "Your Pending Amount";
 const labelCash = "Cash";
+const labelNoResultFound = "No Result Found";
+const labelResults = "Results";
+const labelResult = "Result";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";
