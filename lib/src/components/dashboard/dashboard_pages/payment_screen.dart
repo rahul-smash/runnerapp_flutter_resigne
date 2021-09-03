@@ -616,7 +616,7 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                                                                 width: 2,
                                                               ),
                                                               Text(
-                                                                '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.cashInHand}',
+                                                                '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.cashLimit}',
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,

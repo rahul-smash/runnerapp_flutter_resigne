@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/model/device_info.dart';
@@ -450,5 +451,40 @@ class AppUtils {
       print(e);
     }
     return placemarkModel;
+  }
+
+  static convertDateFormat(DateTime dateObj,
+      {String parsingPattern = dateTimeAppDisplayPattern}) {
+    DateFormat formatter = new DateFormat(parsingPattern);
+    String formatted = formatter.format(dateObj);
+    //print(formatted);
+    return formatted;
+  }
+
+  static const dateTimeServerPattern = 'yyyy-MM-dd hh:mm:ss';
+  static const dateOnlyServerPattern = 'yyyy-MM-dd';
+  static const dateTimeAppDisplayPattern = 'dd MMM, yyyy | hh:mm a';
+  static const dateTimeAppDisplayPattern_1 = 'dd MMM yyyy, hh:mm a';
+  static const timeAppPattern = 'hh:mm a';
+
+  static convertDateFromFormat(String stringDate,
+      {String convertorPattern = dateTimeServerPattern,
+      String parsingPattern = dateTimeAppDisplayPattern}) {
+    DateFormat dateFormat = DateFormat(convertorPattern);
+    DateTime dateTime = dateFormat.parse(stringDate);
+    DateFormat formatter = new DateFormat(parsingPattern);
+    String formatted = formatter.format(dateTime);
+    return formatted;
+  }
+
+  static convertTimeSlot(DateTime dateObj,
+      {String timePattern = timeAppPattern}) {
+    //2021-08-06 12:30:00
+//    DateFormat dateFormat = DateFormat("yyyy-MM-dd, hh:mm:ss");
+//    DateTime dateTime = dateFormat.parse(dateObj);
+    DateFormat formatter = new DateFormat(timePattern);
+    String formatted = formatter.format(dateObj);
+    //print(formatted);
+    return formatted;
   }
 }

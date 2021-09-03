@@ -120,21 +120,25 @@ class Deposite {
     this.depositePercentage,
     this.cashInHand,
     this.lastUpdated,
+    this.cashLimit,
   });
 
   String depositePercentage;
   String cashInHand;
   String lastUpdated;
+  String cashLimit;
 
   Deposite copyWith({
     String depositePercentage,
     String cashInHand,
     String lastUpdated,
+    String cashLimit,
   }) =>
       Deposite(
         depositePercentage: depositePercentage ?? this.depositePercentage,
         cashInHand: cashInHand ?? this.cashInHand,
         lastUpdated: lastUpdated ?? this.lastUpdated,
+        cashLimit: cashLimit ?? this.cashLimit,
       );
 
   factory Deposite.fromRawJson(String str) => Deposite.fromJson(json.decode(str));
@@ -145,11 +149,13 @@ class Deposite {
     depositePercentage: json["deposite_percentage"] == null ? null : json["deposite_percentage"],
     cashInHand: json["cash_in _hand"] == null ? null : json["cash_in _hand"],
     lastUpdated: json["last_updated"] == null ? null : json["last_updated"],
+    cashLimit: json["cash_limit"] == null ? null : json["cash_limit"],
   );
 
   Map<String, dynamic> toJson() => {
     "deposite_percentage": depositePercentage == null ? null : depositePercentage,
     "cash_in _hand": cashInHand == null ? null : cashInHand,
     "last_updated": lastUpdated == null ? null : lastUpdated,
+    "cash_limit": cashLimit == null ? null : cashLimit,
   };
 }
