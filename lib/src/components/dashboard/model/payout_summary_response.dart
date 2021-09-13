@@ -147,14 +147,14 @@ class Deposite {
 
   factory Deposite.fromJson(Map<String, dynamic> json) => Deposite(
     depositePercentage: json["deposite_percentage"] == null ? null : json["deposite_percentage"],
-    cashInHand: json["cash_in _hand"] == null ? null : json["cash_in _hand"],
+    cashInHand: json["cash_in_hand"] == null ? null : json["cash_in_hand"],
     lastUpdated: json["last_updated"] == null ? null : json["last_updated"],
     cashLimit: json["cash_limit"] == null ? null : json["cash_limit"],
   );
 
   Map<String, dynamic> toJson() => {
     "deposite_percentage": depositePercentage == null ? null : depositePercentage,
-    "cash_in _hand": cashInHand == null ? null : cashInHand,
+    "cash_in_hand": cashInHand == null ? null : cashInHand,
     "last_updated": lastUpdated == null ? null : lastUpdated,
     "cash_limit": cashLimit == null ? null : cashLimit,
   };

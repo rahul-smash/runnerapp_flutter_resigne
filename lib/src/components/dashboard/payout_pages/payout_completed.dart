@@ -417,6 +417,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
             child: Container(
                 width: double.infinity,
                 margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                padding:EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -514,7 +515,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                                   "${labelYourReceivedAmount}",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
-                                      fontSize: AppConstants.smallSize,
+                                      fontSize: AppConstants.extraSmallSize,
                                       color: AppTheme.primaryColor,
                                       fontFamily: AppConstants.fontName,
                                       fontWeight: FontWeight.w600),
@@ -533,7 +534,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                                           style: TextStyle(
                                               color: AppTheme.primaryColor,
                                               fontSize:
-                                                  AppConstants.largeSize2X,
+                                                  AppConstants.largeSize,
                                               fontWeight: FontWeight.w600)),
                                     )
                                   ],

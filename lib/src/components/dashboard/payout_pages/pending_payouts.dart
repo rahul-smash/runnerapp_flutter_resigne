@@ -369,7 +369,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "${isApiLoading || pendingSummaryResponse == null ? '--' : int.parse(pendingSummaryResponse.totalRecord) > 0 ? int.parse(pendingSummaryResponse.totalRecord) > 1 ? '${pendingSummaryResponse.totalRecord} $labelResults': '${pendingSummaryResponse.totalRecord} $labelResult' : labelNoResultFound}",
+                            "${isApiLoading || pendingSummaryResponse == null ? '--' : int.parse(pendingSummaryResponse.totalRecord) > 0 ? int.parse(pendingSummaryResponse.totalRecord) > 1 ? '${pendingSummaryResponse.totalRecord} $labelResults' : '${pendingSummaryResponse.totalRecord} $labelResult' : labelNoResultFound}",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14.0,
@@ -443,6 +443,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
+        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         decoration: new BoxDecoration(
             boxShadow: shadow,
             borderRadius: BorderRadius.all(Radius.circular(35)),
@@ -470,8 +471,9 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
               margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
+                  Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -490,12 +492,12 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                             Text("${AppConstants.currency} ",
                                 style: TextStyle(
                                     color: AppTheme.subHeadingTextColor,
-                                    fontSize: AppConstants.smallSize,
+                                    fontSize: AppConstants.extraSmallSize,
                                     fontWeight: FontWeight.w600)),
                             Text("${pendingPayout.totalAmount}",
                                 style: TextStyle(
                                     color: AppTheme.subHeadingTextColor,
-                                    fontSize: AppConstants.largeSize,
+                                    fontSize: AppConstants.smallSize,
                                     fontWeight: FontWeight.w600)),
                             SizedBox(
                               width: 5,
@@ -516,6 +518,8 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                                       '${pendingPayout.paymentMethod.toUpperCase()}',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
+                                          fontSize:
+                                              AppConstants.extraXSmallSize,
                                           color: AppTheme.mainTextColor),
                                     )),
                                   ),
@@ -528,38 +532,37 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                     ),
                   ),
                   SizedBox(
-                    width: 10,
+                    width: 5,
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          labelYourPendingAmount,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              color: AppTheme.mainTextColor,
-                              fontFamily: AppConstants.fontName,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("${AppConstants.currency} ",
-                                style: TextStyle(
-                                    color: AppTheme.primaryColor,
-                                    fontSize: AppConstants.smallSize,
-                                    fontWeight: FontWeight.w600)),
-                            Text("--",
-                                style: TextStyle(
-                                    color: AppTheme.primaryColor,
-                                    fontSize: AppConstants.largeSize2X,
-                                    fontWeight: FontWeight.w600))
-                          ],
-                        )
-                      ],
-                    ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        labelYourPendingAmount,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: AppConstants.extraSmallSize,
+                            color: AppTheme.mainTextColor,
+                            fontFamily: AppConstants.fontName,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("${AppConstants.currency} ",
+                              style: TextStyle(
+                                  color: AppTheme.primaryColor,
+                                  fontSize: AppConstants.smallSize,
+                                  fontWeight: FontWeight.w600)),
+                          Text("${pendingPayout.runnerPayout}",
+                              style: TextStyle(
+                                  color: AppTheme.primaryColor,
+                                  fontSize: AppConstants.largeSize,
+                                  fontWeight: FontWeight.w600))
+                        ],
+                      )
+                    ],
                   ),
                 ],
               ),

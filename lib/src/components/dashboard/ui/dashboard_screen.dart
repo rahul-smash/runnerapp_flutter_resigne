@@ -211,7 +211,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 label: labelMyBooking),
             BottomNavigationBarItem(
                 icon: Image(
-                  image: AssetImage(AppImages.icon_bottom_payment),
+                  image: AssetImage(AppImages.icon_payment_gray),
                   height: 22,
                   color: _selectedTabIndex == 2
                       ? AppTheme.primaryColorDark

@@ -4,6 +4,7 @@ import 'package:marketplace_service_provider/core/network/api/dio_base_service.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_detail_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -99,7 +100,7 @@ class PayoutNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> getDepositCashList(
+  Future<DepositResponse> getDepositCashList(
       String userId, String filterOption) async {
     try {
       Map<String, dynamic> param =
@@ -108,9 +109,9 @@ class PayoutNetworkRepository extends DioBaseService {
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_depositCashList}/${userId}/${filterOption}'),
           param);
-      BaseResponse completeListSummaryResponse =
-          BaseResponse.fromJson(jsonDecode(response));
-      return completeListSummaryResponse;
+      DepositResponse depositResponse =
+      DepositResponse.fromJson(jsonDecode(response));
+      return depositResponse;
     } catch (e) {
       print(e);
     }

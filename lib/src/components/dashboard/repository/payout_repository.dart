@@ -1,5 +1,6 @@
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_detail_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_network_repository.dart';
@@ -35,7 +36,7 @@ class PayoutRepository {
     );
   }
 
-  Future<BaseResponse> getDepositCashList(
+  Future<DepositResponse> getDepositCashList(
       {String userId, String filterOption}) async {
     return await PayoutNetworkRepository.instance
         .getDepositCashList(userId, filterOption);

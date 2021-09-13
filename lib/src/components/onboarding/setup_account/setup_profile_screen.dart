@@ -151,9 +151,11 @@ class _SetupProfileScreenState extends BaseState<SetupProfileScreen> {
                                                                       children: [
                                                                         Text("${list[index].title}",style: TextStyle(color: AppTheme.black,
                                                                           fontSize: 18,fontWeight: FontWeight.w600,fontFamily: AppConstants.fontName,),),
-                                                                        Text("${list[index].subTitle}",
-                                                                          style: TextStyle(color: AppTheme.subHeadingTextColor,fontSize: 14,
-                                                                            fontWeight: FontWeight.w500,fontFamily: AppConstants.fontName,),),
+                                                                        Expanded(
+                                                                          child: Text("${list[index].subTitle}",
+                                                                            style: TextStyle(color: AppTheme.subHeadingTextColor,fontSize: 14,
+                                                                              fontWeight: FontWeight.w500,fontFamily: AppConstants.fontName,),),
+                                                                        ),
                                                                       ],
                                                                     )
                                                                 ),
