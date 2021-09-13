@@ -6,6 +6,7 @@ import 'package:marketplace_service_provider/core/network/connectivity/network_c
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/choose_payment_methods.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/payout_completed_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -531,90 +532,96 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                       ),
                     ),
                     margin: EdgeInsets.only(left: 50, right: 50, bottom: 40),
-                    child: Stack(
-                      alignment: Alignment.centerRight,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: 8.0),
-                          child: Image.asset(
-                            AppImages.icon_tick_full_shade,
-                            height: 40,
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (builder) => ChoosePaymentMethods(_selectCashCollection)));
+                      },
+                      child: Stack(
+                        alignment: Alignment.centerRight,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              AppImages.icon_tick_full_shade,
+                              height: 40,
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 20, right: 20, bottom: 10, top: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(2.0),
-                                    child: Text(
-                                      labelSelectedAmount,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: AppConstants.extraSmallSize,
-                                          color: Colors.white70),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10, top: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(2.0),
+                                      child: Text(
+                                        labelSelectedAmount,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: AppConstants.extraSmallSize,
+                                            color: Colors.white70),
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 8.0, right: 8.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          AppConstants.currency,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.normal,
-                                              fontSize:
-                                                  AppConstants.extraSmallSize,
-                                              color: Colors.white70),
-                                        ),
-                                        SizedBox(
-                                          width: 2,
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            '${_selectedDepositCash.toStringAsFixed(2)}',
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 8.0, right: 8.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            AppConstants.currency,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.normal,
                                                 fontSize:
-                                                    AppConstants.smallSize,
-                                                color: Colors.white),
+                                                    AppConstants.extraSmallSize,
+                                                color: Colors.white70),
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(
+                                            width: 2,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              '${_selectedDepositCash.toStringAsFixed(2)}',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      AppConstants.smallSize,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              )),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  labelDepositAmount,
-                                  style: TextStyle(
-                                      color: AppTheme.white,
-                                      fontSize: AppConstants.smallSize,
-                                      fontWeight: FontWeight.bold),
+                                  ],
+                                )),
+                                SizedBox(
+                                  width: 10,
                                 ),
-                              )
-                            ],
+                                Expanded(
+                                  child: Text(
+                                    labelDepositAmount,
+                                    style: TextStyle(
+                                        color: AppTheme.white,
+                                        fontSize: AppConstants.smallSize,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -626,11 +633,9 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
     );
   }
 
-  Widget _cardItem(int subIndex, CashCollection completePayout) {
+  Widget _cardItem(int subIndex, CashCollection cashCollection) {
     return InkWell(
       onTap: () {
-        // Navigator.push(context,
-        //     MaterialPageRoute(builder: (builder) => DepositCashScreenDetails(completePayout)));
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
@@ -664,7 +669,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                         fontFamily: AppConstants.fontName,
                                       )),
                                   Text(
-                                      "${completePayout.orderId} | ${AppUtils.convertDateFormat(completePayout.cashCollectionDateTime, parsingPattern: AppUtils.dateTimeAppDisplayPattern_2)}",
+                                      "${cashCollection.orderId} | ${AppUtils.convertDateFormat(cashCollection.cashCollectionDateTime, parsingPattern: AppUtils.dateTimeAppDisplayPattern_2)}",
                                       style: TextStyle(
                                         color: AppTheme.subHeadingTextColor,
                                         fontFamily: AppConstants.fontName,
@@ -691,7 +696,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                "${completePayout.categoryTitle}",
+                                "${cashCollection.categoryTitle}",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontSize: AppConstants.smallSize,
@@ -727,7 +732,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                               fontWeight: FontWeight.w600)),
                                       Expanded(
                                         child: Text(
-                                            "${completePayout.cashCollected}",
+                                            "${cashCollection.cashCollected}",
                                             style: TextStyle(
                                                 color: AppTheme.primaryColor,
                                                 fontSize:
@@ -751,10 +756,10 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                 InkWell(
                   onTap: () {
                     setState(() {
-                      if (_selectCashCollection.contains(completePayout)) {
-                        _selectCashCollection.remove(completePayout);
+                      if (_selectCashCollection.contains(cashCollection)) {
+                        _selectCashCollection.remove(cashCollection);
                       } else {
-                        _selectCashCollection.add(completePayout);
+                        _selectCashCollection.add(cashCollection);
                       }
                       _selectedDepositCash = 0.0;
                       for (int i = 0; i < _selectCashCollection.length; i++) {
@@ -767,7 +772,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: _selectCashCollection.contains(completePayout)
+                        gradient: _selectCashCollection.contains(cashCollection)
                             ? LinearGradient(
                                 begin: Alignment.bottomRight,
                                 end: Alignment.topRight,
@@ -778,10 +783,10 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                 ],
                               )
                             : null,
-                        color: _selectCashCollection.contains(completePayout)
+                        color: _selectCashCollection.contains(cashCollection)
                             ? null
                             : AppTheme.borderOnFocusedColor),
-                    child: _selectCashCollection.contains(completePayout)
+                    child: _selectCashCollection.contains(cashCollection)
                         ? Icon(
                             Icons.done,
                             size: 20,
