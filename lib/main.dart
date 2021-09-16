@@ -2,10 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_notification_plugin/flutter_notification_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
@@ -24,18 +29,14 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
 import 'src/components/dashboard/repository/dashboard_repository.dart';
 import 'src/components/login/model/login_response.dart';
-import 'src/singleton/login_user_singleton.dart';
 import 'src/singleton/singleton_service_locations.dart';
 import 'src/singleton/store_config_singleton.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -47,13 +48,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 /// The name associated with the UI isolate's [SendPort].
 const String isolateName = 'isolate';
+const String isolateName2 = 'isolate2';
 
 /// A port used to communicate from a background isolate to the UI isolate.
 final ReceivePort port = ReceivePort();
+final ReceivePort port2 = ReceivePort();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initAlarm();
+  initReminderAlarm();
   serviceLocator();
   //initialization of shared preferences
   await AppSharedPref.instance.init();
@@ -156,12 +160,67 @@ Future<void> initAlarm() async {
   }
 }
 
+Future<void> initReminderAlarm() async {
+  bool isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  print(
+      "isAndroid ${Platform.isAndroid} IsLoggedIn $isLoggedIn IsReminderEnabled ${AppSharedPref.instance.isReminderAlarmEnabled()}");
+  if (Platform.isAndroid && AppSharedPref.instance.isReminderAlarmEnabled()) {
+    IsolateNameServer.registerPortWithName(
+      port2.sendPort,
+      isolateName2,
+    );
+    await AndroidAlarmManager.initialize();
+    try {
+      port.listen((_) async {
+        print("-------port.listen-------------");
+      });
+    } catch (e) {
+      print(e);
+    }
+    await AndroidAlarmManager.periodic(
+        Duration(seconds: 20), 1, handleReminderAlarm,
+        rescheduleOnReboot: true, wakeup: true);
+  }
+}
+
+Future<void> handleReminderAlarm() async {
+  uiSendPort2 ??= IsolateNameServer.lookupPortByName(isolateName2);
+  uiSendPort2?.send("");
+  print('handleReminderAlarm ${DateTime.now()}');
+  startForegroundService();
+}
+
+void startForegroundService() async {
+  // await FlutterNotificationPlugin.setServiceMethodInterval(seconds: 5);
+  await FlutterNotificationPlugin.startForegroundService(
+      holdWakeLock: false,
+      onStarted: () {
+        print("Foreground on Started");
+      },
+      onStopped: () {
+        print("Foreground on Stopped");
+      },
+      title: "Flutter Foreground Service",
+      content: "This is Content",
+      iconName: "ic_notification",
+      stopAction: true,
+      stopIcon: "ic_notification",
+      stopText: "Dismiss",
+      sound: 'order_recieved');
+}
+
+cancelReminderAlarm() async {
+  if (Platform.isAndroid) AndroidAlarmManager.cancel(1);
+  await FlutterNotificationPlugin.stopForegroundService();
+}
+
 cancelAllAlarm() {
   if (Platform.isAndroid) AndroidAlarmManager.cancel(0);
 }
 
 // The background
 SendPort uiSendPort;
+SendPort uiSendPort2;
 //Only for use android Platform
 Future<void> handleBackgroundFunction() async {
   await AppSharedPref.instance.init();
@@ -247,6 +306,14 @@ class _MainWidgetState extends State<MainWidget> {
         initAlarm();
       } else if (event.event == 'cancel') {
         cancelAllAlarm();
+      }
+    });
+
+    eventBus.on<ReminderAlarmEvent>().listen((event) {
+      if (event.event == 'start') {
+        initReminderAlarm();
+      } else if (event.event == 'cancel') {
+        cancelReminderAlarm();
       }
     });
   }

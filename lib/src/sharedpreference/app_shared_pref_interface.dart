@@ -35,4 +35,7 @@ abstract class AppSharePrefInterface {
 
   String getDutyStatus();
 
+  Future<bool> setReminderAlarm(bool status);
+
+  bool isReminderAlarmEnabled();
 }

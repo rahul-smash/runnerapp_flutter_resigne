@@ -18,6 +18,7 @@
         android:icon="@mipmap/ic_launcher"
        tools:ignore="Instantiatable">
        <service android:name="com.marketplace_service_provider.TrackerService" android:exported="true" android:enabled="true"/>
+       <service android:name="com.valueappz.flutter_notification_plugin.FlutterForegroundService" />
 
        <activity
             android:name=".MainActivity"
@@ -79,4 +80,7 @@
            android:screenOrientation="portrait"
            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
+    <uses-sdk
+        android:minSdkVersion="23"
+        tools:overrideLibrary="com.valueappz.flutter_notification_plugin" />
 </manifest>
