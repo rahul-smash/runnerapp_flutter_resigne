@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_notification_plugin/flutter_notification_plugin.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -8,7 +9,6 @@ import 'package:marketplace_service_provider/src/components/dashboard/repository
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_new_request_booking.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
-import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
@@ -102,7 +102,6 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
           ),
           appBar: BaseAppBar(
             backgroundColor: AppTheme.white,
-
             title: Text(
               'New Bookings',
               style: TextStyle(
@@ -118,7 +117,9 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
                 Navigator.pop(context, isChangesHappened);
               },
             ),
-            appBar: AppBar(elevation: 0,),
+            appBar: AppBar(
+              elevation: 0,
+            ),
           ),
         ));
   }
@@ -128,6 +129,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
     switch (type) {
       case 'Accept':
         if (!getIt.get<NetworkConnectionObserver>().offline) {
+          await FlutterNotificationPlugin.stopForegroundService();
           AppUtils.showLoader(context);
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
@@ -155,6 +157,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
         break;
       case 'Reject':
         if (!getIt.get<NetworkConnectionObserver>().offline) {
+          await FlutterNotificationPlugin.stopForegroundService();
           AppUtils.showLoader(context);
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()

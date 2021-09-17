@@ -129,7 +129,7 @@ class AppSharedPref extends BaseSharedPreference
   @override
   bool isReminderAlarmEnabled() {
     return sharepref?.getBool(AppSharePrefConstants.prefKeyAppReminderAlarm) ??
-        true;
+        false;
   }
 
   @override

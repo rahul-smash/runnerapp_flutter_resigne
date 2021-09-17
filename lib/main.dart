@@ -56,6 +56,7 @@ final ReceivePort port2 = ReceivePort();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterNotificationPlugin.stopForegroundService();
   initAlarm();
   initReminderAlarm();
   serviceLocator();
