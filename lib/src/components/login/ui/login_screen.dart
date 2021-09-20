@@ -13,6 +13,7 @@ import 'package:marketplace_service_provider/src/components/side_menu/model/duty
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -24,6 +25,10 @@ import 'package:marketplace_service_provider/src/widgets/gradient_elevated_butto
 import '../../../../main.dart';
 
 class LoginScreen extends StatefulWidget {
+  bool shouldForceUpdate = false;
+
+  LoginScreen({this.shouldForceUpdate});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -42,6 +47,19 @@ class _LoginScreenState extends BaseState<LoginScreen> {
     super.dispose();
     mobileFocusNode.dispose();
     passWordFocusNode.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.shouldForceUpdate) {
+      AppUtils.callForceUpdateDialog(
+          context,
+          VersionApiSingleton.instance.storeResponse.brand.name,
+          VersionApiSingleton.instance.storeResponse.brand.forceDownload[0]
+              .forceDownloadMessage,
+          storeModel: VersionApiSingleton.instance.storeResponse.brand);
+    }
   }
 
   @override
@@ -290,8 +308,11 @@ class _LoginScreenState extends BaseState<LoginScreen> {
               // 2 = block
 
               await AppSharedPref.instance.saveUser(event.loginResponse);
-              await AppSharedPref.instance.saveDutyStatus(event.loginResponse.data.onDuty);
-              getIt.get<DutyStatusObserver>().changeStatus(event.loginResponse.data.onDuty);
+              await AppSharedPref.instance
+                  .saveDutyStatus(event.loginResponse.data.onDuty);
+              getIt
+                  .get<DutyStatusObserver>()
+                  .changeStatus(event.loginResponse.data.onDuty);
 
               if (event.loginResponse.data.status == "3") {
                 Navigator.push(

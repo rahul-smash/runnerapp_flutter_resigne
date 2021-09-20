@@ -19,6 +19,7 @@ import 'package:marketplace_service_provider/src/components/onboarding/setup_acc
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -34,7 +35,9 @@ import '../payout_pages/payout_completed_details.dart';
 import '../payout_pages/pending_payouts.dart';
 
 class DashboardScreen extends StatefulWidget {
-  DashboardScreen({Key key}) : super(key: key);
+  bool shouldForceUpdate = false;
+
+  DashboardScreen({Key key, this.shouldForceUpdate}) : super(key: key);
 
   @override
   _DashboardScreenState createState() {
@@ -65,6 +68,14 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         AppUtils.displayPickUpDialog(context);
       }
       startLocationSetup(context, loginResponse);
+      if (widget.shouldForceUpdate) {
+        AppUtils.callForceUpdateDialog(
+            context,
+            VersionApiSingleton.instance.storeResponse.brand.name,
+            VersionApiSingleton.instance.storeResponse.brand.forceDownload[0]
+                .forceDownloadMessage,
+            storeModel: VersionApiSingleton.instance.storeResponse.brand);
+      }
     });
   }
 
@@ -269,8 +280,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                       end: Dimensions.getScaledSize(2)),
                   borderRadius: BorderRadius.circular(5),
                   child: InkWell(
-                    onTap: () {
-                    },
+                    onTap: () {},
                     child: Icon(
                       Icons.notifications,
                       color: Colors.white,

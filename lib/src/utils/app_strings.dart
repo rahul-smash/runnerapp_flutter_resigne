@@ -113,6 +113,8 @@ const labelCategoryName = "Category\nName";
 const labelCategoryAmount = "Category\nAmount";
 const labelReceivedAmount = "Received\nAmount";
 const labelDepositConfirmed = "Deposit confirmed";
+const labelPaidAmount = "Paid Amount";
+const labelTotalDeposit = "Total Deposit";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";

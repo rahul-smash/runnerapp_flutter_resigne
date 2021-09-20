@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/model/device_info.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -488,4 +490,93 @@ class AppUtils {
     //print(formatted);
     return formatted;
   }
+
+  static Future<bool> callForceUpdateDialog(
+      BuildContext context, String title, String message,
+      {Brand storeModel}) async {
+    return await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () {
+            //print("onWillPop onWillPop");
+            //Navigator.pop(context);
+          },
+          child: Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              //title: Text(title,textAlign: TextAlign.center,),
+              child: Container(
+                child: Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+                      child: Center(
+                        child: Text(
+                          "${title}",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppTheme.mainTextColor, fontSize: 18),
+                        ),
+                      ),
+                    ),
+                    Container(
+                        height: 1,
+                        color: Colors.black45,
+                        width: MediaQuery.of(context).size.width),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
+                      child: Center(
+                        child: Text(
+                          "${message}",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                            child: FlatButton(
+                              child: Text('Update'),
+                              color: AppTheme.primaryColor,
+                              textColor: Colors.white,
+                              onPressed: () {
+                                String urlString = "";
+                                if (Platform.isIOS) {
+                                  urlString = storeModel.iphoneShareLink;
+                                } else if (Platform.isAndroid) {
+                                  urlString = storeModel.androidShareLink;
+                                } else if (Platform.isWindows) {
+                                  urlString = storeModel.appShareLink;
+                                } else if (Platform.isLinux) {
+                                  urlString = storeModel.appShareLink;
+                                } else if (Platform.isMacOS) {
+                                  urlString = storeModel.appShareLink;
+                                }
+                                if (urlString.isNotEmpty)
+                                  launch(urlString);
+                                else {
+                                  SystemNavigator.pop();
+                                }
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        );
+      },
+    );
+  }
+
 }

@@ -24,6 +24,7 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
@@ -104,10 +105,36 @@ void main() async {
   if (!getIt.get<NetworkConnectionObserver>().offline) {
     StoreResponse storeResponse =
         await getIt.get<VersionAuthRepository>().versionApi();
+
     SingletonServiceLocations.instance.serviceLocationResponse =
         await getIt.get<VersionAuthRepository>().serviceLocationsApi();
     setStoreCurrency(storeResponse, configObject);
-    runApp(MyApp(_navigatorKey));
+    List<ForceDownload> forceDownload = storeResponse.brand.forceDownload;
+    PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
+    String version = packageInfo.version;
+
+    int index1 = version.lastIndexOf(".");
+    //print("--substring--${version.substring(0,index1)} ");
+    double currentVesrion = double.parse(version.substring(0, index1).trim());
+    double apiVesrion = 1.0;
+    try {
+      if (Platform.isIOS) {
+        apiVesrion = double.parse(
+            forceDownload[0].iosAppVersion.substring(0, index1).trim());
+      } else {
+        apiVesrion = double.parse(
+            forceDownload[0].androidAppVerison.substring(0, index1).trim());
+      }
+    } catch (e) {
+      //print("-apiVesrion--catch--${e}----");
+    }
+    bool shouldForceUpdate = false;
+    if (apiVesrion > currentVesrion) {
+      shouldForceUpdate = true;
+    } else {
+      shouldForceUpdate = false;
+    }
+    runApp(MyApp(shouldForceUpdate, _navigatorKey));
   } else {
     runApp(NoNetworkApp(_navigatorKey));
   }
@@ -223,17 +250,22 @@ void setStoreCurrency(StoreResponse storeResponse, ConfigModel configObject) {
 
 class MyApp extends StatelessWidget {
   GlobalKey<NavigatorState> navigatorKey;
+  bool shouldForceUpdate = false;
 
-  MyApp(this.navigatorKey);
+  MyApp(this.shouldForceUpdate, this.navigatorKey);
 
   @override
   Widget build(BuildContext context) {
-    return getMaterialApp(MainWidget(), navigatorKey);
+    return getMaterialApp(MainWidget(shouldForceUpdate), navigatorKey);
     // return getMaterialApp(LocationServiceChecking(), navigatorKey);
   }
 }
 
 class MainWidget extends StatefulWidget {
+  bool shouldForceUpdate=false;
+
+  MainWidget(this.shouldForceUpdate);
+
   @override
   _MainWidgetState createState() => _MainWidgetState();
 }
@@ -257,7 +289,7 @@ class _MainWidgetState extends State<MainWidget> {
         AppUtils.getDeviceWidth(context), Orientation.portrait);
     SizeConfig().init(context);
     return Scaffold(
-        body: AppConstants.isLoggedIn ? DashboardScreen() : LoginScreen());
+        body: AppConstants.isLoggedIn ? DashboardScreen(shouldForceUpdate:widget.shouldForceUpdate) : LoginScreen(shouldForceUpdate:widget.shouldForceUpdate));
   }
 }
 

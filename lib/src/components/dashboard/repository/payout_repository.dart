@@ -55,7 +55,7 @@ class PayoutRepository {
   }
 
   Future<BaseResponse> getDepositsCompletedPayoutsList(
-      String userId, String filterOption) async {
+  {String userId, String filterOption}) async {
     return await PayoutNetworkRepository.instance
         .getDepositsCompletedPayoutsList(userId, filterOption);
   }
