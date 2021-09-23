@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,6 +17,7 @@ import 'package:marketplace_service_provider/src/components/login/ui/login_scree
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/components/version_api/repository/version_repository.dart';
+import 'package:marketplace_service_provider/src/model/app_theme_color.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
@@ -25,18 +30,14 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
 import 'src/components/dashboard/repository/dashboard_repository.dart';
 import 'src/components/login/model/login_response.dart';
-import 'src/singleton/login_user_singleton.dart';
 import 'src/singleton/singleton_service_locations.dart';
 import 'src/singleton/store_config_singleton.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -109,6 +110,7 @@ void main() async {
     SingletonServiceLocations.instance.serviceLocationResponse =
         await getIt.get<VersionAuthRepository>().serviceLocationsApi();
     setStoreCurrency(storeResponse, configObject);
+    setAppThemeColors(storeResponse.brand.appThemeColor);
     List<ForceDownload> forceDownload = storeResponse.brand.forceDownload;
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
     String version = packageInfo.version;
@@ -248,6 +250,35 @@ void setStoreCurrency(StoreResponse storeResponse, ConfigModel configObject) {
   }
 }
 
+void setAppThemeColors(AppThemeColor appThemeColor) {
+  AppTheme.primaryColor = AppUtils.colorGeneralization(
+      AppTheme.primaryColor, appThemeColor.primaryColor);
+
+  AppTheme.primaryColorDark = AppUtils.colorGeneralization(
+      AppTheme.primaryColorDark, appThemeColor.primaryDarkColor);
+
+  AppTheme.backgroundColor = AppUtils.colorGeneralization(
+      AppTheme.backgroundColor, appThemeColor.backgroundColor);
+
+  AppTheme.mainTextColor = AppUtils.colorGeneralization(
+      AppTheme.mainTextColor, appThemeColor.mainTextColor);
+
+  AppTheme.subHeadingTextColor = AppUtils.colorGeneralization(
+      AppTheme.subHeadingTextColor, appThemeColor.subHeadingTextColor);
+
+  AppTheme.optionTotalEarningColor = AppUtils.colorGeneralization(
+      AppTheme.optionTotalEarningColor, appThemeColor.option1Color);
+
+  AppTheme.optionTotalBookingBgColor = AppUtils.colorGeneralization(
+      AppTheme.optionTotalBookingBgColor, appThemeColor.option2Color);
+
+  AppTheme.optionTotalCustomerBgColor = AppUtils.colorGeneralization(
+      AppTheme.optionTotalCustomerBgColor, appThemeColor.option2Color);
+
+  AppTheme.errorRed =
+      AppUtils.colorGeneralization(AppTheme.errorRed, appThemeColor.errorColor);
+}
+
 class MyApp extends StatelessWidget {
   GlobalKey<NavigatorState> navigatorKey;
   bool shouldForceUpdate = false;
@@ -262,7 +293,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainWidget extends StatefulWidget {
-  bool shouldForceUpdate=false;
+  bool shouldForceUpdate = false;
 
   MainWidget(this.shouldForceUpdate);
 
@@ -289,7 +320,9 @@ class _MainWidgetState extends State<MainWidget> {
         AppUtils.getDeviceWidth(context), Orientation.portrait);
     SizeConfig().init(context);
     return Scaffold(
-        body: AppConstants.isLoggedIn ? DashboardScreen(shouldForceUpdate:widget.shouldForceUpdate) : LoginScreen(shouldForceUpdate:widget.shouldForceUpdate));
+        body: AppConstants.isLoggedIn
+            ? DashboardScreen(shouldForceUpdate: widget.shouldForceUpdate)
+            : LoginScreen(shouldForceUpdate: widget.shouldForceUpdate));
   }
 }
 

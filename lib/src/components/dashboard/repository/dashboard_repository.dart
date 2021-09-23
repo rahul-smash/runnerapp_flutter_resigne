@@ -68,11 +68,12 @@ class DashboardRepository {
   }
 
   Future<BaseResponse> updateRunnerLatlng(
-      {String userId,
-      String lat,
-      String lng,
-      String address}) async {
+      {String userId, String lat, String lng, String address}) async {
     return await DashboardNetworkRepository.instance
         .updateRunnerLatlng(userId, lat, lng, address);
+  }
+
+  Future<String> getNotifications({String userId}) async {
+    return await DashboardNetworkRepository.instance.getNotifications(userId);
   }
 }

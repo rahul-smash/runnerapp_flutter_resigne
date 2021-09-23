@@ -27,6 +27,7 @@ class DashboardNetworkRepository extends DioBaseService {
       '/runner_orders/cancelBookingByRunner';
   static const _updateRunnerLatlng =
       '/runner_authentication/updateRunnerLatlng';
+  static const _notificationRequest = '/notifications';
 
   // Payment Summery
   // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/paymentSummery/31
@@ -293,6 +294,22 @@ class DashboardNetworkRepository extends DioBaseService {
       print('getCurrentPosition ===response updating lat lng====');
 
       return baseResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<String> getNotifications(String userId) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '$_notificationRequest'),
+          param);
+      return jsonDecode(response);
     } catch (e) {
       debugPrint(e.toString());
     }

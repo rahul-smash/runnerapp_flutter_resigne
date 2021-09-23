@@ -4,20 +4,15 @@ import 'package:badges/badges.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
-import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/account_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/notifications_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/payment_screen.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/choose_payment_methods.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/deposit_history.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/deposit_history_details.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
-import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -28,11 +23,6 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:geolocator/geolocator.dart';
-
-import '../payout_pages/payout_completed.dart';
-import '../payout_pages/payout_completed_details.dart';
-import '../payout_pages/pending_payouts.dart';
 
 class DashboardScreen extends StatefulWidget {
   bool shouldForceUpdate = false;
@@ -280,7 +270,13 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                       end: Dimensions.getScaledSize(2)),
                   borderRadius: BorderRadius.circular(5),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationScreen(),
+                          ));
+                    },
                     child: Icon(
                       Icons.notifications,
                       color: Colors.white,
