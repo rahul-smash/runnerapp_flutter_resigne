@@ -37,6 +37,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      systemOverlayStyle: appBar.systemOverlayStyle,
       centerTitle: this.centerTitle,
       automaticallyImplyLeading: appBar.automaticallyImplyLeading,
       elevation: appBar.elevation,

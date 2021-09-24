@@ -1,9 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
-import 'package:marketplace_service_provider/src/components/login/repository/login_network_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
@@ -46,6 +46,9 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
   final _otpNumberKey = GlobalKey<FormState>();
   BaseResponse response;
 
+  Timer _timer;
+  int _start = 30;
+  bool resendOtp = false;
   @override
   void initState() {
     super.initState();
@@ -62,6 +65,30 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
     signUpAsFocusNode.dispose();
     mobileFocusNode.dispose();
     otpFocusNode.dispose();
+
+    if (_timer != null) {
+      _timer.cancel();
+    }
+  }
+
+  void startTimer() {
+    //print('--startTimer===  $_start');
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        //print('--periodic===  $_start');
+        setState(
+          () {
+            if (_start < 1) {
+              timer.cancel();
+            } else {
+              _start = _start - 1;
+            }
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -77,14 +104,8 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                 fit: BoxFit.fill),
           ),
           child: Container(
-            height: MediaQuery
-                .of(context)
-                .size
-                .height,
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(left: 26, right: 26),
             child: SingleChildScrollView(
               child: Column(
@@ -134,7 +155,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       validator: (val) =>
-                      val.isEmpty ? labelErrorFirstName : null,
+                          val.isEmpty ? labelErrorFirstName : null,
                       onFieldSubmitted: (value) {
                         FocusScope.of(context).requestFocus(lastNameFocusNode);
                       },
@@ -240,7 +261,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                       keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.send,
                       validator: (val) =>
-                      val.isEmpty ? labelErrorMobileNumber : null,
+                          val.isEmpty ? labelErrorMobileNumber : null,
                       onFieldSubmitted: (value) async {
                         FocusScope.of(context).requestFocus(otpFocusNode);
                         sendOtp();
@@ -277,6 +298,29 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                               fontWeight: FontWeight.normal),
                         ),
                       ),
+                      Visibility(
+                        visible: resendOtp,
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: InkWell(
+                            child: Text(
+                              _start < 1
+                                  ? labelResendOTP
+                                  : '$labelResendOTPIn $_start sec',
+                              style: TextStyle(
+                                  color: AppTheme.primaryColorDark,
+                                  fontSize: AppConstants.extraXSmallSize,
+                                  fontFamily: AppConstants.fontName,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            onTap: () {
+                              if (_start < 1) {
+                                sendOtp();
+                              }
+                            },
+                          ),
+                        ),
+                      ),
                       Text(
                         //labelResendOTP,
                         "",
@@ -299,7 +343,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                       focusNode: otpFocusNode,
                       keyboardType: TextInputType.number,
                       validator: (val) =>
-                      val.isEmpty ? labelErrorOTPNumber : null,
+                          val.isEmpty ? labelErrorOTPNumber : null,
                       style: TextStyle(color: AppTheme.mainTextColor),
                       decoration: InputDecoration(
                         hintText: hintEnterOtp,
@@ -328,7 +372,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                         onTap: () {
                           setState(() {
                             isTermAndConditionSelected =
-                            !isTermAndConditionSelected;
+                                !isTermAndConditionSelected;
                           });
                         },
                         child: Padding(
@@ -390,10 +434,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 50, right: 50),
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     child: GradientElevatedButton(
                       onPressed: _handleSignUpButton,
                       buttonText: labelSignUp,
@@ -446,18 +487,24 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
 
   sendOtp() async {
     try {
-      if(this.network.offline){
+      if (this.network.offline) {
         AppUtils.showToast(AppConstants.noInternetMsg, false);
         return;
       }
-      if (mobileCont.text.isNotEmpty){
-            AppUtils.showLoader(context);
-            response =
-                await getIt.get<UserAuthenticationRepository>().sendOtp(phoneNumber: mobileCont.text);
-            AppUtils.showToast(response.message, false);
-            AppUtils.hideKeyboard(context);
-            AppUtils.hideLoader(context);
-          }
+      if (mobileCont.text.isNotEmpty) {
+        AppUtils.showLoader(context);
+        response = await getIt
+            .get<UserAuthenticationRepository>()
+            .sendOtp(phoneNumber: mobileCont.text);
+        AppUtils.showToast(response.message, false);
+        setState(() {
+          resendOtp = true;
+        });
+        _start = 30;
+        startTimer();
+        AppUtils.hideKeyboard(context);
+        AppUtils.hideLoader(context);
+      }
     } catch (e) {
       print(e);
     }
@@ -471,25 +518,30 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
       if (!isTermAndConditionSelected) {
         AppUtils.showToast(labelErrorTermCondition, false);
       } else {
-        if(this.network.offline){
+        if (this.network.offline) {
           AppUtils.showToast(AppConstants.noInternetMsg, false);
           return;
         }
         AppUtils.showLoader(context);
-        RegisterResponse response =
-            await getIt.get<UserAuthenticationRepository>().registerUser(
-              first_name: firstNameCont.text.trim(),last_name: lastNameCont.text.trim(),
-              otp: otpCont.text.trim(),phone: mobileCont.text.trim(),registeredAs: _selectedSignUpOption
-            );
+        RegisterResponse response = await getIt
+            .get<UserAuthenticationRepository>()
+            .registerUser(
+                first_name: firstNameCont.text.trim(),
+                last_name: lastNameCont.text.trim(),
+                otp: otpCont.text.trim(),
+                phone: mobileCont.text.trim(),
+                registeredAs: _selectedSignUpOption);
         AppUtils.hideLoader(context);
         AppUtils.showToast(response.message, false);
         AppUtils.hideKeyboard(context);
-        if(response != null){
-          if(response.success){
+        if (response != null) {
+          if (response.success) {
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                    builder: (context) => RegistrationCompleteScreen(registerResponse: response,)),
-                    (Route<dynamic> route) => false);
+                    builder: (context) => RegistrationCompleteScreen(
+                          registerResponse: response,
+                        )),
+                (Route<dynamic> route) => false);
           }
         }
       }

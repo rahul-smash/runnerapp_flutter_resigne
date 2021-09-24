@@ -1,13 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
-import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/model/register_response.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -219,6 +216,12 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
         AppUtils.showToast(newPinValidationMsg, false);
         return;
       }
+
+      if (newPinCont.text.length != 4 || confirmPinCont.text.length != 4) {
+        AppUtils.showToast(labelErrorMPINNumber, false);
+        return;
+      }
+
       if (!AppUtils.equalsIgnoreCase(newPinCont.text, confirmPinCont.text)) {
         AppUtils.showToast(confirmPinValidationMsg, false);
         return;
@@ -228,20 +231,18 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
           .get<UserAuthenticationRepository>()
           .setMpin(
               mPin: newPinCont.text, userId: widget.registerResponse.data.id);
-      if (response != null)
-      AppUtils.hideKeyboard(context);
+      if (response != null) AppUtils.hideKeyboard(context);
       AppUtils.hideLoader(context);
-      if(response.success){
+      if (response.success) {
         AppUtils.showToast(response.message, false);
         LoginUserSingleton.instance.loginResponse = response;
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
                 builder: (context) => ServicesLocationScreen(
-                  loginResponse: response,
-                )),
-                (Route<dynamic> route) => false);
+                      loginResponse: response,
+                    )),
+            (Route<dynamic> route) => false);
       }
-
     } catch (e) {
       print(e);
     }

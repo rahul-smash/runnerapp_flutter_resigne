@@ -20,12 +20,13 @@ class PayoutNetworkRepository extends DioBaseService {
   static const _completePayoutList = '/runner_payouts/completedPayouts';
   static const _completePayoutDetail = '/runner_payouts/payoutHistory';
 
-  static const _depositCashList = '/runner_deposits/collectedCash';//Pending Deposit List
-  static const _depositCash = '/runner_deposits/depositCash';//Deposit Cash
+  static const _depositCashList =
+      '/runner_deposits/collectedCash'; //Pending Deposit List
+  static const _depositCash = '/runner_deposits/depositCash'; //Deposit Cash
   static const _depositsCompletedPayoutsList =
-      '/runner_deposits/completedPayouts';//Completed Deposit List
+      '/runner_deposits/completedPayouts'; //Completed Deposit List
   static const _depositsCompletedPayoutDetail =
-      '/runner_deposits/depositHistory';//Completed Deposit History List
+      '/runner_deposits/depositHistory'; //Completed Deposit History List
 
   PayoutNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -72,8 +73,7 @@ class PayoutNetworkRepository extends DioBaseService {
   }
 
   Future<BaseResponse> getDepositCash(
-    String ids
-    /*pending deposit index id*/,
+    String ids /*pending deposit index id*/,
     String orderIds,
     String totalOrdersAmount,
     String totalOrders,
@@ -110,7 +110,7 @@ class PayoutNetworkRepository extends DioBaseService {
               '${_depositCashList}/${userId}/${filterOption}'),
           param);
       DepositResponse depositResponse =
-      DepositResponse.fromJson(jsonDecode(response));
+          DepositResponse.fromJson(jsonDecode(response));
       return depositResponse;
     } catch (e) {
       print(e);
@@ -128,7 +128,7 @@ class PayoutNetworkRepository extends DioBaseService {
               '${_completePayoutList}/${userId}/${filterOption}'),
           param);
       CompleteSummaryResponse completeListSummaryResponse =
-      CompleteSummaryResponse.fromJson(jsonDecode(response));
+          CompleteSummaryResponse.fromJson(jsonDecode(response));
       return completeListSummaryResponse;
     } catch (e) {
       print(e);
@@ -146,7 +146,7 @@ class PayoutNetworkRepository extends DioBaseService {
               '${_completePayoutDetail}/${userId}/${batchId}'),
           param);
       CompleteDetailResponse completeDetailsResponse =
-      CompleteDetailResponse.fromJson(jsonDecode(response));
+          CompleteDetailResponse.fromJson(jsonDecode(response));
       return completeDetailsResponse;
     } catch (e) {
       print(e);

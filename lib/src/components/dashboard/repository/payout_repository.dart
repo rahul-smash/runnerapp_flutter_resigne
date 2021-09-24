@@ -20,8 +20,7 @@ class PayoutRepository {
   }
 
   Future<BaseResponse> getDepositCash({
-    String ids
-    /*pending deposit index id*/,
+    String ids /*pending deposit index id*/,
     String orderIds,
     String totalOrdersAmount,
     String totalOrders,
@@ -55,13 +54,13 @@ class PayoutRepository {
   }
 
   Future<BaseResponse> getDepositsCompletedPayoutsList(
-  {String userId, String filterOption}) async {
+      {String userId, String filterOption}) async {
     return await PayoutNetworkRepository.instance
         .getDepositsCompletedPayoutsList(userId, filterOption);
   }
 
   Future<BaseResponse> getDepositsCompletedPayoutDetail(
-      String userId, String batchId) async {
+      {String userId, String batchId}) async {
     return await PayoutNetworkRepository.instance
         .getDepositsCompletedPayoutDetail(userId, batchId);
   }

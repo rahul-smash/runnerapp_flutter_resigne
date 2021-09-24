@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
@@ -259,7 +260,16 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
               height: 25,
             ),
           ),
-          appBar: AppBar(automaticallyImplyLeading: false, elevation: 0),
+          appBar: AppBar(
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.white,
+            backwardsCompatibility: false,
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: Brightness.light),
+            elevation: 0.0,
+            titleSpacing: 0.0,
+          ),
           widgets: <Widget>[
             Center(
               child: Badge(

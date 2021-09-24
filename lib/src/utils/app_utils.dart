@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
+
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
@@ -15,12 +18,9 @@ import 'package:marketplace_service_provider/src/model/store_response_model.dart
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
+import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:html/parser.dart';
-import 'package:marketplace_service_provider/src/utils/app_strings.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
@@ -516,7 +516,8 @@ class AppUtils {
                         child: Text(
                           "${title}",
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppTheme.mainTextColor, fontSize: 18),
+                          style: TextStyle(
+                              color: AppTheme.mainTextColor, fontSize: 18),
                         ),
                       ),
                     ),
@@ -578,5 +579,4 @@ class AppUtils {
       },
     );
   }
-
 }
