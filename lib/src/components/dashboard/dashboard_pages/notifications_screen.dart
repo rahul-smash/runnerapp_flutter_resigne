@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/notification_data.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
@@ -18,11 +21,14 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   bool isLoadingApi = false;
-  var _notificationResponse;
+  NotificationModel _notificationResponse;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _getNotifications();
+    });
   }
 
   @override
@@ -63,12 +69,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
       body: SafeArea(
           child: isLoadingApi
-              ? AppUtils.showSpinner()
+              ? Container()
               : ListView.builder(
                   padding: EdgeInsets.all(16.0),
                   itemBuilder: (context, index) =>
                       _buildNotificationView(index),
-                  itemCount: 10,
+                  itemCount:
+                      _notificationResponse?.data?.notification?.length ?? 0,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: false,
                 )),
@@ -87,22 +94,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'Order Notification',
+            _notificationResponse.data.notification[index].type,
             style: TextStyle(
                 color: AppTheme.mainTextColor,
                 fontWeight: FontWeight.w500,
-                fontSize: 16.0),
+                fontSize: 18.0),
           ),
           SizedBox(
             height: 8.0,
           ),
-          Text(
-              'This is long description message'
-              'for the order notification itemview',
+          Text(_notificationResponse.data.notification[index].message,
               style: TextStyle(
-                  fontSize: 14.0, color: AppTheme.subHeadingTextColor)),
+                  fontSize: 16.0, color: AppTheme.subHeadingTextColor)),
           SizedBox(
-            height: 8.0,
+            height: 12.0,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -115,11 +120,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               SizedBox(
                 width: 4.0,
               ),
-              Text(
-                  AppUtils.convertDateFromFormat(DateTime.now().toString(),
-                      parsingPattern: AppUtils.dateTimeAppDisplayPattern_2),
+              Text(_notificationResponse.data.notification[index].date,
                   style: TextStyle(
-                      fontSize: 13.0, color: AppTheme.subHeadingTextColor)),
+                      fontSize: 14.0, color: AppTheme.subHeadingTextColor)),
               SizedBox(
                 width: 8.0,
               ),
@@ -131,9 +134,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               SizedBox(
                 width: 4.0,
               ),
-              Text(AppUtils.convertTimeSlot(DateTime.now()),
+              Text(_notificationResponse.data.notification[index].time,
                   style: TextStyle(
-                      fontSize: 13.0, color: AppTheme.subHeadingTextColor)),
+                      fontSize: 14.0, color: AppTheme.subHeadingTextColor)),
             ],
           )
         ],
@@ -143,8 +146,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   void _getNotifications() async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
-      _notificationResponse =
-          await getIt.get<DashboardRepository>().getNotifications(userId: 'id');
+      AppUtils.showLoader(context);
+      LoginResponse loginResponse = await AppSharedPref.instance.getUser();
+      _notificationResponse = await getIt
+          .get<DashboardRepository>()
+          .getNotifications(userId: loginResponse.data.id);
+      AppUtils.hideLoader(context);
     } else {
       AppUtils.noNetWorkDialog(context);
     }

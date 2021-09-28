@@ -8,6 +8,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/notification_data.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
@@ -27,7 +28,7 @@ class DashboardNetworkRepository extends DioBaseService {
       '/runner_orders/cancelBookingByRunner';
   static const _updateRunnerLatlng =
       '/runner_authentication/updateRunnerLatlng';
-  static const _notificationRequest = '/notifications';
+  static const _notificationRequest = '/runner_notifications/getNotifications';
 
   // Payment Summery
   // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/paymentSummery/31
@@ -300,16 +301,18 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<String> getNotifications(String userId) async {
+  Future<NotificationModel> getNotifications(String userId) async {
     try {
       Map<String, dynamic> param =
           getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['user_id'] = userId;
+      param['pagelength'] = 9999;
+      param['page'] = 1;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '$_notificationRequest'),
           param);
-      return jsonDecode(response);
+      return NotificationModel.fromJson(jsonDecode(response));
     } catch (e) {
       debugPrint(e.toString());
     }
