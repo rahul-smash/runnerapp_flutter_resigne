@@ -1,5 +1,7 @@
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_detail_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
@@ -53,13 +55,13 @@ class PayoutRepository {
         .getCompletePayoutDetails(userId, batchId);
   }
 
-  Future<BaseResponse> getDepositsCompletedPayoutsList(
+  Future<DepositHistory> getDepositsCompletedPayoutsList(
       {String userId, String filterOption}) async {
     return await PayoutNetworkRepository.instance
         .getDepositsCompletedPayoutsList(userId, filterOption);
   }
 
-  Future<BaseResponse> getDepositsCompletedPayoutDetail(
+  Future<DepositHistoryDetails> getDepositsCompletedPayoutDetail(
       {String userId, String batchId}) async {
     return await PayoutNetworkRepository.instance
         .getDepositsCompletedPayoutDetail(userId, batchId);

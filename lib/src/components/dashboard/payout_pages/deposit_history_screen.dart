@@ -4,9 +4,9 @@ import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/deposit_history_details.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/deposit_history_details_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -15,21 +15,21 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
-class DepositHistory extends StatefulWidget {
-  DepositHistory();
+class DepositHistoryScreen extends StatefulWidget {
+  DepositHistoryScreen();
 
   @override
-  _DepositHistoryState createState() {
-    return _DepositHistoryState();
+  _DepositHistoryScreenState createState() {
+    return _DepositHistoryScreenState();
   }
 }
 
-class _DepositHistoryState extends BaseState<DepositHistory> {
+class _DepositHistoryScreenState extends BaseState<DepositHistoryScreen> {
   String _selectedOverviewOption = 'Monthly';
   List<String> _overviewOptions = List.empty(growable: true);
 
   bool isApiLoading = false;
-  BaseResponse pendingSummaryResponse;
+  DepositHistory depositHistory;
 
   void _onRefresh() async {
     _getPendingPayoutSummary(isShowLoader: true);
@@ -84,7 +84,7 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isApiLoading = true;
-      pendingSummaryResponse = await getIt
+      depositHistory = await getIt
           .get<PayoutRepository>()
           .getDepositsCompletedPayoutsList(
               userId: loginResponse.data.id,
@@ -252,7 +252,10 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                                   Colors.white.withOpacity(0.8),
                                               fontSize: AppConstants.smallSize,
                                               fontWeight: FontWeight.w600)),
-                                      Text("23000",
+                                      Text(
+                                          depositHistory
+                                                  ?.summery?.totalEarning ??
+                                              "0",
                                           style: TextStyle(
                                               color: AppTheme.white,
                                               fontSize:
@@ -281,7 +284,7 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "4 Results",
+                              "${depositHistory?.totalRecord ?? 0} ${((depositHistory?.totalRecord ?? 0) > 1) ? "Results" : "Result"}",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14.0,
@@ -292,7 +295,7 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                             Row(
                               children: [
                                 Text(
-                                  "Aug 2021",
+                                  "${AppUtils.convertDateFromFormat(depositHistory?.depositData?.first?.depositDateTime?.toString() ?? DateTime.now().toString(), parsingPattern: AppUtils.dateTimeAppDisplayPattern_3)}",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 14.0,
@@ -319,7 +322,7 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                 topLeft: const Radius.circular(30.0),
                                 topRight: const Radius.circular(30.0))),
                         child: ListView.builder(
-                          itemCount: 10,
+                          itemCount: depositHistory?.depositData?.length ?? 0,
                           padding:
                               EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
                           itemBuilder: (context, index) {
@@ -329,7 +332,9 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (builder) =>
-                                            DepositHistoryDetails()));
+                                            DepositHistoryDetailsScreen(
+                                                depositHistory
+                                                    .depositData[index])));
                               },
                               child: Container(
                                   margin: EdgeInsets.only(bottom: 16.0),
@@ -374,7 +379,11 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                                                   AppConstants
                                                                       .fontName,
                                                             )),
-                                                        Text("1855 to 1121",
+                                                        Text(
+                                                            depositHistory
+                                                                .depositData[
+                                                                    index]
+                                                                .runnerDepositBatchId,
                                                             style: TextStyle(
                                                               color: AppTheme
                                                                   .subHeadingTextColor,
@@ -435,7 +444,11 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                                                 CrossAxisAlignment
                                                                     .start,
                                                             children: [
-                                                              Text("54",
+                                                              Text(
+                                                                  depositHistory
+                                                                      .depositData[
+                                                                          index]
+                                                                      .totalOrders,
                                                                   style: TextStyle(
                                                                       color: AppTheme
                                                                           .mainTextColor,
@@ -485,7 +498,7 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                                                   .start,
                                                           children: [
                                                             Text(
-                                                                "${AppConstants.currency} ",
+                                                                "${AppConstants.currency}",
                                                                 style: TextStyle(
                                                                     color: AppTheme
                                                                         .primaryColor,
@@ -495,7 +508,11 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w600)),
-                                                            Text("23000",
+                                                            Text(
+                                                                depositHistory
+                                                                    .depositData[
+                                                                        index]
+                                                                    .totalOrdersAmount,
                                                                 style: TextStyle(
                                                                     color: AppTheme
                                                                         .primaryColor,
@@ -528,7 +545,10 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                                                             3),
                                                                 child: Center(
                                                                     child: Text(
-                                                                  "Cash",
+                                                                  depositHistory
+                                                                      .depositData[
+                                                                          index]
+                                                                      .depositType,
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
@@ -552,32 +572,39 @@ class _DepositHistoryState extends BaseState<DepositHistory> {
                                                 children: [
                                                   Expanded(
                                                     flex: 2,
-                                                    child: Container(
-                                                      margin:
-                                                          EdgeInsets.fromLTRB(
-                                                              0, 10, 0, 0),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.done_all,
-                                                            color: AppTheme
-                                                                .primaryColorDark,
-                                                            size: 20,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child: Text(
-                                                              labelDepositConfirmed,
-                                                              style: TextStyle(
+                                                    child: depositHistory
+                                                                .depositData[
+                                                                    index]
+                                                                .depositVerified ==
+                                                            '1'
+                                                        ? Container(
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(0, 10,
+                                                                    0, 0),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .done_all,
                                                                   color: AppTheme
-                                                                      .primaryColorDark),
+                                                                      .primaryColorDark,
+                                                                  size: 20,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Expanded(
+                                                                  child: Text(
+                                                                    labelDepositConfirmed,
+                                                                    style: TextStyle(
+                                                                        color: AppTheme
+                                                                            .primaryColorDark),
+                                                                  ),
+                                                                )
+                                                              ],
                                                             ),
                                                           )
-                                                        ],
-                                                      ),
-                                                    ),
+                                                        : Container(),
                                                   ),
                                                   Container(
                                                     padding: EdgeInsets.only(

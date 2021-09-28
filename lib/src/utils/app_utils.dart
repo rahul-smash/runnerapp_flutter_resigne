@@ -468,6 +468,7 @@ class AppUtils {
   static const dateTimeAppDisplayPattern = 'dd MMM, yyyy | hh:mm a';
   static const dateTimeAppDisplayPattern_1 = 'dd MMM yyyy, hh:mm a';
   static const dateTimeAppDisplayPattern_2 = 'dd MMM yyyy';
+  static const dateTimeAppDisplayPattern_3 = 'dd MMM';
   static const timeAppPattern = 'hh:mm a';
 
   static convertDateFromFormat(String stringDate,

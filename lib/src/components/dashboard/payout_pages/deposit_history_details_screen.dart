@@ -4,28 +4,32 @@ import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
-class DepositHistoryDetails extends StatefulWidget {
-  DepositHistoryDetails();
+class DepositHistoryDetailsScreen extends StatefulWidget {
+  final DepositDatum depositDatum;
+
+  DepositHistoryDetailsScreen(this.depositDatum);
 
   @override
-  _DepositHistoryDetailsState createState() {
-    return _DepositHistoryDetailsState();
+  _DepositHistoryDetailsScreenState createState() {
+    return _DepositHistoryDetailsScreenState();
   }
 }
 
-class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
+class _DepositHistoryDetailsScreenState
+    extends BaseState<DepositHistoryDetailsScreen> {
   String _selectedOverviewOption = 'Monthly';
   List<String> _overviewOptions = List.empty(growable: true);
   bool isApiLoading = false;
-  BaseResponse pendingSummaryResponse;
+  DepositHistoryDetails depositHistoryDetails;
 
   @override
   void initState() {
@@ -142,7 +146,7 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                       Expanded(
                           child: ListView.separated(
                         shrinkWrap: true,
-                        itemCount: 10,
+                        itemCount: depositHistoryDetails?.deposits?.length ?? 0,
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
@@ -161,11 +165,13 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                                     width: 15,
                                   ),
                                   Expanded(
-                                    child: Text("#1242"),
+                                    child: Text(depositHistoryDetails
+                                        ?.deposits[index].displayOrderId),
                                   ),
                                   Expanded(
                                     child: Text(
-                                      "Electrcain",
+                                      depositHistoryDetails
+                                          ?.deposits[index].categoryTitle,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           color: AppTheme.mainTextColor),
@@ -180,13 +186,16 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text("${AppConstants.currency} ",
+                                          Text("${AppConstants.currency}",
                                               style: TextStyle(
                                                   color: AppTheme
                                                       .subHeadingTextColor,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w600)),
-                                          Text("230",
+                                          Text(
+                                              depositHistoryDetails
+                                                  ?.deposits[index]
+                                                  .cashCollected,
                                               style: TextStyle(
                                                   color: AppTheme
                                                       .subHeadingTextColor,
@@ -209,7 +218,7 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                                               bottom: 3),
                                           child: Center(
                                               child: Text(
-                                            "Cash",
+                                            widget.depositDatum.depositType,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 color: AppTheme.mainTextColor),
@@ -265,7 +274,7 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text("${AppConstants.currency} ",
+                                              Text("${AppConstants.currency}",
                                                   style: TextStyle(
                                                       color: Colors.white
                                                           .withOpacity(0.8),
@@ -273,7 +282,10 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                                                           .smallSize,
                                                       fontWeight:
                                                           FontWeight.w600)),
-                                              Text("23000",
+                                              Text(
+                                                  widget.depositDatum
+                                                          ?.totalOrdersAmount ??
+                                                      0,
                                                   style: TextStyle(
                                                       color: AppTheme.white,
                                                       fontSize: AppConstants
@@ -314,7 +326,10 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text("24",
+                                            Text(
+                                                widget.depositDatum
+                                                        ?.totalOrders ??
+                                                    0,
                                                 style: TextStyle(
                                                     color: AppTheme.white,
                                                     fontSize: AppConstants
@@ -359,7 +374,7 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
                           Row(
                             children: [
                               Text(
-                                "23 Aug 2021, 3:30 pm",
+                                "${AppUtils.convertDateFromFormat(widget.depositDatum?.depositDateTime?.toString() ?? DateTime.now().toString(), parsingPattern: AppUtils.dateTimeAppDisplayPattern_1)}",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14.0,
@@ -386,11 +401,11 @@ class _DepositHistoryDetailsState extends BaseState<DepositHistoryDetails> {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isApiLoading = true;
-      pendingSummaryResponse = await getIt
+      depositHistoryDetails = await getIt
           .get<PayoutRepository>()
           .getDepositsCompletedPayoutDetail(
               userId: loginResponse.data.id,
-              batchId: _selectedFilterParam(_selectedOverviewOption));
+              batchId: widget.depositDatum.runnerDepositBatchId);
       setState(() {});
       AppUtils.hideLoader(context);
       isApiLoading = false;

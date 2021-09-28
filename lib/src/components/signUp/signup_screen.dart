@@ -49,6 +49,7 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
   Timer _timer;
   int _start = 30;
   bool resendOtp = false;
+
   @override
   void initState() {
     super.initState();
@@ -492,6 +493,11 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
         return;
       }
       if (mobileCont.text.isNotEmpty) {
+        if (mobileCont.text.length < 10) {
+          AppUtils.showToast(validMobileNumber, false);
+          return;
+        }
+
         AppUtils.showLoader(context);
         response = await getIt
             .get<UserAuthenticationRepository>()

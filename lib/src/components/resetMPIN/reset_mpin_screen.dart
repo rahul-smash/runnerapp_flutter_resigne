@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -206,15 +205,16 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
 
   sendOtp() async {
     try {
-      if(this.network.offline){
+      if (this.network.offline) {
         AppUtils.showToast(AppConstants.noInternetMsg, false);
         return;
       }
-      if (mobileCont.text.isNotEmpty){
+      if (mobileCont.text.isNotEmpty) {
         AppUtils.showLoader(context);
-        baseResponse =
-        await getIt.get<UserAuthenticationRepository>().resetPinOtp(phoneNumber: mobileCont.text);
-        if(baseResponse != null)
+        baseResponse = await getIt
+            .get<UserAuthenticationRepository>()
+            .resetPinOtp(phoneNumber: mobileCont.text);
+        if (baseResponse != null)
           AppUtils.showToast(baseResponse.message, false);
         AppUtils.hideKeyboard(context);
         AppUtils.hideLoader(context);
@@ -225,31 +225,37 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
   }
 
   _handleResetPINButton() async {
-    if(this.network.offline){
+    if (this.network.offline) {
       AppUtils.showToast(AppConstants.noInternetMsg, false);
       return;
     }
-    if (mobileCont.text.isEmpty){
+    if (mobileCont.text.isEmpty) {
       AppUtils.showToast("Please enter valid phone number!", false);
       return;
     }
-    if (otpCont.text.isEmpty){
+
+    if (mobileCont.text.length < 10) {
+      AppUtils.showToast(validMobileNumber, false);
+      return;
+    }
+
+    if (otpCont.text.isEmpty) {
       AppUtils.showToast("Please enter valid Otp!", false);
       return;
     }
     AppUtils.showLoader(context);
-    baseResponse =
-        await getIt.get<UserAuthenticationRepository>().verifyResetPinOtp(
-            otp: otpCont.text,phoneNumber: mobileCont.text);
-    if(baseResponse != null)
-      AppUtils.showToast(baseResponse.message, false);
+    baseResponse = await getIt
+        .get<UserAuthenticationRepository>()
+        .verifyResetPinOtp(otp: otpCont.text, phoneNumber: mobileCont.text);
+    if (baseResponse != null) AppUtils.showToast(baseResponse.message, false);
     AppUtils.hideKeyboard(context);
     AppUtils.hideLoader(context);
     Navigator.pop(context);
     Navigator.push(
         context,
         new MaterialPageRoute(
-          builder: (BuildContext context) => SetNewMPINScreen(user_id:baseResponse.user_id),
+          builder: (BuildContext context) =>
+              SetNewMPINScreen(user_id: baseResponse.user_id),
         ));
   }
 }

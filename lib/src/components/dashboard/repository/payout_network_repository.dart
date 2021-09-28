@@ -4,6 +4,8 @@ import 'package:marketplace_service_provider/core/network/api/dio_base_service.d
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_detail_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
@@ -24,7 +26,7 @@ class PayoutNetworkRepository extends DioBaseService {
       '/runner_deposits/collectedCash'; //Pending Deposit List
   static const _depositCash = '/runner_deposits/depositCash'; //Deposit Cash
   static const _depositsCompletedPayoutsList =
-      '/runner_deposits/completedPayouts'; //Completed Deposit List
+      '/runner_deposits/completedDeposits'; //Completed Deposit List
   static const _depositsCompletedPayoutDetail =
       '/runner_deposits/depositHistory'; //Completed Deposit History List
 
@@ -154,7 +156,7 @@ class PayoutNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> getDepositsCompletedPayoutsList(
+  Future<DepositHistory> getDepositsCompletedPayoutsList(
       String userId, String filterOption) async {
     try {
       Map<String, dynamic> param =
@@ -163,16 +165,16 @@ class PayoutNetworkRepository extends DioBaseService {
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_depositsCompletedPayoutsList}/${userId}/${filterOption}'),
           param);
-      BaseResponse completeListSummaryResponse =
-          BaseResponse.fromJson(jsonDecode(response));
-      return completeListSummaryResponse;
+      DepositHistory depositHistory =
+          DepositHistory.fromJson(jsonDecode(response));
+      return depositHistory;
     } catch (e) {
       print(e);
     }
     return null;
   }
 
-  Future<BaseResponse> getDepositsCompletedPayoutDetail(
+  Future<DepositHistoryDetails> getDepositsCompletedPayoutDetail(
       String userId, String batchId) async {
     try {
       Map<String, dynamic> param =
@@ -181,9 +183,9 @@ class PayoutNetworkRepository extends DioBaseService {
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_depositsCompletedPayoutDetail}/${userId}/${batchId}'),
           param);
-      BaseResponse completeListSummaryResponse =
-          BaseResponse.fromJson(jsonDecode(response));
-      return completeListSummaryResponse;
+      DepositHistoryDetails depositHistoryDetails =
+          DepositHistoryDetails.fromJson(jsonDecode(response));
+      return depositHistoryDetails;
     } catch (e) {
       print(e);
     }

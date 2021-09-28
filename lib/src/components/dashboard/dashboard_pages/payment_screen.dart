@@ -6,7 +6,7 @@ import 'package:marketplace_service_provider/core/network/connectivity/network_c
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/deposit_cash_screen.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/deposit_history.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/deposit_history_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/payout_completed.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/pending_payouts.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
@@ -759,8 +759,8 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
 
   void _openDepositHistoryScreen() {
     //TODO: handle this
-    Navigator.push(
-        context, MaterialPageRoute(builder: (builder) => DepositHistory()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (builder) => DepositHistoryScreen()));
   }
 
   Widget _createTopCard(

@@ -26,6 +26,7 @@ import 'business_detail_screen.dart';
 class MyProfileScreen extends StatefulWidget {
   final VoidCallback voidCallback;
   final bool isComingFromAccount;
+
   MyProfileScreen(
       {@required this.voidCallback, this.isComingFromAccount = false});
 
@@ -1085,6 +1086,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
               "Please upload atleast one identity proof document", false);
           return;
         }
+      }
+
+      if (!AppUtils.validateEmail(emailCont.text)) {
+        AppUtils.showToast("Please enter valid email", true);
       }
 
       AppUtils.showLoader(context);

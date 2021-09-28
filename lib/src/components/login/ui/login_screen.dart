@@ -22,8 +22,6 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
-import '../../../../main.dart';
-
 class LoginScreen extends StatefulWidget {
   bool shouldForceUpdate = false;
 
@@ -270,6 +268,12 @@ class _LoginScreenState extends BaseState<LoginScreen> {
         AppUtils.showToast(AppConstants.noInternetMsg, false);
         return;
       }
+
+      if (mobileCont.text.length < 10) {
+        AppUtils.showToast(validMobileNumber, false);
+        return;
+      }
+
       userLoginBloc.eventSink.add(LoginEventData(
           UserLoginAction.PerformLoggin, mobileCont.text, passwordCont.text));
 
