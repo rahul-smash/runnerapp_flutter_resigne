@@ -198,13 +198,13 @@ Future<void> handleReminderAlarm() async {
         storeId: '1', userId: loginResponse.data.id);
     if (order != null && order["success"]) {
       if (order["order_count"] > 0) {
-        startForegroundService();
+        startForegroundService(order["message"]);
       }
     }
   }
 }
 
-void startForegroundService() async {
+void startForegroundService(String message) async {
   // await FlutterNotificationPlugin.setServiceMethodInterval(seconds: 5);
   await FlutterNotificationPlugin.startForegroundService(
       holdWakeLock: false,
@@ -214,8 +214,8 @@ void startForegroundService() async {
       onStopped: () {
         print("Foreground on Stopped");
       },
-      title: "Flutter Foreground Service",
-      content: "This is Content",
+      title: "Booking Reminder",
+      content: message,
       iconName: "ic_notification",
       stopAction: true,
       stopIcon: "ic_notification",
