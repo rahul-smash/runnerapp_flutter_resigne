@@ -68,11 +68,14 @@ class DashboardRepository {
   }
 
   Future<BaseResponse> updateRunnerLatlng(
-      {String userId,
-      String lat,
-      String lng,
-      String address}) async {
+      {String userId, String lat, String lng, String address}) async {
     return await DashboardNetworkRepository.instance
         .updateRunnerLatlng(userId, lat, lng, address);
+  }
+
+  Future<Map<String, dynamic>> ordersCount(
+      {String storeId, String userId}) async {
+    return await DashboardNetworkRepository.instance
+        .ordersCount(storeId, userId);
   }
 }

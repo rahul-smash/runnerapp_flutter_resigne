@@ -188,7 +188,20 @@ Future<void> handleReminderAlarm() async {
   uiSendPort2 ??= IsolateNameServer.lookupPortByName(isolateName2);
   uiSendPort2?.send("");
   print('handleReminderAlarm ${DateTime.now()}');
-  startForegroundService();
+  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  if (AppConstants.isLoggedIn) {
+    LoginResponse loginResponse = await AppSharedPref.instance.getUser();
+    DashboardRepository repository = DashboardRepository();
+    // fixme:: store is null here
+    // String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
+    Map<String, dynamic> order = await repository.ordersCount(
+        storeId: '1', userId: loginResponse.data.id);
+    if (order != null && order["success"]) {
+      if (order["order_count"] > 0) {
+        startForegroundService();
+      }
+    }
+  }
 }
 
 void startForegroundService() async {
