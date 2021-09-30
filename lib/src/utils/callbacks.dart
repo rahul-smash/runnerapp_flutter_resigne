@@ -26,3 +26,11 @@ class AlarmEvent {
 
   AlarmEvent.cancelAllAlarm(this.event);
 }
+
+class ReminderAlarmEvent {
+  String event;
+
+  ReminderAlarmEvent.startPeriodicAlarm(this.event);
+
+  ReminderAlarmEvent.cancelAllAlarm(this.event);
+}

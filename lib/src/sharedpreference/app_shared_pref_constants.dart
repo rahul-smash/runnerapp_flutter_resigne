@@ -11,4 +11,5 @@ class AppSharePrefConstants {
   static const prefKeyAppSaveUser = 'prefKeySaveUser';
   static const prefKeyAppGetUser = 'prefKeyGetUser';
   static const prefKeyAppSaveDutyStatus = 'prefKeySaveDutyStatus';
+  static const prefKeyAppReminderAlarm = 'prefKeyAppReminderAlarm';
 }

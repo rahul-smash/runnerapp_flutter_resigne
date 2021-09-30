@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref.dart';
@@ -7,7 +6,8 @@ import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pre
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_interface.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 
-class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterface {
+class AppSharedPref extends BaseSharedPreference
+    implements AppSharePrefInterface {
   static AppSharedPref _instance;
 
   AppSharedPref._();
@@ -38,12 +38,13 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
 
   @override
   Future<bool> isLoggedIn() async {
-    bool IsLoggedIn = sharepref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
-    if(IsLoggedIn){
+    bool isLoggedIn =
+        sharepref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+    if (isLoggedIn) {
       await getUser();
-      return IsLoggedIn;
-    }else{
-      return IsLoggedIn;
+      return isLoggedIn;
+    } else {
+      return isLoggedIn;
     }
   }
 
@@ -52,7 +53,6 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
     return await sharepref?.setBool(
         AppSharePrefConstants.prefKeyIsLoggedIn, value);
   }
-
 
   @override
   String getApiVersion() {
@@ -93,7 +93,7 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
   }
 
   @override
-  Future<bool> setAppLanguage(String appLanguage) async{
+  Future<bool> setAppLanguage(String appLanguage) async {
     return await sharepref?.setString(
         AppSharePrefConstants.prefKeyAppLanguage, appLanguage);
   }
@@ -108,7 +108,8 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
 
   @override
   Future<LoginResponse> getUser() async {
-    Map<String, dynamic> userMap = await json.decode(sharepref?.getString(AppSharePrefConstants.prefKeyAppSaveUser));
+    Map<String, dynamic> userMap = await json
+        .decode(sharepref?.getString(AppSharePrefConstants.prefKeyAppSaveUser));
     var user = LoginResponse.fromJson(userMap);
     LoginUserSingleton.instance.loginResponse = user;
     return user;
@@ -120,8 +121,20 @@ class AppSharedPref extends BaseSharedPreference implements AppSharePrefInterfac
   }
 
   @override
-  Future<bool> saveDutyStatus(String status) async{
+  Future<bool> saveDutyStatus(String status) async {
     return await sharepref?.setString(
         AppSharePrefConstants.prefKeyAppSaveDutyStatus, status);
+  }
+
+  @override
+  bool isReminderAlarmEnabled() {
+    return sharepref?.getBool(AppSharePrefConstants.prefKeyAppReminderAlarm) ??
+        false;
+  }
+
+  @override
+  Future<bool> setReminderAlarm(bool status) async {
+    return await sharepref?.setBool(
+        AppSharePrefConstants.prefKeyAppReminderAlarm, status);
   }
 }

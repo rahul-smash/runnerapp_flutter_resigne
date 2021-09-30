@@ -39,6 +39,11 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
     _drawerItems.add(ItemSideMenuChild(labelFaq, AppImages.icon_faq));
     _drawerItems
         .add(ItemSideMenuChild(labelHowToVideo, AppImages.icon_howtovideo));
+    _drawerItems.add(ItemSideMenuChild(
+        AppSharedPref.instance.isReminderAlarmEnabled()
+            ? reminderOn
+            : reminderOff,
+        AppImages.icon_aboutus));
   }
 
   @override
@@ -218,6 +223,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                 Navigator.of(context).pop();
                 await AppSharedPref.instance.sharepref.clear();
                 eventBus.fire(AlarmEvent.cancelAllAlarm('cancel'));
+                eventBus.fire(ReminderAlarmEvent.cancelAllAlarm('cancel'));
                 AppConstants.isLoggedIn = false;
                 Navigator.pushAndRemoveUntil(
                     context,
@@ -289,7 +295,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
         ));
   }
 
-  void _openPageForIndex(ItemSideMenuChild item, BuildContext context) {
+  void _openPageForIndex(ItemSideMenuChild item, BuildContext context) async {
     print(item.title);
     if (item.title == labelAboutUs) {
       Navigator.push(
@@ -310,6 +316,20 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
           context,
           MaterialPageRoute(
               builder: (BuildContext context) => HelpVideoScreen()));
+    } else if (item.title == reminderOn || item.title == reminderOff) {
+      await AppSharedPref.instance
+          .setReminderAlarm(!AppSharedPref.instance.isReminderAlarmEnabled());
+      eventBus.fire(AppSharedPref.instance.isReminderAlarmEnabled()
+          ? ReminderAlarmEvent.startPeriodicAlarm('start')
+          : ReminderAlarmEvent.cancelAllAlarm('cancel'));
+      setState(() {
+        _drawerItems.removeLast();
+        _drawerItems.add(ItemSideMenuChild(
+            AppSharedPref.instance.isReminderAlarmEnabled()
+                ? reminderOn
+                : reminderOff,
+            AppImages.icon_aboutus));
+      });
     }
   }
 }

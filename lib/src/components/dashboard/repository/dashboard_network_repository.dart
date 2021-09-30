@@ -30,6 +30,8 @@ class DashboardNetworkRepository extends DioBaseService {
       '/runner_authentication/updateRunnerLatlng';
   static const _notificationRequest = '/runner_notifications/getNotifications';
 
+  static const _orderCounts = '/runner_orders/OrderAssignmentCount';
+
   // Payment Summery
   // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/paymentSummery/31
   // Pending Payout
@@ -285,16 +287,27 @@ class DashboardNetworkRepository extends DioBaseService {
       param['lng'] = lng;
       param['address'] = address;
       print(" param... $param");
-      var response = await post(
-          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
-              '${_updateRunnerLatlng}'),
-          param);
+      var response = await post(apiPath('2', '${_updateRunnerLatlng}'), param);
       print('getCurrentPosition ===hit updating lat lng====');
 
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
       print('getCurrentPosition ===response updating lat lng====');
 
       return baseResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>> ordersCount(
+      String storeId, String userId) async {
+    try {
+      var response = await get(
+        apiPath(storeId, '$_orderCounts/$userId'),
+      );
+      print(response.toString());
+      return jsonDecode(response);
     } catch (e) {
       debugPrint(e.toString());
     }

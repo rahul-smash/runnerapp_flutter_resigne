@@ -65,6 +65,9 @@ dependencies:
   geocoding: ^2.0.0
   android_alarm_manager_plus: ^1.2.0
   percent_indicator: ^3.0.1           #ANDROID IOS LINUX MACOS WEB WINDOWS
+  flutter_notification_plugin:
+    git:
+      url: https://github.com/ketansignity/flutter_alarm_notification_plugin
 
 
 dev_dependencies:

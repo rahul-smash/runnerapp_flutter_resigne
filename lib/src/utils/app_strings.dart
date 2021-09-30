@@ -120,4 +120,6 @@ const labelTotalDeposit = "Total Deposit";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";
+const reminderOn = "Reminder On";
+const reminderOff = "Reminder Off";
 const validMobileNumber = "Please enter valid mobile number";

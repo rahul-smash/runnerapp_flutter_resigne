@@ -321,6 +321,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  flutter_notification_plugin:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "291b94b943a87d9ce0a26eee0be57d0339709c3e"
+      url: "https://github.com/ketansignity/flutter_alarm_notification_plugin"
+    source: git
+    version: "0.0.2"
   flutter_overlay_loader:
     dependency: "direct main"
     description:

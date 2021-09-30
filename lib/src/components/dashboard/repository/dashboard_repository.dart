@@ -74,6 +74,12 @@ class DashboardRepository {
         .updateRunnerLatlng(userId, lat, lng, address);
   }
 
+  Future<Map<String, dynamic>> ordersCount(
+      {String storeId, String userId}) async {
+    return await DashboardNetworkRepository.instance
+        .ordersCount(storeId, userId);
+  }
+
   Future<NotificationModel> getNotifications({String userId}) async {
     return await DashboardNetworkRepository.instance.getNotifications(userId);
   }
