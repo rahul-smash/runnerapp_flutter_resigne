@@ -4,12 +4,9 @@ import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/choose_payment_methods.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/payout_completed_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -17,7 +14,6 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class DepositCashScreen extends StatefulWidget {
@@ -95,7 +91,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
       depositCashResponse = await getIt
           .get<PayoutRepository>()
           .getDepositCashList(
-              userId: loginResponse.data.id,
+              userId: userId,
               filterOption: _selectedFilterParam(_selectedOverviewOption));
       setState(() {});
       AppUtils.hideLoader(context);
@@ -533,9 +529,12 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                     ),
                     margin: EdgeInsets.only(left: 50, right: 50, bottom: 40),
                     child: InkWell(
-                      onTap: (){
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (builder) => ChoosePaymentMethods(_selectCashCollection)));
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (builder) => ChoosePaymentMethods(
+                                    _selectCashCollection)));
                       },
                       child: Stack(
                         alignment: Alignment.centerRight,
@@ -565,13 +564,14 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontWeight: FontWeight.normal,
-                                            fontSize: AppConstants.extraSmallSize,
+                                            fontSize:
+                                                AppConstants.extraSmallSize,
                                             color: Colors.white70),
                                       ),
                                     ),
                                     Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 8.0, right: 8.0),
+                                      padding: EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         crossAxisAlignment:
@@ -635,8 +635,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
 
   Widget _cardItem(int subIndex, CashCollection cashCollection) {
     return InkWell(
-      onTap: () {
-      },
+      onTap: () {},
       child: Container(
         margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
         decoration: new BoxDecoration(

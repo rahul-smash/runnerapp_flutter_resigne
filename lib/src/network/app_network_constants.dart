@@ -1,6 +1,5 @@
 class AppNetworkConstants {
-  // static const baseUrl = 'https://servicemarketplace.valueappz.com/';
-  static const baseUrl = 'https://devservicemarketplace.valueappz.com';
-  static const baseStoreParam = '/1';
-  static const baseRoute = '/runner_v1';
+  static const baseUrl = 'https://devmarketplace.restroapp.com';
+  static const baseStoreParam = '/2';
+  static const baseRouteV2 = '/runner_v2';
 }

@@ -6,7 +6,6 @@ import 'package:marketplace_service_provider/core/network/connectivity/network_c
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -14,7 +13,6 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PendingPayouts extends StatefulWidget {
   PendingPayouts();
@@ -88,7 +86,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
       pendingSummaryResponse = await getIt
           .get<PayoutRepository>()
           .getPendingPayout(
-              userId: loginResponse.data.id,
+              userId: userId,
               filterOption: _selectedFilterParam(_selectedOverviewOption));
       setState(() {});
       AppUtils.hideLoader(context);

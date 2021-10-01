@@ -36,8 +36,6 @@ import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
 import 'src/components/dashboard/repository/dashboard_repository.dart';
-import 'src/components/login/model/login_response.dart';
-import 'src/singleton/singleton_service_locations.dart';
 import 'src/singleton/store_config_singleton.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -112,10 +110,10 @@ void main() async {
     StoreResponse storeResponse =
         await getIt.get<VersionAuthRepository>().versionApi();
 
-    SingletonServiceLocations.instance.serviceLocationResponse =
-        await getIt.get<VersionAuthRepository>().serviceLocationsApi();
+    // SingletonServiceLocations.instance.serviceLocationResponse = await getIt.get<VersionAuthRepository>().serviceLocationsApi();
     setStoreCurrency(storeResponse, configObject);
-    setAppThemeColors(storeResponse.brand.appThemeColor);
+    // fixme:: app dynamic colors
+    // setAppThemeColors(storeResponse.brand.appThemeColor);
     List<ForceDownload> forceDownload = storeResponse.brand.forceDownload;
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
     String version = packageInfo.version;
@@ -219,12 +217,12 @@ Future<void> handleReminderAlarm() async {
   print('handleReminderAlarm ${DateTime.now()}');
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
   if (AppConstants.isLoggedIn) {
-    LoginResponse loginResponse = await AppSharedPref.instance.getUser();
+    String userId = AppSharedPref.instance.getUserId();
     DashboardRepository repository = DashboardRepository();
     // fixme:: store is null here
     // String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
-    Map<String, dynamic> order = await repository.ordersCount(
-        storeId: '1', userId: loginResponse.data.id);
+    Map<String, dynamic> order =
+        await repository.ordersCount(storeId: '1', userId: userId);
     if (order != null && order["success"]) {
       if (order["order_count"] > 0) {
         startForegroundService(order["message"]);
@@ -280,7 +278,7 @@ Future<void> handleBackgroundFunction() async {
   print(
       "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
   if (AppConstants.isLoggedIn) {
-    LoginResponse loginResponse = await AppSharedPref.instance.getUser();
+    String userId = AppSharedPref.instance.getUserId();
     DashboardRepository repository = DashboardRepository();
     String address = 'N/A';
     try {
@@ -291,7 +289,7 @@ Future<void> handleBackgroundFunction() async {
       debugPrint(e);
     }
     BaseResponse baseResponse = await repository.updateRunnerLatlng(
-        userId: loginResponse.data.id,
+        userId: userId,
         lat: '${position.latitude}',
         lng: '${position.longitude}',
         address: address);

@@ -10,15 +10,13 @@ import 'package:marketplace_service_provider/src/components/dashboard/repository
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_booking.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_new_request_booking.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/new_request_booking_screen.dart';
-import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
-import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -35,7 +33,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  LoginResponse loginResponse;
+  String userId;
   List<String> _overviewOptions = List.empty(growable: true);
   List<String> _filterOptions = List.empty(growable: true);
   String _selectedOverviewOption = 'Today';
@@ -54,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    loginResponse = LoginUserSingleton.instance.loginResponse;
+    userId = AppSharedPref.instance.getUserId();
     _overviewOptions.add('Today');
     _overviewOptions.add('Yesterday');
     _overviewOptions.add('7 days');
@@ -93,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _dashboardResponse = await getIt
           .get<DashboardRepository>()
           .getDashboardSummary(
-              userId: loginResponse.data.id,
+              userId: userId,
               filterOption: _selectedFilterParam(selectedFilter));
       AppUtils.hideLoader(context);
       isDashboardApiLoading = false;
@@ -109,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
-          userId: loginResponse.data.id,
+          userId: userId,
           status: _getCurrentStatus(selectedBookingFilterIndex));
       _getFilterCount();
       setState(() {});
@@ -158,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Hi, ${loginResponse.data.fullName} ${loginResponse.data.lastName}",
+                          "Hi, ${AppSharedPref.instance.getUserName()} ${AppSharedPref.instance.getUserLastName()}",
                           style: TextStyle(
                               fontSize: Dimensions.getScaledSize(20),
                               fontWeight: FontWeight.bold,
@@ -815,9 +813,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-                  userId: loginResponse.data.id,
-                  orderId: bookingRequest.id,
-                  status: '1');
+                  userId: userId, orderId: bookingRequest.id, status: '1');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
@@ -843,9 +839,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-                  userId: loginResponse.data.id,
-                  orderId: bookingRequest.id,
-                  status: '2');
+                  userId: userId, orderId: bookingRequest.id, status: '2');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
@@ -882,7 +876,7 @@ class _HomeScreenState extends State<HomeScreen> {
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .changeBookingAction(
-              userId: loginResponse.data.id,
+              userId: userId,
               orderId: booking.id,
               status: _changeBookingStatus(type));
       AppUtils.hideLoader(context);

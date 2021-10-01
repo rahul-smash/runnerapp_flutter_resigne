@@ -12,9 +12,8 @@ import 'package:marketplace_service_provider/src/components/dashboard/dashboard_
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/notifications_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/payment_screen.dart';
-import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
-import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -46,19 +45,17 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
     try {
       appPrintLog("AppConstants.isLoggedIn=${AppConstants.isLoggedIn}");
+      appPrintLog("---login user---=${AppSharedPref.instance.getUserId()}");
       appPrintLog(
-          "---login user---=${LoginUserSingleton.instance.loginResponse.data.id}");
-      appPrintLog(
-          "---login fullName---=${LoginUserSingleton.instance.loginResponse.data.fullName}");
+          "---login fullName---=${AppSharedPref.instance.getUserName()}");
     } catch (e) {
       print(e);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (loginResponse.data.status == "1" &&
-          loginResponse.afterApprovalFirstTime == "1") {
-        AppUtils.displayPickUpDialog(context);
-      }
-      startLocationSetup(context, loginResponse);
+      // if (userId.data.status == "1" && userId.afterApprovalFirstTime == "1") {
+      //   AppUtils.displayPickUpDialog(context);
+      // }
+      startLocationSetup(context);
       if (widget.shouldForceUpdate) {
         AppUtils.callForceUpdateDialog(
             context,
@@ -302,13 +299,13 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   }
 }
 
-startLocationSetup(BuildContext context, LoginResponse loginResponse) async {
+startLocationSetup(BuildContext context) async {
   //TODO: manage location permission //check Duty is on
   bool isServiceEnable = await Geolocator.isLocationServiceEnabled();
   if (isServiceEnable) {
     LocationPermission permission = await Geolocator.checkPermission();
     await Geolocator.requestPermission();
-    if (Platform.isAndroid && loginResponse.data.onDuty == '1') {
+    if (Platform.isAndroid && AppSharedPref.instance.getDutyStatus() == '1') {
       if (permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always) {
         if (permission == LocationPermission.whileInUse) {

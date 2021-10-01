@@ -271,7 +271,7 @@ class _AgreementDetailScreenState extends BaseState<AgreementDetailScreen> {
       return;
     }
     AppUtils.showLoader(context);
-    BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>().saveAgreementData(loginResponse.data.id);
+    BaseResponse baseresponse = await getIt.get<AccountStepsDetailRepositoryImpl>().saveAgreementData(userId);
     AppUtils.hideLoader(context);
 
     if(baseresponse != null){

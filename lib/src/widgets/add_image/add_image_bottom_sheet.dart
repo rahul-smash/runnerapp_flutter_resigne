@@ -6,12 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
-import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
-import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -19,7 +17,6 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class AddImageBottomSheet with ImagePickerListener {
-  final LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
   dynamic booking;
   BuildContext context;
   ImagePickerHandler imagePicker;
@@ -305,7 +302,7 @@ class AddImageBottomSheet with ImagePickerListener {
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .addBookingWorkImages(
-              userId: loginResponse.data.id,
+              userId: AppSharedPref.instance.getUserId(),
               orderId: booking.id,
               paymentMethod: paymentMethod,
               total: booking.total,

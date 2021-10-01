@@ -4,7 +4,6 @@ import 'package:marketplace_service_provider/core/network/connectivity/network_c
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/notification_data.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
-import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
@@ -147,10 +146,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
   void _getNotifications() async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       AppUtils.showLoader(context);
-      LoginResponse loginResponse = await AppSharedPref.instance.getUser();
+      String userId = AppSharedPref.instance.getUserId();
       _notificationResponse = await getIt
           .get<DashboardRepository>()
-          .getNotifications(userId: loginResponse.data.id);
+          .getNotifications(userId: userId);
       AppUtils.hideLoader(context);
     } else {
       AppUtils.noNetWorkDialog(context);

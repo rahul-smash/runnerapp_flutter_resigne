@@ -74,7 +74,7 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
       payoutSummaryResponse = await getIt
           .get<PayoutRepository>()
           .getPayoutSummary(
-              userId: loginResponse.data.id,
+              userId: userId,
               filterOption: _selectedFilterParam(_selectedOverviewOption));
       setState(() {});
       AppUtils.hideLoader(context);

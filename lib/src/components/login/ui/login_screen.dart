@@ -2,17 +2,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
-import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
-import 'package:marketplace_service_provider/src/components/login/bloc/user_login_bloc.dart';
-import 'package:marketplace_service_provider/src/components/login/model/login_event_data.dart';
-import 'package:marketplace_service_provider/src/components/onboarding/setup_account/presentation/user_profile_status_screen.dart';
+import 'package:marketplace_service_provider/src/components/login/bloc/login_bloc.dart';
+import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
-import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
-import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
-import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -32,24 +27,43 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends BaseState<LoginScreen> {
-  final UserLoginBloc userLoginBloc = getIt.get<UserLoginBloc>();
-  TextEditingController mobileCont = TextEditingController(text: "");
-  TextEditingController passwordCont = TextEditingController(text: "");
-  bool _showPassword = false;
+  TextEditingController mobileCont = TextEditingController();
+  TextEditingController passwordCont = TextEditingController();
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  ValueNotifier<bool> showPassword = ValueNotifier(false);
+  final LoginBloc loginBloc = LoginBloc();
 
   @override
   void dispose() {
     super.dispose();
     mobileFocusNode.dispose();
     passWordFocusNode.dispose();
+    loginBloc.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    loginBloc.loginStateStream.listen((loginResult) {
+      switch (loginResult.state) {
+        case LoginState.progress:
+          AppUtils.hideKeyboard(context);
+          AppUtils.showLoader(context);
+          break;
+        case LoginState.failed:
+          AppUtils.hideLoader(context);
+          AppUtils.showToast(loginResult.data.message, true);
+          break;
+        case LoginState.success:
+          AppUtils.hideLoader(context);
+          AppUtils.showToast(loginResult.data.message, true);
+          onLoginSuccess(loginResult.data);
+          break;
+      }
+    });
+
     if (widget.shouldForceUpdate) {
       AppUtils.callForceUpdateDialog(
           context,
@@ -58,6 +72,16 @@ class _LoginScreenState extends BaseState<LoginScreen> {
               .forceDownloadMessage,
           storeModel: VersionApiSingleton.instance.storeResponse.brand);
     }
+  }
+
+  Future<void> onLoginSuccess(LoginResponse loginResponse) async {
+    await AppSharedPref.instance.setAppUser(loginResponse);
+    await AppSharedPref.instance.setLoggedIn(true);
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => DashboardScreen()));
   }
 
   @override
@@ -147,42 +171,46 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                     SizedBox(
                       height: 10,
                     ),
-                    TextFormField(
-                      controller: passwordCont,
-                      focusNode: passWordFocusNode,
-                      obscureText: !_showPassword,
-                      keyboardType: TextInputType.text,
-                      style: TextStyle(color: AppTheme.mainTextColor),
-                      maxLength: 4,
-                      validator: (value) =>
-                          value.isEmpty ? 'MPIN cannot be blank' : null,
-                      decoration: InputDecoration(
-                        hintText: hintMPIN,
-                        counterText: "",
-                        hintStyle: TextStyle(
-                            color: AppTheme.subHeadingTextColor, fontSize: 14),
-                        labelStyle: TextStyle(
-                            color: AppTheme.mainTextColor, fontSize: 14),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _showPassword = !_showPassword;
-                            });
-                          },
-                          child: Icon(
-                              _showPassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: AppTheme.primaryColor,
-                              size: 20),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppTheme.borderOnFocusedColor)),
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppTheme.borderNotFocusedColor)),
-                      ),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: showPassword,
+                      builder: (context, value, child) {
+                        return TextFormField(
+                          controller: passwordCont,
+                          focusNode: passWordFocusNode,
+                          obscureText: !value,
+                          keyboardType: TextInputType.text,
+                          style: TextStyle(color: AppTheme.mainTextColor),
+                          maxLength: 4,
+                          validator: (value) =>
+                              value.isEmpty ? 'MPIN cannot be blank' : null,
+                          decoration: InputDecoration(
+                            hintText: hintMPIN,
+                            counterText: "",
+                            hintStyle: TextStyle(
+                                color: AppTheme.subHeadingTextColor,
+                                fontSize: 14),
+                            labelStyle: TextStyle(
+                                color: AppTheme.mainTextColor, fontSize: 14),
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                showPassword.value = !value;
+                              },
+                              child: Icon(
+                                  value
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: AppTheme.primaryColor,
+                                  size: 20),
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppTheme.borderOnFocusedColor)),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppTheme.borderNotFocusedColor)),
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 16),
                     Align(
@@ -208,7 +236,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                       margin: EdgeInsets.only(left: 50, right: 50),
                       width: MediaQuery.of(context).size.width,
                       child: GradientElevatedButton(
-                        onPressed: validateAndSave,
+                        onPressed: validateAndLogin,
                         buttonText: labelLogin,
                       ),
                     ),
@@ -260,10 +288,8 @@ class _LoginScreenState extends BaseState<LoginScreen> {
         ));
   }
 
-  void validateAndSave() {
-    final FormState form = _formKey.currentState;
-    if (form.validate()) {
-      print('Form is valid');
+  void validateAndLogin() {
+    if (_formKey.currentState.validate()) {
       if (this.network.offline) {
         AppUtils.showToast(AppConstants.noInternetMsg, false);
         return;
@@ -274,88 +300,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
         return;
       }
 
-      userLoginBloc.eventSink.add(LoginEventData(
-          UserLoginAction.PerformLoggin, mobileCont.text, passwordCont.text));
-
-      userLoginBloc.userModelStream.listen((event) async {
-        if (event.showLoader) {
-          AppUtils.showLoader(context);
-        }
-        if (!event.showLoader) {
-          AppUtils.hideKeyboard(context);
-          AppUtils.hideLoader(context);
-        }
-
-        if (event.loginResponse != null) {
-          if (!event.loginResponse.success) {
-            AppUtils.showToast(event.loginResponse.message, true);
-          } else if (event.loginResponse.success) {
-            AppUtils.showToast(event.loginResponse.message, false);
-            if (event.loginResponse.location.locationId == "0") {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => ServicesLocationScreen(
-                            loginResponse: event.loginResponse,
-                            redirectToLogin: true,
-                          )));
-            } else {
-              if (!event.loginResponse.success) {
-                AppUtils.showToast(event.loginResponse.message, false);
-                return;
-              }
-
-              LoginUserSingleton.instance.loginResponse = event.loginResponse;
-              //"status": value are below,
-              // 3 = under approval
-              // 1 = approval
-              // 2 = block
-
-              await AppSharedPref.instance.saveUser(event.loginResponse);
-              await AppSharedPref.instance
-                  .saveDutyStatus(event.loginResponse.data.onDuty);
-              getIt
-                  .get<DutyStatusObserver>()
-                  .changeStatus(event.loginResponse.data.onDuty);
-
-              if (event.loginResponse.data.status == "3") {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            UserProfileStatusScreen(
-                              isProfileApproved: false,
-                              userId: event.loginResponse.data.id,
-                            )));
-              }
-
-              if (event.loginResponse.data.status == "1" &&
-                  event.loginResponse.afterApprovalFirstTime == "2") {
-                AppConstants.isLoggedIn =
-                    await AppSharedPref.instance.setLoggedIn(true);
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => DashboardScreen()));
-              }
-
-              if (event.loginResponse.data.status == "1" &&
-                  event.loginResponse.afterApprovalFirstTime == "1") {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            UserProfileStatusScreen(
-                                isProfileApproved: true,
-                                userId: event.loginResponse.data.id)));
-              }
-            }
-          }
-        }
-        //call next screen here
-      });
+      loginBloc.perfromLogin(mNumber: mobileCont.text, mPin: passwordCont.text);
     }
   }
 }

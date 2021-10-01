@@ -7,7 +7,6 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/payout_completed_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -89,7 +88,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
       completeSummaryResponse = await getIt
           .get<PayoutRepository>()
           .getCompletePayoutList(
-              userId: loginResponse.data.id,
+              userId: userId,
               filterOption: _selectedFilterParam(_selectedOverviewOption));
       setState(() {});
       AppUtils.hideLoader(context);
@@ -247,13 +246,15 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                               child: ListView.builder(
                               padding: EdgeInsets.only(bottom: 40),
                               shrinkWrap: true,
-                              itemCount: completeSummaryResponse.keysList.length,
+                              itemCount:
+                                  completeSummaryResponse.keysList.length,
                               itemBuilder: (context, index) {
                                 return Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(completeSummaryResponse.keysList[index],
+                                    Text(
+                                        completeSummaryResponse.keysList[index],
                                         style: TextStyle(
                                             color: AppTheme.mainTextColor,
                                             fontSize: 16)),
@@ -402,8 +403,10 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
   Widget _cardItem(CompletedPayouts completePayout) {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (builder) => PayoutCompletedDetails(completePayout)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (builder) => PayoutCompletedDetails(completePayout)));
       },
       child: Stack(
         alignment: Alignment.centerRight,
@@ -417,7 +420,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
             child: Container(
                 width: double.infinity,
                 margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                padding:EdgeInsets.fromLTRB(10, 0, 10, 0),
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -533,8 +536,7 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                                           "${completePayout.totalPayout}",
                                           style: TextStyle(
                                               color: AppTheme.primaryColor,
-                                              fontSize:
-                                                  AppConstants.largeSize,
+                                              fontSize: AppConstants.largeSize,
                                               fontWeight: FontWeight.w600)),
                                     )
                                   ],

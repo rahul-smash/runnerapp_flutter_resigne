@@ -74,7 +74,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
     });
     getIt
         .get<AccountStepsDetailRepositoryImpl>()
-        .getProfileInfo(loginResponse.data.id)
+        .getProfileInfo(userId)
         .then((value) {
       profileInfoModel = value;
       if (addressProofsList.isNotEmpty) addressProofsList.clear();
@@ -1109,7 +1109,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
               _selectedProofTypeTag,
               selectedDocument1: _selectedImg1,
               selectedDocument2: _selectedImg2,
-              user_id: loginResponse.data.id,
+              user_id: userId,
               profile_id: profileInfoModel.data.profileId,
               profileInfoModel: profileInfoModel);
       AppUtils.hideLoader(context);

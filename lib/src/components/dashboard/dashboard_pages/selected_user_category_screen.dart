@@ -4,18 +4,14 @@ import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/select_category/presentation/widgets/categories_services_dialog.dart';
-import 'package:marketplace_service_provider/src/components/onboarding/select_category/repository/categorys_list_network_datasource.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/under_approval_model.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/repository/account_steps_detail_repository_impl.dart';
-import 'package:marketplace_service_provider/src/components/onboarding/setup_account/setup_profile_screen.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
-import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class SelectedUserCategoryScreen extends StatefulWidget {
   SelectedUserCategoryScreen();
@@ -26,8 +22,8 @@ class SelectedUserCategoryScreen extends StatefulWidget {
   }
 }
 
-class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScreen> {
-
+class _SelectedUserCategoryScreenState
+    extends BaseState<SelectedUserCategoryScreen> {
   bool isLoading;
   UnderApprovalModel underApprovalModel;
 
@@ -35,8 +31,9 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
   void initState() {
     super.initState();
     isLoading = true;
-    getIt.get<AccountStepsDetailRepositoryImpl>()
-        .getUnderApprovalDetail(loginResponse.data.id)
+    getIt
+        .get<AccountStepsDetailRepositoryImpl>()
+        .getUnderApprovalDetail(userId)
         .then((value) {
       underApprovalModel = value;
       setState(() {
@@ -52,23 +49,24 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
 
   @override
   Widget builder(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         appBar: BaseAppBar(
-          callback: (){
+          callback: () {
             Navigator.of(context).pop();
           },
           backgroundColor: AppTheme.white,
-          title: Text('Selected Categories',style: TextStyle(color: Colors.black),),
+          title: Text(
+            'Selected Categories',
+            style: TextStyle(color: Colors.black),
+          ),
           appBar: AppBar(
             foregroundColor: Colors.black,
             backgroundColor: Colors.white,
             backwardsCompatibility: false,
             systemOverlayStyle: SystemUiOverlayStyle(
                 statusBarColor: Colors.white,
-                statusBarIconBrightness: Brightness.dark
-            ),
+                statusBarIconBrightness: Brightness.dark),
             elevation: 0.0,
             titleSpacing: 0.0,
             bottom: PreferredSize(
@@ -78,8 +76,7 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
                 ),
                 preferredSize: Size.fromHeight(4.0)),
           ),
-          widgets: <Widget>[
-          ],
+          widgets: <Widget>[],
         ),
         backgroundColor: Color(0xFFECECEC),
         body: Container(
@@ -89,7 +86,9 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
                 height: 150,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(30),bottomLeft: Radius.circular(30)),
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(30)),
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
@@ -108,73 +107,119 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
                   decoration: new BoxDecoration(
                       color: Colors.white,
                       borderRadius: new BorderRadius.only(
-                          topLeft:  const  Radius.circular(25.0),
-                          topRight: const  Radius.circular(25.0))
-                  ),
-                  margin: EdgeInsets.fromLTRB(20,  100, 20, 0),
+                          topLeft: const Radius.circular(25.0),
+                          topRight: const Radius.circular(25.0))),
+                  margin: EdgeInsets.fromLTRB(20, 100, 20, 0),
                   padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: Column(
                     children: <Widget>[
-                      SizedBox(height: Dimensions.getScaledSize(10),),
-                      SizedBox(height: Dimensions.getScaledSize(10),),
+                      SizedBox(
+                        height: Dimensions.getScaledSize(10),
+                      ),
+                      SizedBox(
+                        height: Dimensions.getScaledSize(10),
+                      ),
                       isLoading
                           ? AppUtils.showSpinner()
                           : Expanded(
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            itemCount: underApprovalModel.success.categoryies.length,
-                            itemBuilder: (context, index) {
-
-                              return Container(
-                                  width: double.infinity,
-                                  margin: EdgeInsets.fromLTRB(0,15,10,10),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            Text("${underApprovalModel.success.categoryies[index].title}",style: TextStyle(color: AppTheme.black,
-                                              fontWeight: FontWeight.w500,fontFamily: AppConstants.fontName,),),
-                                          ],
+                              child: ListView.separated(
+                              shrinkWrap: true,
+                              itemCount:
+                                  underApprovalModel.success.categoryies.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.fromLTRB(0, 15, 10, 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                "${underApprovalModel.success.categoryies[index].title}",
+                                                style: TextStyle(
+                                                  color: AppTheme.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily:
+                                                      AppConstants.fontName,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      InkWell(
-                                        onTap: (){
-                                          print("locationId=${loginResponse.location.locationId}");
-                                          print("cat id=${underApprovalModel.success.categoryies[index].id}");
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return CategoriesServicesDialog(title: underApprovalModel.success.categoryies[index].title,
-                                                  categoryId: underApprovalModel.success.categoryies[index].id,
-                                                  locationId:loginResponse.location.locationId);
-                                            },);
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Text("${underApprovalModel.success.categoryies[index].serviceCount}",style: TextStyle(color: AppTheme.black,
-                                              fontWeight: FontWeight.w700,fontFamily: AppConstants.fontName,),),
-                                            SizedBox(width: Dimensions.getScaledSize(10),),
-                                            Text("Services",style: TextStyle(color: AppTheme.subHeadingTextColor,
-                                              fontWeight: FontWeight.normal,fontFamily: AppConstants.fontName,),),
-                                            SizedBox(width: Dimensions.getScaledSize(5),),
-                                            Icon(Icons.arrow_forward_ios_rounded,size:Dimensions.getScaledSize(20),color: AppTheme.subHeadingTextColor)
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  )
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return Divider();
-                            },
-                          )
-                      ),
-
+                                        InkWell(
+                                          onTap: () {
+                                            // print("locationId=${userId.location.locationId}");
+                                            print(
+                                                "cat id=${underApprovalModel.success.categoryies[index].id}");
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return CategoriesServicesDialog(
+                                                    title: underApprovalModel
+                                                        .success
+                                                        .categoryies[index]
+                                                        .title,
+                                                    categoryId:
+                                                        underApprovalModel
+                                                            .success
+                                                            .categoryies[index]
+                                                            .id,
+                                                    locationId: AppSharedPref
+                                                        .instance
+                                                        .getLocationId());
+                                              },
+                                            );
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                "${underApprovalModel.success.categoryies[index].serviceCount}",
+                                                style: TextStyle(
+                                                  color: AppTheme.black,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily:
+                                                      AppConstants.fontName,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: Dimensions.getScaledSize(
+                                                    10),
+                                              ),
+                                              Text(
+                                                "Services",
+                                                style: TextStyle(
+                                                  color: AppTheme
+                                                      .subHeadingTextColor,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontFamily:
+                                                      AppConstants.fontName,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width:
+                                                    Dimensions.getScaledSize(5),
+                                              ),
+                                              Icon(
+                                                  Icons
+                                                      .arrow_forward_ios_rounded,
+                                                  size:
+                                                      Dimensions.getScaledSize(
+                                                          20),
+                                                  color: AppTheme
+                                                      .subHeadingTextColor)
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ));
+                              },
+                              separatorBuilder: (context, index) {
+                                return Divider();
+                              },
+                            )),
                     ],
-                  )
-              ),
+                  )),
               Container(
                 margin: EdgeInsets.fromLTRB(0, 45, 0, 0),
                 width: MediaQuery.of(context).size.width,
@@ -185,8 +230,7 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
                       fontSize: 18.0,
                       color: Colors.white,
                       fontFamily: AppConstants.fontName,
-                      fontWeight: FontWeight.w700
-                  ),
+                      fontWeight: FontWeight.w700),
                 ),
               ),
               Container(
@@ -194,7 +238,9 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Container(
-                    width: 30,height: 3,color: Colors.white,
+                    width: 30,
+                    height: 3,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -204,5 +250,4 @@ class _SelectedUserCategoryScreenState extends BaseState<SelectedUserCategoryScr
       ),
     );
   }
-
 }

@@ -5,7 +5,6 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -15,7 +14,6 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class ChoosePaymentMethods extends StatefulWidget {
   List<CashCollection> selectCashCollection;
@@ -393,7 +391,7 @@ class _ChoosePaymentMethodsState extends BaseState<ChoosePaymentMethods> {
                           _selectAmount.toStringAsFixed(2);
                       String totalOrders =
                           widget.selectCashCollection.length.toString();
-                      String runnerId = loginResponse.data.id;
+                      String runnerId = userId;
                       for (int i = 0;
                           i < widget.selectCashCollection.length;
                           i++) {

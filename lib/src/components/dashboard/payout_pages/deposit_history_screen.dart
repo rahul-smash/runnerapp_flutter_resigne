@@ -87,7 +87,7 @@ class _DepositHistoryScreenState extends BaseState<DepositHistoryScreen> {
       depositHistory = await getIt
           .get<PayoutRepository>()
           .getDepositsCompletedPayoutsList(
-              userId: loginResponse.data.id,
+              userId: userId,
               filterOption: _selectedFilterParam(_selectedOverviewOption));
       setState(() {});
       AppUtils.hideLoader(context);

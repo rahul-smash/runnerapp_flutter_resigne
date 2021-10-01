@@ -24,7 +24,8 @@ class WorkDetailScreen extends StatefulWidget {
   final VoidCallback voidCallback;
 
   final bool isComingFromAccount;
-  WorkDetailScreen({@required this.voidCallback,this.isComingFromAccount = false});
+  WorkDetailScreen(
+      {@required this.voidCallback, this.isComingFromAccount = false});
 
   @override
   _WorkDetailScreenState createState() {
@@ -62,7 +63,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
     });
     getIt
         .get<AccountStepsDetailRepositoryImpl>()
-        .getExperienceDetail(loginResponse.data.id)
+        .getExperienceDetail(userId)
         .then((value) {
       this.experienceDetailModel = value;
       setWorkDetailData();
@@ -166,7 +167,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextFormField(
-                              enabled:  widget.isComingFromAccount ? false : true,
+                              enabled:
+                                  widget.isComingFromAccount ? false : true,
                               readOnly: widget.isComingFromAccount,
                               controller: experienceCont,
                               keyboardType: TextInputType.number,
@@ -199,7 +201,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             TextFormField(
-                              enabled:  widget.isComingFromAccount ? false : true,
+                              enabled:
+                                  widget.isComingFromAccount ? false : true,
                               readOnly: widget.isComingFromAccount,
                               controller: qualificationCont,
                               keyboardType: TextInputType.text,
@@ -260,7 +263,13 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible: widget.isComingFromAccount ? false : workDoc1 != null &&  workDoc2 != null &&  workDoc3 != null  ? false : true,
+                              visible: widget.isComingFromAccount
+                                  ? false
+                                  : workDoc1 != null &&
+                                          workDoc2 != null &&
+                                          workDoc3 != null
+                                      ? false
+                                      : true,
                               child: InkWell(
                                 child: DottedBorder(
                                   dashPattern: [3, 3, 3, 3],
@@ -305,7 +314,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                                   ),
                                 ),
                                 onTap: () {
-                                  if(widget.isComingFromAccount){
+                                  if (widget.isComingFromAccount) {
                                     return;
                                   }
                                   if (workDoc1 == null) {
@@ -375,11 +384,13 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible: widget.isComingFromAccount ? false : certificateDoc1 != null &&
-                                      certificateDoc2 != null &&
-                                      certificateDoc3 != null
+                              visible: widget.isComingFromAccount
                                   ? false
-                                  : true,
+                                  : certificateDoc1 != null &&
+                                          certificateDoc2 != null &&
+                                          certificateDoc3 != null
+                                      ? false
+                                      : true,
                               child: InkWell(
                                 child: DottedBorder(
                                   dashPattern: [3, 3, 3, 3],
@@ -424,7 +435,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                                   ),
                                 ),
                                 onTap: () {
-                                  if(widget.isComingFromAccount){
+                                  if (widget.isComingFromAccount) {
                                     return;
                                   }
                                   if (certificateDoc1 == null) {
@@ -466,7 +477,8 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible: widget.isComingFromAccount ? false : true,
+                              visible:
+                                  widget.isComingFromAccount ? false : true,
                               child: Container(
                                 margin: EdgeInsets.only(
                                     left: 30, right: 30, bottom: 20),
@@ -590,7 +602,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                 visible: widget.isComingFromAccount ? false : true,
                 child: InkWell(
                   onTap: () {
-                    if(widget.isComingFromAccount){
+                    if (widget.isComingFromAccount) {
                       return;
                     }
                     setState(() {
@@ -598,7 +610,9 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                       //workPhotographsDocList.removeAt(index);
                     });
                   },
-                  child: Icon(Icons.clear,),
+                  child: Icon(
+                    Icons.clear,
+                  ),
                 ),
               ),
               contentPadding: EdgeInsets.only(left: 10, right: 10),
@@ -835,7 +849,7 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
       BaseResponse baseresponse = await getIt
           .get<AccountStepsDetailRepositoryImpl>()
           .saveWorkDetail(
-              userId: loginResponse.data.id,
+              userId: userId,
               experienceId: experienceDetailModel.data.experienceId,
               workExperience: experienceCont.text,
               qualification: qualificationCont.text,
@@ -852,9 +866,9 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
       if (baseresponse != null) {
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
-        if(widget.isComingFromAccount){
+        if (widget.isComingFromAccount) {
           Navigator.pop(context);
-        }else{
+        } else {
           if (gotoProfileStepsScreen) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             widget.voidCallback();
@@ -863,15 +877,12 @@ class _WorkDetailScreenState extends BaseState<WorkDetailScreen>
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) => AgreementDetailScreen(
-                      voidCallback: () {
-                        widget.voidCallback();
-                      },
-                    )
-                )
-            );
+                          voidCallback: () {
+                            widget.voidCallback();
+                          },
+                        )));
           }
         }
-
       }
     }
   }

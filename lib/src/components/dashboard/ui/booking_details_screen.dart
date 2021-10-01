@@ -1,7 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -16,7 +15,6 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
@@ -1294,8 +1292,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       isBookingDetailsApiLoading = true;
       _bookingDetailsResponse = await getIt
           .get<DashboardRepository>()
-          .getBookingsdetails(
-              userId: loginResponse.data.id, orderId: booking.id);
+          .getBookingsdetails(userId: userId, orderId: booking.id);
       AppUtils.hideLoader(context);
       isBookingDetailsApiLoading = false;
     } else {
@@ -1311,7 +1308,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .bookingsCancelBookingByRunner(
-              userId: loginResponse.data.id,
+              userId: userId,
               orderId: booking.id,
               reasonOption: reasonOption,
               reason: reason);
@@ -1332,7 +1329,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .changeBookingAction(
-              userId: loginResponse.data.id,
+              userId: userId,
               orderId: booking.id,
               status: _changeBookingStatus(type));
       AppUtils.hideLoader(context);

@@ -7,7 +7,6 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_detail_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/complete_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
-import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -47,7 +46,7 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
       completeDetailsResponse = await getIt
           .get<PayoutRepository>()
           .getCompletePayoutDetails(
-              userId: loginResponse.data.id, batchId: widget.completePayout.id);
+              userId: userId, batchId: widget.completePayout.id);
       setState(() {});
       AppUtils.hideLoader(context);
       isApiLoading = false;

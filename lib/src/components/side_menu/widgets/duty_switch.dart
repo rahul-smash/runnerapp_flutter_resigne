@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:custom_switch/custom_switch.dart';
+import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
@@ -53,7 +53,7 @@ class DutySwitchState extends BaseState<DutySwitchScreen> {
               BaseResponse baseresponse = await getIt
                   .get<MenuOptionRepositoryImpl>()
                   .updateDutyStatus(
-                      userId: loginResponse.data.id,
+                      userId: userId,
                       status: value ? "1" : "0",
                       lng: "0.0",
                       lat: "0.0",
@@ -66,11 +66,9 @@ class DutySwitchState extends BaseState<DutySwitchScreen> {
                   .dutyStatusObserver
                   .changeStatus(baseresponse.newDuty.toString());
               await AppSharedPref.instance
-                  .saveDutyStatus(baseresponse.newDuty.toString());
-              loginResponse.data.onDuty = baseresponse.newDuty.toString();
-              await AppSharedPref.instance.saveUser(loginResponse);
+                  .setDutyStatus(baseresponse.newDuty.toString());
               if (baseresponse.newDuty.toString() == '1')
-                startLocationSetup(context, loginResponse);
+                startLocationSetup(context);
               else {
                 eventBus.fire(AlarmEvent.cancelAllAlarm('cancel'));
               }

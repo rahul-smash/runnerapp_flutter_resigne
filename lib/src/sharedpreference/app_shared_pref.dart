@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_constants.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_interface.dart';
-import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 
 class AppSharedPref extends BaseSharedPreference
     implements AppSharePrefInterface {
@@ -15,14 +12,14 @@ class AppSharedPref extends BaseSharedPreference
   static AppSharedPref get instance => _instance ??= AppSharedPref._();
 
   @override
-  String getMobileNumber() {
-    return sharepref?.getString(AppSharePrefConstants.prefKeyMobile);
+  String getUserMobileNumber() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyUserMobile);
   }
 
   @override
-  Future<bool> setMobileNumber(String deviceToken) async {
+  Future<bool> setUserMobileNumber(String mobileNumber) async {
     return await sharepref?.setString(
-        AppSharePrefConstants.prefKeyMobile, deviceToken);
+        AppSharePrefConstants.prefKeyUserMobile, mobileNumber);
   }
 
   @override
@@ -38,14 +35,7 @@ class AppSharedPref extends BaseSharedPreference
 
   @override
   Future<bool> isLoggedIn() async {
-    bool isLoggedIn =
-        sharepref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
-    if (isLoggedIn) {
-      await getUser();
-      return isLoggedIn;
-    } else {
-      return isLoggedIn;
-    }
+    return sharepref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
   }
 
   @override
@@ -89,7 +79,7 @@ class AppSharedPref extends BaseSharedPreference
 
   @override
   String getAppLanguage() {
-    return sharepref?.getString(AppSharePrefConstants.prefKeyAppVersion);
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppLanguage);
   }
 
   @override
@@ -98,32 +88,27 @@ class AppSharedPref extends BaseSharedPreference
         AppSharePrefConstants.prefKeyAppLanguage, appLanguage);
   }
 
-  @override
-  Future<bool> saveUser(LoginResponse model) async {
-    dynamic userResponse = model.toJson();
-    String jsonString = jsonEncode(userResponse);
-    return await sharepref?.setString(
-        AppSharePrefConstants.prefKeyAppSaveUser, jsonString);
-  }
-
-  @override
-  Future<LoginResponse> getUser() async {
-    Map<String, dynamic> userMap = await json
-        .decode(sharepref?.getString(AppSharePrefConstants.prefKeyAppSaveUser));
-    var user = LoginResponse.fromJson(userMap);
-    LoginUserSingleton.instance.loginResponse = user;
-    return user;
+  Future<bool> setAppUser(LoginResponse model) async {
+    await setUserId(model?.data?.id);
+    await setUserName(model?.data?.fullName);
+    await setUserLastName(model?.data?.lastName);
+    await setUserMobileNumber(model?.data?.phone);
+    await setUserEmail(model?.data?.email);
+    await setUserRating(model?.data?.rating);
+    await setUserProfileImage(model?.data?.profileImage);
+    await setDutyStatus(model?.data?.onDuty);
+    return Future.value(true);
   }
 
   @override
   String getDutyStatus() {
-    return sharepref?.getString(AppSharePrefConstants.prefKeyAppSaveDutyStatus);
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppUserDutyStatus);
   }
 
   @override
-  Future<bool> saveDutyStatus(String status) async {
+  Future<bool> setDutyStatus(String status) async {
     return await sharepref?.setString(
-        AppSharePrefConstants.prefKeyAppSaveDutyStatus, status);
+        AppSharePrefConstants.prefKeyAppUserDutyStatus, status);
   }
 
   @override
@@ -136,5 +121,82 @@ class AppSharedPref extends BaseSharedPreference
   Future<bool> setReminderAlarm(bool status) async {
     return await sharepref?.setBool(
         AppSharePrefConstants.prefKeyAppReminderAlarm, status);
+  }
+
+  @override
+  String getUserEmail() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppUserEmail);
+  }
+
+  @override
+  String getUserId() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppUserId);
+  }
+
+  @override
+  String getUserLastName() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppUserLastName);
+  }
+
+  @override
+  String getUserName() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppUserName);
+  }
+
+  @override
+  String getUserProfileImage() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppUserProfile);
+  }
+
+  @override
+  String getUserRating() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppUserRating);
+  }
+
+  @override
+  Future<bool> setUserEmail(String userEmail) async {
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppUserEmail, userEmail);
+  }
+
+  @override
+  Future<bool> setUserId(String userId) async {
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppUserId, userId);
+  }
+
+  @override
+  Future<bool> setUserLastName(String userLastName) async {
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppUserLastName, userLastName);
+  }
+
+  @override
+  Future<bool> setUserName(String userName) async {
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppUserName, userName);
+  }
+
+  @override
+  Future<bool> setUserProfileImage(String userImage) async {
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppUserProfile, userImage);
+  }
+
+  @override
+  Future<bool> setUserRating(String userRating) async {
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppUserRating, userRating);
+  }
+
+  @override
+  String getLocationId() {
+    return sharepref?.getString(AppSharePrefConstants.prefKeyAppLocationId);
+  }
+
+  @override
+  Future<bool> setLocationId(String locationId) async {
+    return await sharepref?.setString(
+        AppSharePrefConstants.prefKeyAppLocationId, locationId);
   }
 }

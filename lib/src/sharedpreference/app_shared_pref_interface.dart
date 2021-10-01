@@ -1,9 +1,7 @@
-import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
-
 abstract class AppSharePrefInterface {
-  Future<bool> setMobileNumber(String mobileNumber);
+  Future<bool> setUserMobileNumber(String mobileNumber);
 
-  String getMobileNumber();
+  String getUserMobileNumber();
 
   Future<bool> setDeviceId(String deviceId);
 
@@ -29,13 +27,39 @@ abstract class AppSharePrefInterface {
 
   String getAppLanguage();
 
-  Future<bool> saveUser(LoginResponse userJson);
-
-  Future<bool> saveDutyStatus(String status);
+  Future<bool> setDutyStatus(String status);
 
   String getDutyStatus();
 
   Future<bool> setReminderAlarm(bool status);
 
   bool isReminderAlarmEnabled();
+
+  Future<bool> setUserId(String userId);
+
+  String getUserId();
+
+  Future<bool> setUserName(String userName);
+
+  String getUserName();
+
+  Future<bool> setUserLastName(String userLastName);
+
+  String getUserLastName();
+
+  Future<bool> setUserEmail(String userEmail);
+
+  String getUserEmail();
+
+  Future<bool> setUserRating(String userRating);
+
+  String getUserRating();
+
+  Future<bool> setUserProfileImage(String userImage);
+
+  String getUserProfileImage();
+
+  Future<bool> setLocationId(String locationId);
+
+  String getLocationId();
 }

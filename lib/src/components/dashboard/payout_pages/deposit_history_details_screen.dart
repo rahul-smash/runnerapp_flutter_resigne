@@ -404,7 +404,7 @@ class _DepositHistoryDetailsScreenState
       depositHistoryDetails = await getIt
           .get<PayoutRepository>()
           .getDepositsCompletedPayoutDetail(
-              userId: loginResponse.data.id,
+              userId: userId,
               batchId: widget.depositDatum.runnerDepositBatchId);
       setState(() {});
       AppUtils.hideLoader(context);

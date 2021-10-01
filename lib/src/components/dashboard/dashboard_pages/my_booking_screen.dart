@@ -57,7 +57,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
-          userId: loginResponse.data.id,
+          userId: userId,
           status: _getCurrentStatus(selectedFilterIndex),
           bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot);
       _getFilterCount();
@@ -220,7 +220,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .changeBookingAction(
-              userId: loginResponse.data.id,
+              userId: userId,
               orderId: booking.id,
               status: _changeBookingStatus(type));
       AppUtils.hideLoader(context);

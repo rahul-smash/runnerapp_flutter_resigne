@@ -12,6 +12,7 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
+
 import '../bloc/save_location_bloc.dart';
 import '../model/location_event_data.dart';
 
@@ -247,6 +248,7 @@ class _ServicesLocationScreenState extends BaseState<ServicesLocationScreen> {
             location.locationName = object.name;
             loginResponse.location = location;
             LoginUserSingleton.instance.loginResponse = loginResponse;
+            AppSharedPref.instance.setLocationId(location.locationId);
 
             if (widget.redirectToLogin) {
               Navigator.pop(context);

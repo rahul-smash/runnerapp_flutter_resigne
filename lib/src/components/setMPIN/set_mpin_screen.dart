@@ -5,7 +5,7 @@ import 'package:marketplace_service_provider/src/components/login/model/login_re
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/components/service_location/ui/services_location_screen.dart';
 import 'package:marketplace_service_provider/src/components/signUp/model/register_response.dart';
-import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -235,7 +235,7 @@ class _SetMPINScreenState extends BaseState<SetMPINScreen> {
       AppUtils.hideLoader(context);
       if (response.success) {
         AppUtils.showToast(response.message, false);
-        LoginUserSingleton.instance.loginResponse = response;
+        await AppSharedPref.instance.setAppUser(response);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
                 builder: (context) => ServicesLocationScreen(

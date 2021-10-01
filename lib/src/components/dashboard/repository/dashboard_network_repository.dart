@@ -43,7 +43,7 @@ class DashboardNetworkRepository extends DioBaseService {
       _instance ??= DashboardNetworkRepository._();
 
   String apiPath(String storeId, String path) =>
-      '$storeId${AppNetworkConstants.baseRoute}$path';
+      '$storeId${AppNetworkConstants.baseRouteV2}$path';
 
   Future<DashboardResponse> getDashboardSummary(
       String user_id, String filterOption) async {

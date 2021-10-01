@@ -134,9 +134,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-                  userId: loginResponse.data.id,
-                  orderId: bookingRequest.id,
-                  status: '1');
+                  userId: userId, orderId: bookingRequest.id, status: '1');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
@@ -162,9 +160,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-                  userId: loginResponse.data.id,
-                  orderId: bookingRequest.id,
-                  status: '2');
+                  userId: userId, orderId: bookingRequest.id, status: '2');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {

@@ -261,7 +261,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${loginResponse.data.fullName} ${loginResponse.data.lastName}",
+                      "${AppSharedPref.instance.getUserName()} ${AppSharedPref.instance.getUserLastName()}",
                       style: TextStyle(
                           fontSize: Dimensions.getScaledSize(20),
                           fontWeight: FontWeight.bold,
@@ -269,7 +269,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                           fontFamily: AppConstants.fontName),
                     ),
                     Text(
-                      "${loginResponse.data.email}",
+                      "${AppSharedPref.instance.getUserEmail()}",
                       style: TextStyle(
                           fontSize: Dimensions.getScaledSize(16),
                           fontWeight: FontWeight.normal,

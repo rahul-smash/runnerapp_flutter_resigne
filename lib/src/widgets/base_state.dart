@@ -4,6 +4,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/singleton/store_config_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/language_utils.dart';
@@ -13,7 +14,7 @@ abstract class BaseState<T extends StatefulWidget> extends State<T>  implements 
 
   final NetworkConnectionObserver network = getIt.get<NetworkConnectionObserver>();
   final DutyStatusObserver dutyStatusObserver = getIt.get<DutyStatusObserver>();
-  final LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
+  final String userId = AppSharedPref.instance.getUserId();
   final ConfigModel configModel = StoreConfigurationSingleton.instance.configModel;
 
   Widget futureBuild<T>(

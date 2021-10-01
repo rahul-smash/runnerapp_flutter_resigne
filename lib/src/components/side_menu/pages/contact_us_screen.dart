@@ -378,7 +378,7 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                            phoneNumber: mobileNameController.text,
                           email: emailNameController.text,
                           desc: messagetNameController.text,
-                          img1: _selectedImg1,user_id:loginResponse.data.id
+                          img1: _selectedImg1,user_id:userId
                       );
                       AppUtils.hideLoader(context);
                       AppUtils.showToast(baseresponse.message, true);

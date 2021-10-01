@@ -36,7 +36,7 @@ class PayoutNetworkRepository extends DioBaseService {
       _instance ??= PayoutNetworkRepository._();
 
   String apiPath(String storeId, String path) =>
-      '$storeId${AppNetworkConstants.baseRoute}$path';
+      '$storeId${AppNetworkConstants.baseRouteV2}$path';
 
   Future<PayoutSummaryResponse> getPaymentSummary(
       String user_id, String filterOption) async {
