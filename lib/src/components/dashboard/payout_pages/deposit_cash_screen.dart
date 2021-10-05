@@ -109,103 +109,103 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
 
   @override
   Widget builder(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: BaseAppBar(
-          removeTitleSpacing: true,
-          callback: () {
-            Navigator.of(context).pop();
-          },
-          backBtnColor: Colors.white,
-          backgroundColor: AppTheme.optionTotalBookingBgColor,
-          title: Text(
-            '$labelDepositCash',
-            style: TextStyle(color: Colors.white),
-          ),
-          appBar: AppBar(
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.white,
-            backwardsCompatibility: false,
-            systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: AppTheme.optionTotalBookingBgColor,
-                statusBarIconBrightness: Brightness.dark),
-            elevation: 0.0,
-            titleSpacing: 0.0,
-            bottom: PreferredSize(
-                child: Container(
-                  color: AppTheme.grayCircle,
-                  height: 4.0,
-                ),
-                preferredSize: Size.fromHeight(4.0)),
-          ),
-          widgets: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 25),
-              child: PopupMenuButton(
-                elevation: 3.2,
-                iconSize: 5.0,
-                tooltip: labelSorting,
-                child: Row(
-                  children: [
-                    Text(
-                      _selectedOverviewOption,
-                      style: TextStyle(
-                          color: AppTheme.white,
-                          fontSize: AppConstants.smallSize,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Image.asset(
-                      AppImages.icon_dropdownarrow,
-                      height: 5,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                  ],
-                ),
-                onSelected: (value) {
-                  _selectedOverviewOption = value;
-                  _onRefresh();
-                  setState(() {});
-                },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                itemBuilder: (BuildContext context) {
-                  return _overviewOptions.map((String choice) {
-                    return PopupMenuItem(
-                      value: choice,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            choice,
-                            style: TextStyle(
-                                color: _selectedOverviewOption == choice
-                                    ? AppTheme.primaryColorDark
-                                    : AppTheme.mainTextColor),
-                          ),
-                          Visibility(
-                              visible: _selectedOverviewOption == choice,
-                              child: Icon(
-                                Icons.check,
-                                color: AppTheme.primaryColorDark,
-                              ))
-                        ],
-                      ),
-                    );
-                  }).toList();
-                },
-              ),
-            ),
-          ],
+    return Scaffold(
+      appBar: BaseAppBar(
+        removeTitleSpacing: true,
+        callback: () {
+          Navigator.of(context).pop();
+        },
+        backBtnColor: Colors.white,
+        backgroundColor: AppTheme.optionTotalBookingBgColor,
+        title: Text(
+          '$labelDepositCash',
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color(0xFFECECEC),
-        body: Container(
+        appBar: AppBar(
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
+          backwardsCompatibility: false,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: AppTheme.optionTotalBookingBgColor,
+              statusBarIconBrightness: Brightness.dark),
+          elevation: 0.0,
+          titleSpacing: 0.0,
+          bottom: PreferredSize(
+              child: Container(
+                color: AppTheme.grayCircle,
+                height: 4.0,
+              ),
+              preferredSize: Size.fromHeight(4.0)),
+        ),
+        widgets: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 25),
+            child: PopupMenuButton(
+              elevation: 3.2,
+              iconSize: 5.0,
+              tooltip: labelSorting,
+              child: Row(
+                children: [
+                  Text(
+                    _selectedOverviewOption,
+                    style: TextStyle(
+                        color: AppTheme.white,
+                        fontSize: AppConstants.smallSize,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Image.asset(
+                    AppImages.icon_dropdownarrow,
+                    height: 5,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                ],
+              ),
+              onSelected: (value) {
+                _selectedOverviewOption = value;
+                _onRefresh();
+                setState(() {});
+              },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              itemBuilder: (BuildContext context) {
+                return _overviewOptions.map((String choice) {
+                  return PopupMenuItem(
+                    value: choice,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          choice,
+                          style: TextStyle(
+                              color: _selectedOverviewOption == choice
+                                  ? AppTheme.primaryColorDark
+                                  : AppTheme.mainTextColor),
+                        ),
+                        Visibility(
+                            visible: _selectedOverviewOption == choice,
+                            child: Icon(
+                              Icons.check,
+                              color: AppTheme.primaryColorDark,
+                            ))
+                      ],
+                    ),
+                  );
+                }).toList();
+              },
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Color(0xFFECECEC),
+      body: SafeArea(
+        child: Container(
           child: Stack(
             children: [
               Container(
@@ -309,6 +309,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                 ),
                                 Expanded(
                                     child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Flexible(
                                       child: Column(
@@ -336,10 +337,65 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                                   color: Colors.white70),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 8.0, right: 8.0),
-                                            child: Row(
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                AppConstants.currency,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: AppConstants
+                                                        .extraSmallSize,
+                                                    color: Colors.white70),
+                                              ),
+                                              SizedBox(
+                                                width: 2,
+                                              ),
+                                              Text(
+                                                '${isApiLoading || depositCashResponse == null ? '--' : depositCashResponse.summery.cashInHand}',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                        AppConstants.largeSize,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Flexible(
+                                      child: Container(
+                                        width: double.maxFinite,
+                                        padding:
+                                            EdgeInsets.only(left: 15, right: 5),
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                                left: BorderSide(
+                                                    color: AppTheme.white))),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              labelCashLimit,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize:
+                                                      AppConstants.smallSize,
+                                                  color: Colors.white),
+                                            ),
+                                            Row(
                                               mainAxisSize: MainAxisSize.min,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -358,7 +414,7 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                                   width: 2,
                                                 ),
                                                 Text(
-                                                  '${isApiLoading || depositCashResponse == null ? '--' : depositCashResponse.summery.cashInHand}',
+                                                  '${isApiLoading || depositCashResponse == null ? '--' : depositCashResponse.summery.cashLimit}',
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                       fontWeight:
@@ -368,70 +424,6 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                                                       color: Colors.white),
                                                 ),
                                               ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    Flexible(
-                                      child: Container(
-                                        width: double.maxFinite,
-                                        padding:
-                                            EdgeInsets.only(left: 5, right: 5),
-                                        decoration: BoxDecoration(
-                                            border: Border(
-                                                left: BorderSide(
-                                                    color: AppTheme.white))),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              labelCashLimit,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize:
-                                                      AppConstants.smallSize,
-                                                  color: Colors.white),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 8.0, right: 8.0),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    AppConstants.currency,
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        fontSize: AppConstants
-                                                            .extraSmallSize,
-                                                        color: Colors.white70),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 2,
-                                                  ),
-                                                  Text(
-                                                    '${isApiLoading || depositCashResponse == null ? '--' : depositCashResponse.summery.cashLimit}',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: AppConstants
-                                                            .largeSize,
-                                                        color: Colors.white),
-                                                  ),
-                                                ],
-                                              ),
                                             ),
                                           ],
                                         ),

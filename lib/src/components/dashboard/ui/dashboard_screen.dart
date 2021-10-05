@@ -142,7 +142,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         );
         break;
       case 1:
-        return MyBookingScreen();
+        return MyBookingScreen(
+          menuInteraction: () {
+            _toggle();
+          },
+        );
         break;
       case 2:
         return PaymentScreen(() {
@@ -170,10 +174,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   Widget get bottomNavigationBar {
     return Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(30), topLeft: Radius.circular(30)),
           boxShadow: [
-            BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 6),
+            BoxShadow(color: Colors.black12, spreadRadius: 0, blurRadius: 6),
           ],
         ),
         child: BottomNavigationBar(

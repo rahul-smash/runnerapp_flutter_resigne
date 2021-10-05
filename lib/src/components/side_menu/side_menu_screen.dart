@@ -227,7 +227,10 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                 AppConstants.isLoggedIn = false;
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => LoginScreen(
+                              shouldForceUpdate: false,
+                            )),
                     (Route<dynamic> route) => false);
               },
             ),
@@ -273,7 +276,7 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
                       style: TextStyle(
                           fontSize: Dimensions.getScaledSize(16),
                           fontWeight: FontWeight.normal,
-                          color: AppTheme.subHeadingTextColor,
+                          color: AppTheme.white,
                           fontFamily: AppConstants.fontName),
                     ),
                   ],

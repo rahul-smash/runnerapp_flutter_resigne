@@ -104,103 +104,103 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
 
   @override
   Widget builder(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: BaseAppBar(
-          removeTitleSpacing: true,
-          callback: () {
-            Navigator.of(context).pop();
-          },
-          backBtnColor: Colors.white,
-          backgroundColor: AppTheme.optionTotalCustomerBgColor,
-          title: Text(
-            labelPayoutPendingTitle,
-            style: TextStyle(color: Colors.white),
-          ),
-          appBar: AppBar(
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.white,
-            backwardsCompatibility: false,
-            systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: AppTheme.optionTotalCustomerBgColor,
-                statusBarIconBrightness: Brightness.dark),
-            elevation: 0.0,
-            titleSpacing: 0.0,
-            bottom: PreferredSize(
-                child: Container(
-                  color: AppTheme.grayCircle,
-                  height: 4.0,
-                ),
-                preferredSize: Size.fromHeight(4.0)),
-          ),
-          widgets: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 25),
-              child: PopupMenuButton(
-                elevation: 3.2,
-                iconSize: 5.0,
-                tooltip: 'Sorting',
-                child: Row(
-                  children: [
-                    Text(
-                      _selectedOverviewOption,
-                      style: TextStyle(
-                          color: AppTheme.white,
-                          fontSize: AppConstants.smallSize,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Image.asset(
-                      AppImages.icon_dropdownarrow,
-                      height: 5,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                  ],
-                ),
-                onSelected: (value) {
-                  _selectedOverviewOption = value;
-                  _onRefresh();
-                  setState(() {});
-                },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                itemBuilder: (BuildContext c8ontext) {
-                  return _overviewOptions.map((String choice) {
-                    return PopupMenuItem(
-                      value: choice,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            choice,
-                            style: TextStyle(
-                                color: _selectedOverviewOption == choice
-                                    ? AppTheme.primaryColorDark
-                                    : AppTheme.mainTextColor),
-                          ),
-                          Visibility(
-                              visible: _selectedOverviewOption == choice,
-                              child: Icon(
-                                Icons.check,
-                                color: AppTheme.primaryColorDark,
-                              ))
-                        ],
-                      ),
-                    );
-                  }).toList();
-                },
-              ),
-            ),
-          ],
+    return Scaffold(
+      appBar: BaseAppBar(
+        removeTitleSpacing: true,
+        callback: () {
+          Navigator.of(context).pop();
+        },
+        backBtnColor: Colors.white,
+        backgroundColor: AppTheme.optionTotalCustomerBgColor,
+        title: Text(
+          labelPayoutPendingTitle,
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppTheme.backgroundGeryColor,
-        body: Container(
+        appBar: AppBar(
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
+          backwardsCompatibility: false,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: AppTheme.optionTotalCustomerBgColor,
+              statusBarIconBrightness: Brightness.dark),
+          elevation: 0.0,
+          titleSpacing: 0.0,
+          bottom: PreferredSize(
+              child: Container(
+                color: AppTheme.grayCircle,
+                height: 4.0,
+              ),
+              preferredSize: Size.fromHeight(4.0)),
+        ),
+        widgets: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 25),
+            child: PopupMenuButton(
+              elevation: 3.2,
+              iconSize: 5.0,
+              tooltip: 'Sorting',
+              child: Row(
+                children: [
+                  Text(
+                    _selectedOverviewOption,
+                    style: TextStyle(
+                        color: AppTheme.white,
+                        fontSize: AppConstants.smallSize,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Image.asset(
+                    AppImages.icon_dropdownarrow,
+                    height: 5,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                ],
+              ),
+              onSelected: (value) {
+                _selectedOverviewOption = value;
+                _onRefresh();
+                setState(() {});
+              },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              itemBuilder: (BuildContext c8ontext) {
+                return _overviewOptions.map((String choice) {
+                  return PopupMenuItem(
+                    value: choice,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          choice,
+                          style: TextStyle(
+                              color: _selectedOverviewOption == choice
+                                  ? AppTheme.primaryColorDark
+                                  : AppTheme.mainTextColor),
+                        ),
+                        Visibility(
+                            visible: _selectedOverviewOption == choice,
+                            child: Icon(
+                              Icons.check,
+                              color: AppTheme.primaryColorDark,
+                            ))
+                      ],
+                    ),
+                  );
+                }).toList();
+              },
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: AppTheme.backgroundGeryColor,
+      body: SafeArea(
+        child: Container(
           child: Stack(
             children: [
               Container(
@@ -289,7 +289,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                 child: Column(
                   children: [
                     Container(
-                      height: 40,
+                      height: Dimensions.getScaledSize(55),
                       margin: EdgeInsets.fromLTRB(
                           Dimensions.getScaledSize(65), 0, 0, 0),
                       child: Row(

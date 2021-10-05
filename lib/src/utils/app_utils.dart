@@ -181,7 +181,7 @@ class AppUtils {
         ),
         themeData:
             Theme.of(context).copyWith(accentColor: AppTheme.primaryColor),
-        overlayColor: Color(0x99E8EAF6));
+        overlayColor: Colors.transparent);
   }
 
   static void hideLoader(BuildContext context) {

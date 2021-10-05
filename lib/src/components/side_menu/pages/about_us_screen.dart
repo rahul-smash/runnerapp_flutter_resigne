@@ -50,7 +50,7 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
           backgroundColor: Colors.white,
           backwardsCompatibility: false,
           systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Colors.white,
+              statusBarColor: Colors.transparent,
               statusBarIconBrightness: Brightness.dark),
           elevation: 0.0,
           titleSpacing: 0.0,

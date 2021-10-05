@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,6 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/repository/menu_option_repository_impl.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
-import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -25,13 +25,13 @@ class ContactUsScreen extends StatefulWidget {
   }
 }
 
-class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePickerListener{
-
+class _ContactUsScreenState extends BaseState<ContactUsScreen>
+    with ImagePickerListener {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController mobileNameController = TextEditingController();
   TextEditingController emailNameController = TextEditingController();
   TextEditingController messagetNameController = TextEditingController();
-  List<String> contactUsOptionsList = ["Option 1","Option 2"];
+  List<String> contactUsOptionsList = ["Option 1", "Option 2"];
   String _selectedContactUsOption;
   File _selectedImg1;
   var resultFileImgSize1;
@@ -42,8 +42,9 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
     super.initState();
     imagePicker = new ImagePickerHandler(this);
     imagePicker.init();
-    contactUsOptionsList = VersionApiSingleton.instance.storeResponse.brand.contactusOptions;
-    _selectedContactUsOption = contactUsOptionsList.first;
+    // contactUsOptionsList =
+    //     VersionApiSingleton.instance.storeResponse.brand.contactusOptions;
+    // _selectedContactUsOption = contactUsOptionsList?.first;
   }
 
   @override
@@ -57,23 +58,24 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
 
   @override
   Widget builder(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppTheme.grayCircle,
       appBar: BaseAppBar(
-        callback: (){
+        callback: () {
           Navigator.of(context).pop();
         },
         backgroundColor: AppTheme.white,
-        title: Text('Contact Us',style: TextStyle(color: Colors.black),),
+        title: Text(
+          'Contact Us',
+          style: TextStyle(color: Colors.black),
+        ),
         appBar: AppBar(
           foregroundColor: Colors.black,
           backgroundColor: Colors.white,
           backwardsCompatibility: false,
           systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Colors.white,
-              statusBarIconBrightness: Brightness.dark
-          ),
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark),
           elevation: 0.0,
           titleSpacing: 0.0,
           bottom: PreferredSize(
@@ -83,8 +85,7 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
               ),
               preferredSize: Size.fromHeight(4.0)),
         ),
-        widgets: <Widget>[
-        ],
+        widgets: <Widget>[],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -95,32 +96,28 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-
                 TextFormField(
                   controller: fullNameController,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
                   validator: (val) =>
-                  val.isEmpty ? "Please enter your first name!" : null,
-                  onFieldSubmitted: (value) {
-
-                  },
+                      val.isEmpty ? "Please enter your first name!" : null,
+                  onFieldSubmitted: (value) {},
                   style: TextStyle(color: AppTheme.mainTextColor),
                   decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppTheme.borderNotFocusedColor)),
+                        borderSide:
+                            BorderSide(color: AppTheme.borderNotFocusedColor)),
                     focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppTheme.primaryColor)),
+                        borderSide: BorderSide(color: AppTheme.primaryColor)),
                     hintText: "Enter First Name",
                     errorStyle: TextStyle(
                         fontSize: AppConstants.extraXSmallSize,
                         fontFamily: AppConstants.fontName),
                     hintStyle: TextStyle(
                         color: AppTheme.subHeadingTextColor, fontSize: 16),
-                    labelStyle: TextStyle(
-                        color: AppTheme.mainTextColor, fontSize: 16),
+                    labelStyle:
+                        TextStyle(color: AppTheme.mainTextColor, fontSize: 16),
                   ),
                 ),
                 SizedBox(
@@ -131,63 +128,54 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
                   validator: (val) =>
-                  val.isEmpty ? "Please enter your mobile number" : null,
-                  onFieldSubmitted: (value) {
-
-                  },
+                      val.isEmpty ? "Please enter your mobile number" : null,
+                  onFieldSubmitted: (value) {},
                   style: TextStyle(color: AppTheme.mainTextColor),
                   decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppTheme.borderNotFocusedColor)),
+                        borderSide:
+                            BorderSide(color: AppTheme.borderNotFocusedColor)),
                     focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppTheme.primaryColor)),
+                        borderSide: BorderSide(color: AppTheme.primaryColor)),
                     hintText: "Enter Mobile Number",
                     errorStyle: TextStyle(
                         fontSize: AppConstants.extraXSmallSize,
                         fontFamily: AppConstants.fontName),
                     hintStyle: TextStyle(
                         color: AppTheme.subHeadingTextColor, fontSize: 16),
-                    labelStyle: TextStyle(
-                        color: AppTheme.mainTextColor, fontSize: 16),
+                    labelStyle:
+                        TextStyle(color: AppTheme.mainTextColor, fontSize: 16),
                   ),
                 ),
                 SizedBox(
                   height: 20,
                 ),
-
                 TextFormField(
                   controller: emailNameController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.send,
-                  validator: (val) =>
-                  val.isEmpty ? labelErrorEmail : null,
-                  onFieldSubmitted: (value) async {
-
-                  },
+                  validator: (val) => val.isEmpty ? labelErrorEmail : null,
+                  onFieldSubmitted: (value) async {},
                   style: TextStyle(color: AppTheme.mainTextColor),
                   decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppTheme.borderNotFocusedColor)),
+                        borderSide:
+                            BorderSide(color: AppTheme.borderNotFocusedColor)),
                     focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppTheme.primaryColor)),
+                        borderSide: BorderSide(color: AppTheme.primaryColor)),
                     hintText: labelErrorEmail,
                     errorStyle: TextStyle(
                         fontSize: AppConstants.extraXSmallSize,
                         fontFamily: AppConstants.fontName),
                     hintStyle: TextStyle(
                         color: AppTheme.subHeadingTextColor, fontSize: 14),
-                    labelStyle: TextStyle(
-                        color: AppTheme.mainTextColor, fontSize: 14),
+                    labelStyle:
+                        TextStyle(color: AppTheme.mainTextColor, fontSize: 14),
                   ),
                 ),
                 SizedBox(
                   height: 20,
                 ),
-
                 Container(
                   child: DropdownButtonFormField(
                     dropdownColor: Colors.white,
@@ -207,7 +195,8 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                           ));
                     }).toList(),
                     onTap: () {},
-                    onChanged:  (newValue) => setState(() => _selectedContactUsOption = newValue),
+                    onChanged: (newValue) =>
+                        setState(() => _selectedContactUsOption = newValue),
                     value: _selectedContactUsOption,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(0),
@@ -222,13 +211,13 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                 SizedBox(
                   height: 20,
                 ),
-
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Description",),
-                    ]
-                ),
+                      Text(
+                        "Description",
+                      ),
+                    ]),
                 SizedBox(
                   height: 5,
                 ),
@@ -238,14 +227,14 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                     color: AppTheme.grayCircle,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  margin: EdgeInsets.only(top: 0,  bottom: 0),
+                  margin: EdgeInsets.only(top: 0, bottom: 0),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(15, 15, 10, 10),
                     child: TextFormField(
                       //focusNode: _nodeText1,
                       controller: messagetNameController,
                       validator: (val) =>
-                      val.isEmpty ? labelErrorAboutUs : null,
+                          val.isEmpty ? labelErrorAboutUs : null,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       textAlign: TextAlign.start,
@@ -284,8 +273,7 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                           ),
                         ),
                       ),
-                    ]
-                ),
+                    ]),
                 SizedBox(
                   height: 20,
                 ),
@@ -310,7 +298,10 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Icon(Icons.upload_rounded,color: AppTheme.primaryColor,),
+                                Icon(
+                                  Icons.upload_rounded,
+                                  color: AppTheme.primaryColor,
+                                ),
                                 Text(
                                   "Upload\nImage 1",
                                   textAlign: TextAlign.center,
@@ -325,12 +316,14 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                         ),
                       ),
                     ),
-                    onTap: (){
-                      imagePicker.showDialog(context,docImage1: true,profileImage: false,docImage2: false);
+                    onTap: () {
+                      imagePicker.showDialog(context,
+                          docImage1: true,
+                          profileImage: false,
+                          docImage2: false);
                     },
                   ),
                 ),
-
                 SizedBox(
                   height: 10,
                 ),
@@ -348,46 +341,47 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                     color: AppTheme.primaryColor,
                     textColor: Colors.white,
                     onPressed: () async {
-                      if(this.network.offline){
+                      if (this.network.offline) {
                         AppUtils.showToast("No Internet connection!", true);
                         return;
                       }
-                      if(fullNameController.text.trim().isEmpty){
+                      if (fullNameController.text.trim().isEmpty) {
                         AppUtils.showToast("Please enter first name", true);
                         return;
                       }
-                      if(mobileNameController.text.trim().isEmpty){
+                      if (mobileNameController.text.trim().isEmpty) {
                         AppUtils.showToast("Please enter mobile number", true);
                         return;
                       }
-                      if(emailNameController.text.isEmpty){
+                      if (emailNameController.text.isEmpty) {
                         AppUtils.showToast("Please enter email", true);
                         return;
                       }
-                      if(!AppUtils.validateEmail(emailNameController.text.trim())){
+                      if (!AppUtils.validateEmail(
+                          emailNameController.text.trim())) {
                         AppUtils.showToast("Please enter valid email", true);
                         return;
                       }
-                      if(messagetNameController.text.isEmpty){
+                      if (messagetNameController.text.isEmpty) {
                         AppUtils.showToast("Please enter description", true);
                         return;
                       }
                       AppUtils.showLoader(context);
-                      BaseResponse baseresponse = await getIt.get<MenuOptionRepositoryImpl>()
-                          .sendContactUsData(name: fullNameController.text,
-                           phoneNumber: mobileNameController.text,
-                          email: emailNameController.text,
-                          desc: messagetNameController.text,
-                          img1: _selectedImg1,user_id:userId
-                      );
+                      BaseResponse baseresponse = await getIt
+                          .get<MenuOptionRepositoryImpl>()
+                          .sendContactUsData(
+                              name: fullNameController.text,
+                              phoneNumber: mobileNameController.text,
+                              email: emailNameController.text,
+                              desc: messagetNameController.text,
+                              img1: _selectedImg1,
+                              user_id: userId);
                       AppUtils.hideLoader(context);
                       AppUtils.showToast(baseresponse.message, true);
                       AppUtils.hideKeyboard(context);
-
                     },
                   ),
                 ),
-
               ],
             ),
           ),
@@ -397,20 +391,26 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
   }
 
   @override
-  selectedProfileImage(XFile _image, bool profileImage, bool docImage1, bool docImage2,
-      bool docImage3, bool docCertificateImage1, bool docCertificateImage2, bool docCertificateImage3) async {
+  selectedProfileImage(
+      XFile _image,
+      bool profileImage,
+      bool docImage1,
+      bool docImage2,
+      bool docImage3,
+      bool docCertificateImage1,
+      bool docCertificateImage2,
+      bool docCertificateImage3) async {
     try {
-      if(_image == null){
-            AppUtils.showToast("Invalid Image!", true);
-            return;
-          }
-      if(docImage1){
-            _selectedImg1 = File(_image.path);
-            resultFileImgSize1 = await AppUtils.getFileSize(_selectedImg1.path, 1);
-            print("resultFileImgSize1=${resultFileImgSize1}");
-            setState(() {
-            });
-          }
+      if (_image == null) {
+        AppUtils.showToast("Invalid Image!", true);
+        return;
+      }
+      if (docImage1) {
+        _selectedImg1 = File(_image.path);
+        resultFileImgSize1 = await AppUtils.getFileSize(_selectedImg1.path, 1);
+        print("resultFileImgSize1=${resultFileImgSize1}");
+        setState(() {});
+      }
     } catch (e) {
       print(e);
     }
@@ -421,7 +421,6 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
       shrinkWrap: true,
       padding: EdgeInsets.all(0),
       children: <Widget>[
-
         Visibility(
           visible: _selectedImg1 != null ? true : false,
           child: SizedBox(
@@ -441,13 +440,22 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: ListTile(
-              leading: Container(height: double.infinity,
-                  child: Icon(Icons.description_outlined,color: AppTheme.primaryColor,)
-              ),
-              title: Text(_selectedImg1 == null ? "" : "${_selectedImg1.path.split('/').last}",maxLines: 2,overflow: TextOverflow.ellipsis),
-              subtitle: Text(resultFileImgSize1 == null ? "" : '${resultFileImgSize1}'),
+              leading: Container(
+                  height: double.infinity,
+                  child: Icon(
+                    Icons.description_outlined,
+                    color: AppTheme.primaryColor,
+                  )),
+              title: Text(
+                  _selectedImg1 == null
+                      ? ""
+                      : "${_selectedImg1.path.split('/').last}",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis),
+              subtitle: Text(
+                  resultFileImgSize1 == null ? "" : '${resultFileImgSize1}'),
               trailing: InkWell(
-                onTap: (){
+                onTap: () {
                   setState(() {
                     _selectedImg1 = null;
                     resultFileImgSize1 = null;
@@ -455,7 +463,7 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
                 },
                 child: Icon(Icons.clear),
               ),
-              contentPadding: EdgeInsets.only(left: 10,right: 10),
+              contentPadding: EdgeInsets.only(left: 10, right: 10),
             ),
           ),
         ),
@@ -463,4 +471,3 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>  with ImagePicker
     );
   }
 }
-

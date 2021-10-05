@@ -16,6 +16,10 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MyBookingScreen extends StatefulWidget {
+  final VoidCallback menuInteraction;
+
+  MyBookingScreen({Key key, this.menuInteraction}) : super(key: key);
+
   @override
   _MyBookingScreenState createState() => _MyBookingScreenState();
 
@@ -296,11 +300,13 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
           height: 25,
           color: AppTheme.black,
         ),
-        onPressed: () {},
+        onPressed: () {
+          widget.menuInteraction();
+        },
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        elevation: 4,
+        elevation: 0.0,
       ),
       widgets: [
         Container(

@@ -209,7 +209,7 @@ class _SetNewMPINScreenState extends BaseState<SetNewMPINScreen> {
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-            builder: (context) => LoginScreen()),
+            builder: (context) => LoginScreen(shouldForceUpdate: false,)),
             (Route<dynamic> route) => false);
 
 

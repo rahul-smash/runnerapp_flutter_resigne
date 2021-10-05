@@ -295,7 +295,16 @@ class _DepositHistoryScreenState extends BaseState<DepositHistoryScreen> {
                             Row(
                               children: [
                                 Text(
-                                  "${AppUtils.convertDateFromFormat(depositHistory?.depositData?.first?.depositDateTime?.toString() ?? DateTime.now().toString(), parsingPattern: AppUtils.dateTimeAppDisplayPattern_3)}",
+                                  AppUtils.convertDateFromFormat(
+                                      depositHistory != null &&
+                                              depositHistory
+                                                  .depositData.isNotEmpty
+                                          ? depositHistory
+                                              .depositData.first.depositDateTime
+                                              .toString()
+                                          : DateTime.now().toString(),
+                                      parsingPattern:
+                                          AppUtils.dateTimeAppDisplayPattern_3),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 14.0,

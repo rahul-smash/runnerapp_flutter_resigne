@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
@@ -90,9 +91,15 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
   Widget builder(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.black,
+        backwardsCompatibility: false,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light),
+        elevation: 0.0,
+        titleSpacing: 0.0,
         backgroundColor: AppTheme.primaryColor,
         toolbarHeight: 0.5,
-        elevation: 0.0,
       ),
       backgroundColor: AppTheme.white,
       body: SmartRefresher(
