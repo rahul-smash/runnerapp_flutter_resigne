@@ -26,21 +26,26 @@ class BookingDetailsResponse {
         bookings: bookings ?? this.bookings,
       );
 
-  factory BookingDetailsResponse.fromRawJson(String str) => BookingDetailsResponse.fromJson(json.decode(str));
+  factory BookingDetailsResponse.fromRawJson(String str) =>
+      BookingDetailsResponse.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory BookingDetailsResponse.fromJson(Map<String, dynamic> json) => BookingDetailsResponse(
-    success: json["success"] == null ? null : json["success"],
-    bookingCounts: json["booking_counts"] == null ? null : json["booking_counts"],
-    bookings: json["bookings"] == null ? null : Bookings.fromJson(json["bookings"]),
-  );
+  factory BookingDetailsResponse.fromJson(Map<String, dynamic> json) =>
+      BookingDetailsResponse(
+        success: json["success"] == null ? null : json["success"],
+        bookingCounts:
+            json["booking_counts"] == null ? null : json["booking_counts"],
+        bookings: json["bookings"] == null
+            ? null
+            : Bookings.fromJson(json["bookings"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success == null ? null : success,
-    "booking_counts": bookingCounts == null ? null : bookingCounts,
-    "bookings": bookings == null ? null : bookings.toJson(),
-  };
+        "success": success == null ? null : success,
+        "booking_counts": bookingCounts == null ? null : bookingCounts,
+        "bookings": bookings == null ? null : bookings.toJson(),
+      };
 }
 
 class Bookings {
@@ -119,9 +124,9 @@ class Bookings {
   String orderFacility;
   String status;
   String runnerAssigned;
-  DateTime deliveryTimeSlot;
-  DateTime created;
-  DateTime modified;
+  String deliveryTimeSlot;
+  String created;
+  String modified;
   UserAddress userAddress;
   User user;
   List<Cart> cart;
@@ -162,9 +167,9 @@ class Bookings {
     String orderFacility,
     String status,
     String runnerAssigned,
-    DateTime deliveryTimeSlot,
-    DateTime created,
-    DateTime modified,
+    String deliveryTimeSlot,
+    String created,
+    String modified,
     UserAddress userAddress,
     User user,
     List<Cart> cart,
@@ -180,7 +185,8 @@ class Bookings {
         storeId: storeId ?? this.storeId,
         userId: userId ?? this.userId,
         runnerId: runnerId ?? this.runnerId,
-        runnerDeliveryAccepted: runnerDeliveryAccepted ?? this.runnerDeliveryAccepted,
+        runnerDeliveryAccepted:
+            runnerDeliveryAccepted ?? this.runnerDeliveryAccepted,
         userAddressId: userAddressId ?? this.userAddressId,
         bookingsUserAddress: bookingsUserAddress ?? this.bookingsUserAddress,
         paymentMethod: paymentMethod ?? this.paymentMethod,
@@ -217,97 +223,138 @@ class Bookings {
         serviceDuration: serviceDuration ?? this.serviceDuration,
       );
 
-  factory Bookings.fromRawJson(String str) => Bookings.fromJson(json.decode(str));
+  factory Bookings.fromRawJson(String str) =>
+      Bookings.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory Bookings.fromJson(Map<String, dynamic> json) => Bookings(
-    id: json["id"] == null ? null : json["id"],
-    displayOrderId: json["display_order_id"] == null ? null : json["display_order_id"],
-    brandId: json["brand_id"] == null ? null : json["brand_id"],
-    storeId: json["store_id"] == null ? null : json["store_id"],
-    userId: json["user_id"] == null ? null : json["user_id"],
-    runnerId: json["runner_id"] == null ? null : json["runner_id"],
-    runnerDeliveryAccepted: json["runner_delivery_accepted"] == null ? null : json["runner_delivery_accepted"],
-    userAddressId: json["user_address_id"] == null ? null : json["user_address_id"],
-    bookingsUserAddress: json["user_address"] == null ? null : json["user_address"],
-    paymentMethod: json["payment_method"] == null ? null : json["payment_method"],
-    discount: json["discount"] == null ? null : json["discount"],
-    cartSaving: json["cart_saving"] == null ? null : json["cart_saving"],
-    onlineMethod: json["online_method"] == null ? null : json["online_method"],
-    platform: json["platform"] == null ? null : json["platform"],
-    paymentRequestId: json["payment_request_id"] == null ? null : json["payment_request_id"],
-    paymentId: json["payment_id"] == null ? null : json["payment_id"],
-    note: json["note"] == null ? null : json["note"],
-    couponCode: json["coupon_code"] == null ? null : json["coupon_code"],
-    total: json["total"] == null ? null : json["total"],
-    rating: json["rating"] == null ? null : json["rating"],
-    checkout: json["checkout"] == null ? null : json["checkout"],
-    shippingCharges: json["shipping_charges"] == null ? null : json["shipping_charges"],
-    shippingTax: json["shipping_tax"] == null ? null : json["shipping_tax"],
-    shippingTaxRate: json["shipping_tax_rate"] == null ? null : json["shipping_tax_rate"],
-    tax: json["tax"] == null ? null : json["tax"],
-    storeTaxRateDetail: json["store_tax_rate_detail"] == null ? null : json["store_tax_rate_detail"],
-    calculatedTaxDetail: json["calculated_tax_detail"] == null ? null : json["calculated_tax_detail"],
-    storeFixedTaxDetail: json["store_fixed_tax_detail"] == null ? null : json["store_fixed_tax_detail"],
-    orderFacility: json["order_facility"] == null ? null : json["order_facility"],
-    status: json["status"] == null ? null : json["status"],
-    runnerAssigned: json["runner_assigned"] == null ? null : json["runner_assigned"],
-    deliveryTimeSlot: json["delivery_time_slot"] == null ? null : DateTime.parse(json["delivery_time_slot"]),
-    created: json["created"] == null ? null : DateTime.parse(json["created"]),
-    modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),
-    userAddress: json["UserAddress"] == null ? null : UserAddress.fromJson(json["UserAddress"]),
-    user: json["User"] == null ? null : User.fromJson(json["User"]),
-    cart: json["Cart"] == null ? null : List<Cart>.from(json["Cart"].map((x) => Cart.fromJson(x))),
-    bookingDateTime: json["booking_date_time"] == null ? null : json["booking_date_time"],
-    categoryTitle: json["category_title"] == null ? null : json["category_title"],
-    serviceCount: json["service_count"] == null ? null : json["service_count"],
-    serviceDuration: json["service_duration"] == null ? null : json["service_duration"],
-  );
+        id: json["id"] == null ? null : json["id"],
+        displayOrderId:
+            json["display_order_id"] == null ? null : json["display_order_id"],
+        brandId: json["brand_id"] == null ? null : json["brand_id"],
+        storeId: json["store_id"] == null ? null : json["store_id"],
+        userId: json["user_id"] == null ? null : json["user_id"],
+        runnerId: json["runner_id"] == null ? null : json["runner_id"],
+        runnerDeliveryAccepted: json["runner_delivery_accepted"] == null
+            ? null
+            : json["runner_delivery_accepted"],
+        userAddressId:
+            json["user_address_id"] == null ? null : json["user_address_id"],
+        bookingsUserAddress:
+            json["user_address"] == null ? null : json["user_address"],
+        paymentMethod:
+            json["payment_method"] == null ? null : json["payment_method"],
+        discount: json["discount"] == null ? null : json["discount"],
+        cartSaving: json["cart_saving"] == null ? null : json["cart_saving"],
+        onlineMethod:
+            json["online_method"] == null ? null : json["online_method"],
+        platform: json["platform"] == null ? null : json["platform"],
+        paymentRequestId: json["payment_request_id"] == null
+            ? null
+            : json["payment_request_id"],
+        paymentId: json["payment_id"] == null ? null : json["payment_id"],
+        note: json["note"] == null ? null : json["note"],
+        couponCode: json["coupon_code"] == null ? null : json["coupon_code"],
+        total: json["total"] == null ? null : json["total"],
+        rating: json["rating"] == null ? null : json["rating"],
+        checkout: json["checkout"] == null ? null : json["checkout"],
+        shippingCharges:
+            json["shipping_charges"] == null ? null : json["shipping_charges"],
+        shippingTax: json["shipping_tax"] == null ? null : json["shipping_tax"],
+        shippingTaxRate: json["shipping_tax_rate"] == null
+            ? null
+            : json["shipping_tax_rate"],
+        tax: json["tax"] == null ? null : json["tax"],
+        storeTaxRateDetail: json["store_tax_rate_detail"] == null
+            ? null
+            : json["store_tax_rate_detail"],
+        calculatedTaxDetail: json["calculated_tax_detail"] == null
+            ? null
+            : json["calculated_tax_detail"],
+        storeFixedTaxDetail: json["store_fixed_tax_detail"] == null
+            ? null
+            : json["store_fixed_tax_detail"],
+        orderFacility:
+            json["order_facility"] == null ? null : json["order_facility"],
+        status: json["status"] == null ? null : json["status"],
+        runnerAssigned:
+            json["runner_assigned"] == null ? null : json["runner_assigned"],
+        deliveryTimeSlot: json["delivery_time_slot"] == null
+            ? null
+            : json["delivery_time_slot"],
+        created: json["created"] == null ? null : json["created"],
+        modified: json["modified"] == null ? null : json["modified"],
+        userAddress: json["UserAddress"] == null
+            ? null
+            : UserAddress.fromJson(json["UserAddress"]),
+        user: json["User"] == null ? null : User.fromJson(json["User"]),
+        cart: json["Cart"] == null
+            ? null
+            : List<Cart>.from(json["Cart"].map((x) => Cart.fromJson(x))),
+        bookingDateTime: json["booking_date_time"] == null
+            ? null
+            : json["booking_date_time"],
+        categoryTitle:
+            json["category_title"] == null ? null : json["category_title"],
+        serviceCount:
+            json["service_count"] == null ? null : json["service_count"],
+        serviceDuration:
+            json["service_duration"] == null ? null : json["service_duration"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "display_order_id": displayOrderId == null ? null : displayOrderId,
-    "brand_id": brandId == null ? null : brandId,
-    "store_id": storeId == null ? null : storeId,
-    "user_id": userId == null ? null : userId,
-    "runner_id": runnerId == null ? null : runnerId,
-    "runner_delivery_accepted": runnerDeliveryAccepted == null ? null : runnerDeliveryAccepted,
-    "user_address_id": userAddressId == null ? null : userAddressId,
-    "user_address": bookingsUserAddress == null ? null : bookingsUserAddress,
-    "payment_method": paymentMethod == null ? null : paymentMethod,
-    "discount": discount == null ? null : discount,
-    "cart_saving": cartSaving == null ? null : cartSaving,
-    "online_method": onlineMethod == null ? null : onlineMethod,
-    "platform": platform == null ? null : platform,
-    "payment_request_id": paymentRequestId == null ? null : paymentRequestId,
-    "payment_id": paymentId == null ? null : paymentId,
-    "note": note == null ? null : note,
-    "coupon_code": couponCode == null ? null : couponCode,
-    "total": total == null ? null : total,
-    "rating": rating == null ? null : rating,
-    "checkout": checkout == null ? null : checkout,
-    "shipping_charges": shippingCharges == null ? null : shippingCharges,
-    "shipping_tax": shippingTax == null ? null : shippingTax,
-    "shipping_tax_rate": shippingTaxRate == null ? null : shippingTaxRate,
-    "tax": tax == null ? null : tax,
-    "store_tax_rate_detail": storeTaxRateDetail == null ? null : storeTaxRateDetail,
-    "calculated_tax_detail": calculatedTaxDetail == null ? null : calculatedTaxDetail,
-    "store_fixed_tax_detail": storeFixedTaxDetail == null ? null : storeFixedTaxDetail,
-    "order_facility": orderFacility == null ? null : orderFacility,
-    "status": status == null ? null : status,
-    "runner_assigned": runnerAssigned == null ? null : runnerAssigned,
-    "delivery_time_slot": deliveryTimeSlot == null ? null : deliveryTimeSlot.toIso8601String(),
-    "created": created == null ? null : created.toIso8601String(),
-    "modified": modified == null ? null : modified.toIso8601String(),
-    "UserAddress": userAddress == null ? null : userAddress.toJson(),
-    "User": user == null ? null : user.toJson(),
-    "Cart": cart == null ? null : List<dynamic>.from(cart.map((x) => x.toJson())),
-    "booking_date_time": bookingDateTime == null ? null : bookingDateTime,
-    "category_title": categoryTitle == null ? null : categoryTitle,
-    "service_count": serviceCount == null ? null : serviceCount,
-    "service_duration": serviceDuration == null ? null : serviceDuration,
-  };
+        "id": id == null ? null : id,
+        "display_order_id": displayOrderId == null ? null : displayOrderId,
+        "brand_id": brandId == null ? null : brandId,
+        "store_id": storeId == null ? null : storeId,
+        "user_id": userId == null ? null : userId,
+        "runner_id": runnerId == null ? null : runnerId,
+        "runner_delivery_accepted":
+            runnerDeliveryAccepted == null ? null : runnerDeliveryAccepted,
+        "user_address_id": userAddressId == null ? null : userAddressId,
+        "user_address":
+            bookingsUserAddress == null ? null : bookingsUserAddress,
+        "payment_method": paymentMethod == null ? null : paymentMethod,
+        "discount": discount == null ? null : discount,
+        "cart_saving": cartSaving == null ? null : cartSaving,
+        "online_method": onlineMethod == null ? null : onlineMethod,
+        "platform": platform == null ? null : platform,
+        "payment_request_id":
+            paymentRequestId == null ? null : paymentRequestId,
+        "payment_id": paymentId == null ? null : paymentId,
+        "note": note == null ? null : note,
+        "coupon_code": couponCode == null ? null : couponCode,
+        "total": total == null ? null : total,
+        "rating": rating == null ? null : rating,
+        "checkout": checkout == null ? null : checkout,
+        "shipping_charges": shippingCharges == null ? null : shippingCharges,
+        "shipping_tax": shippingTax == null ? null : shippingTax,
+        "shipping_tax_rate": shippingTaxRate == null ? null : shippingTaxRate,
+        "tax": tax == null ? null : tax,
+        "store_tax_rate_detail":
+            storeTaxRateDetail == null ? null : storeTaxRateDetail,
+        "calculated_tax_detail":
+            calculatedTaxDetail == null ? null : calculatedTaxDetail,
+        "store_fixed_tax_detail":
+            storeFixedTaxDetail == null ? null : storeFixedTaxDetail,
+        "order_facility": orderFacility == null ? null : orderFacility,
+        "status": status == null ? null : status,
+        "runner_assigned": runnerAssigned == null ? null : runnerAssigned,
+        "delivery_time_slot":
+            deliveryTimeSlot == null ? null : deliveryTimeSlot,
+        "created": created == null ? null : created,
+        "modified": modified == null ? null : modified,
+        "UserAddress": userAddress == null ? null : userAddress.toJson(),
+        "User": user == null ? null : user.toJson(),
+        "Cart": cart == null
+            ? null
+            : List<dynamic>.from(cart.map((x) => x.toJson())),
+        "booking_date_time": bookingDateTime == null ? null : bookingDateTime,
+        "category_title": categoryTitle == null ? null : categoryTitle,
+        "service_count": serviceCount == null ? null : serviceCount,
+        "service_duration": serviceDuration == null ? null : serviceDuration,
+      };
 }
 
 class Cart {
@@ -465,80 +512,88 @@ class Cart {
   String toRawJson() => json.encode(toJson());
 
   factory Cart.fromJson(Map<String, dynamic> json) => Cart(
-    id: json["id"] == null ? null : json["id"],
-    storeId: json["store_id"] == null ? null : json["store_id"],
-    userId: json["user_id"] == null ? null : json["user_id"],
-    orderId: json["order_id"] == null ? null : json["order_id"],
-    deviceId: json["device_id"] == null ? null : json["device_id"],
-    deviceToken: json["device_token"] == null ? null : json["device_token"],
-    platform: json["platform"] == null ? null : json["platform"],
-    productId: json["product_id"] == null ? null : json["product_id"],
-    productName: json["product_name"] == null ? null : json["product_name"],
-    variantId: json["variant_id"] == null ? null : json["variant_id"],
-    weight: json["weight"] == null ? null : json["weight"],
-    mrpPrice: json["mrp_price"] == null ? null : json["mrp_price"],
-    price: json["price"] == null ? null : json["price"],
-    discount: json["discount"] == null ? null : json["discount"],
-    servicePayout: json["service_payout"] == null ? null : json["service_payout"],
-    walletRefundAmount: json["wallet_refund_amount"] == null ? null : json["wallet_refund_amount"],
-    refundStatus: json["refund_status"] == null ? null : json["refund_status"],
-    unitType: json["unit_type"] == null ? null : json["unit_type"],
-    quantity: json["quantity"] == null ? null : json["quantity"],
-    comment: json["comment"] == null ? null : json["comment"],
-    isTaxEnable: json["isTaxEnable"] == null ? null : json["isTaxEnable"],
-    hsnCode: json["hsn_code"] == null ? null : json["hsn_code"],
-    gstDetail: json["gst_detail"] == null ? null : json["gst_detail"],
-    cgst: json["cgst"] == null ? null : json["cgst"],
-    sgst: json["sgst"] == null ? null : json["sgst"],
-    igst: json["igst"] == null ? null : json["igst"],
-    gstType: json["gst_type"] == null ? null : json["gst_type"],
-    gstTaxRate: json["gst_tax_rate"] == null ? null : json["gst_tax_rate"],
-    gstState: json["gst_state"] == null ? null : json["gst_state"],
-    status: json["status"] == null ? null : json["status"],
-    created: json["created"] == null ? null : DateTime.parse(json["created"]),
-    modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),
-    image10080: json["image_100_80"] == null ? null : json["image_100_80"],
-    image300200: json["image_300_200"] == null ? null : json["image_300_200"],
-    image: json["image"] == null ? null : json["image"],
-  );
+        id: json["id"] == null ? null : json["id"],
+        storeId: json["store_id"] == null ? null : json["store_id"],
+        userId: json["user_id"] == null ? null : json["user_id"],
+        orderId: json["order_id"] == null ? null : json["order_id"],
+        deviceId: json["device_id"] == null ? null : json["device_id"],
+        deviceToken: json["device_token"] == null ? null : json["device_token"],
+        platform: json["platform"] == null ? null : json["platform"],
+        productId: json["product_id"] == null ? null : json["product_id"],
+        productName: json["product_name"] == null ? null : json["product_name"],
+        variantId: json["variant_id"] == null ? null : json["variant_id"],
+        weight: json["weight"] == null ? null : json["weight"],
+        mrpPrice: json["mrp_price"] == null ? null : json["mrp_price"],
+        price: json["price"] == null ? null : json["price"],
+        discount: json["discount"] == null ? null : json["discount"],
+        servicePayout:
+            json["service_payout"] == null ? null : json["service_payout"],
+        walletRefundAmount: json["wallet_refund_amount"] == null
+            ? null
+            : json["wallet_refund_amount"],
+        refundStatus:
+            json["refund_status"] == null ? null : json["refund_status"],
+        unitType: json["unit_type"] == null ? null : json["unit_type"],
+        quantity: json["quantity"] == null ? null : json["quantity"],
+        comment: json["comment"] == null ? null : json["comment"],
+        isTaxEnable: json["isTaxEnable"] == null ? null : json["isTaxEnable"],
+        hsnCode: json["hsn_code"] == null ? null : json["hsn_code"],
+        gstDetail: json["gst_detail"] == null ? null : json["gst_detail"],
+        cgst: json["cgst"] == null ? null : json["cgst"],
+        sgst: json["sgst"] == null ? null : json["sgst"],
+        igst: json["igst"] == null ? null : json["igst"],
+        gstType: json["gst_type"] == null ? null : json["gst_type"],
+        gstTaxRate: json["gst_tax_rate"] == null ? null : json["gst_tax_rate"],
+        gstState: json["gst_state"] == null ? null : json["gst_state"],
+        status: json["status"] == null ? null : json["status"],
+        created:
+            json["created"] == null ? null : DateTime.parse(json["created"]),
+        modified:
+            json["modified"] == null ? null : DateTime.parse(json["modified"]),
+        image10080: json["image_100_80"] == null ? null : json["image_100_80"],
+        image300200:
+            json["image_300_200"] == null ? null : json["image_300_200"],
+        image: json["image"] == null ? null : json["image"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "store_id": storeId == null ? null : storeId,
-    "user_id": userId == null ? null : userId,
-    "order_id": orderId == null ? null : orderId,
-    "device_id": deviceId == null ? null : deviceId,
-    "device_token": deviceToken == null ? null : deviceToken,
-    "platform": platform == null ? null : platform,
-    "product_id": productId == null ? null : productId,
-    "product_name": productName == null ? null : productName,
-    "variant_id": variantId == null ? null : variantId,
-    "weight": weight == null ? null : weight,
-    "mrp_price": mrpPrice == null ? null : mrpPrice,
-    "price": price == null ? null : price,
-    "discount": discount == null ? null : discount,
-    "service_payout": servicePayout == null ? null : servicePayout,
-    "wallet_refund_amount": walletRefundAmount == null ? null : walletRefundAmount,
-    "refund_status": refundStatus == null ? null : refundStatus,
-    "unit_type": unitType == null ? null : unitType,
-    "quantity": quantity == null ? null : quantity,
-    "comment": comment == null ? null : comment,
-    "isTaxEnable": isTaxEnable == null ? null : isTaxEnable,
-    "hsn_code": hsnCode == null ? null : hsnCode,
-    "gst_detail": gstDetail == null ? null : gstDetail,
-    "cgst": cgst == null ? null : cgst,
-    "sgst": sgst == null ? null : sgst,
-    "igst": igst == null ? null : igst,
-    "gst_type": gstType == null ? null : gstType,
-    "gst_tax_rate": gstTaxRate == null ? null : gstTaxRate,
-    "gst_state": gstState == null ? null : gstState,
-    "status": status == null ? null : status,
-    "created": created == null ? null : created.toIso8601String(),
-    "modified": modified == null ? null : modified.toIso8601String(),
-    "image_100_80": image10080 == null ? null : image10080,
-    "image_300_200": image300200 == null ? null : image300200,
-    "image": image == null ? null : image,
-  };
+        "id": id == null ? null : id,
+        "store_id": storeId == null ? null : storeId,
+        "user_id": userId == null ? null : userId,
+        "order_id": orderId == null ? null : orderId,
+        "device_id": deviceId == null ? null : deviceId,
+        "device_token": deviceToken == null ? null : deviceToken,
+        "platform": platform == null ? null : platform,
+        "product_id": productId == null ? null : productId,
+        "product_name": productName == null ? null : productName,
+        "variant_id": variantId == null ? null : variantId,
+        "weight": weight == null ? null : weight,
+        "mrp_price": mrpPrice == null ? null : mrpPrice,
+        "price": price == null ? null : price,
+        "discount": discount == null ? null : discount,
+        "service_payout": servicePayout == null ? null : servicePayout,
+        "wallet_refund_amount":
+            walletRefundAmount == null ? null : walletRefundAmount,
+        "refund_status": refundStatus == null ? null : refundStatus,
+        "unit_type": unitType == null ? null : unitType,
+        "quantity": quantity == null ? null : quantity,
+        "comment": comment == null ? null : comment,
+        "isTaxEnable": isTaxEnable == null ? null : isTaxEnable,
+        "hsn_code": hsnCode == null ? null : hsnCode,
+        "gst_detail": gstDetail == null ? null : gstDetail,
+        "cgst": cgst == null ? null : cgst,
+        "sgst": sgst == null ? null : sgst,
+        "igst": igst == null ? null : igst,
+        "gst_type": gstType == null ? null : gstType,
+        "gst_tax_rate": gstTaxRate == null ? null : gstTaxRate,
+        "gst_state": gstState == null ? null : gstState,
+        "status": status == null ? null : status,
+        "created": created == null ? null : created.toIso8601String(),
+        "modified": modified == null ? null : modified.toIso8601String(),
+        "image_100_80": image10080 == null ? null : image10080,
+        "image_300_200": image300200 == null ? null : image300200,
+        "image": image == null ? null : image,
+      };
 }
 
 class User {
@@ -568,16 +623,16 @@ class User {
   String toRawJson() => json.encode(toJson());
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-    phone: json["phone"] == null ? null : json["phone"],
-    fullName: json["full_name"] == null ? null : json["full_name"],
-    lastName: json["last_name"] == null ? null : json["last_name"],
-  );
+        phone: json["phone"] == null ? null : json["phone"],
+        fullName: json["full_name"] == null ? null : json["full_name"],
+        lastName: json["last_name"] == null ? null : json["last_name"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "phone": phone == null ? null : phone,
-    "full_name": fullName == null ? null : fullName,
-    "last_name": lastName == null ? null : lastName,
-  };
+        "phone": phone == null ? null : phone,
+        "full_name": fullName == null ? null : fullName,
+        "last_name": lastName == null ? null : lastName,
+      };
 }
 
 class UserAddress {
@@ -670,53 +725,60 @@ class UserAddress {
         completAddress: completAddress ?? this.completAddress,
       );
 
-  factory UserAddress.fromRawJson(String str) => UserAddress.fromJson(json.decode(str));
+  factory UserAddress.fromRawJson(String str) =>
+      UserAddress.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory UserAddress.fromJson(Map<String, dynamic> json) => UserAddress(
-    id: json["id"] == null ? null : json["id"],
-    brandId: json["brand_id"] == null ? null : json["brand_id"],
-    userId: json["user_id"] == null ? null : json["user_id"],
-    firstName: json["first_name"] == null ? null : json["first_name"],
-    lastName: json["last_name"] == null ? null : json["last_name"],
-    mobile: json["mobile"] == null ? null : json["mobile"],
-    email: json["email"] == null ? null : json["email"],
-    address: json["address"] == null ? null : json["address"],
-    address2: json["address2"] == null ? null : json["address2"],
-    city: json["city"] == null ? null : json["city"],
-    state: json["state"] == null ? null : json["state"],
-    zipcode: json["zipcode"] == null ? null : json["zipcode"],
-    lat: json["lat"] == null ? null : json["lat"],
-    lng: json["lng"] == null ? null : json["lng"],
-    addressType: json["address_type"] == null ? null : json["address_type"],
-    setDefaultAddress: json["set_default_address"] == null ? null : json["set_default_address"],
-    softdelete: json["softdelete"] == null ? null : json["softdelete"],
-    created: json["created"] == null ? null : DateTime.parse(json["created"]),
-    modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),
-    completAddress: json["complet_address"] == null ? null : json["complet_address"],
-  );
+        id: json["id"] == null ? null : json["id"],
+        brandId: json["brand_id"] == null ? null : json["brand_id"],
+        userId: json["user_id"] == null ? null : json["user_id"],
+        firstName: json["first_name"] == null ? null : json["first_name"],
+        lastName: json["last_name"] == null ? null : json["last_name"],
+        mobile: json["mobile"] == null ? null : json["mobile"],
+        email: json["email"] == null ? null : json["email"],
+        address: json["address"] == null ? null : json["address"],
+        address2: json["address2"] == null ? null : json["address2"],
+        city: json["city"] == null ? null : json["city"],
+        state: json["state"] == null ? null : json["state"],
+        zipcode: json["zipcode"] == null ? null : json["zipcode"],
+        lat: json["lat"] == null ? null : json["lat"],
+        lng: json["lng"] == null ? null : json["lng"],
+        addressType: json["address_type"] == null ? null : json["address_type"],
+        setDefaultAddress: json["set_default_address"] == null
+            ? null
+            : json["set_default_address"],
+        softdelete: json["softdelete"] == null ? null : json["softdelete"],
+        created:
+            json["created"] == null ? null : DateTime.parse(json["created"]),
+        modified:
+            json["modified"] == null ? null : DateTime.parse(json["modified"]),
+        completAddress:
+            json["complet_address"] == null ? null : json["complet_address"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "brand_id": brandId == null ? null : brandId,
-    "user_id": userId == null ? null : userId,
-    "first_name": firstName == null ? null : firstName,
-    "last_name": lastName == null ? null : lastName,
-    "mobile": mobile == null ? null : mobile,
-    "email": email == null ? null : email,
-    "address": address == null ? null : address,
-    "address2": address2 == null ? null : address2,
-    "city": city == null ? null : city,
-    "state": state == null ? null : state,
-    "zipcode": zipcode == null ? null : zipcode,
-    "lat": lat == null ? null : lat,
-    "lng": lng == null ? null : lng,
-    "address_type": addressType == null ? null : addressType,
-    "set_default_address": setDefaultAddress == null ? null : setDefaultAddress,
-    "softdelete": softdelete == null ? null : softdelete,
-    "created": created == null ? null : created.toIso8601String(),
-    "modified": modified == null ? null : modified.toIso8601String(),
-    "complet_address": completAddress == null ? null : completAddress,
-  };
+        "id": id == null ? null : id,
+        "brand_id": brandId == null ? null : brandId,
+        "user_id": userId == null ? null : userId,
+        "first_name": firstName == null ? null : firstName,
+        "last_name": lastName == null ? null : lastName,
+        "mobile": mobile == null ? null : mobile,
+        "email": email == null ? null : email,
+        "address": address == null ? null : address,
+        "address2": address2 == null ? null : address2,
+        "city": city == null ? null : city,
+        "state": state == null ? null : state,
+        "zipcode": zipcode == null ? null : zipcode,
+        "lat": lat == null ? null : lat,
+        "lng": lng == null ? null : lng,
+        "address_type": addressType == null ? null : addressType,
+        "set_default_address":
+            setDefaultAddress == null ? null : setDefaultAddress,
+        "softdelete": softdelete == null ? null : softdelete,
+        "created": created == null ? null : created.toIso8601String(),
+        "modified": modified == null ? null : modified.toIso8601String(),
+        "complet_address": completAddress == null ? null : completAddress,
+      };
 }

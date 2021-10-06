@@ -22,7 +22,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
-  VoidCallback callback;
+  final VoidCallback callback;
 
   HomeScreen({Key key, this.callback}) : super(key: key);
 
@@ -139,34 +139,27 @@ class _HomeScreenState extends State<HomeScreen> {
         enablePullDown: true,
         controller: _refreshController,
         onRefresh: _onRefresh,
-        child: Container(
-            child: SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Stack(
             children: [
-              //User Name
-              CommonWidgets.gradientContainer(
-                  context,
-                  -1,
-                  SizeConfig.screenWidth,
-                  Container(
-                    margin: EdgeInsets.only(
-                        left: Dimensions.getScaledSize(45),
-                        bottom: Dimensions.getScaledSize(45)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Hi, ${AppSharedPref.instance.getUserName()} ${AppSharedPref.instance.getUserLastName()}",
-                          style: TextStyle(
-                              fontSize: Dimensions.getScaledSize(20),
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.white,
-                              fontFamily: AppConstants.fontName),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        //TODO: Handle this Date Concept
+              Container(
+                padding: EdgeInsets.only(left: 40.0),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Hi, ${AppSharedPref.instance.getUserName()} ${AppSharedPref.instance.getUserLastName()}",
+                      style: TextStyle(
+                          fontSize: Dimensions.getScaledSize(20),
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.white,
+                          fontFamily: AppConstants.fontName),
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    //TODO: Handle this Date Concept
 //                      Text(
 //                        "Today, Thu 5 August",
 //                        style: TextStyle(
@@ -175,39 +168,37 @@ class _HomeScreenState extends State<HomeScreen> {
 //                            color: AppTheme.subHeadingTextColor,
 //                            fontFamily: AppConstants.fontName),
 //                      ),
-                      ],
-                    ),
-                  ),
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [
-                    0.0,
-                    0.3,
-                    0.7,
-                    0.9
                   ],
-                  colors: [
-                    AppTheme.primaryColor,
-                    AppTheme.primaryColor,
-                    AppTheme.primaryColorLight,
-                    AppTheme.primaryColorLight
-                  ]),
+                ),
+                height: Dimensions.getHeight(percentage: 10.0),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    stops: [0.2, 0.9],
+                    colors: [
+                      AppTheme.primaryColorDark,
+                      AppTheme.primaryColor,
+                    ],
+                  ),
+                ),
+              ),
               Container(
                 width: SizeConfig.screenWidth,
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: new BorderRadius.only(
                         topLeft: const Radius.circular(30.0),
                         topRight: const Radius.circular(30.0))),
-                margin: EdgeInsets.only(top: Dimensions.getScaledSize(60)),
+                margin:
+                    EdgeInsets.only(top: Dimensions.getHeight(percentage: 6.0)),
                 child: Column(
                   children: [
+                    SizedBox(
+                      height: 16,
+                    ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          Dimensions.getScaledSize(26),
-                          Dimensions.getScaledSize(16),
-                          Dimensions.getScaledSize(26),
-                          0),
+                      padding: EdgeInsets.symmetric(horizontal: 26.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
@@ -293,11 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 20,
                     ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          Dimensions.getScaledSize(22),
-                          0,
-                          Dimensions.getScaledSize(22),
-                          Dimensions.getScaledSize(10)),
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
                       child: Row(
                         children: [
                           Expanded(
@@ -493,13 +480,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
                     _addNewBookingView(),
                   ],
                 ),
               ),
             ],
           ),
-        )),
+        ),
       ),
     );
   }
@@ -617,7 +607,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 percentage: _dashboardResponse != null &&
                         _dashboardResponse.bookingRequests != null &&
                         _dashboardResponse.bookingRequests.isNotEmpty
-                    ? 43
+                    ? 44
                     : 0),
           ),
           child: Center(

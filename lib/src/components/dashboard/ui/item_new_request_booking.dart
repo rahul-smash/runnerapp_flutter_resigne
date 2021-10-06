@@ -5,7 +5,6 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/dash
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
-import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class ItemNewRequestBooking extends StatefulWidget {
   final BookingRequest bookingRequest;
@@ -98,8 +97,8 @@ class _ItemNewRequestBookingState extends State<ItemNewRequestBooking> {
                                             child: Text(
                                               _services[index].trim(),
                                               style: TextStyle(
-                                                  fontSize:
-                                                      AppConstants.extraSmallSize,
+                                                  fontSize: AppConstants
+                                                      .extraSmallSize,
                                                   fontWeight: FontWeight.normal,
                                                   fontFamily:
                                                       AppConstants.fontName),
@@ -208,7 +207,8 @@ class _ItemNewRequestBookingState extends State<ItemNewRequestBooking> {
                     children: [
                       InkWell(
                         onTap: () {
-                          widget.callBackMethod('Reject', widget.bookingRequest);
+                          widget.callBackMethod(
+                              'Reject', widget.bookingRequest);
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -232,7 +232,8 @@ class _ItemNewRequestBookingState extends State<ItemNewRequestBooking> {
                       ),
                       InkWell(
                         onTap: () {
-                          widget.callBackMethod('Accept', widget.bookingRequest);
+                          widget.callBackMethod(
+                              'Accept', widget.bookingRequest);
                         },
                         child: Container(
                           decoration: BoxDecoration(

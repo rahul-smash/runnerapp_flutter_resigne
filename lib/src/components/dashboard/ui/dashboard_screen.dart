@@ -42,7 +42,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   void initState() {
     super.initState();
     initFirebase();
-
+    AppSharedPref.instance.setUserId("120");
     try {
       appPrintLog("AppConstants.isLoggedIn=${AppConstants.isLoggedIn}");
       appPrintLog("---login user---=${AppSharedPref.instance.getUserId()}");
@@ -289,6 +289,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                     child: Icon(
                       Icons.notifications,
                       color: Colors.white,
+                      size: 25,
                     ),
                   )),
             ),
