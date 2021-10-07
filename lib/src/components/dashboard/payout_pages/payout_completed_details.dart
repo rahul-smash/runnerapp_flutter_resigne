@@ -276,7 +276,7 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
                                                       fontWeight:
                                                           FontWeight.w600)),
                                               Text(
-                                                  "${isApiLoading || completeDetailsResponse == null ? '--' : completeDetailsResponse.payoutDetail.tax}",
+                                                  "${isApiLoading || completeDetailsResponse == null ? '--' : completeDetailsResponse.payoutDetail.tax ?? "0.0"}",
                                                   style: TextStyle(
                                                       color: AppTheme.white,
                                                       fontSize: AppConstants
@@ -369,7 +369,7 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
                                                     fontWeight:
                                                         FontWeight.w600)),
                                             Text(
-                                                "${isApiLoading || completeDetailsResponse == null ? '--' : completeDetailsResponse.payoutDetail.tds}",
+                                                "${isApiLoading || completeDetailsResponse == null ? '--' : completeDetailsResponse.payoutDetail.tds ?? "0.0"}",
                                                 style: TextStyle(
                                                     color: AppTheme.white,
                                                     fontSize: AppConstants

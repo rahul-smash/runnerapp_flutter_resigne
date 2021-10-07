@@ -84,9 +84,11 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
                       bottom: Dimensions.getScaledSize(16),
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      return ItemNewRequestBooking(
-                          _dashboardResponse.bookingRequests[index],
-                          _bookingActionMethod);
+                      return ItemViewOrderRequests(
+                        bookingRequest:
+                            _dashboardResponse.bookingRequests[index],
+                        callback: _bookingActionMethod,
+                      );
                     },
                     itemCount: _dashboardResponse.bookingRequests.length,
                     separatorBuilder: (BuildContext context, int index) {
@@ -124,10 +126,10 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
         ));
   }
 
-  Future<Function> _bookingActionMethod(
-      String type, BookingRequest bookingRequest) async {
-    switch (type) {
-      case 'Accept':
+  void _bookingActionMethod(
+      BookingRequest bookingRequest, RequestStatus requestStatus) async {
+    switch (requestStatus) {
+      case RequestStatus.accept:
         if (!getIt.get<NetworkConnectionObserver>().offline) {
           await FlutterNotificationPlugin.stopForegroundService();
           AppUtils.showLoader(context);
@@ -153,7 +155,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
           AppUtils.noNetWorkDialog(context);
         }
         break;
-      case 'Reject':
+      case RequestStatus.reject:
         if (!getIt.get<NetworkConnectionObserver>().offline) {
           await FlutterNotificationPlugin.stopForegroundService();
           AppUtils.showLoader(context);

@@ -284,7 +284,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     color: AppTheme.subHeadingTextColor),
                               ),
                               Text(
-                                '${AppUtils.convertDateFormat(_bookingDetailsResponse.bookings.created)}',
+                                '${AppUtils.convertDateFromFormat(_bookingDetailsResponse.bookings.created)}',
                                 style: TextStyle(
                                     color: AppTheme.subHeadingTextColor),
                               ),
@@ -389,7 +389,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          '${AppUtils.convertTimeSlot(_bookingDetailsResponse.bookings.deliveryTimeSlot)}',
+                                          '${AppUtils.convertDateFromFormat(_bookingDetailsResponse.bookings.deliveryTimeSlot)}',
                                           style: TextStyle(
                                               color: AppTheme.mainTextColor,
                                               fontSize: AppConstants.largeSize,

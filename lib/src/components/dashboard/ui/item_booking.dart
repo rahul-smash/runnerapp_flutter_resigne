@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/booking_details_screen.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
-import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
-import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class ItemBooking extends StatefulWidget {
   final Booking booking;
-  Function callBackMethod;
+  final Function callBackMethod;
 
   ItemBooking(this.booking, this.callBackMethod);
 
@@ -60,13 +57,17 @@ class _ItemBookingState extends State<ItemBooking> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        child: Padding(
-          padding: EdgeInsets.all(18.0),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30.0), color: Colors.white),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 16.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Row(
                   children: [
                     Expanded(
                       child: Text(
@@ -112,136 +113,165 @@ class _ItemBookingState extends State<ItemBooking> {
                     ),
                   ],
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.booking.categoryTitle,
+                      "Restaurant Name",
+                      style: TextStyle(
+                          fontFamily: AppConstants.fontName,
+                          fontSize: AppConstants.largeSize2X,
+                          color: AppTheme.mainTextColor,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      "",
                       style: TextStyle(
                           fontFamily: AppConstants.fontName,
                           fontSize: AppConstants.largeSize,
                           color: AppTheme.mainTextColor,
                           fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "4 Services",
+                      style: TextStyle(
+                          fontFamily: AppConstants.fontName,
+                          fontSize: AppConstants.smallSize,
+                          color: AppTheme.subHeadingTextColor,
+                          fontWeight: FontWeight.normal),
                     ),
-                    SizedBox(
-                      height: Dimensions.pixels_5,
+                    Text(
+                      "",
+                      style: TextStyle(
+                          fontFamily: AppConstants.fontName,
+                          fontSize: AppConstants.largeSize,
+                          color: AppTheme.mainTextColor,
+                          fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 4.0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        "${widget.booking.userAddress}",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontFamily: AppConstants.fontName,
+                            fontSize: AppConstants.smallSize,
+                            color: AppTheme.mainTextColor,
+                            fontWeight: FontWeight.normal),
+                      ),
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                    Text(
+                      "${AppConstants.currency}${widget.booking.total}",
+                      style: TextStyle(
+                          fontFamily: AppConstants.fontName,
+                          fontSize: AppConstants.largeSize,
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 12.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Customer Address',
+                            style: TextStyle(
+                                fontFamily: AppConstants.fontName,
+                                fontSize: AppConstants.smallSize,
+                                color: AppTheme.subHeadingTextColor,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          SizedBox(
+                            height: 4.0,
+                          ),
+                          Text(
+                            widget.booking.userAddress,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                                fontFamily: AppConstants.fontName,
+                                fontSize: AppConstants.smallSize,
+                                color: AppTheme.mainTextColor,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              color: AppTheme.primaryColorDark,
-                              borderRadius: BorderRadius.circular(30)),
-                          width: 8,
-                          height: 8,
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
                         Text(
-                          '${widget.booking.serviceCount}${widget.booking.serviceCount == '1' ? ' Service' : ' Services'}',
+                          'Distance',
                           style: TextStyle(
                               fontFamily: AppConstants.fontName,
                               fontSize: AppConstants.smallSize,
                               color: AppTheme.subHeadingTextColor,
-                              fontWeight: FontWeight.w600),
+                              fontWeight: FontWeight.normal),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppConstants.currency,
-                          style: TextStyle(
-                              fontFamily: AppConstants.fontName,
-                              fontSize: AppConstants.extraSmallSize,
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.bold),
+                        SizedBox(
+                          height: 4.0,
                         ),
                         Text(
-                          widget.booking.total,
+                          '#${widget.booking.displayOrderId}',
                           style: TextStyle(
                               fontFamily: AppConstants.fontName,
                               fontSize: AppConstants.largeSize,
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Visibility(
-                          visible: widget.booking.paymentMethod != null &&
-                              widget.booking.paymentMethod.trim().isNotEmpty,
-                          child: Container(
-                              margin: EdgeInsets.only(left: 6),
-                              padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xFFE6E6E6)),
-                                color: Color(0xFFE6E6E6),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15.0)),
-                              ),
-                              child: Text(
-                                  '${widget.booking.paymentMethod.trim().toUpperCase()}',
-                                  style: TextStyle(
-                                    color: Color(0xFF39444D),
-                                    fontSize: 13,
-                                  ))),
+                              color: AppTheme.mainTextColor,
+                              fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Align(
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Align(
                   alignment: Alignment.bottomRight,
                   child: _getWidgetAccordingToStatus(),
                 ),
-                widget.booking.completionImages!=null&&widget.booking.completionImages.isNotEmpty?
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 1,
-                      color: AppTheme.subHeadingTextColor,
-                    ),
-                    Container(
-                      height: 100,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemCount: widget.booking.completionImages.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  left: 5, right: 5, top: 10, bottom: 10),
-                              child: ClipRRect(
-                                  borderRadius: new BorderRadius.circular(15),
-                                  child: widget
-                                      .booking.completionImages[index].isNotEmpty
-                                      ? Image.network(
-                                    widget.booking.completionImages[index],
-                                    height: 80,
-                                    width: 80,
-                                    fit: BoxFit.cover,
-                                  )
-                                      : Image.asset(AppImages.icon_img_place_holder,
-                                      height: 80, width: 80, fit: BoxFit.cover)),
-                            );
-                          }),
-                    )
-                  ],
-                ):Container(),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+            ],
           ),
         ),
       ),
