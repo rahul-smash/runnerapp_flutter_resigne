@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
+
 class BookingResponse {
   BookingResponse({
     this.success,
@@ -13,7 +15,10 @@ class BookingResponse {
 
   bool success;
   BookingCounts bookingCounts;
-  List<Booking> bookings;
+  List<BookingRequest> bookings;
+  dynamic page;
+  dynamic limit;
+  int totalOrder;
 
   BookingResponse copyWith({
     bool success,
@@ -26,21 +31,30 @@ class BookingResponse {
         bookings: bookings ?? this.bookings,
       );
 
-  factory BookingResponse.fromRawJson(String str) => BookingResponse.fromJson(json.decode(str));
+  factory BookingResponse.fromRawJson(String str) =>
+      BookingResponse.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory BookingResponse.fromJson(Map<String, dynamic> json) => BookingResponse(
-    success: json["success"] == null ? null : json["success"],
-    bookingCounts: json["booking_counts"] == null ? null : BookingCounts.fromJson(json["booking_counts"]),
-    bookings: json["bookings"] == null ? null : List<Booking>.from(json["bookings"].map((x) => Booking.fromJson(x))),
-  );
+  factory BookingResponse.fromJson(Map<String, dynamic> json) =>
+      BookingResponse(
+        success: json["success"] == null ? null : json["success"],
+        bookingCounts: json["booking_counts"] == null
+            ? null
+            : BookingCounts.fromJson(json["booking_counts"]),
+        bookings: json["bookings"] == null
+            ? null
+            : List<BookingRequest>.from(
+                json["bookings"].map((x) => BookingRequest.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success == null ? null : success,
-    "booking_counts": bookingCounts == null ? null : bookingCounts.toJson(),
-    "bookings": bookings == null ? null : List<dynamic>.from(bookings.map((x) => x.toJson())),
-  };
+        "success": success == null ? null : success,
+        "booking_counts": bookingCounts == null ? null : bookingCounts.toJson(),
+        "bookings": bookings == null
+            ? null
+            : List<dynamic>.from(bookings.map((x) => x.toJson())),
+      };
 }
 
 class BookingCounts {
@@ -73,25 +87,26 @@ class BookingCounts {
         rejected: rejected ?? this.rejected,
       );
 
-  factory BookingCounts.fromRawJson(String str) => BookingCounts.fromJson(json.decode(str));
+  factory BookingCounts.fromRawJson(String str) =>
+      BookingCounts.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory BookingCounts.fromJson(Map<String, dynamic> json) => BookingCounts(
-    all: json["all"] == null ? null : json["all"],
-    upcoming: json["upcoming"] == null ? null : json["upcoming"],
-    ongoing: json["ongoing"] == null ? null : json["ongoing"],
-    completed: json["completed"] == null ? null : json["completed"],
-    rejected: json["rejected"] == null ? null : json["rejected"],
-  );
+        all: json["all"] == null ? null : json["all"],
+        upcoming: json["upcoming"] == null ? null : json["upcoming"],
+        ongoing: json["ongoing"] == null ? null : json["ongoing"],
+        completed: json["completed"] == null ? null : json["completed"],
+        rejected: json["rejected"] == null ? null : json["rejected"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "all": all == null ? null : all,
-    "upcoming": upcoming == null ? null : upcoming,
-    "ongoing": ongoing == null ? null : ongoing,
-    "completed": completed == null ? null : completed,
-    "rejected": rejected == null ? null : rejected,
-  };
+        "all": all == null ? null : all,
+        "upcoming": upcoming == null ? null : upcoming,
+        "ongoing": ongoing == null ? null : ongoing,
+        "completed": completed == null ? null : completed,
+        "rejected": rejected == null ? null : rejected,
+      };
 }
 
 class Booking {
@@ -173,40 +188,53 @@ class Booking {
   String toRawJson() => json.encode(toJson());
 
   factory Booking.fromJson(Map<String, dynamic> json) => Booking(
-    id: json["id"] == null ? null : json["id"],
-    rating: json["rating"] == null ? null : json["rating"],
-    displayOrderId: json["display_order_id"] == null ? null : json["display_order_id"],
-    userId: json["user_id"] == null ? null : json["user_id"],
-    userAddress: json["user_address"] == null ? null : json["user_address"],
-    total: json["total"] == null ? null : json["total"],
-    status: json["status"] == null ? null : json["status"],
-    paymentMethod: json["payment_method"] == null ? null : json["payment_method"],
-    customerName: json["customer_name"] == null ? null : json["customer_name"],
-    customerPhone: json["customer_phone"] == null ? null : json["customer_phone"],
-    bookingDateTime: json["booking_date_time"] == null ? null : json["booking_date_time"],
-    categoryTitle: json["category_title"] == null ? null : json["category_title"],
-    serviceCount: json["service_count"] == null ? null : json["service_count"],
-    serviceDuration: json["service_duration"] == null ? null : json["service_duration"],
-    services: json["services"] == null ? null : json["services"],
-    completionImages: json["completion_images"] == null ? null : List<String>.from(json["completion_images"].map((x) => x)),
-  );
+        id: json["id"] == null ? null : json["id"],
+        rating: json["rating"] == null ? null : json["rating"],
+        displayOrderId:
+            json["display_order_id"] == null ? null : json["display_order_id"],
+        userId: json["user_id"] == null ? null : json["user_id"],
+        userAddress: json["user_address"] == null ? null : json["user_address"],
+        total: json["total"] == null ? null : json["total"],
+        status: json["status"] == null ? null : json["status"],
+        paymentMethod:
+            json["payment_method"] == null ? null : json["payment_method"],
+        customerName:
+            json["customer_name"] == null ? null : json["customer_name"],
+        customerPhone:
+            json["customer_phone"] == null ? null : json["customer_phone"],
+        bookingDateTime: json["booking_date_time"] == null
+            ? null
+            : json["booking_date_time"],
+        categoryTitle:
+            json["category_title"] == null ? null : json["category_title"],
+        serviceCount:
+            json["service_count"] == null ? null : json["service_count"],
+        serviceDuration:
+            json["service_duration"] == null ? null : json["service_duration"],
+        services: json["services"] == null ? null : json["services"],
+        completionImages: json["completion_images"] == null
+            ? null
+            : List<String>.from(json["completion_images"].map((x) => x)),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "rating": rating == null ? null : rating,
-    "display_order_id": displayOrderId == null ? null : displayOrderId,
-    "user_id": userId == null ? null : userId,
-    "user_address": userAddress == null ? null : userAddress,
-    "total": total == null ? null : total,
-    "status": status == null ? null : status,
-    "payment_method": paymentMethod == null ? null : paymentMethod,
-    "customer_name": customerName == null ? null : customerName,
-    "customer_phone": customerPhone == null ? null : customerPhone,
-    "booking_date_time": bookingDateTime == null ? null : bookingDateTime,
-    "category_title": categoryTitle == null ? null : categoryTitle,
-    "service_count": serviceCount == null ? null : serviceCount,
-    "service_duration": serviceDuration == null ? null : serviceDuration,
-    "services": services == null ? null : services,
-    "completion_images": completionImages == null ? null : List<dynamic>.from(completionImages.map((x) => x)),
-  };
+        "id": id == null ? null : id,
+        "rating": rating == null ? null : rating,
+        "display_order_id": displayOrderId == null ? null : displayOrderId,
+        "user_id": userId == null ? null : userId,
+        "user_address": userAddress == null ? null : userAddress,
+        "total": total == null ? null : total,
+        "status": status == null ? null : status,
+        "payment_method": paymentMethod == null ? null : paymentMethod,
+        "customer_name": customerName == null ? null : customerName,
+        "customer_phone": customerPhone == null ? null : customerPhone,
+        "booking_date_time": bookingDateTime == null ? null : bookingDateTime,
+        "category_title": categoryTitle == null ? null : categoryTitle,
+        "service_count": serviceCount == null ? null : serviceCount,
+        "service_duration": serviceDuration == null ? null : serviceDuration,
+        "services": services == null ? null : services,
+        "completion_images": completionImages == null
+            ? null
+            : List<dynamic>.from(completionImages.map((x) => x)),
+      };
 }

@@ -3,6 +3,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_booking.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -63,7 +64,9 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: userId,
           status: _getCurrentStatus(selectedFilterIndex),
-          bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot);
+          bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot,
+          page: 5,
+          limit: 20);
       _getFilterCount();
       AppUtils.hideLoader(context);
       _refreshController.refreshCompleted();
@@ -129,7 +132,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         child: Column(
           children: [
             SizedBox(
-              height: 20,
+              height: 8.0,
             ),
             Container(
               height: 30,
@@ -149,7 +152,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                     child: Container(
                         height: 30,
                         margin: EdgeInsets.only(left: 4, right: 4),
-                        padding: EdgeInsets.fromLTRB(20, 3, 20, 3),
+                        padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
                         decoration: BoxDecoration(
                             color: selectedFilterIndex == index
                                 ? AppTheme.primaryColor.withOpacity(0.1)
@@ -171,6 +174,9 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                   );
                 },
               ),
+            ),
+            SizedBox(
+              height: 8.0,
             ),
             Expanded(
               child: SmartRefresher(
@@ -214,7 +220,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     }
   }
 
-  _bookingAction(String type, Booking booking) async {
+  _bookingAction(String type, BookingRequest booking) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
@@ -251,11 +257,12 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 50,
+            height: 60,
           ),
           Image(
+            width: Dimensions.getWidth(percentage: 70.0),
             image: AssetImage(AppImages.icon_no_order_graphic),
-            height: Dimensions.getScaledSize(135),
+            fit: BoxFit.fitWidth,
           ),
           Text(
             labelNoOrderYet,
@@ -266,10 +273,11 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                 fontSize: AppConstants.extraLargeSize),
           ),
           SizedBox(
-            height: 5,
+            height: 8.0,
           ),
           Text(
             labelNoOrderYetMsg,
+            textAlign: TextAlign.center,
             style: TextStyle(
                 color: AppTheme.subHeadingTextColor,
                 fontFamily: AppConstants.fontName,

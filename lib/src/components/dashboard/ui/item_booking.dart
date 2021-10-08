@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/booking_details_screen.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -11,7 +10,7 @@ import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bot
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 
 class ItemBooking extends StatefulWidget {
-  final Booking booking;
+  final BookingRequest booking;
   final Function callBackMethod;
 
   ItemBooking(this.booking, this.callBackMethod);
@@ -21,19 +20,9 @@ class ItemBooking extends StatefulWidget {
 }
 
 class _ItemBookingState extends State<ItemBooking> {
-  List<String> _services;
-
-  final ScrollController _newBookingScrollController =
-      ScrollController(initialScrollOffset: 0);
-
   @override
   void initState() {
     super.initState();
-    if (widget.booking.services.trim().isNotEmpty)
-      _services = widget.booking.services.split(',').toList(growable: true);
-    else {
-      _services = List.empty(growable: true);
-    }
   }
 
   @override
@@ -52,14 +41,11 @@ class _ItemBookingState extends State<ItemBooking> {
       },
       child: Card(
         shadowColor: AppTheme.borderNotFocusedColor,
-        elevation: 8,
-        borderOnForeground: true,
+        elevation: 8.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
         child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30.0), color: Colors.white),
           child: Column(
             children: [
               SizedBox(
@@ -71,7 +57,7 @@ class _ItemBookingState extends State<ItemBooking> {
                   children: [
                     Expanded(
                       child: Text(
-                        '#${widget.booking.displayOrderId} | ${widget.booking.bookingDateTime}',
+                        '#${widget.booking.displayOrderId} | ${AppUtils.convertDateFromFormat(widget.booking.created)}',
                         style: TextStyle(
                             fontSize: 14,
                             color: AppTheme.subHeadingTextColor,
@@ -79,12 +65,12 @@ class _ItemBookingState extends State<ItemBooking> {
                       ),
                     ),
                     Visibility(
-                      visible: widget.booking.customerPhone.isNotEmpty,
+                      visible: widget.booking.user.phone.isNotEmpty,
                       child: Row(
                         children: [
                           InkWell(
                               child: Padding(
-                                padding: EdgeInsets.all(8.0),
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Image(
                                   image: AssetImage(
                                     AppImages.icon_whatsapp,
@@ -94,19 +80,16 @@ class _ItemBookingState extends State<ItemBooking> {
                               ),
                               onTap: () {
                                 AppUtils.launchWhatsApp(
-                                    widget.booking.customerPhone);
+                                    widget.booking.user.phone);
                               }),
                           InkWell(
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Image(
-                                  image: AssetImage(AppImages.icon_call),
-                                  height: 25,
-                                ),
+                              child: Image(
+                                image: AssetImage(AppImages.icon_call),
+                                height: 25,
                               ),
                               onTap: () {
                                 AppUtils.launchCaller(
-                                    widget.booking.customerPhone);
+                                    widget.booking.user.phone);
                               }),
                         ],
                       ),
@@ -120,7 +103,7 @@ class _ItemBookingState extends State<ItemBooking> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Restaurant Name",
+                      widget.booking.store?.storeName ?? "",
                       style: TextStyle(
                           fontFamily: AppConstants.fontName,
                           fontSize: AppConstants.largeSize2X,
@@ -144,7 +127,7 @@ class _ItemBookingState extends State<ItemBooking> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "4 Services",
+                      "${widget.booking.cart.length} ${widget.booking.cart.length > 1 ? "Items" : "Item"}",
                       style: TextStyle(
                           fontFamily: AppConstants.fontName,
                           fontSize: AppConstants.smallSize,
@@ -173,7 +156,7 @@ class _ItemBookingState extends State<ItemBooking> {
                   children: [
                     Flexible(
                       child: Text(
-                        "${widget.booking.userAddress}",
+                        getStoreAddress(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -182,6 +165,9 @@ class _ItemBookingState extends State<ItemBooking> {
                             color: AppTheme.mainTextColor,
                             fontWeight: FontWeight.normal),
                       ),
+                    ),
+                    SizedBox(
+                      width: 8.0,
                     ),
                     Text(
                       "${AppConstants.currency}${widget.booking.total}",
@@ -219,7 +205,7 @@ class _ItemBookingState extends State<ItemBooking> {
                             height: 4.0,
                           ),
                           Text(
-                            widget.booking.userAddress,
+                            widget.booking.bookingRequestUserAddress,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style: TextStyle(
@@ -246,7 +232,7 @@ class _ItemBookingState extends State<ItemBooking> {
                           height: 4.0,
                         ),
                         Text(
-                          '#${widget.booking.displayOrderId}',
+                          '${widget.booking.distance} km',
                           style: TextStyle(
                               fontFamily: AppConstants.fontName,
                               fontSize: AppConstants.largeSize,
@@ -297,11 +283,11 @@ class _ItemBookingState extends State<ItemBooking> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(0),
-                  Dimensions.getScaledSize(10)),
+              // padding: EdgeInsets.fromLTRB(
+              //     Dimensions.getScaledSize(10),
+              //     Dimensions.getScaledSize(10),
+              //     Dimensions.getScaledSize(0),
+              //     Dimensions.getScaledSize(10)),
               child: Row(
                 children: [
                   Image.asset(
@@ -335,11 +321,11 @@ class _ItemBookingState extends State<ItemBooking> {
                   color: AppTheme.optionTotalBookingBgColor,
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
-                padding: EdgeInsets.fromLTRB(
-                    Dimensions.getScaledSize(20),
-                    Dimensions.getScaledSize(10),
-                    Dimensions.getScaledSize(20),
-                    Dimensions.getScaledSize(10)),
+                // padding: EdgeInsets.fromLTRB(
+                //     Dimensions.getScaledSize(20),
+                //     Dimensions.getScaledSize(10),
+                //     Dimensions.getScaledSize(20),
+                //     Dimensions.getScaledSize(10)),
                 child: Row(
                   children: [
                     Image.asset(
@@ -367,11 +353,11 @@ class _ItemBookingState extends State<ItemBooking> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10)),
+              // padding: EdgeInsets.fromLTRB(
+              //     Dimensions.getScaledSize(10),
+              //     Dimensions.getScaledSize(10),
+              //     Dimensions.getScaledSize(10),
+              //     Dimensions.getScaledSize(10)),
               child: Row(
                 children: [
                   Image.asset(
@@ -397,11 +383,6 @@ class _ItemBookingState extends State<ItemBooking> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(0),
-                  Dimensions.getScaledSize(10)),
               child: Row(
                 children: [
                   Image.asset(
@@ -444,11 +425,7 @@ class _ItemBookingState extends State<ItemBooking> {
                   color: AppTheme.primaryColorDark,
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
-                padding: EdgeInsets.fromLTRB(
-                    Dimensions.getScaledSize(20),
-                    Dimensions.getScaledSize(10),
-                    Dimensions.getScaledSize(20),
-                    Dimensions.getScaledSize(10)),
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   children: [
                     Image.asset(
@@ -476,11 +453,6 @@ class _ItemBookingState extends State<ItemBooking> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10)),
               child: Row(
                 children: [
                   Image.asset(
@@ -506,11 +478,6 @@ class _ItemBookingState extends State<ItemBooking> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10),
-                  Dimensions.getScaledSize(10)),
               child: Row(
                 children: [
                   Image.asset(
@@ -532,5 +499,18 @@ class _ItemBookingState extends State<ItemBooking> {
         );
         break; // cancelled
     }
+  }
+
+  String getStoreAddress() {
+    String address = widget.booking.store?.location ?? "";
+    if (widget.booking.store?.city != null &&
+        widget.booking.store.city.isNotEmpty) {
+      address += ", ${widget.booking.store?.city}";
+    }
+    if (widget.booking.store?.state != null &&
+        widget.booking.store.state.isNotEmpty) {
+      address += ", ${widget.booking.store?.state}";
+    }
+    return address;
   }
 }

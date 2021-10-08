@@ -2,23 +2,27 @@ import 'dart:io';
 
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/notification_data.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_network_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 
 class DashboardRepository {
-  Future<DashboardResponse> getDashboardSummary(
-      {String userId, String filterOption}) async {
+  Future<DashboardResponseSummary> getDashboardSummary(
+      {String userId, String filterOption, int page = 1, int limit = 5}) async {
     return await DashboardNetworkRepository.instance
-        .getDashboardSummary(userId, filterOption);
+        .getDashboardSummary(userId, filterOption, page, limit);
   }
 
   Future<BookingResponse> getBookings(
-      {String userId, String status, FilterType bookingSorting}) async {
+      {String userId,
+      String status,
+      FilterType bookingSorting,
+      int page = 1,
+      int limit = 10}) async {
     return await DashboardNetworkRepository.instance
-        .getBookings(userId, status, bookingSorting);
+        .getBookings(userId, status, bookingSorting, page, limit);
   }
 
   Future<BookingDetailsResponse> getBookingsdetails(

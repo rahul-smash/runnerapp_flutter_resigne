@@ -5,7 +5,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
@@ -21,7 +21,7 @@ import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class BookingDetailsScreen extends StatefulWidget {
-  Booking booking;
+  BookingRequest booking;
   Function callBackMethod;
 
   BookingDetailsScreen(this.booking, this.callBackMethod);
@@ -389,7 +389,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          '${AppUtils.convertDateFromFormat(_bookingDetailsResponse.bookings.deliveryTimeSlot)}',
+                                          '${_bookingDetailsResponse.bookings.deliveryTimeSlot}',
                                           style: TextStyle(
                                               color: AppTheme.mainTextColor,
                                               fontSize: AppConstants.largeSize,
@@ -1286,7 +1286,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
     return showCancelButton;
   }
 
-  void _getBookingdetails(Booking booking, {bool isShowLoader = true}) async {
+  void _getBookingdetails(BookingRequest booking,
+      {bool isShowLoader = true}) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingDetailsApiLoading = true;

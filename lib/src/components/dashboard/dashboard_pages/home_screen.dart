@@ -5,7 +5,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_booking.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_new_request_booking.dart';
@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  DashboardResponse _dashboardResponse;
+  DashboardResponseSummary _dashboardResponse;
   BookingResponse _bookingResponse;
 
   bool isDashboardApiLoading = true;
@@ -71,20 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _getDashboardSummary(
       {bool isShowLoader = true, String selectedFilter}) async {
-    _selectedFilterParam(String selectedFilter) {
-      if (selectedFilter != null) {
-        if (selectedFilter == _overviewOptions[0]) {
-          return 'today';
-        } else if (selectedFilter == _overviewOptions[1]) {
-          return 'yesterday';
-        } else if (selectedFilter == _overviewOptions[2]) {
-          return 'sevendays';
-        }
-      } else {
-        return 'today';
-      }
-    }
-
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isDashboardApiLoading = true;
@@ -99,6 +85,20 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {});
     } else {
       AppUtils.noNetWorkDialog(context);
+    }
+  }
+
+  _selectedFilterParam(String selectedFilter) {
+    if (selectedFilter != null) {
+      if (selectedFilter == _overviewOptions[0]) {
+        return 'today';
+      } else if (selectedFilter == _overviewOptions[1]) {
+        return 'yesterday';
+      } else if (selectedFilter == _overviewOptions[2]) {
+        return 'sevendays';
+      }
+    } else {
+      return 'today';
     }
   }
 
@@ -508,7 +508,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 clipBehavior: Clip.antiAlias,
                 child: CommonWidgets.gradientContainer(
                     context,
-                    Dimensions.getHeight(percentage: 46),
+                    Dimensions.getHeight(percentage: 48),
                     SizeConfig.screenWidth,
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -535,7 +535,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             NewRequestBookingScreen(
-                                                _dashboardResponse)),
+                                              userId: userId,
+                                              filter: _selectedFilterParam(
+                                                  _selectedOverviewOption),
+                                            )),
                                   );
                                   if (refreshData != null && refreshData) {
                                     _refreshController.requestRefresh();
@@ -556,6 +559,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 16,
                         ),
                         Flexible(
+                          fit: FlexFit.tight,
                           child: PageView(
                             scrollDirection: Axis.horizontal,
                             controller: _pageController,
@@ -565,6 +569,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     callback: _bookingRequestActionMethod))
                                 .toList(),
                           ),
+                        ),
+                        SizedBox(
+                          height: 8,
                         ),
                         SmoothPageIndicator(
                             controller: _pageController,
@@ -603,12 +610,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(
-                  Dimensions.getScaledSize(26),
-                  Dimensions.getScaledSize(30),
-                  Dimensions.getScaledSize(26),
-                  Dimensions.getScaledSize(26),
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -635,7 +637,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                height: 42,
+                height: 36.0,
                 child: ListView.builder(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0),
                   itemCount: _filterOptions.length,
@@ -650,7 +652,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: Container(
                           margin: EdgeInsets.only(left: 4, right: 4),
-                          padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
+                          padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
                           decoration: BoxDecoration(
                               color: selectedBookingFilterIndex == index
                                   ? AppTheme.primaryColor.withOpacity(0.1)
@@ -682,8 +684,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           _bookingResponse.bookings.isNotEmpty
                       ? Container(
                           child: ListView.builder(
-                              padding:
-                                  EdgeInsets.all(Dimensions.getScaledSize(10)),
+                              padding: EdgeInsets.all(16.0),
                               shrinkWrap: true,
                               itemCount: _bookingResponse.bookings.length,
                               physics: NeverScrollableScrollPhysics(),
@@ -842,7 +843,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _bookingAction(
     String type,
-    Booking booking,
+    BookingRequest booking,
   ) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {

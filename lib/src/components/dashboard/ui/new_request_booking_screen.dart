@@ -4,7 +4,7 @@ import 'package:flutter_notification_plugin/flutter_notification_plugin.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_resposne.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/item_new_request_booking.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -15,20 +15,47 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class NewRequestBookingScreen extends StatefulWidget {
-  DashboardResponse dashboardResponse;
+  final String filter;
+  final String userId;
 
-  NewRequestBookingScreen(this.dashboardResponse);
+  NewRequestBookingScreen({this.filter, this.userId});
 
   @override
   _NewRequestBookingScreenState createState() =>
-      _NewRequestBookingScreenState(dashboardResponse);
+      _NewRequestBookingScreenState();
 }
 
 class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
-  DashboardResponse _dashboardResponse;
+  DashboardResponseSummary _dashboardResponse;
   bool isChangesHappened = false;
+  bool isDashboardApiLoading = true;
 
-  _NewRequestBookingScreenState(this._dashboardResponse);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _getDashboardSummary();
+    });
+  }
+
+  void _getDashboardSummary({bool isShowLoader = true}) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      if (isShowLoader) AppUtils.showLoader(context);
+      isDashboardApiLoading = true;
+      _dashboardResponse = await getIt
+          .get<DashboardRepository>()
+          .getDashboardSummary(
+              userId: widget.userId,
+              filterOption: widget.filter,
+              page: 1,
+              limit: 1000);
+      AppUtils.hideLoader(context);
+      isDashboardApiLoading = false;
+      setState(() {});
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
+  }
 
   @override
   Widget builder(BuildContext context) {
@@ -39,69 +66,66 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
         },
         child: Scaffold(
           backgroundColor: AppTheme.white,
-          body: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(30), topLeft: Radius.circular(30)),
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                stops: [0.1, 0.5, 0.7, 0.9],
-                colors: [
-                  AppTheme.primaryColorDark,
-                  AppTheme.primaryColorDark,
-                  AppTheme.primaryColor,
-                  AppTheme.primaryColor,
-                ],
-              ),
-            ),
-            padding: EdgeInsets.fromLTRB(
-              Dimensions.getScaledSize(16),
-              Dimensions.getScaledSize(16),
-              Dimensions.getScaledSize(16),
-              Dimensions.getScaledSize(0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    '${_dashboardResponse.bookingRequests.length} Orders',
-                    style: TextStyle(
-                        fontSize: AppConstants.smallSize,
-                        color: AppTheme.subHeadingTextColor,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: AppConstants.fontName),
-                  ),
-                ),
-                SizedBox(
-                  height: Dimensions.getScaledSize(16),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    padding: EdgeInsets.only(
-                      bottom: Dimensions.getScaledSize(16),
+          body: isDashboardApiLoading
+              ? Container()
+              : Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(30)),
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      stops: [0.1, 0.5, 0.7, 0.9],
+                      colors: [
+                        AppTheme.primaryColorDark,
+                        AppTheme.primaryColorDark,
+                        AppTheme.primaryColor,
+                        AppTheme.primaryColor,
+                      ],
                     ),
-                    itemBuilder: (BuildContext context, int index) {
-                      return ItemViewOrderRequests(
-                        bookingRequest:
-                            _dashboardResponse.bookingRequests[index],
-                        callback: _bookingActionMethod,
-                      );
-                    },
-                    itemCount: _dashboardResponse.bookingRequests.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Container(
-                        color: AppTheme.transparent,
-                        height: Dimensions.pixels_5,
-                      );
-                    },
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 16.0, top: 16.0),
+                        child: Text(
+                          '${_dashboardResponse.bookingRequests.length} Orders',
+                          style: TextStyle(
+                              fontSize: AppConstants.smallSize,
+                              color: AppTheme.subHeadingTextColor,
+                              fontWeight: FontWeight.normal,
+                              fontFamily: AppConstants.fontName),
+                        ),
+                      ),
+                      SizedBox(
+                        height: Dimensions.getScaledSize(16),
+                      ),
+                      Expanded(
+                        child: ListView.separated(
+                          padding: EdgeInsets.only(
+                            bottom: Dimensions.getScaledSize(16),
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return ItemViewOrderRequests(
+                              bookingRequest:
+                                  _dashboardResponse.bookingRequests[index],
+                              callback: _bookingActionMethod,
+                            );
+                          },
+                          itemCount: _dashboardResponse.bookingRequests.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return Container(
+                              color: AppTheme.transparent,
+                              height: 16.0,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
           appBar: BaseAppBar(
             backgroundColor: AppTheme.white,
             title: Text(
@@ -112,7 +136,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
                   fontFamily: AppConstants.fontName),
             ),
             leading: IconButton(
-              iconSize: 20,
+              iconSize: 24,
               color: AppTheme.black,
               icon: Icon(Icons.arrow_back),
               onPressed: () {
@@ -140,8 +164,8 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
-              bool isAccepted = widget.dashboardResponse.bookingRequests
-                  .remove(bookingRequest);
+              bool isAccepted =
+                  _dashboardResponse.bookingRequests.remove(bookingRequest);
               setState(() {});
               if (isAccepted) {
                 appPrintLog('Your Booking request is accepted');
@@ -166,8 +190,8 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
-              bool isAccepted = widget.dashboardResponse.bookingRequests
-                  .remove(bookingRequest);
+              bool isAccepted =
+                  _dashboardResponse.bookingRequests.remove(bookingRequest);
               setState(() {});
               if (isAccepted) {
                 appPrintLog('Your Booking request is Rejected');
