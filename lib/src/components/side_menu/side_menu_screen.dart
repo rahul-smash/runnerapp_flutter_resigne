@@ -221,7 +221,8 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
               child: const Text('YES'),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await AppSharedPref.instance.sharepref.clear();
+                await AppSharedPref.instance.setLoggedIn(false);
+                // await AppSharedPref.instance.sharepref.clear();
                 eventBus.fire(AlarmEvent.cancelAllAlarm('cancel'));
                 eventBus.fire(ReminderAlarmEvent.cancelAllAlarm('cancel'));
                 AppConstants.isLoggedIn = false;

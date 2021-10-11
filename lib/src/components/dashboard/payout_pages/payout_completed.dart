@@ -14,7 +14,6 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class PayoutCompleted extends StatefulWidget {
   PayoutCompleted();
@@ -234,11 +233,11 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                           topRight: const Radius.circular(35.0))),
                   margin: EdgeInsets.fromLTRB(
                       25, Dimensions.getScaledSize(110), 25, 0),
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: Dimensions.getScaledSize(10),
+                        height: 2.0,
                       ),
                       isApiLoading || completeSummaryResponse == null
                           ? Container()
@@ -369,28 +368,6 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                       ),
                     )
                   ],
-                ),
-              ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    height: 40.0,
-                    foregroundDecoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.8),
-                          Colors.white
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: [0.5, 0.5, 0.8, 0.5],
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ],
@@ -550,23 +527,23 @@ class _PayoutCompletedState extends BaseState<PayoutCompleted> {
                     SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      children: [
-                        Expanded(child: Container()),
-                        Container(
-                          margin: EdgeInsets.only(
-                            left: 5,
-                            right: 20,
-                          ),
-                          width: Dimensions.getScaledSize(150),
-                          child: GradientElevatedButton(
-                            onPressed: () {},
-                            buttonText: labelDownloadPDF,
-                          ),
-                          height: 40,
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Expanded(child: Container()),
+                    //     Container(
+                    //       margin: EdgeInsets.only(
+                    //         left: 5,
+                    //         right: 20,
+                    //       ),
+                    //       width: Dimensions.getScaledSize(150),
+                    //       child: GradientElevatedButton(
+                    //         onPressed: () {},
+                    //         buttonText: labelDownloadPDF,
+                    //       ),
+                    //       height: 40,
+                    //     ),
+                    //   ],
+                    // ),
                     SizedBox(
                       height: 15,
                     )

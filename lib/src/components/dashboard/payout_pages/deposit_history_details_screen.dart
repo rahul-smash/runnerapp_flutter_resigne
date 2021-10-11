@@ -129,10 +129,7 @@ class _DepositHistoryDetailsScreenState
                               child: Text("ID"),
                             ),
                             Expanded(
-                              child: Text("Category\nName"),
-                            ),
-                            Expanded(
-                              child: Text("Category\nPaid Amount"),
+                              child: Text("Paid Amount"),
                             ),
                           ],
                         ),
@@ -168,15 +165,15 @@ class _DepositHistoryDetailsScreenState
                                     child: Text(depositHistoryDetails
                                         ?.deposits[index].displayOrderId),
                                   ),
-                                  Expanded(
-                                    child: Text(
-                                      depositHistoryDetails
-                                          ?.deposits[index].categoryTitle,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: AppTheme.mainTextColor),
-                                    ),
-                                  ),
+                                  // Expanded(
+                                  //   child: Text(
+                                  //     depositHistoryDetails
+                                  //         ?.deposits[index].categoryTitle,
+                                  //     style: TextStyle(
+                                  //         fontWeight: FontWeight.w600,
+                                  //         color: AppTheme.mainTextColor),
+                                  //   ),
+                                  // ),
                                   Expanded(
                                       child: Column(
                                     crossAxisAlignment:

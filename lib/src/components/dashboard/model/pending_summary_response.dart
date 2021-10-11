@@ -59,8 +59,10 @@ class PendingSummaryResponse {
                       List<PendingPayout>.from(
                           v.map((x) => PendingPayout.fromJson(x))));
                 }),
-      totalRecord: json["totalRecord"] == null ? null : json["totalRecord"].toString() ,
-      displayDate: json["display_date"] == null ? null : json["display_date"].toString(),
+      totalRecord:
+          json["totalRecord"] == null ? null : json["totalRecord"].toString(),
+      displayDate:
+          json["display_date"] == null ? null : json["display_date"].toString(),
       keysList: keysList,
     );
   }
@@ -78,16 +80,16 @@ class PendingSummaryResponse {
 }
 
 class PendingPayout {
-  PendingPayout({
-    this.orderId,
-    this.totalAmount,
-    this.paymentMethod,
-    this.cashDeposit,
-    this.runnerPayout,
-    this.bookingDateTime,
-    this.bookingCompletedDate,
-    this.categoryTitle,
-  });
+  PendingPayout(
+      {this.orderId,
+      this.totalAmount,
+      this.paymentMethod,
+      this.cashDeposit,
+      this.runnerPayout,
+      this.bookingDateTime,
+      this.bookingCompletedDate,
+      this.categoryTitle,
+      this.orderAmount});
 
   String orderId;
   String totalAmount;
@@ -97,27 +99,29 @@ class PendingPayout {
   DateTime bookingDateTime;
   DateTime bookingCompletedDate;
   String categoryTitle;
+  String orderAmount;
 
-  PendingPayout copyWith({
-    String orderId,
-    String totalAmount,
-    String paymentMethod,
-    String cashDeposit,
-    String runnerPayout,
-    DateTime bookingDateTime,
-    DateTime bookingCompletedDate,
-    String categoryTitle,
-  }) =>
+  PendingPayout copyWith(
+          {String orderId,
+          String totalAmount,
+          String paymentMethod,
+          String cashDeposit,
+          String runnerPayout,
+          DateTime bookingDateTime,
+          DateTime bookingCompletedDate,
+          String categoryTitle,
+          String orderAmount}) =>
       PendingPayout(
-        orderId: orderId ?? this.orderId,
-        totalAmount: totalAmount ?? this.totalAmount,
-        paymentMethod: paymentMethod ?? this.paymentMethod,
-        cashDeposit: cashDeposit ?? this.cashDeposit,
-        runnerPayout: runnerPayout ?? this.runnerPayout,
-        bookingDateTime: bookingDateTime ?? this.bookingDateTime,
-        bookingCompletedDate: bookingCompletedDate ?? this.bookingCompletedDate,
-        categoryTitle: categoryTitle ?? this.categoryTitle,
-      );
+          orderId: orderId ?? this.orderId,
+          totalAmount: totalAmount ?? this.totalAmount,
+          paymentMethod: paymentMethod ?? this.paymentMethod,
+          cashDeposit: cashDeposit ?? this.cashDeposit,
+          runnerPayout: runnerPayout ?? this.runnerPayout,
+          bookingDateTime: bookingDateTime ?? this.bookingDateTime,
+          bookingCompletedDate:
+              bookingCompletedDate ?? this.bookingCompletedDate,
+          categoryTitle: categoryTitle ?? this.categoryTitle,
+          orderAmount: orderAmount ?? this.orderAmount);
 
   factory PendingPayout.fromRawJson(String str) =>
       PendingPayout.fromJson(json.decode(str));
@@ -141,6 +145,7 @@ class PendingPayout {
           : DateTime.parse(json["booking_completed_date"]),
       categoryTitle:
           json["category_title"] == null ? null : json["category_title"],
+      orderAmount: json["order_amount"] == null ? null : json["order_amount"],
     );
   }
 
@@ -156,6 +161,7 @@ class PendingPayout {
             ? null
             : "${bookingCompletedDate.year.toString().padLeft(4, '0')}-${bookingCompletedDate.month.toString().padLeft(2, '0')}-${bookingCompletedDate.day.toString().padLeft(2, '0')}",
         "category_title": categoryTitle == null ? null : categoryTitle,
+        "order_amount": orderAmount == null ? null : orderAmount,
       };
 }
 

@@ -683,16 +683,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           _bookingResponse.bookings != null &&
                           _bookingResponse.bookings.isNotEmpty
                       ? Container(
-                          child: ListView.builder(
-                              padding: EdgeInsets.all(16.0),
-                              shrinkWrap: true,
-                              itemCount: _bookingResponse.bookings.length,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (BuildContext context, int index) {
-                                return ItemBooking(
-                                    _bookingResponse.bookings[index],
-                                    _bookingAction);
-                              }),
+                          child: ListView.separated(
+                            padding: EdgeInsets.all(18.0),
+                            shrinkWrap: true,
+                            itemCount: _bookingResponse.bookings.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (BuildContext context, int index) {
+                              return ItemBooking(
+                                  _bookingResponse.bookings[index],
+                                  _bookingAction);
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return SizedBox(
+                                height: 8.0,
+                              );
+                            },
+                          ),
                         )
                       : _noOrderContainer(),
             ],

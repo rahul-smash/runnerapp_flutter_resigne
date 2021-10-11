@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
-import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
-import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -14,8 +12,6 @@ import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bot
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class CashCollectionBottomSheet {
-  final LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
-
   //typeScreen ==0 //Dashboard and other listing
   //typeScreen ==1 //Booking details
   // type== 'complete or Ongoing
@@ -251,7 +247,7 @@ class CashCollectionBottomSheet {
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .changeBookingCashCollectionAction(
-            userId: loginResponse.data.id,
+            userId: AppSharedPref.instance.getUserId(),
             orderId: booking.id,
             paymentMethod: 'cod',
             total: booking.total,

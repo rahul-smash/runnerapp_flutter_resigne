@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
@@ -30,10 +31,11 @@ class LoginNetworkRepository extends DioBaseService {
 
   Future<LoginResponse> loginApi(String phoneNumber, String mPin) async {
     try {
-      Map<String, dynamic> param =
-          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      Map<String, dynamic> param = {};
       param['phone'] = phoneNumber;
       param['pin'] = mPin;
+      param['device_info'] = getIt.get<CommonNetworkUtils>().getDeviceParams();
+      log(param.toString());
       var response = await post(
           apiPath(
               StoreConfigurationSingleton.instance.configModel.storeId, _login),

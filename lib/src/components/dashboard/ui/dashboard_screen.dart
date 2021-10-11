@@ -25,9 +25,9 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class DashboardScreen extends StatefulWidget {
-  bool shouldForceUpdate = false;
+  final bool shouldForceUpdate;
 
-  DashboardScreen({Key key, this.shouldForceUpdate}) : super(key: key);
+  DashboardScreen({Key key, this.shouldForceUpdate = false}) : super(key: key);
 
   @override
   _DashboardScreenState createState() {

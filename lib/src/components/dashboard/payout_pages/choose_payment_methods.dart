@@ -50,33 +50,33 @@ class _ChoosePaymentMethodsState extends BaseState<ChoosePaymentMethods> {
 
   @override
   Widget builder(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: BaseAppBar(
-          removeTitleSpacing: true,
-          callback: () {
-            Navigator.of(context).pop();
-          },
-          backBtnColor: Colors.white,
-          backgroundColor: AppTheme.primaryColor,
-          title: Text(
-            "",
-            style: TextStyle(color: Colors.white),
-          ),
-          appBar: AppBar(
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.white,
-            backwardsCompatibility: false,
-            systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: AppTheme.optionTotalCustomerBgColor,
-                statusBarIconBrightness: Brightness.dark),
-            elevation: 0.0,
-            titleSpacing: 0.0,
-          ),
-          widgets: <Widget>[],
+    return Scaffold(
+      appBar: BaseAppBar(
+        removeTitleSpacing: true,
+        callback: () {
+          Navigator.of(context).pop();
+        },
+        backBtnColor: Colors.white,
+        backgroundColor: AppTheme.primaryColor,
+        title: Text(
+          "",
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppTheme.backgroundGeryColor,
-        body: Container(
+        appBar: AppBar(
+          foregroundColor: Colors.black,
+          backwardsCompatibility: false,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.light),
+          elevation: 0.0,
+          backgroundColor: AppTheme.primaryColor,
+          titleSpacing: 0.0,
+        ),
+        widgets: <Widget>[],
+      ),
+      backgroundColor: AppTheme.backgroundGeryColor,
+      body: SafeArea(
+        child: Container(
           child: Stack(
             children: [
               Container(

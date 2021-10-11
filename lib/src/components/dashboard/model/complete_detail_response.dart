@@ -133,6 +133,7 @@ class Payout {
     this.cashDeposit,
     this.runnerPayout,
     this.categoryTitle,
+    this.orderAmount,
   });
 
   String orderId;
@@ -141,15 +142,16 @@ class Payout {
   String cashDeposit;
   String runnerPayout;
   String categoryTitle;
+  String orderAmount;
 
-  Payout copyWith({
-    String orderId,
-    String totalAmount,
-    String paymentMethod,
-    String cashDeposit,
-    String runnerPayout,
-    String categoryTitle,
-  }) =>
+  Payout copyWith(
+          {String orderId,
+          String totalAmount,
+          String paymentMethod,
+          String cashDeposit,
+          String runnerPayout,
+          String categoryTitle,
+          String orderAmount}) =>
       Payout(
         orderId: orderId ?? this.orderId,
         totalAmount: totalAmount ?? this.totalAmount,
@@ -157,6 +159,7 @@ class Payout {
         cashDeposit: cashDeposit ?? this.cashDeposit,
         runnerPayout: runnerPayout ?? this.runnerPayout,
         categoryTitle: categoryTitle ?? this.categoryTitle,
+        orderAmount: orderAmount ?? this.orderAmount,
       );
 
   factory Payout.fromRawJson(String str) => Payout.fromJson(json.decode(str));
@@ -173,6 +176,7 @@ class Payout {
             json["runner_payout"] == null ? null : json["runner_payout"],
         categoryTitle:
             json["category_title"] == null ? null : json["category_title"],
+        orderAmount: json["order_amount"] == null ? null : json["order_amount"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -182,5 +186,6 @@ class Payout {
         "cash_deposit": cashDeposit == null ? null : cashDeposit,
         "runner_payout": runnerPayout == null ? null : runnerPayout,
         "category_title": categoryTitle == null ? null : categoryTitle,
+        "order_amount": orderAmount == null ? null : orderAmount,
       };
 }

@@ -14,7 +14,6 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
-import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class PayoutCompletedDetails extends StatefulWidget {
   CompletedPayouts completePayout;
@@ -142,9 +141,6 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
                             ),
                             Expanded(
                               child: Text("${labelID}"),
-                            ),
-                            Expanded(
-                              child: Text("$labelCategoryName"),
                             ),
                             Expanded(
                               child: Text("$labelCategoryAmount"),
@@ -430,19 +426,19 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
                   ],
                 ),
               ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 50, right: 50, bottom: 20),
-                    width: MediaQuery.of(context).size.width,
-                    child: GradientElevatedButton(
-                      onPressed: () {},
-                      buttonText: labelDownloadPDF,
-                    ),
-                  ),
-                ),
-              ),
+              // Positioned.fill(
+              //   child: Align(
+              //     alignment: Alignment.bottomCenter,
+              //     child: Container(
+              //       margin: EdgeInsets.only(left: 50, right: 50, bottom: 20),
+              //       width: MediaQuery.of(context).size.width,
+              //       child: GradientElevatedButton(
+              //         onPressed: () {},
+              //         buttonText: labelDownloadPDF,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -468,9 +464,6 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
               child: Text("#${payout.orderId}"),
             ),
             Expanded(
-              child: Text("${payout.categoryTitle}"),
-            ),
-            Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -482,7 +475,7 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
                             color: AppTheme.subHeadingTextColor,
                             fontSize: 14,
                             fontWeight: FontWeight.w600)),
-                    Text("${payout.totalAmount}",
+                    Text("${payout.orderAmount}",
                         style: TextStyle(
                             color: AppTheme.subHeadingTextColor,
                             fontSize: 16,
@@ -500,7 +493,7 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
                         EdgeInsets.only(left: 5, right: 5, top: 3, bottom: 3),
                     child: Center(
                         child: Text(
-                      "${payout.paymentMethod.toUpperCase()}",
+                      "${payout.paymentMethod == "0" ? "Online" : "Cash"}",
                       textAlign: TextAlign.center,
                       style: TextStyle(color: AppTheme.mainTextColor),
                     )),

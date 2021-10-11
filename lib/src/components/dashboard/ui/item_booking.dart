@@ -283,11 +283,6 @@ class _ItemBookingState extends State<ItemBooking> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              // padding: EdgeInsets.fromLTRB(
-              //     Dimensions.getScaledSize(10),
-              //     Dimensions.getScaledSize(10),
-              //     Dimensions.getScaledSize(0),
-              //     Dimensions.getScaledSize(10)),
               child: Row(
                 children: [
                   Image.asset(
@@ -321,11 +316,7 @@ class _ItemBookingState extends State<ItemBooking> {
                   color: AppTheme.optionTotalBookingBgColor,
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
-                // padding: EdgeInsets.fromLTRB(
-                //     Dimensions.getScaledSize(20),
-                //     Dimensions.getScaledSize(10),
-                //     Dimensions.getScaledSize(20),
-                //     Dimensions.getScaledSize(10)),
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   children: [
                     Image.asset(
@@ -353,11 +344,6 @@ class _ItemBookingState extends State<ItemBooking> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              // padding: EdgeInsets.fromLTRB(
-              //     Dimensions.getScaledSize(10),
-              //     Dimensions.getScaledSize(10),
-              //     Dimensions.getScaledSize(10),
-              //     Dimensions.getScaledSize(10)),
               child: Row(
                 children: [
                   Image.asset(

@@ -65,8 +65,8 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
           userId: userId,
           status: _getCurrentStatus(selectedFilterIndex),
           bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot,
-          page: 5,
-          limit: 20);
+          page: 1,
+          limit: 1000);
       _getFilterCount();
       AppUtils.hideLoader(context);
       _refreshController.refreshCompleted();
@@ -190,7 +190,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                     : _bookingResponse != null &&
                             _bookingResponse.bookings != null &&
                             _bookingResponse.bookings.isNotEmpty
-                        ? ListView.builder(
+                        ? ListView.separated(
                             padding:
                                 EdgeInsets.all(Dimensions.getScaledSize(10)),
                             shrinkWrap: true,
@@ -199,7 +199,14 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                               return ItemBooking(
                                   _bookingResponse.bookings[index],
                                   _bookingAction);
-                            })
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return SizedBox(
+                                height: 8.0,
+                              );
+                            },
+                          )
                         : _noOrderContainer(),
               ),
             ),

@@ -113,7 +113,7 @@ void main() async {
     // SingletonServiceLocations.instance.serviceLocationResponse = await getIt.get<VersionAuthRepository>().serviceLocationsApi();
     setStoreCurrency(storeResponse, configObject);
     // fixme:: app dynamic colors
-    // setAppThemeColors(storeResponse.brand.appThemeColor);
+    setAppThemeColors(storeResponse.brand.appThemeColor);
     List<ForceDownload> forceDownload = storeResponse.brand.forceDownload;
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
     String version = packageInfo.version;

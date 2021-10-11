@@ -232,11 +232,11 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                           topRight: const Radius.circular(35.0))),
                   margin: EdgeInsets.fromLTRB(
                       25, Dimensions.getScaledSize(110), 25, 0),
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: Dimensions.getScaledSize(10),
+                        height: 2.0,
                       ),
                       isApiLoading || pendingSummaryResponse == null
                           ? Container()
@@ -247,9 +247,11 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                               itemCount: pendingSummaryResponse.keysList.length,
                               itemBuilder: (context, index) {
                                 return Column(
-                                  mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    SizedBox(
+                                      height: 8.0,
+                                    ),
                                     Text(pendingSummaryResponse.keysList[index],
                                         style: TextStyle(
                                             color: AppTheme.mainTextColor,
@@ -402,28 +404,6 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                   ],
                 ),
               ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    height: 40.0,
-                    foregroundDecoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.8),
-                          Colors.white
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: [0.1, 0.3, 0.8, 0.9],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -452,7 +432,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 15, 5, 5),
               child: Text(
-                  "#${pendingPayout.orderId} | ${AppUtils.convertDateFormat(pendingPayout.bookingDateTime, parsingPattern: AppUtils.dateTimeAppDisplayPattern_1)}",
+                  "${AppUtils.convertDateFormat(pendingPayout.bookingDateTime, parsingPattern: AppUtils.dateTimeAppDisplayPattern_1)}",
                   style: TextStyle(
                     color: AppTheme.subHeadingTextColor,
                     fontSize: AppConstants.extraSmallSize,
@@ -476,7 +456,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${pendingPayout.categoryTitle}',
+                          '#${pendingPayout.orderId}',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: AppConstants.largeSize,
@@ -492,7 +472,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                                     color: AppTheme.subHeadingTextColor,
                                     fontSize: AppConstants.extraSmallSize,
                                     fontWeight: FontWeight.w600)),
-                            Text("${pendingPayout.totalAmount}",
+                            Text("${pendingPayout.orderAmount}",
                                 style: TextStyle(
                                     color: AppTheme.subHeadingTextColor,
                                     fontSize: AppConstants.smallSize,
@@ -513,7 +493,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                                         left: 10, right: 10, top: 3, bottom: 3),
                                     child: Center(
                                         child: Text(
-                                      '${pendingPayout.paymentMethod.toUpperCase()}',
+                                      '${pendingPayout.cashDeposit == '0' ? "Online" : "Cash"}',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize:
