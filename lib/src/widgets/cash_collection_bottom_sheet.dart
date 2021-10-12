@@ -8,7 +8,6 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class CashCollectionBottomSheet {
@@ -260,7 +259,7 @@ class CashCollectionBottomSheet {
           else if (typeScreen == '0') callBackMethod('Complete', booking);
 
           Navigator.pop(context);
-          AddImageBottomSheet(context, booking, 'cod');
+          // AddImageBottomSheet(context, booking, 'cod');
           openCashCollectedBottomSheet(context, booking.total);
         } else {
           AppUtils.showToast(baseResponse.message, false);

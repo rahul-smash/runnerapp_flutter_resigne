@@ -215,10 +215,10 @@ class _AccountScreenState extends BaseState<AccountScreen> {
       imgePath:  "lib/src/components/dashboard/images/myserviceicon.png"
     );
     list.add(setupAccountModel1);
-    list.add(setupAccountModel2);
-    list.add(setupAccountModel3);
-    list.add(setupAccountModel5);
-    list.add(setupAccountModel4);
+    // list.add(setupAccountModel2);
+    // list.add(setupAccountModel3);
+    // list.add(setupAccountModel5);
+    // list.add(setupAccountModel4);
     /*2= in progress
     1= completed
     0 = not completed*/

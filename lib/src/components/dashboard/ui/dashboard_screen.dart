@@ -316,6 +316,7 @@ startLocationSetup(BuildContext context) async {
           AppUtils.displayCommonDialog(context,
               title: labelErrorAlert,
               massage: labelBatterPerformanceMsg, positiveOnPressed: () async {
+            Navigator.pop(context);
             await Geolocator.requestPermission();
           });
         }

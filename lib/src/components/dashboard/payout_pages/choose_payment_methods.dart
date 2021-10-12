@@ -16,9 +16,10 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class ChoosePaymentMethods extends StatefulWidget {
-  List<CashCollection> selectCashCollection;
+  final List<CashCollection> selectCashCollection;
+  final VoidCallback callback;
 
-  ChoosePaymentMethods(this.selectCashCollection);
+  ChoosePaymentMethods(this.selectCashCollection, this.callback);
 
   @override
   _ChoosePaymentMethodsState createState() {
@@ -407,8 +408,8 @@ class _ChoosePaymentMethodsState extends BaseState<ChoosePaymentMethods> {
                       print(totalOrdersAmount);
                       print(totalOrders);
                       print(runnerId);
-                      // _getDepositPayment(ids, orderIds, totalOrdersAmount,
-                      //     totalOrders, runnerId);
+                      _getDepositPayment(orderIds, orderIds, totalOrdersAmount,
+                          totalOrders, runnerId);
                     },
                     child: Container(
                         height: 50,
@@ -488,6 +489,9 @@ class _ChoosePaymentMethodsState extends BaseState<ChoosePaymentMethods> {
                 totalOrders: totalOrders,
                 runnerId: runnerId,
               );
+      if (baseResponse.success) {
+        widget.callback();
+      }
       setState(() {});
       AppUtils.hideLoader(context);
       isApiLoading = false;

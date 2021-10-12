@@ -44,7 +44,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
   TextEditingController ageCont = TextEditingController();
   TextEditingController mobileCont = TextEditingController();
   TextEditingController emailCont = TextEditingController();
-  List<String> _genderOptions = ["Male", "Female"];
+  List<String> _genderOptions = ["male", "female"];
   String _selectedGenderUpOption = labelSignUpAs;
   DateTime selectedStartDate;
   List<String> addressProofsList = [];
@@ -1140,20 +1140,20 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
   void setSavedProfileData() {
     firstNameCont.text = profileInfoModel.data.firstName;
     lastNameCont.text = profileInfoModel.data.lastName;
-    if (profileInfoModel.data.gender.isNotEmpty) {
+    if (profileInfoModel.data.gender?.isNotEmpty ?? false) {
       _selectedGenderUpOption = profileInfoModel.data.gender;
     }
     ageCont.text = profileInfoModel.data.dob;
     mobileCont.text = profileInfoModel.data.phone;
     emailCont.text = profileInfoModel.data.email;
     userCommentController.text = profileInfoModel.data.aboutYourself;
-    if (profileInfoModel.data.identityProof.isNotEmpty) {
+    if (profileInfoModel.data.identityProof?.isNotEmpty ?? false) {
       _selectedProofTypeTag = profileInfoModel.data.identityProof;
     }
     proofNameCont.text = profileInfoModel.data.identityProofMentionedName;
     idProofNameCont.text = profileInfoModel.data.identityProofNumber;
 
-    if (profileInfoModel.data.identityProofImage1.isNotEmpty) {
+    if (profileInfoModel.data.identityProofImage1?.isNotEmpty ?? false) {
       _selectedImg1 = File("");
       resultFileImgSize1 = "";
     }

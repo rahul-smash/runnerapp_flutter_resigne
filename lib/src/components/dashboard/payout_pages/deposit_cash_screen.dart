@@ -526,7 +526,12 @@ class _DepositCashScreenState extends BaseState<DepositCashScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (builder) => ChoosePaymentMethods(
-                                    _selectCashCollection)));
+                                        _selectCashCollection, () {
+                                      setState(() {
+                                        _selectCashCollection.clear();
+                                      });
+                                      _getDepositPaymentSummary();
+                                    })));
                       },
                       child: Stack(
                         alignment: Alignment.centerRight,

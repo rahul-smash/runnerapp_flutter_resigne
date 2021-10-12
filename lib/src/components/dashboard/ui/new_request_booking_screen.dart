@@ -94,7 +94,7 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
                           '${_dashboardResponse.bookingRequests.length} Orders',
                           style: TextStyle(
                               fontSize: AppConstants.smallSize,
-                              color: AppTheme.subHeadingTextColor,
+                              color: Colors.white,
                               fontWeight: FontWeight.normal,
                               fontFamily: AppConstants.fontName),
                         ),

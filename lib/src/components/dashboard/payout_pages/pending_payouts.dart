@@ -493,7 +493,7 @@ class _PendingPayoutsState extends BaseState<PendingPayouts> {
                                         left: 10, right: 10, top: 3, bottom: 3),
                                     child: Center(
                                         child: Text(
-                                      '${pendingPayout.cashDeposit == '0' ? "Online" : "Cash"}',
+                                      '${pendingPayout.paymentMethod.toUpperCase()}',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize:

@@ -34,7 +34,17 @@ class LoginNetworkRepository extends DioBaseService {
       Map<String, dynamic> param = {};
       param['phone'] = phoneNumber;
       param['pin'] = mPin;
-      param['device_info'] = getIt.get<CommonNetworkUtils>().getDeviceParams();
+      var data = getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['device_info'] = {
+        'app_version': data['app_version'],
+        'platform': data['platform'],
+        'device_id': data['device_id'],
+        'device_token': data['device_token'],
+        'device_brand': data['device_brand'],
+        'device_model': data['device_model'],
+        'device_os': data['device_os'],
+        'device_os_version': data['device_os_version']
+      };
       log(param.toString());
       var response = await post(
           apiPath(

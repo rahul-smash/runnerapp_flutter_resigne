@@ -493,7 +493,7 @@ class _PayoutCompletedDetailsState extends BaseState<PayoutCompletedDetails> {
                         EdgeInsets.only(left: 5, right: 5, top: 3, bottom: 3),
                     child: Center(
                         child: Text(
-                      "${payout.paymentMethod == "0" ? "Online" : "Cash"}",
+                      "${payout.paymentMethod.toUpperCase()}",
                       textAlign: TextAlign.center,
                       style: TextStyle(color: AppTheme.mainTextColor),
                     )),

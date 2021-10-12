@@ -6,7 +6,6 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/add_image/add_image_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 
 class ItemBooking extends StatefulWidget {
@@ -403,7 +402,7 @@ class _ItemBookingState extends State<ItemBooking> {
                       widget.callBackMethod, 'Complete', '0');
                 } else {
                   widget.callBackMethod('Complete', widget.booking);
-                  AddImageBottomSheet(context, widget.booking, 'online');
+                  // AddImageBottomSheet(context, widget.booking, 'online');
                 }
               },
               child: Container(

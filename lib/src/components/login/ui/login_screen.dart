@@ -1,12 +1,12 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/bloc/login_bloc.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
-import 'package:marketplace_service_provider/src/components/signUp/signup_screen.dart';
+import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -77,6 +77,9 @@ class _LoginScreenState extends BaseState<LoginScreen> {
   Future<void> onLoginSuccess(LoginResponse loginResponse) async {
     await AppSharedPref.instance.setAppUser(loginResponse);
     await AppSharedPref.instance.setLoggedIn(true);
+    getIt
+        .get<DutyStatusObserver>()
+        .changeStatus(AppSharedPref.instance.getDutyStatus());
     Navigator.pop(context);
     Navigator.push(
         context,
@@ -178,7 +181,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                           controller: passwordCont,
                           focusNode: passWordFocusNode,
                           obscureText: !value,
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           style: TextStyle(color: AppTheme.mainTextColor),
                           maxLength: 4,
                           validator: (value) =>
@@ -243,43 +246,43 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                     SizedBox(
                       height: 26,
                     ),
-                    Text(
-                      labelOR,
-                      style: TextStyle(
-                          color: AppTheme.subHeadingTextColor,
-                          fontFamily: AppConstants.fontName),
-                    ),
-                    SizedBox(
-                      height: 26,
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Text.rich(
-                        TextSpan(
-                          text: labelDontHaveAccount,
-                          style: TextStyle(
-                              color: AppTheme.subHeadingTextColor,
-                              fontFamily: AppConstants.fontName,
-                              fontWeight: FontWeight.normal),
-                          children: <TextSpan>[
-                            TextSpan(
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                SignUpScreen()));
-                                  },
-                                text: labelSignUp,
-                                style: TextStyle(
-                                    color: AppTheme.primaryColor,
-                                    fontFamily: AppConstants.fontName,
-                                    fontWeight: FontWeight.normal)),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Text(
+                    //   labelOR,
+                    //   style: TextStyle(
+                    //       color: AppTheme.subHeadingTextColor,
+                    //       fontFamily: AppConstants.fontName),
+                    // ),
+                    // SizedBox(
+                    //   height: 26,
+                    // ),
+                    // Align(
+                    //   alignment: Alignment.bottomCenter,
+                    //   child: Text.rich(
+                    //     TextSpan(
+                    //       text: labelDontHaveAccount,
+                    //       style: TextStyle(
+                    //           color: AppTheme.subHeadingTextColor,
+                    //           fontFamily: AppConstants.fontName,
+                    //           fontWeight: FontWeight.normal),
+                    //       children: <TextSpan>[
+                    //         TextSpan(
+                    //             recognizer: TapGestureRecognizer()
+                    //               ..onTap = () {
+                    //                 Navigator.push(
+                    //                     context,
+                    //                     MaterialPageRoute(
+                    //                         builder: (BuildContext context) =>
+                    //                             SignUpScreen()));
+                    //               },
+                    //             text: labelSignUp,
+                    //             style: TextStyle(
+                    //                 color: AppTheme.primaryColor,
+                    //                 fontFamily: AppConstants.fontName,
+                    //                 fontWeight: FontWeight.normal)),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

@@ -615,61 +615,61 @@ class _DepositHistoryScreenState extends BaseState<DepositHistoryScreen> {
                                                           )
                                                         : Container(),
                                                   ),
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                      left: 15,
-                                                      top: 10,
-                                                      bottom: 10,
-                                                      right: 15,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                            color: AppTheme
-                                                                .buttonShadowColor,
-                                                            offset:
-                                                                Offset(0, 8),
-                                                            blurRadius: 5.0)
-                                                      ],
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  30)),
-                                                      gradient: LinearGradient(
-                                                        begin:
-                                                            Alignment.topRight,
-                                                        end: Alignment
-                                                            .bottomLeft,
-                                                        stops: [
-                                                          0.1,
-                                                          0.5,
-                                                          0.7,
-                                                          0.9
-                                                        ],
-                                                        colors: [
-                                                          AppTheme
-                                                              .primaryColorDark,
-                                                          AppTheme.primaryColor,
-                                                          AppTheme.primaryColor,
-                                                          AppTheme.primaryColor,
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    // width:
-                                                    //     Dimensions.getScaledSize(
-                                                    //
-                                                    //         150),
-                                                    child: Text(
-                                                        labelDownloadPDF,
-                                                        style: TextStyle(
-                                                            color:
-                                                                AppTheme.white,
-                                                            fontSize: AppConstants
-                                                                .extraSmallSize,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w400)),
-                                                  ),
+                                                  // Container(
+                                                  //   padding: EdgeInsets.only(
+                                                  //     left: 15,
+                                                  //     top: 10,
+                                                  //     bottom: 10,
+                                                  //     right: 15,
+                                                  //   ),
+                                                  //   decoration: BoxDecoration(
+                                                  //     boxShadow: [
+                                                  //       BoxShadow(
+                                                  //           color: AppTheme
+                                                  //               .buttonShadowColor,
+                                                  //           offset:
+                                                  //               Offset(0, 8),
+                                                  //           blurRadius: 5.0)
+                                                  //     ],
+                                                  //     borderRadius:
+                                                  //         BorderRadius.all(
+                                                  //             Radius.circular(
+                                                  //                 30)),
+                                                  //     gradient: LinearGradient(
+                                                  //       begin:
+                                                  //           Alignment.topRight,
+                                                  //       end: Alignment
+                                                  //           .bottomLeft,
+                                                  //       stops: [
+                                                  //         0.1,
+                                                  //         0.5,
+                                                  //         0.7,
+                                                  //         0.9
+                                                  //       ],
+                                                  //       colors: [
+                                                  //         AppTheme
+                                                  //             .primaryColorDark,
+                                                  //         AppTheme.primaryColor,
+                                                  //         AppTheme.primaryColor,
+                                                  //         AppTheme.primaryColor,
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  //   // width:
+                                                  //   //     Dimensions.getScaledSize(
+                                                  //   //
+                                                  //   //         150),
+                                                  //   child: Text(
+                                                  //       labelDownloadPDF,
+                                                  //       style: TextStyle(
+                                                  //           color:
+                                                  //               AppTheme.white,
+                                                  //           fontSize: AppConstants
+                                                  //               .extraSmallSize,
+                                                  //           fontWeight:
+                                                  //               FontWeight
+                                                  //                   .w400)),
+                                                  // ),
                                                 ],
                                               ),
                                               SizedBox(
