@@ -146,7 +146,7 @@ class DashboardNetworkRepository extends DioBaseService {
           getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['user_id'] = userId;
       param['order_id'] = orderId;
-      param['total'] = total;
+      param['cash_collected'] = total;
       param['payment_method'] = paymentMethod;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
