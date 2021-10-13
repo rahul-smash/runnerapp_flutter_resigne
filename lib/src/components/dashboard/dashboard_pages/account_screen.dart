@@ -21,7 +21,6 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends BaseState<AccountScreen> {
-
   List<SetupAccountModel> list = [];
 
   @override
@@ -37,7 +36,6 @@ class _AccountScreenState extends BaseState<AccountScreen> {
 
   @override
   Widget builder(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: Scaffold(
@@ -49,7 +47,9 @@ class _AccountScreenState extends BaseState<AccountScreen> {
                   height: 110,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(30),bottomLeft: Radius.circular(30)),
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(30),
+                        bottomLeft: Radius.circular(30)),
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
@@ -68,95 +68,130 @@ class _AccountScreenState extends BaseState<AccountScreen> {
                     decoration: new BoxDecoration(
                         color: Colors.transparent,
                         borderRadius: new BorderRadius.only(
-                            topLeft:  const  Radius.circular(25.0),
-                            topRight: const  Radius.circular(25.0))
-                    ),
-                    margin: EdgeInsets.fromLTRB(0,  40, 0, 0),
+                            topLeft: const Radius.circular(25.0),
+                            topRight: const Radius.circular(25.0))),
+                    margin: EdgeInsets.fromLTRB(0, 40, 0, 0),
                     padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: Column(
                       children: <Widget>[
-                        SizedBox(height: Dimensions.getScaledSize(10),),
+                        SizedBox(
+                          height: Dimensions.getScaledSize(10),
+                        ),
                         Expanded(
                             child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: list.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: (){
-                                    onListViewTap(index);
-                                  },
-                                  child: Card(
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                        //side: BorderSide(color: getColorFromStatus(getStatusValue(accountStepsDetailModel,list[index].title)), width: 2),
-                                        borderRadius: BorderRadius.circular(22)
-                                    ),
-                                    child: Stack(
-                                      clipBehavior: Clip.antiAlias,
-                                      children: [
-                                        Container(
-                                            padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-                                            width: double.infinity,height: 100,
-                                            margin: EdgeInsets.fromLTRB(0,0,0,0),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center ,
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                          shrinkWrap: true,
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                onListViewTap(index);
+                              },
+                              child: Card(
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                    //side: BorderSide(color: getColorFromStatus(getStatusValue(accountStepsDetailModel,list[index].title)), width: 2),
+                                    borderRadius: BorderRadius.circular(22)),
+                                child: Stack(
+                                  clipBehavior: Clip.antiAlias,
+                                  children: [
+                                    Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 20, 10, 20),
+                                        width: double.infinity,
+                                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.center ,
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(width: 10,),
-                                                    Container(
-                                                        width: 30,
-                                                        height: 30,
-                                                        child: Center(
-                                                            child:Image.asset(list[index].imgePath,width: Dimensions.getScaledSize(30),height: Dimensions.getScaledSize(30),),
-                                                        ),
-                                                    ),
-                                                  ],
+                                                SizedBox(
+                                                  width: 10,
                                                 ),
-                                                SizedBox(width: 20,),
-                                                Expanded(
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              Text("${list[index].title}",style: TextStyle(color: AppTheme.black,
-                                                                fontSize: 18,fontWeight: FontWeight.w600,fontFamily: AppConstants.fontName,),),
-                                                              Text("${list[index].subTitle}",
-                                                                style: TextStyle(color: AppTheme.subHeadingTextColor,fontSize: 14,
-                                                                  fontWeight: FontWeight.w500,fontFamily: AppConstants.fontName,),),
-                                                            ],
-                                                          )
-                                                      ),
-                                                    ],
+                                                Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  child: Center(
+                                                    child: Image.asset(
+                                                      list[index].imgePath,
+                                                      width: Dimensions
+                                                          .getScaledSize(30),
+                                                      height: Dimensions
+                                                          .getScaledSize(30),
+                                                    ),
                                                   ),
                                                 ),
                                               ],
-                                            )
-                                        ),
-                                        Positioned.fill(
-                                          child: Align(
-                                            child: Container(
-                                                child: getImgFromStatus("In Progress")
                                             ),
-                                            alignment: Alignment.bottomRight,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
-                        ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Expanded(
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                      child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        "${list[index].title}",
+                                                        style: TextStyle(
+                                                          color: AppTheme.black,
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontFamily:
+                                                              AppConstants
+                                                                  .fontName,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "${list[index].subTitle}",
+                                                        style: TextStyle(
+                                                          color: AppTheme
+                                                              .subHeadingTextColor,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontFamily:
+                                                              AppConstants
+                                                                  .fontName,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )),
+                                    Positioned.fill(
+                                      child: Align(
+                                        child: Container(
+                                            child: getImgFromStatus(
+                                                "In Progress")),
+                                        alignment: Alignment.bottomRight,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        )),
                       ],
-                    )
-                ),
+                    )),
                 Container(
                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   width: MediaQuery.of(context).size.width,
@@ -167,8 +202,7 @@ class _AccountScreenState extends BaseState<AccountScreen> {
                         fontSize: 20.0,
                         color: Colors.white,
                         fontFamily: AppConstants.fontName,
-                        fontWeight: FontWeight.w700
-                    ),
+                        fontWeight: FontWeight.w700),
                   ),
                 ),
                 Container(
@@ -176,7 +210,9 @@ class _AccountScreenState extends BaseState<AccountScreen> {
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Container(
-                      width: 30,height: 3,color: Colors.white,
+                      width: 30,
+                      height: 3,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -189,31 +225,21 @@ class _AccountScreenState extends BaseState<AccountScreen> {
   }
 
   void addDataToList() {
-    SetupAccountModel setupAccountModel1 = SetupAccountModel(
-        "My Profile",
+    SetupAccountModel setupAccountModel1 = SetupAccountModel("My Profile",
         "Please provide us precise and authentic information about your own self.",
-        imgePath: "lib/src/components/dashboard/images/profileicon.png"
-    );
-    SetupAccountModel setupAccountModel2 = SetupAccountModel(
-        "Business Detail",
+        imgePath: "lib/src/components/dashboard/images/profileicon.png");
+    SetupAccountModel setupAccountModel2 = SetupAccountModel("Business Detail",
         "Please tell us more about your business-location timings etc.",
-        imgePath: "lib/src/components/dashboard/images/businessdetailicon.png"
-    );
+        imgePath: "lib/src/components/dashboard/images/businessdetailicon.png");
     SetupAccountModel setupAccountModel3 = SetupAccountModel(
-        "Work Detail",
-        "Please share your work experience and work proofs",
-      imgePath: "lib/src/components/dashboard/images/workdetailicon.png"
-    );
+        "Work Detail", "Please share your work experience and work proofs",
+        imgePath: "lib/src/components/dashboard/images/workdetailicon.png");
     SetupAccountModel setupAccountModel4 = SetupAccountModel(
-        "Agreement",
-        "Please thoroughly check and accept work agreement",
-        imgePath: "lib/src/components/dashboard/images/agreementicon.png"
-    );
+        "Agreement", "Please thoroughly check and accept work agreement",
+        imgePath: "lib/src/components/dashboard/images/agreementicon.png");
     SetupAccountModel setupAccountModel5 = SetupAccountModel(
-        "My Services",
-        "View and update my services details",
-      imgePath:  "lib/src/components/dashboard/images/myserviceicon.png"
-    );
+        "My Services", "View and update my services details",
+        imgePath: "lib/src/components/dashboard/images/myserviceicon.png");
     list.add(setupAccountModel1);
     // list.add(setupAccountModel2);
     // list.add(setupAccountModel3);
@@ -224,53 +250,70 @@ class _AccountScreenState extends BaseState<AccountScreen> {
     0 = not completed*/
   }
 
-  Widget getImgFromStatus(String status){
-    if(status == "In Progress"){
-      return Image.asset("lib/src/components/onboarding/images/colored_next_arrow.png",width: 35,height: 35,);
+  Widget getImgFromStatus(String status) {
+    if (status == "In Progress") {
+      return Image.asset(
+        "lib/src/components/onboarding/images/colored_next_arrow.png",
+        width: 35,
+        height: 35,
+      );
     }
-    if(status == "Not Completed"){
-      return Image.asset("lib/src/components/onboarding/images/grey_next_arrow.png",width: 35,height: 35,);
+    if (status == "Not Completed") {
+      return Image.asset(
+        "lib/src/components/onboarding/images/grey_next_arrow.png",
+        width: 35,
+        height: 35,
+      );
     }
-    if(status == "Completed"){
-      return Image.asset("lib/src/components/onboarding/images/green_next_arrow.png",width: 35,height: 35,);
+    if (status == "Completed") {
+      return Image.asset(
+        "lib/src/components/onboarding/images/green_next_arrow.png",
+        width: 35,
+        height: 35,
+      );
     }
   }
 
   void onListViewTap(int index) {
     //print(index);
-    if(index == 0){
+    if (index == 0) {
       //Navigator.pop(context);
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => MyProfileScreen(
-            isComingFromAccount: true,
-            voidCallback: (){
-          },))
-      );
-    }else if(index == 1){
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => BusinessDetailScreen(
-            isComingFromAccount: true,
-            voidCallback: (){
-            },))
-      );
-    } else if(index == 2){
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => WorkDetailScreen(
-            isComingFromAccount: true,
-            voidCallback: (){
-          },)));
-    } else if(index == 3){
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => SelectedUserCategoryScreen())
-      );
-    }else if(index == 4){
-      Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context) => AgreementDetailScreen(
-            isComingFromAccount: true,
-            voidCallback: (){
-
-            },)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => MyProfileScreen(
+                    isComingFromAccount: true,
+                    voidCallback: () {},
+                  )));
+    } else if (index == 1) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => BusinessDetailScreen(
+                    isComingFromAccount: true,
+                    voidCallback: () {},
+                  )));
+    } else if (index == 2) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => WorkDetailScreen(
+                    isComingFromAccount: true,
+                    voidCallback: () {},
+                  )));
+    } else if (index == 3) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => SelectedUserCategoryScreen()));
+    } else if (index == 4) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => AgreementDetailScreen(
+                    isComingFromAccount: true,
+                    voidCallback: () {},
+                  )));
     }
   }
-
 }

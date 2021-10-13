@@ -426,8 +426,8 @@ class Cart {
   String gstTaxRate;
   String gstState;
   String status;
-  DateTime created;
-  DateTime modified;
+  String created;
+  String modified;
   String image10080;
   String image300200;
   String image;
@@ -546,10 +546,8 @@ class Cart {
         gstTaxRate: json["gst_tax_rate"] == null ? null : json["gst_tax_rate"],
         gstState: json["gst_state"] == null ? null : json["gst_state"],
         status: json["status"] == null ? null : json["status"],
-        created:
-            json["created"] == null ? null : DateTime.parse(json["created"]),
-        modified:
-            json["modified"] == null ? null : DateTime.parse(json["modified"]),
+        created: json["created"] == null ? null : json["created"],
+        modified: json["modified"] == null ? null : json["modified"],
         image10080: json["image_100_80"] == null ? null : json["image_100_80"],
         image300200:
             json["image_300_200"] == null ? null : json["image_300_200"],
@@ -588,8 +586,8 @@ class Cart {
         "gst_tax_rate": gstTaxRate == null ? null : gstTaxRate,
         "gst_state": gstState == null ? null : gstState,
         "status": status == null ? null : status,
-        "created": created == null ? null : created.toIso8601String(),
-        "modified": modified == null ? null : modified.toIso8601String(),
+        "created": created == null ? null : created,
+        "modified": modified == null ? null : modified,
         "image_100_80": image10080 == null ? null : image10080,
         "image_300_200": image300200 == null ? null : image300200,
         "image": image == null ? null : image,
@@ -675,9 +673,9 @@ class UserAddress {
   String lng;
   String addressType;
   String setDefaultAddress;
-  bool softdelete;
-  DateTime created;
-  DateTime modified;
+  dynamic softdelete;
+  String created;
+  String modified;
   String completAddress;
 
   UserAddress copyWith({
@@ -697,9 +695,9 @@ class UserAddress {
     String lng,
     String addressType,
     String setDefaultAddress,
-    bool softdelete,
-    DateTime created,
-    DateTime modified,
+    dynamic softdelete,
+    String created,
+    String modified,
     String completAddress,
   }) =>
       UserAddress(
@@ -750,10 +748,8 @@ class UserAddress {
             ? null
             : json["set_default_address"],
         softdelete: json["softdelete"] == null ? null : json["softdelete"],
-        created:
-            json["created"] == null ? null : DateTime.parse(json["created"]),
-        modified:
-            json["modified"] == null ? null : DateTime.parse(json["modified"]),
+        created: json["created"] == null ? null : json["created"],
+        modified: json["modified"] == null ? null : json["modified"],
         completAddress:
             json["complet_address"] == null ? null : json["complet_address"],
       );
@@ -777,8 +773,8 @@ class UserAddress {
         "set_default_address":
             setDefaultAddress == null ? null : setDefaultAddress,
         "softdelete": softdelete == null ? null : softdelete,
-        "created": created == null ? null : created.toIso8601String(),
-        "modified": modified == null ? null : modified.toIso8601String(),
+        "created": created == null ? null : created,
+        "modified": modified == null ? null : modified,
         "complet_address": completAddress == null ? null : completAddress,
       };
 }

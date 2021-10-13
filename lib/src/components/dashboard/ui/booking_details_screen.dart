@@ -15,6 +15,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/map_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
@@ -173,6 +174,9 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                 ],
                               ),
                             ),
+                            SizedBox(
+                              height: 4.0,
+                            ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 18.0),
                               child: Row(
@@ -187,14 +191,16 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                         color: AppTheme.mainTextColor,
                                         fontWeight: FontWeight.w600),
                                   ),
-                                  Text(
-                                    "",
-                                    style: TextStyle(
-                                        fontFamily: AppConstants.fontName,
-                                        fontSize: AppConstants.largeSize,
-                                        color: AppTheme.mainTextColor,
-                                        fontWeight: FontWeight.w600),
-                                  )
+                                  Flexible(
+                                    child: Text(
+                                      "${AppConstants.currency}${widget.booking.total}",
+                                      style: TextStyle(
+                                          fontFamily: AppConstants.fontName,
+                                          fontSize: AppConstants.largeSize,
+                                          color: AppTheme.primaryColor,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -258,19 +264,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 18.0),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Flexible(
-                                    child: Text(
-                                      "${AppConstants.currency}${widget.booking.total}",
-                                      style: TextStyle(
-                                          fontFamily: AppConstants.fontName,
-                                          fontSize: AppConstants.largeSize,
-                                          color: AppTheme.primaryColor,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
                                   _getWidgetAccordingToStatus(),
                                 ],
                               ),
@@ -384,9 +379,20 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Image.asset(
-                                      AppImages.icon_map,
-                                      height: 25,
+                                    child: InkWell(
+                                      onTap: () {
+                                        MapUtils.openMap(
+                                            double.tryParse(widget
+                                                    .booking.userAddress.lat) ??
+                                                0,
+                                            double.tryParse(widget
+                                                    .booking.userAddress.lng) ??
+                                                0);
+                                      },
+                                      child: Image.asset(
+                                        AppImages.icon_map,
+                                        height: 25,
+                                      ),
                                     ),
                                   ),
                                 ],
