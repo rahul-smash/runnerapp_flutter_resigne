@@ -17,7 +17,6 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
-import 'package:marketplace_service_provider/src/widgets/common_widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -501,94 +500,98 @@ class _HomeScreenState extends State<HomeScreen> {
                 _dashboardResponse != null &&
                 _dashboardResponse.bookingRequests != null &&
                 _dashboardResponse.bookingRequests.isNotEmpty
-            ? ClipRRect(
-                borderRadius: new BorderRadius.only(
-                    topLeft: const Radius.circular(30.0),
-                    topRight: const Radius.circular(30.0)),
-                clipBehavior: Clip.antiAlias,
-                child: CommonWidgets.gradientContainer(
-                    context,
-                    Dimensions.getHeight(percentage: 48),
-                    SizeConfig.screenWidth,
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 18.0,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'New Booking',
-                                style: TextStyle(
-                                    fontSize: AppConstants.smallSize,
-                                    color: AppTheme.white,
-                                    fontFamily: AppConstants.fontName),
-                              ),
-                              InkWell(
-                                onTap: () async {
-                                  bool refreshData =
-                                      await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            NewRequestBookingScreen(
-                                              userId: userId,
-                                              filter: _selectedFilterParam(
-                                                  _selectedOverviewOption),
-                                            )),
-                                  );
-                                  if (refreshData != null && refreshData) {
-                                    _refreshController.requestRefresh();
-                                  }
-                                },
-                                child: Text(
-                                  'View All',
-                                  style: TextStyle(
-                                      fontSize: AppConstants.smallSize,
-                                      color: AppTheme.white,
-                                      fontFamily: AppConstants.fontName),
-                                ),
-                              )
-                            ],
+            ? Container(
+                height: 350,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(30.0),
+                      topLeft: Radius.circular(30.0)),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    stops: [0.1, 0.5, 0.7, 0.9],
+                    colors: [
+                      AppTheme.primaryColorDark,
+                      AppTheme.primaryColor,
+                      AppTheme.primaryColor,
+                      AppTheme.primaryColor,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 18.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Order Request',
+                            style: TextStyle(
+                                fontSize: AppConstants.smallSize,
+                                color: AppTheme.white,
+                                fontFamily: AppConstants.fontName),
                           ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Flexible(
-                          fit: FlexFit.tight,
-                          child: PageView(
-                            scrollDirection: Axis.horizontal,
-                            controller: _pageController,
-                            children: _dashboardResponse.bookingRequests
-                                .map((bookingRequest) => ItemViewOrderRequests(
-                                    bookingRequest: bookingRequest,
-                                    callback: _bookingRequestActionMethod))
-                                .toList(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        SmoothPageIndicator(
-                            controller: _pageController,
-                            count: _dashboardResponse.bookingRequests.length,
-                            effect: ExpandingDotsEffect(
-                              radius: 8,
-                              dotHeight: 8,
-                              dotWidth: 8,
-                              dotColor: AppTheme.borderOnFocusedColor,
-                              activeDotColor: AppTheme.white,
-                              spacing: 5,
-                            )),
-                        SizedBox(
-                          height: 48,
-                        ),
-                      ],
-                    )),
+                          InkWell(
+                            onTap: () async {
+                              bool refreshData =
+                                  await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        NewRequestBookingScreen(
+                                          userId: userId,
+                                          filter: _selectedFilterParam(
+                                              _selectedOverviewOption),
+                                        )),
+                              );
+                              if (refreshData != null && refreshData) {
+                                _refreshController.requestRefresh();
+                              }
+                            },
+                            child: Text(
+                              'View All',
+                              style: TextStyle(
+                                  fontSize: AppConstants.smallSize,
+                                  color: AppTheme.white,
+                                  fontFamily: AppConstants.fontName),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    SizedBox(
+                      height: 250,
+                      child: PageView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _pageController,
+                        children: _dashboardResponse.bookingRequests
+                            .map((bookingRequest) => ItemViewOrderRequests(
+                                bookingRequest: bookingRequest,
+                                callback: _bookingRequestActionMethod))
+                            .toList(),
+                      ),
+                    ),
+                    SmoothPageIndicator(
+                        controller: _pageController,
+                        count: _dashboardResponse.bookingRequests.length,
+                        effect: ExpandingDotsEffect(
+                          radius: 8,
+                          dotHeight: 6,
+                          dotWidth: 6,
+                          expansionFactor: 4,
+                          dotColor: Colors.white30,
+                          activeDotColor: AppTheme.white,
+                          spacing: 5,
+                        )),
+                  ],
+                ),
               )
             : Container(),
         Container(
@@ -599,12 +602,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 topRight: Radius.circular(Dimensions.getScaledSize(30)),
               )),
           margin: EdgeInsets.only(
-            top: Dimensions.getHeight(
-                percentage: _dashboardResponse != null &&
-                        _dashboardResponse.bookingRequests != null &&
-                        _dashboardResponse.bookingRequests.isNotEmpty
-                    ? 43
-                    : 0),
+            top: _dashboardResponse != null &&
+                    _dashboardResponse.bookingRequests != null &&
+                    _dashboardResponse.bookingRequests.isNotEmpty
+                ? 320
+                : 0,
           ),
           child: Center(
               child: Column(

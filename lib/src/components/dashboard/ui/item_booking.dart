@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/booking_details_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/step_viewer.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -39,222 +40,200 @@ class _ItemBookingState extends State<ItemBooking> {
                     })));
       },
       child: Card(
-        shadowColor: AppTheme.borderNotFocusedColor,
+        color: Colors.white,
         elevation: 8.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         child: Container(
+          padding: EdgeInsets.all(18.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 16.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '#${widget.booking.displayOrderId} | ${AppUtils.convertDateFromFormat(widget.booking.created)}',
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: AppTheme.subHeadingTextColor,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    ),
-                    Visibility(
-                      visible: widget.booking.user.phone.isNotEmpty,
-                      child: Row(
-                        children: [
-                          InkWell(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Image(
-                                  image: AssetImage(
-                                    AppImages.icon_whatsapp,
-                                  ),
-                                  height: 25,
-                                ),
-                              ),
-                              onTap: () {
-                                AppUtils.launchWhatsApp(
-                                    widget.booking.user.phone);
-                              }),
-                          InkWell(
-                              child: Image(
-                                image: AssetImage(AppImages.icon_call),
-                                height: 25,
-                              ),
-                              onTap: () {
-                                AppUtils.launchCaller(
-                                    widget.booking.user.phone);
-                              }),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.booking.store?.storeName ?? "",
-                      style: TextStyle(
-                          fontFamily: AppConstants.fontName,
-                          fontSize: AppConstants.largeSize2X,
-                          color: AppTheme.mainTextColor,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      "",
-                      style: TextStyle(
-                          fontFamily: AppConstants.fontName,
-                          fontSize: AppConstants.largeSize,
-                          color: AppTheme.mainTextColor,
-                          fontWeight: FontWeight.w600),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "${widget.booking.cart.length} ${widget.booking.cart.length > 1 ? "Items" : "Item"}",
-                      style: TextStyle(
-                          fontFamily: AppConstants.fontName,
-                          fontSize: AppConstants.smallSize,
-                          color: AppTheme.subHeadingTextColor,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      "",
-                      style: TextStyle(
-                          fontFamily: AppConstants.fontName,
-                          fontSize: AppConstants.largeSize,
-                          color: AppTheme.mainTextColor,
-                          fontWeight: FontWeight.w600),
-                    )
-                  ],
-                ),
+              Text(
+                '#${widget.booking.displayOrderId} | ${AppUtils.convertDateFromFormat(widget.booking.created)}',
+                style: TextStyle(
+                    fontSize: 12.0,
+                    color: AppTheme.subHeadingTextColor,
+                    fontWeight: FontWeight.normal),
               ),
               SizedBox(
                 height: 4.0,
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        getStoreAddress(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontFamily: AppConstants.fontName,
-                            fontSize: AppConstants.smallSize,
-                            color: AppTheme.mainTextColor,
-                            fontWeight: FontWeight.normal),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 8.0,
-                    ),
-                    Text(
-                      "${AppConstants.currency}${widget.booking.total}",
-                      style: TextStyle(
-                          fontFamily: AppConstants.fontName,
-                          fontSize: AppConstants.largeSize,
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w600),
-                    )
-                  ],
-                ),
+              Text(
+                'Pickup Address',
+                style: TextStyle(
+                    fontFamily: AppConstants.fontName,
+                    fontSize: 14.0,
+                    color: AppTheme.subHeadingTextColor,
+                    fontWeight: FontWeight.normal),
               ),
-              SizedBox(
-                height: 12.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Customer Address',
-                            style: TextStyle(
-                                fontFamily: AppConstants.fontName,
-                                fontSize: AppConstants.smallSize,
-                                color: AppTheme.subHeadingTextColor,
-                                fontWeight: FontWeight.w400),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            widget.booking.bookingRequestUserAddress,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontFamily: AppConstants.fontName,
-                                fontSize: AppConstants.smallSize,
-                                color: AppTheme.mainTextColor,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Column(
                       children: [
                         Text(
-                          'Distance',
+                          widget.booking.store.storeName,
                           style: TextStyle(
                               fontFamily: AppConstants.fontName,
-                              fontSize: AppConstants.smallSize,
-                              color: AppTheme.subHeadingTextColor,
-                              fontWeight: FontWeight.normal),
+                              fontSize: 18.0,
+                              color: AppTheme.mainTextColor,
+                              fontWeight: FontWeight.w600),
                         ),
                         SizedBox(
                           height: 4.0,
                         ),
-                        Text(
-                          '${widget.booking.distance} km',
+                        SizedBox.fromSize(
+                          child: Text(
+                            getStoreAddress(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontFamily: AppConstants.fontName,
+                                fontSize: 14.0,
+                                color: AppTheme.mainTextColor,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          size: Size.fromHeight(36.0),
+                        ),
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                        )
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Order Amount",
+                        style: TextStyle(
+                            fontFamily: AppConstants.fontName,
+                            fontSize: 16.0,
+                            color: AppTheme.mainTextColor,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 4.0,
+                      ),
+                      Visibility(
+                        visible:
+                            widget.booking.paymentMethod.toLowerCase() == 'cod',
+                        child: Text(
+                          "${AppConstants.currency}${widget.booking.total}",
                           style: TextStyle(
                               fontFamily: AppConstants.fontName,
-                              fontSize: AppConstants.largeSize,
-                              color: AppTheme.mainTextColor,
-                              fontWeight: FontWeight.w500),
+                              fontSize: 16.0,
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w600),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      Visibility(
+                        visible:
+                            widget.booking.paymentMethod.toLowerCase() != 'cod',
+                        child: Text(
+                          "PAID",
+                          style: TextStyle(
+                              fontFamily: AppConstants.fontName,
+                              fontSize: 16.0,
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Visibility(
+                        visible:
+                            widget.booking.paymentMethod.toLowerCase() == 'cod',
+                        child: Container(
+                          margin: EdgeInsets.only(top: 2.0),
+                          decoration: BoxDecoration(
+                              color: AppTheme.containerBackgroundColor,
+                              borderRadius: BorderRadius.circular(16.0)),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 8.0),
+                          child: Text(
+                            "${widget.booking.paymentMethod.toUpperCase()}",
+                            style: TextStyle(
+                                fontFamily: AppConstants.fontName,
+                                fontSize: 10.0,
+                                color: AppTheme.mainTextColor,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
               ),
               SizedBox(
-                height: 16.0,
+                height: 8.0,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: _getWidgetAccordingToStatus(),
-                ),
+              Text(
+                'Delivery Address',
+                style: TextStyle(
+                    fontFamily: AppConstants.fontName,
+                    fontSize: AppConstants.smallSize,
+                    color: AppTheme.subHeadingTextColor,
+                    fontWeight: FontWeight.w400),
               ),
               SizedBox(
-                height: 16.0,
+                height: 4.0,
+              ),
+              SizedBox.fromSize(
+                child: Text(
+                  widget.booking.bookingRequestUserAddress,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      fontFamily: AppConstants.fontName,
+                      fontSize: 14.0,
+                      color: AppTheme.mainTextColor,
+                      fontWeight: FontWeight.normal),
+                ),
+                size: Size.fromHeight(36.0),
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              Divider(
+                height: 1,
+                thickness: 1,
+              ),
+              SizedBox(
+                height: 12.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                      child: StepViewer(
+                    stopsRadius: 8.0,
+                    pathColor: AppTheme.primaryColor,
+                    stopColor: AppTheme.primaryColor,
+                    stopValues: [
+                      'You',
+                      'Pickup',
+                      'Delivery',
+                    ],
+                    distanceValues: [
+                      '600m',
+                      '1.5km',
+                    ],
+                  )),
+                  SizedBox(width: 8.0),
+                  _getWidgetAccordingToStatus()
+                ],
               ),
             ],
           ),
@@ -289,22 +268,23 @@ class _ItemBookingState extends State<ItemBooking> {
                     height: 14,
                   ),
                   SizedBox(
-                    width: 5,
+                    width: 2.0,
                   ),
-                  Text('UpComming',
+                  Text('UpComing',
                       style: TextStyle(
                           color: Color(0xFF1CCDCD),
-                          fontSize: 15,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.normal)),
                 ],
               ),
             ),
             Icon(
-              Icons.keyboard_arrow_right,
+              Icons.arrow_forward_ios,
               color: AppTheme.subHeadingTextColor,
+              size: 16.0,
             ),
             SizedBox(
-              width: 5,
+              width: 2.0,
             ),
             InkWell(
               onTap: () {
@@ -315,7 +295,7 @@ class _ItemBookingState extends State<ItemBooking> {
                   color: AppTheme.optionTotalBookingBgColor,
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
                 child: Row(
                   children: [
                     Image.asset(
@@ -324,12 +304,12 @@ class _ItemBookingState extends State<ItemBooking> {
                       height: 10,
                     ),
                     SizedBox(
-                      width: 5,
+                      width: 2.0,
                     ),
                     Text('Ongoing',
                         style: TextStyle(
                             color: AppTheme.white,
-                            fontSize: 15,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.normal)),
                   ],
                 ),
@@ -347,15 +327,15 @@ class _ItemBookingState extends State<ItemBooking> {
                 children: [
                   Image.asset(
                     AppImages.icon_rejected,
-                    height: 14,
+                    height: 14.0,
                   ),
                   SizedBox(
-                    width: 5,
+                    width: 2.0,
                   ),
                   Text('Rejected',
                       style: TextStyle(
                           color: AppTheme.errorRed,
-                          fontSize: 15,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.normal)),
                 ],
               ),
@@ -372,25 +352,26 @@ class _ItemBookingState extends State<ItemBooking> {
                 children: [
                   Image.asset(
                     AppImages.icon_ongoing,
-                    height: 10,
+                    height: 10.0,
                   ),
                   SizedBox(
-                    width: 5,
+                    width: 2.0,
                   ),
                   Text('Ongoing',
                       style: TextStyle(
                           color: AppTheme.optionTotalBookingBgColor,
-                          fontSize: 15,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.normal)),
                 ],
               ),
             ),
             Icon(
-              Icons.keyboard_arrow_right,
+              Icons.arrow_forward_ios,
               color: AppTheme.subHeadingTextColor,
+              size: 16.0,
             ),
             SizedBox(
-              width: 5,
+              width: 2.0,
             ),
             InkWell(
               onTap: () {
@@ -410,21 +391,21 @@ class _ItemBookingState extends State<ItemBooking> {
                   color: AppTheme.primaryColorDark,
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
                 child: Row(
                   children: [
                     Image.asset(
                       AppImages.icon_complete,
                       color: AppTheme.white,
-                      height: 10,
+                      height: 8.0,
                     ),
                     SizedBox(
-                      width: 5,
+                      width: 2.0,
                     ),
                     Text('Complete',
                         style: TextStyle(
                             color: AppTheme.white,
-                            fontSize: 15,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.normal)),
                   ],
                 ),
@@ -442,15 +423,15 @@ class _ItemBookingState extends State<ItemBooking> {
                 children: [
                   Image.asset(
                     AppImages.icon_complete,
-                    height: 10,
+                    height: 8.0,
                   ),
                   SizedBox(
-                    width: 5,
+                    width: 2.0,
                   ),
                   Text('Completed',
                       style: TextStyle(
                           color: AppTheme.primaryColorDark,
-                          fontSize: 15,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.normal)),
                 ],
               ),
@@ -467,15 +448,15 @@ class _ItemBookingState extends State<ItemBooking> {
                 children: [
                   Image.asset(
                     AppImages.icon_rejected,
-                    height: 14,
+                    height: 14.0,
                   ),
                   SizedBox(
-                    width: 5,
+                    width: 2.0,
                   ),
                   Text('Cancelled',
                       style: TextStyle(
                           color: AppTheme.errorRed,
-                          fontSize: 15,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.normal)),
                 ],
               ),

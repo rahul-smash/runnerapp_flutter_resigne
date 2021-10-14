@@ -68,6 +68,9 @@ dependencies:
   flutter_notification_plugin:
     git:
       url: https://github.com/ketansignity/flutter_alarm_notification_plugin
+  step_viewer:
+    git:
+      url: https://github.com/ketan-tetry/step_viewer
 
 
 dev_dependencies:
