@@ -50,6 +50,7 @@ class BookingDetailsResponse {
 
 class Bookings {
   Bookings({
+    this.distance,
     this.riderToStoreDistance,
     this.id,
     this.displayOrderId,
@@ -93,7 +94,7 @@ class Bookings {
     this.serviceCount,
     this.serviceDuration,
   });
-int riderToStoreDistance;
+dynamic riderToStoreDistance;
   String id;
   String displayOrderId;
   String brandId;
@@ -135,6 +136,7 @@ int riderToStoreDistance;
   String categoryTitle;
   String serviceCount;
   String serviceDuration;
+  String distance;
 
   Bookings copyWith({
 
@@ -179,9 +181,12 @@ int riderToStoreDistance;
     String categoryTitle,
     String serviceCount,
     String serviceDuration,
+    dynamic riderToStoreDistance,
+    String distance,
   }) =>
       Bookings(
         riderToStoreDistance: riderToStoreDistance ?? this.riderToStoreDistance,
+        distance: distance ?? this.distance,
         id: id ?? this.id,
         displayOrderId: displayOrderId ?? this.displayOrderId,
         brandId: brandId ?? this.brandId,
@@ -234,6 +239,7 @@ int riderToStoreDistance;
   factory Bookings.fromJson(Map<String, dynamic> json) => Bookings(
 
         id: json["id"] == null ? null : json["id"],
+        distance: json["distance"] == null ? null : json["distance"],
         riderToStoreDistance: json["riderToStoreDistance"] == null ? null : json["riderToStoreDistance"],
         displayOrderId:
             json["display_order_id"] == null ? null : json["display_order_id"],
@@ -311,6 +317,7 @@ int riderToStoreDistance;
   Map<String, dynamic> toJson() => {
 
         "id": id == null ? null : id,
+        "distance": distance == null ? null : distance,
         "riderToStoreDistance": riderToStoreDistance == null ? null : riderToStoreDistance,
         "display_order_id": displayOrderId == null ? null : displayOrderId,
         "brand_id": brandId == null ? null : brandId,
