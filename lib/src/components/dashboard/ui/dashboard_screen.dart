@@ -42,8 +42,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   void initState() {
     super.initState();
     initFirebase();
-    AppSharedPref.instance.setUserId("120");
+   // AppSharedPref.instance.setUserId("120");
+    AppSharedPref.instance.getUserId();
     try {
+      appPrintLog("---login imagelink---=${AppSharedPref.instance.getUserProfileImage()}");
       appPrintLog("AppConstants.isLoggedIn=${AppConstants.isLoggedIn}");
       appPrintLog("---login user---=${AppSharedPref.instance.getUserId()}");
       appPrintLog(

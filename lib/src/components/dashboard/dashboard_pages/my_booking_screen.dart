@@ -58,6 +58,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
 
   void _getMyBookingOrders(
       {bool isShowLoader = true, FilterType bookingSorting}) async {
+    print('_getMyBookingOrders------');
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingApiLoading = true;
