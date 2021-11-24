@@ -183,7 +183,7 @@ class BookingRequest {
   String services;
 
   factory BookingRequest.fromJson(Map<String, dynamic> json) => BookingRequest(
-        id: json["id"] == null ? null : json["id"],
+    id: json["id"] == null ? null : json["id"],
         displayOrderId:
             json["display_order_id"] == null ? null : json["display_order_id"],
         posOrderId: json["pos_order_id"] == null ? null : json["pos_order_id"],

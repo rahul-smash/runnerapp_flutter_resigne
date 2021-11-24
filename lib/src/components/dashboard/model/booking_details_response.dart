@@ -50,6 +50,7 @@ class BookingDetailsResponse {
 
 class Bookings {
   Bookings({
+    this.riderToStoreDistance,
     this.id,
     this.displayOrderId,
     this.brandId,
@@ -92,7 +93,7 @@ class Bookings {
     this.serviceCount,
     this.serviceDuration,
   });
-
+int riderToStoreDistance;
   String id;
   String displayOrderId;
   String brandId;
@@ -136,6 +137,7 @@ class Bookings {
   String serviceDuration;
 
   Bookings copyWith({
+
     String id,
     String displayOrderId,
     String brandId,
@@ -179,6 +181,7 @@ class Bookings {
     String serviceDuration,
   }) =>
       Bookings(
+        riderToStoreDistance: riderToStoreDistance ?? this.riderToStoreDistance,
         id: id ?? this.id,
         displayOrderId: displayOrderId ?? this.displayOrderId,
         brandId: brandId ?? this.brandId,
@@ -229,7 +232,9 @@ class Bookings {
   String toRawJson() => json.encode(toJson());
 
   factory Bookings.fromJson(Map<String, dynamic> json) => Bookings(
+
         id: json["id"] == null ? null : json["id"],
+        riderToStoreDistance: json["riderToStoreDistance"] == null ? null : json["riderToStoreDistance"],
         displayOrderId:
             json["display_order_id"] == null ? null : json["display_order_id"],
         brandId: json["brand_id"] == null ? null : json["brand_id"],
@@ -304,7 +309,9 @@ class Bookings {
       );
 
   Map<String, dynamic> toJson() => {
+
         "id": id == null ? null : id,
+        "riderToStoreDistance": riderToStoreDistance == null ? null : riderToStoreDistance,
         "display_order_id": displayOrderId == null ? null : displayOrderId,
         "brand_id": brandId == null ? null : brandId,
         "store_id": storeId == null ? null : storeId,

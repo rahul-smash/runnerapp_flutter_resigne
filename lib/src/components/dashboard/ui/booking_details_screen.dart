@@ -420,7 +420,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                 'Delivery',
                               ],
                               distanceValues: [
-                                '600m',
+                                _bookingDetailsResponse?.bookings!= null? _bookingDetailsResponse.bookings.riderToStoreDistance.toString():" ",
                                 '1.5km',
                               ],
                               showProgress: true,
