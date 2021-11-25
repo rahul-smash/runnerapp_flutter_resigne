@@ -789,6 +789,12 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   color: AppTheme.mainTextColor,
                                   fontWeight: FontWeight.w500,
                                   fontSize: AppConstants.largeSize)),
+                          Text(
+                              'Qunatity: ${_bookingDetailsResponse.bookings.cart[index].quantity}',
+                              style: TextStyle(
+                                  color: AppTheme.mainTextColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: AppConstants.largeSize)),
                           Container(
                               margin: EdgeInsets.only(top: 6.0),
                               padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
