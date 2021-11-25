@@ -790,7 +790,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   fontWeight: FontWeight.w500,
                                   fontSize: AppConstants.largeSize)),
                           Text(
-                              'Qunatity: ${_bookingDetailsResponse.bookings.cart[index].quantity}',
+                              'Qunatity: ${_bookingDetailsResponse.bookings.cart[index].quantity}''${_bookingDetailsResponse.bookings.cart[index].unitType}',
                               style: TextStyle(
                                   color: AppTheme.mainTextColor,
                                   fontWeight: FontWeight.w500,
