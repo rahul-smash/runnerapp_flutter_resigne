@@ -263,6 +263,8 @@ class DashboardNetworkRepository extends DioBaseService {
       param['order_id'] = orderId;
       param['reason_option'] = reasonOption;
       param['reason'] = reason;
+      print('params--11-'+param.toString());
+
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_bookingscancelBookingByRunner}'),
