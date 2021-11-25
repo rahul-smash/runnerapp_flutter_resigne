@@ -433,6 +433,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                               height: 8.0,
                             ),
                             Center(
+
                               child: GestureDetector(
                                 onTap: () {
                                   double lat = double.tryParse(getCurrent() == 0
