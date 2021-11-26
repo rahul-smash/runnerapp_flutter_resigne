@@ -420,8 +420,12 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                 'Delivery',
                               ],
                               distanceValues: [
-                                '600m',
-                                '1.5km',
+                                _bookingDetailsResponse?.bookings != null
+                                    ? "${_bookingDetailsResponse.bookings.riderToStoreDistance.toString()} km"
+                                    : "",
+                                _bookingDetailsResponse?.bookings != null
+                                    ? "${_bookingDetailsResponse.bookings.distance.toString()} km"
+                                    : "",
                               ],
                               showProgress: true,
                             ),
@@ -429,6 +433,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                               height: 8.0,
                             ),
                             Center(
+
                               child: GestureDetector(
                                 onTap: () {
                                   double lat = double.tryParse(getCurrent() == 0
@@ -479,8 +484,10 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                               ListView.separated(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
-                                itemCount: _bookingDetailsResponse
-                                    .bookings.cart.length,
+                              /*  itemCount: _bookingDetailsResponse
+                                    .bookings.cart.length,*/
+                              itemCount: _bookingDetailsResponse?.bookings?.cart?.length ?? 0,
+
                                 itemBuilder: (context, index) {
                                   return listItem(context, index);
                                 },
@@ -778,6 +785,12 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                         children: [
                           Text(
                               '${_bookingDetailsResponse.bookings.cart[index].productName}',
+                              style: TextStyle(
+                                  color: AppTheme.mainTextColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: AppConstants.largeSize)),
+                          Text(
+                              'Qunatity: ${_bookingDetailsResponse.bookings.cart[index].quantity}''${_bookingDetailsResponse.bookings.cart[index].unitType}',
                               style: TextStyle(
                                   color: AppTheme.mainTextColor,
                                   fontWeight: FontWeight.w500,

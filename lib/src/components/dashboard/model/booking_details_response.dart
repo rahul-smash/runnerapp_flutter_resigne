@@ -50,6 +50,8 @@ class BookingDetailsResponse {
 
 class Bookings {
   Bookings({
+    this.distance,
+    this.riderToStoreDistance,
     this.id,
     this.displayOrderId,
     this.brandId,
@@ -92,7 +94,7 @@ class Bookings {
     this.serviceCount,
     this.serviceDuration,
   });
-
+dynamic riderToStoreDistance;
   String id;
   String displayOrderId;
   String brandId;
@@ -134,8 +136,10 @@ class Bookings {
   String categoryTitle;
   String serviceCount;
   String serviceDuration;
+  String distance;
 
   Bookings copyWith({
+
     String id,
     String displayOrderId,
     String brandId,
@@ -177,8 +181,12 @@ class Bookings {
     String categoryTitle,
     String serviceCount,
     String serviceDuration,
+    dynamic riderToStoreDistance,
+    String distance,
   }) =>
       Bookings(
+        riderToStoreDistance: riderToStoreDistance ?? this.riderToStoreDistance,
+        distance: distance ?? this.distance,
         id: id ?? this.id,
         displayOrderId: displayOrderId ?? this.displayOrderId,
         brandId: brandId ?? this.brandId,
@@ -229,7 +237,10 @@ class Bookings {
   String toRawJson() => json.encode(toJson());
 
   factory Bookings.fromJson(Map<String, dynamic> json) => Bookings(
+
         id: json["id"] == null ? null : json["id"],
+        distance: json["distance"] == null ? null : json["distance"],
+        riderToStoreDistance: json["riderToStoreDistance"] == null ? null : json["riderToStoreDistance"],
         displayOrderId:
             json["display_order_id"] == null ? null : json["display_order_id"],
         brandId: json["brand_id"] == null ? null : json["brand_id"],
@@ -304,7 +315,10 @@ class Bookings {
       );
 
   Map<String, dynamic> toJson() => {
+
         "id": id == null ? null : id,
+        "distance": distance == null ? null : distance,
+        "riderToStoreDistance": riderToStoreDistance == null ? null : riderToStoreDistance,
         "display_order_id": displayOrderId == null ? null : displayOrderId,
         "brand_id": brandId == null ? null : brandId,
         "store_id": storeId == null ? null : storeId,
