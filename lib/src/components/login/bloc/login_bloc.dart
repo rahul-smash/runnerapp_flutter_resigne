@@ -23,8 +23,12 @@ class LoginBloc {
 
   Future<void> perfromLogin({String mNumber, String mPin}) async {
     loginStateSink = LoginResult()..state = LoginState.progress;
+
     LoginResponse loginResponse =
         await LoginNetworkRepository.instance.loginApi(mNumber, mPin);
+    print('@@loginResponse-'+loginResponse.toString());
+    print('@@loginResponse-'+LoginNetworkRepository.instance.loginApi(mNumber, mPin).toString());
+
     loginStateSink = new LoginResult()
       ..state = loginResponse.success ? LoginState.success : LoginState.failed
       ..data = loginResponse;

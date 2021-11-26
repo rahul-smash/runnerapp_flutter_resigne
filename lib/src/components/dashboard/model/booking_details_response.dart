@@ -115,7 +115,7 @@ dynamic riderToStoreDistance;
   String couponCode;
   String total;
   String rating;
-  String checkout;
+  dynamic checkout;
   String shippingCharges;
   String shippingTax;
   String shippingTaxRate;
@@ -136,7 +136,7 @@ dynamic riderToStoreDistance;
   String categoryTitle;
   String serviceCount;
   String serviceDuration;
-  String distance;
+  dynamic distance;
 
   Bookings copyWith({
 
@@ -160,7 +160,7 @@ dynamic riderToStoreDistance;
     String couponCode,
     String total,
     String rating,
-    String checkout,
+    dynamic checkout,
     String shippingCharges,
     String shippingTax,
     String shippingTaxRate,
@@ -182,7 +182,7 @@ dynamic riderToStoreDistance;
     String serviceCount,
     String serviceDuration,
     dynamic riderToStoreDistance,
-    String distance,
+    dynamic distance,
   }) =>
       Bookings(
         riderToStoreDistance: riderToStoreDistance ?? this.riderToStoreDistance,

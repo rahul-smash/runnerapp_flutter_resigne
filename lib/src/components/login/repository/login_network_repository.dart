@@ -44,6 +44,7 @@ class LoginNetworkRepository extends DioBaseService {
       param['device_os'] = data['device_os'];
       param['device_os_version'] = data['device_os_version'];
       log(param.toString());
+      print('@@LoginCredentails---'+param.toString());
       var response = await post(
           apiPath(
               StoreConfigurationSingleton.instance.configModel.storeId, _login),
@@ -77,7 +78,10 @@ class LoginNetworkRepository extends DioBaseService {
     Map<String, dynamic> param =
         getIt.get<CommonNetworkUtils>().getDeviceParams();
     param['phone'] = _phone;
+
     try {
+      print('@@resetPinOtpApi---'+param.toString());
+
       var response = await post(apiPath(storeId, _resetPinOTP), param);
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
       return baseResponse;
@@ -116,6 +120,7 @@ class LoginNetworkRepository extends DioBaseService {
     param['confirm_pin'] = mPin;
     param['user_id'] = userId;
     try {
+      print('@@_setPin---'+param.toString());
       var response = await post(apiPath(storeId, _setPin), param);
       LoginResponse baseResponse = LoginResponse.fromJson(jsonDecode(response));
       return baseResponse;
@@ -133,6 +138,7 @@ class LoginNetworkRepository extends DioBaseService {
     param['phone'] = phoneNumber;
     param['otp'] = otp;
     try {
+      print('@@verifyResetPinOtpApi----'+param.toString());
       var response = await post(apiPath(storeId, _verifyResetPinOTP), param);
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
       return baseResponse;
