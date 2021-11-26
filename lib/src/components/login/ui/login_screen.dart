@@ -186,6 +186,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                           maxLength: 4,
                           validator: (value) =>
                               value.isEmpty ? 'MPIN cannot be blank' : null,
+
                           decoration: InputDecoration(
                             hintText: hintMPIN,
                             counterText: "",
