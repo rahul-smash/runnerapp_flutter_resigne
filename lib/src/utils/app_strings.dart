@@ -1,7 +1,8 @@
 const appName = "appName";
 const appValueappzName = "Valueappz.";
 
-const labelWelcomeTitle = "Welcome to\nService Provider App";
+// const labelWelcomeTitle = "Welcome to\nService Provider App";
+const labelWelcomeTitle = "Welcome to\nRunner App";
 const labelResetMPINTitle = "Reset MPIN";
 const labelSetNewMPINTitle = "Set New PIN";
 const labelSetNewMPINSubTitle = "Please enter 4 digit new pin";
@@ -14,7 +15,7 @@ const labelResendOTP = "Resend OTP";
 const labelResendOTPIn = "Resend OTP in";
 const labelResetMPINSubTitle =
     "Enter your mobile below to reset your\nPassword";
-const labelDummyText = "Lorem Ipsum is simply dummy text ";
+const labelDummyText = ""; /*"Lorem Ipsum is simply dummy text "*/
 const labelOTPWillSentMsg = "OTP would be sent to the number ";
 const labelMobileNumber = "Mobile Number";
 const labelForgotPin = "Forget PIN?";
@@ -117,6 +118,20 @@ const labelReceivedAmount = "Received\nAmount";
 const labelDepositConfirmed = "Deposit confirmed";
 const labelPaidAmount = "Paid Amount";
 const labelTotalDeposit = "Total Deposit";
+const labelPleasePay = "Please pay";
+const labelToStop = "to Shop";
+const labelPaymentMethod = "Payment Method";
+const labelCashOnDelivery = "Cash on Delivery";
+const labelOnline = "Online";
+const labelPleaseCollect = "Please Collect";
+const labelFromCustomer = "from customer.";
+const labelOrderComment = "Order Comment";
+const labelComment = "Comment";
+const labelOperatorCommission = "Operator Commission";
+const labelRiderCommission = "Rider Commission";
+const labelAlreadyPaid = "Already Paid!";
+const labelUserDutyOFF = "User duty is off.\nPlease turn On duty for performing this operation.";
+const labelDutyOFF = "Duty OFF";
 
 const newPinValidationMsg = "Please enter your new Pin!";
 const confirmPinValidationMsg = "New pin and confirm pin should be same!";

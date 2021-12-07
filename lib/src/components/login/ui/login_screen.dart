@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
@@ -148,7 +149,8 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                     TextFormField(
                       controller: mobileCont,
                       focusNode: mobileFocusNode,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (value) {
                         FocusScope.of(context).requestFocus(passWordFocusNode);
@@ -157,7 +159,9 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                           ? 'Mobile number cannot be blank'
                           : null,
                       style: TextStyle(color: AppTheme.mainTextColor),
+                      maxLength: AppConstants.mobileNumberLength,
                       decoration: InputDecoration(
+                          counterText: '',
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: AppTheme.borderNotFocusedColor)),

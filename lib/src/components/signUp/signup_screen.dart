@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -259,7 +260,8 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                     child: TextFormField(
                       controller: mobileCont,
                       focusNode: mobileFocusNode,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       textInputAction: TextInputAction.send,
                       validator: (val) =>
                           val.isEmpty ? labelErrorMobileNumber : null,
@@ -267,8 +269,10 @@ class _SignUpScreenState extends BaseState<SignUpScreen> {
                         FocusScope.of(context).requestFocus(otpFocusNode);
                         sendOtp();
                       },
+                      maxLength: AppConstants.mobileNumberLength,
                       style: TextStyle(color: AppTheme.mainTextColor),
                       decoration: InputDecoration(
+                        counterText: '',
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: AppTheme.borderNotFocusedColor)),

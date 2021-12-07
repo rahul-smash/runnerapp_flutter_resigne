@@ -228,7 +228,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     }
   }
 
-  _bookingAction(String type, BookingRequest booking) async {
+  _bookingAction(String type, dynamic booking) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
@@ -244,7 +244,18 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
-          int index = _bookingResponse.bookings.indexOf(booking);
+          int tempIndex=-1;
+          for(int i=0;i<_bookingResponse.bookings.length;i++){
+            if(booking.id==_bookingResponse.bookings[i].id){
+              tempIndex=i;
+              break;
+            }
+          }
+          // int index = _bookingResponse.bookings.indexOf(booking);
+          if(tempIndex==-1){
+            return;
+          }
+          int index = tempIndex;
           _bookingResponse.bookings[index].status = _changeBookingStatus(type);
           if (selectedFilterIndex != 0) {
             _bookingResponse.bookings.removeAt(index);

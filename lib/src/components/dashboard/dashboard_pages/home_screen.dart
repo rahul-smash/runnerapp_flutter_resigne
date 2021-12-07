@@ -17,6 +17,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -31,7 +32,7 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends BaseState<HomeScreen> {
   String userId;
   List<String> _overviewOptions = List.empty(growable: true);
   List<String> _filterOptions = List.empty(growable: true);
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget builder(BuildContext context) {
     return new Scaffold(
       backgroundColor: AppTheme.white,
       body: SmartRefresher(
@@ -794,6 +795,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _bookingRequestActionMethod(
       BookingRequest bookingRequest, RequestStatus status) async {
+    if(!isDutyOn()){
+      return;
+    }
     switch (status) {
       case RequestStatus.accept:
         if (!getIt.get<NetworkConnectionObserver>().offline) {
@@ -852,7 +856,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _bookingAction(
     String type,
-    BookingRequest booking,
+    dynamic booking,
   ) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
@@ -870,7 +874,18 @@ class _HomeScreenState extends State<HomeScreen> {
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
-          int index = _bookingResponse.bookings.indexOf(booking);
+          int tempIndex=-1;
+          for(int i=0;i<_bookingResponse.bookings.length;i++){
+            if(booking.id==_bookingResponse.bookings[i].id){
+              tempIndex=i;
+              break;
+            }
+          }
+          // int index = _bookingResponse.bookings.indexOf(booking);
+          if(tempIndex==-1){
+            return;
+          }
+          int index = tempIndex;
           _changeCounterStatus(type);
           _bookingResponse.bookings[index].status = _changeBookingStatus(type);
           if (selectedBookingFilterIndex != 0) {

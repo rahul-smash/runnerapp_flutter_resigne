@@ -7,6 +7,7 @@ class AppConstants {
   static const iOS = 'IOS';
   static const android = 'Android';
   static const web = 'Web';
+  static int mobileNumberLength = 10;
 
   static const translationsEnglish = "assets/translations/en.json";
   static const translationsArabic = "assets/translations/ar.json";

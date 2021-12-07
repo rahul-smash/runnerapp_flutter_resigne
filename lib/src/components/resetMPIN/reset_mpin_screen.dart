@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/set_new_mpin_screen.dart';
@@ -106,14 +107,19 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                           TextFormField(
                             controller: mobileCont,
                             focusNode: mobileFocusNode,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             textInputAction: TextInputAction.next,
                             onFieldSubmitted: (value) {
                               FocusScope.of(context).requestFocus(otpFocusNode);
                               sendOtp();
                             },
+                            maxLength: AppConstants.mobileNumberLength,
                             style: TextStyle(color: AppTheme.mainTextColor),
                             decoration: InputDecoration(
+                              counterText: '',
                               enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
                                       color: AppTheme.borderNotFocusedColor)),
@@ -247,15 +253,19 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
     baseResponse = await getIt
         .get<UserAuthenticationRepository>()
         .verifyResetPinOtp(otp: otpCont.text, phoneNumber: mobileCont.text);
-    if (baseResponse != null) AppUtils.showToast(baseResponse.message, false);
-    AppUtils.hideKeyboard(context);
-    AppUtils.hideLoader(context);
-    Navigator.pop(context);
-    Navigator.push(
-        context,
-        new MaterialPageRoute(
-          builder: (BuildContext context) =>
-              SetNewMPINScreen(user_id: baseResponse.user_id),
-        ));
+    if (baseResponse != null) {
+      AppUtils.showToast(baseResponse.message, false);
+      AppUtils.hideKeyboard(context);
+      AppUtils.hideLoader(context);
+      if (baseResponse.success) {
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  SetNewMPINScreen(user_id: baseResponse.user_id),
+            ));
+      }
+    }
   }
 }

@@ -69,6 +69,7 @@ class AppTheme {
 
   static var cyanColor = Color(0xFFD3F8E9);
   static var cyanColorDark = Color(0xFF42A27C);
+  static var lightGreenColor = Color(0xff74BA33);
 
   static Color darken(Color color, [double amount = .1]) {
     assert(amount >= 0 && amount <= 1);

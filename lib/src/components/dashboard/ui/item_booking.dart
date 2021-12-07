@@ -7,6 +7,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 
 class ItemBooking extends StatefulWidget {
@@ -19,23 +20,25 @@ class ItemBooking extends StatefulWidget {
   _ItemBookingState createState() => _ItemBookingState();
 }
 
-class _ItemBookingState extends State<ItemBooking> {
+class _ItemBookingState extends BaseState<ItemBooking> {
   @override
   void initState() {
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget builder(BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    BookingDetailsScreen(widget.booking, (status) {
+                builder: (BuildContext context) => BookingDetailsScreen(
+                        widget.booking, callBackMethod: (status) {
                       widget.booking.status = status;
-                      setState(() {});
+                      if (mounted) {
+                        setState(() {});
+                      }
                       widget.callBackMethod('refresh', widget.booking);
                     })));
       },
@@ -217,20 +220,22 @@ class _ItemBookingState extends State<ItemBooking> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(
-                      child: StepViewer(
-                    stopsRadius: 8.0,
-                    pathColor: AppTheme.primaryColor,
-                    stopColor: AppTheme.primaryColor,
-                    stopValues: [
-                      'You',
-                      'Pickup',
-                      'Delivery',
-                    ],
-                    distanceValues: [
-                      '600m',
-                      '1.5km',
-                    ],
-                  )),
+                    child: /*StepViewer(
+                      stopsRadius: 8.0,
+                      pathColor: AppTheme.primaryColor,
+                      stopColor: AppTheme.primaryColor,
+                      stopValues: [
+                    'You',
+                    'Pickup',
+                    'Delivery',
+                      ],
+                      distanceValues: [
+                    '600m',
+                    '1.5km',
+                      ],
+                    )*/
+                    Container(),
+                  ),
                   SizedBox(width: 8.0),
                   _getWidgetAccordingToStatus()
                 ],
@@ -288,6 +293,9 @@ class _ItemBookingState extends State<ItemBooking> {
             ),
             InkWell(
               onTap: () {
+                if(!isDutyOn()){
+                  return;
+                }
                 widget.callBackMethod('Ongoing', widget.booking);
               },
               child: Container(
@@ -375,6 +383,9 @@ class _ItemBookingState extends State<ItemBooking> {
             ),
             InkWell(
               onTap: () {
+                if(!isDutyOn()){
+                  return;
+                }
                 if (widget.booking.paymentMethod
                     .toLowerCase()
                     .trim()
@@ -479,4 +490,5 @@ class _ItemBookingState extends State<ItemBooking> {
     }
     return address;
   }
+
 }

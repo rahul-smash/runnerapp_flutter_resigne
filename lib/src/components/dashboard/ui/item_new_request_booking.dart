@@ -188,22 +188,23 @@ class ItemViewOrderRequests extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
-                      child: StepViewer(
-                    stopsRadius: 8.0,
-                    pathColor: AppTheme.primaryColor,
-                    stopColor: AppTheme.primaryColor,
-                    stopValues: [
-                      'You',
-                      'Pickup',
-                      'Delivery',
-                    ],
-                    distanceValues: [
-                      '600m',
-                      '1.5km',
-                    ],
-                  )),
-                  SizedBox(width: 16.0),
+                  // Flexible(
+                  //     child: StepViewer(
+                  //   stopsRadius: 8.0,
+                  //   pathColor: AppTheme.primaryColor,
+                  //   stopColor: AppTheme.primaryColor,
+                  //   stopValues: [
+                  //     'You',
+                  //     'Pickup',
+                  //     'Delivery',
+                  //   ],
+                  //   distanceValues: [
+                  //     '600m',
+                  //     '1.5km',
+                  //   ],
+                  // )),
+                  Expanded(child: Container()),
+                  // SizedBox(width: 16.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

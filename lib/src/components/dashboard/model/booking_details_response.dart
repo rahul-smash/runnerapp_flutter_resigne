@@ -5,25 +5,28 @@
 import 'dart:convert';
 
 class BookingDetailsResponse {
-  BookingDetailsResponse({
-    this.success,
-    this.bookingCounts,
-    this.bookings,
-  });
+  BookingDetailsResponse(
+      {this.success,
+      this.bookingCounts,
+      this.bookings,
+      this.runnerPayoutAmount});
 
   bool success;
   String bookingCounts;
   Bookings bookings;
+  String runnerPayoutAmount;
 
   BookingDetailsResponse copyWith({
     bool success,
     String bookingCounts,
     Bookings bookings,
+    String runnerPayoutAmount,
   }) =>
       BookingDetailsResponse(
         success: success ?? this.success,
         bookingCounts: bookingCounts ?? this.bookingCounts,
         bookings: bookings ?? this.bookings,
+        runnerPayoutAmount: runnerPayoutAmount ?? this.runnerPayoutAmount,
       );
 
   factory BookingDetailsResponse.fromRawJson(String str) =>
@@ -39,12 +42,16 @@ class BookingDetailsResponse {
         bookings: json["bookings"] == null
             ? null
             : Bookings.fromJson(json["bookings"]),
+        runnerPayoutAmount: json["runner_payout_amount"] == null
+            ? null
+            : json["runner_payout_amount"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
         "success": success == null ? null : success,
         "booking_counts": bookingCounts == null ? null : bookingCounts,
         "bookings": bookings == null ? null : bookings.toJson(),
+        "runner_payout_amount": runnerPayoutAmount == null ? null : runnerPayoutAmount,
       };
 }
 
@@ -93,8 +100,11 @@ class Bookings {
     this.categoryTitle,
     this.serviceCount,
     this.serviceDuration,
+    this.storeAmt,
+    this.operatorCommission,
   });
-dynamic riderToStoreDistance;
+
+  dynamic riderToStoreDistance;
   String id;
   String displayOrderId;
   String brandId;
@@ -137,9 +147,10 @@ dynamic riderToStoreDistance;
   String serviceCount;
   String serviceDuration;
   dynamic distance;
+  String storeAmt;
+  String operatorCommission;
 
   Bookings copyWith({
-
     String id,
     String displayOrderId,
     String brandId,
@@ -183,6 +194,8 @@ dynamic riderToStoreDistance;
     String serviceDuration,
     dynamic riderToStoreDistance,
     dynamic distance,
+    String storeAmt,
+    String operatorCommission,
   }) =>
       Bookings(
         riderToStoreDistance: riderToStoreDistance ?? this.riderToStoreDistance,
@@ -229,6 +242,8 @@ dynamic riderToStoreDistance;
         categoryTitle: categoryTitle ?? this.categoryTitle,
         serviceCount: serviceCount ?? this.serviceCount,
         serviceDuration: serviceDuration ?? this.serviceDuration,
+        storeAmt: storeAmt ?? this.storeAmt,
+        operatorCommission: operatorCommission ?? this.operatorCommission,
       );
 
   factory Bookings.fromRawJson(String str) =>
@@ -237,10 +252,11 @@ dynamic riderToStoreDistance;
   String toRawJson() => json.encode(toJson());
 
   factory Bookings.fromJson(Map<String, dynamic> json) => Bookings(
-
         id: json["id"] == null ? null : json["id"],
         distance: json["distance"] == null ? null : json["distance"],
-        riderToStoreDistance: json["riderToStoreDistance"] == null ? null : json["riderToStoreDistance"],
+        riderToStoreDistance: json["riderToStoreDistance"] == null
+            ? null
+            : json["riderToStoreDistance"],
         displayOrderId:
             json["display_order_id"] == null ? null : json["display_order_id"],
         brandId: json["brand_id"] == null ? null : json["brand_id"],
@@ -312,13 +328,18 @@ dynamic riderToStoreDistance;
             json["service_count"] == null ? null : json["service_count"],
         serviceDuration:
             json["service_duration"] == null ? null : json["service_duration"],
+        storeAmt:
+            json["store_amt"] == null ? null : json["store_amt"].toString(),
+        operatorCommission: json["operator_commission"] == null
+            ? null
+            : json["operator_commission"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
-
         "id": id == null ? null : id,
         "distance": distance == null ? null : distance,
-        "riderToStoreDistance": riderToStoreDistance == null ? null : riderToStoreDistance,
+        "riderToStoreDistance":
+            riderToStoreDistance == null ? null : riderToStoreDistance,
         "display_order_id": displayOrderId == null ? null : displayOrderId,
         "brand_id": brandId == null ? null : brandId,
         "store_id": storeId == null ? null : storeId,
@@ -368,6 +389,9 @@ dynamic riderToStoreDistance;
         "category_title": categoryTitle == null ? null : categoryTitle,
         "service_count": serviceCount == null ? null : serviceCount,
         "service_duration": serviceDuration == null ? null : serviceDuration,
+        "store_amt": storeAmt == null ? null : storeAmt,
+        "operator_commission":
+            operatorCommission == null ? null : operatorCommission,
       };
 }
 

@@ -424,13 +424,16 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                   widget.isComingFromAccount ? false : true,
                               readOnly: widget.isComingFromAccount,
                               controller: mobileCont,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.phone,
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               textInputAction: TextInputAction.send,
                               validator: (val) =>
                                   val.isEmpty ? labelErrorMobileNumber : null,
                               onFieldSubmitted: (value) async {},
                               style: TextStyle(color: AppTheme.mainTextColor),
+                              maxLength: AppConstants.mobileNumberLength,
                               decoration: InputDecoration(
+                                counterText: '',
                                 enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color: AppTheme.borderNotFocusedColor)),
