@@ -60,29 +60,29 @@ class BookingResponse {
 class BookingCounts {
   BookingCounts({
     this.all,
-    this.upcoming,
-    this.ongoing,
+    this.active,
+    this.onTheWay,
     this.completed,
     this.rejected,
   });
 
   String all;
-  String upcoming;
-  String ongoing;
+  String active;
+  String onTheWay;
   String completed;
   String rejected;
 
   BookingCounts copyWith({
     String all,
-    String upcoming,
-    String ongoing,
+    String active,
+    String onTheWay,
     String completed,
     String rejected,
   }) =>
       BookingCounts(
         all: all ?? this.all,
-        upcoming: upcoming ?? this.upcoming,
-        ongoing: ongoing ?? this.ongoing,
+        active: active ?? this.active,
+        onTheWay: onTheWay ?? this.onTheWay,
         completed: completed ?? this.completed,
         rejected: rejected ?? this.rejected,
       );
@@ -94,16 +94,16 @@ class BookingCounts {
 
   factory BookingCounts.fromJson(Map<String, dynamic> json) => BookingCounts(
         all: json["all"] == null ? null : json["all"],
-        upcoming: json["upcoming"] == null ? null : json["upcoming"],
-        ongoing: json["ongoing"] == null ? null : json["ongoing"],
+        active: json["active"] == null ? null : json["active"],
+        onTheWay: json["On the way"] == null ? null : json["On the way"],
         completed: json["completed"] == null ? null : json["completed"],
         rejected: json["rejected"] == null ? null : json["rejected"],
       );
 
   Map<String, dynamic> toJson() => {
         "all": all == null ? null : all,
-        "upcoming": upcoming == null ? null : upcoming,
-        "ongoing": ongoing == null ? null : ongoing,
+        "active": active == null ? null : active,
+        "On the way": onTheWay == null ? null : onTheWay,
         "completed": completed == null ? null : completed,
         "rejected": rejected == null ? null : rejected,
       };

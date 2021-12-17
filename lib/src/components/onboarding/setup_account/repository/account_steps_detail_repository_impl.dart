@@ -158,7 +158,10 @@ class AccountStepsDetailRepositoryImpl extends DioBaseService
           null,
           isMultipartUploadRequest: true,
           formData: formData);
+      print("response==$response");
       BaseResponse loginResponse = BaseResponse.fromJson(jsonDecode(response));
+      print("login response==$loginResponse");
+
       return loginResponse;
     } catch (e) {
       debugPrint(e.toString());

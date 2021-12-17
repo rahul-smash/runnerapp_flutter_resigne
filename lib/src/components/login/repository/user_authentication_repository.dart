@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marketplace_service_provider/src/components/login/model/forgot_password_response.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/signUp/model/register_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -33,6 +34,11 @@ class UserAuthenticationRepository extends AuthenticationRepository {
   @override
   Future<BaseResponse> resetPinOtp({String phoneNumber}) async{
     return await LoginNetworkRepository.instance.resetPinOtpApi(phoneNumber);
+  }
+//forgot password
+  @override
+  Future<ForgotPasswordResponse> forgotPassword({String email}) async{
+    return await LoginNetworkRepository.instance.forgotPassword(email);
   }
 
   @override

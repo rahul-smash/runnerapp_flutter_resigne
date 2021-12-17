@@ -25,6 +25,7 @@ import 'business_detail_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   final VoidCallback voidCallback;
+  //this is used in case of when user can also login from onboarding...
   final bool isComingFromAccount;
 
   MyProfileScreen(
@@ -256,9 +257,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextFormField(
-                              enabled:
-                                  widget.isComingFromAccount ? false : true,
-                              readOnly: widget.isComingFromAccount,
+                              // enabled:
+                              //     widget.isComingFromAccount ? false : true,
+                              // readOnly: widget.isComingFromAccount,
                               controller: firstNameCont,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
@@ -290,9 +291,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                               height: 20,
                             ),
                             TextFormField(
-                              enabled:
-                                  widget.isComingFromAccount ? false : true,
-                              readOnly: widget.isComingFromAccount,
+                              // enabled:
+                              //     widget.isComingFromAccount ? false : true,
+                              // readOnly: widget.isComingFromAccount,
                               controller: lastNameCont,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
@@ -368,9 +369,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                 ),
                                 Expanded(
                                   child: TextFormField(
-                                    enabled: widget.isComingFromAccount
-                                        ? false
-                                        : true,
+                                    // enabled: widget.isComingFromAccount
+                                    //     ? false
+                                    //     : true,
                                     controller: ageCont,
                                     readOnly: true,
                                     keyboardType: TextInputType.text,
@@ -420,12 +421,14 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                               height: 20,
                             ),
                             TextFormField(
-                              enabled:
-                                  widget.isComingFromAccount ? false : true,
-                              readOnly: widget.isComingFromAccount,
+                              // enabled:
+                              //     widget.isComingFromAccount ? false : true,
+                              // readOnly: widget.isComingFromAccount,
                               controller: mobileCont,
                               keyboardType: TextInputType.phone,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
                               textInputAction: TextInputAction.send,
                               validator: (val) =>
                                   val.isEmpty ? labelErrorMobileNumber : null,
@@ -584,11 +587,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                 children: addressProofsList.map((tag) {
                                   return InkWell(
                                       onTap: () {
-                                        if (!widget.isComingFromAccount) {
-                                          setState(() {
-                                            _selectedProofTypeTag = tag;
-                                          });
-                                        }
+                                        // if (!widget.isComingFromAccount) {
+                                        //   setState(() {
+                                        //     _selectedProofTypeTag = tag;
+                                        //   });
+                                        // }
                                       },
                                       child: Container(
                                         width: SizeConfig.screenWidth / 4.1,
@@ -627,9 +630,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                               height: 10,
                             ),
                             TextFormField(
-                              enabled:
-                                  widget.isComingFromAccount ? false : true,
-                              readOnly: widget.isComingFromAccount,
+                              // enabled:
+                              //     widget.isComingFromAccount ? false : true,
+                              // readOnly: widget.isComingFromAccount,
                               controller: proofNameCont,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
@@ -661,9 +664,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                               height: 20,
                             ),
                             TextFormField(
-                              enabled:
-                                  widget.isComingFromAccount ? false : true,
-                              readOnly: widget.isComingFromAccount,
+                              // enabled:
+                              //     widget.isComingFromAccount ? false : true,
+                              // readOnly: widget.isComingFromAccount,
                               controller: idProofNameCont,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
@@ -1074,9 +1077,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
 
   Future<void> callProfileApi({bool gotoProfileStepsScreen = false}) async {
     final FormState form = _key.currentState;
+    print("check");
     if (form.validate()) {
+      print("check1");
       if (profileInfoModel.data.profileImage.isEmpty) {
         if (_selectedProfileImg == null) {
+          print("check2");
           AppUtils.showToast("Please upload your profile picture", false);
           return;
         }
@@ -1117,11 +1123,13 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
               profileInfoModel: profileInfoModel);
       AppUtils.hideLoader(context);
       if (baseresponse != null) {
+        print("check3");
         AppUtils.showToast(baseresponse.message, true);
         AppUtils.hideKeyboard(context);
         if (baseresponse.success) if (widget.isComingFromAccount) {
           Navigator.pop(context);
-        } else {
+        }
+        else {
           if (gotoProfileStepsScreen) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             widget.voidCallback();

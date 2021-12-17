@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/model/forgot_password_response.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/set_new_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -24,6 +27,15 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
   FocusNode mobileFocusNode = FocusNode();
   FocusNode otpFocusNode = FocusNode();
   BaseResponse baseResponse;
+  StoreResponse storeResponse;
+  ForgotPasswordResponse forgotPasswordResponse;
+
+  @override
+  void initState() {
+    super.initState();
+    storeResponse = VersionApiSingleton.instance.storeResponse;
+
+  }
 
   @override
   void dispose() {
@@ -107,16 +119,19 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                           TextFormField(
                             controller: mobileCont,
                             focusNode: mobileFocusNode,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            keyboardType:
+                                storeResponse.brand.internationalOtp == "1"
+                                    ? TextInputType.emailAddress
+                                    : TextInputType.phone,
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.digitsOnly
+                            // ],
                             textInputAction: TextInputAction.next,
                             onFieldSubmitted: (value) {
                               FocusScope.of(context).requestFocus(otpFocusNode);
                               sendOtp();
                             },
-                            maxLength: AppConstants.mobileNumberLength,
+                            // maxLength: AppConstants.mobileNumberLength,
                             style: TextStyle(color: AppTheme.mainTextColor),
                             decoration: InputDecoration(
                               counterText: '',
@@ -126,7 +141,10 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                               focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
                                       color: AppTheme.borderOnFocusedColor)),
-                              hintText: labelMobileNumber,
+                              hintText:
+                                  storeResponse.brand.internationalOtp == "1"
+                                      ? labelEmail
+                                      : labelMobileNumber,
                               hintStyle: TextStyle(
                                   color: AppTheme.subHeadingTextColor,
                                   fontSize: 14),
@@ -209,26 +227,26 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
         ));
   }
 
-  sendOtp() async {
-    try {
-      if (this.network.offline) {
-        AppUtils.showToast(AppConstants.noInternetMsg, false);
-        return;
-      }
-      if (mobileCont.text.isNotEmpty) {
-        AppUtils.showLoader(context);
-        baseResponse = await getIt
-            .get<UserAuthenticationRepository>()
-            .resetPinOtp(phoneNumber: mobileCont.text);
-        if (baseResponse != null)
-          AppUtils.showToast(baseResponse.message, false);
-        AppUtils.hideKeyboard(context);
-        AppUtils.hideLoader(context);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  // sendOtp() async {
+  //   try {
+  //     if (this.network.offline) {
+  //       AppUtils.showToast(AppConstants.noInternetMsg, false);
+  //       return;
+  //     }
+  //     if (mobileCont.text.isNotEmpty) {
+  //       AppUtils.showLoader(context);
+  //       forgotPasswordResponse = await getIt
+  //           .get<UserAuthenticationRepository>()
+  //           .forgotPassword(email: mobileCont.text);
+  //       if (forgotPasswordResponse != null)
+  //         AppUtils.showToast(forgotPasswordResponse.message, false);
+  //       AppUtils.hideKeyboard(context);
+  //       AppUtils.hideLoader(context);
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   _handleResetPINButton() async {
     if (this.network.offline) {
@@ -236,19 +254,23 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
       return;
     }
     if (mobileCont.text.isEmpty) {
-      AppUtils.showToast("Please enter valid phone number!", false);
+      storeResponse.brand.internationalOtp == "1"
+          ? AppUtils.showToast("Please enter email", true)
+          : AppUtils.showToast("Please enter mobile number", true);
+      return;
+    }
+    if (mobileCont.text.length < 10 ||
+        !AppUtils.validateEmail(mobileCont.text.trim())) {
+      storeResponse.brand.internationalOtp == "1"
+          ? AppUtils.showToast(validEmail, true)
+          : AppUtils.showToast(validMobileNumber, false);
       return;
     }
 
-    if (mobileCont.text.length < 10) {
-      AppUtils.showToast(validMobileNumber, false);
-      return;
-    }
-
-    if (otpCont.text.isEmpty) {
-      AppUtils.showToast("Please enter valid Otp!", false);
-      return;
-    }
+    // if (otpCont.va) {
+    //   AppUtils.showToast("Please enter valid Otp!", false);
+    //   return;
+    // }
     AppUtils.showLoader(context);
     baseResponse = await getIt
         .get<UserAuthenticationRepository>()

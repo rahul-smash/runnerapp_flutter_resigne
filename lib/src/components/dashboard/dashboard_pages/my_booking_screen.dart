@@ -81,9 +81,9 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   _getFilterCount() {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
-      _filterOptions[1] =
-          '${_bookingResponse.bookingCounts.upcoming} | Upcoming';
-      _filterOptions[2] = '${_bookingResponse.bookingCounts.ongoing} | Ongoing';
+      _filterOptions[1] = '${_bookingResponse.bookingCounts.active} | Active';
+      _filterOptions[2] =
+          '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[3] =
           '${_bookingResponse.bookingCounts.completed} | Completed';
       _filterOptions[4] =
@@ -92,12 +92,13 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   }
 
   _getCurrentStatus(int selectedFilterIndex) {
-//    0 => 'pending',
-//    1 =>'accepted',
+//    0 => 'due',
+//    1 =>'processing',
 //    2 =>'rejected',
-//    4 =>'ongoing',
-//    5 =>'completed',
-//    6 => 'cancelled' // cancelled by customer
+//    5 =>'delivered',
+//    6 => 'cancel' // cancelled by customer
+//    7=> 'on the way'
+//    8=>'ready to be picked
     switch (selectedFilterIndex) {
       case 0:
         return '0';
@@ -244,15 +245,15 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
-          int tempIndex=-1;
-          for(int i=0;i<_bookingResponse.bookings.length;i++){
-            if(booking.id==_bookingResponse.bookings[i].id){
-              tempIndex=i;
+          int tempIndex = -1;
+          for (int i = 0; i < _bookingResponse.bookings.length; i++) {
+            if (booking.id == _bookingResponse.bookings[i].id) {
+              tempIndex = i;
               break;
             }
           }
           // int index = _bookingResponse.bookings.indexOf(booking);
-          if(tempIndex==-1){
+          if (tempIndex == -1) {
             return;
           }
           int index = tempIndex;
@@ -341,7 +342,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
             elevation: 3.2,
             iconSize: 5.0,
             onCanceled: () {
-              print('You have not chossed anything');
+              print('You have not choosed anything');
             },
             tooltip: 'Sorting',
             child: Row(

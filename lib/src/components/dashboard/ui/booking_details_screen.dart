@@ -8,6 +8,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/step_viewer.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
@@ -72,29 +73,29 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
           elevation: 0.0,
         ),
         widgets: <Widget>[
-          Visibility(
-            visible: _bookingDetailsResponse?.bookings != null &&
-                showCancelButton(_bookingDetailsResponse.bookings.status),
-            child: InkWell(
-                onTap: () async {
-                  if(!isDutyOn()){
-                    return;
-                  }
-                  cancelOrderBottomSheet(
-                      context, _bookingDetailsResponse.bookings);
-                },
-                child: Center(
-                  child: Padding(
-                      padding: EdgeInsets.only(right: 16, left: 16),
-                      child: Text(
-                        'Cancel Order',
-                        style: TextStyle(
-                            color: AppTheme.primaryColorDark,
-                            fontSize: AppConstants.smallSize,
-                            fontWeight: FontWeight.w400),
-                      )),
-                )),
-          ),
+          // Visibility(
+          //   visible: _bookingDetailsResponse?.bookings != null &&
+          //       showCancelButton(_bookingDetailsResponse.bookings.status),
+          //   child: InkWell(
+          //       onTap: () async {
+          //         if(!isDutyOn()){
+          //           return;
+          //         }
+          //         cancelOrderBottomSheet(
+          //             context, _bookingDetailsResponse.bookings);
+          //       },
+          //       child: Center(
+          //         child: Padding(
+          //             padding: EdgeInsets.only(right: 16, left: 16),
+          //             child: Text(
+          //               'Cancel Order',
+          //               style: TextStyle(
+          //                   color: AppTheme.primaryColorDark,
+          //                   fontSize: AppConstants.smallSize,
+          //                   fontWeight: FontWeight.w400),
+          //             )),
+          //       )),
+          // ),
         ],
       ),
       body: isBookingDetailsApiLoading
@@ -252,7 +253,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                               .toLowerCase() ==
                                           'cod',
                                       child: Container(
-                                        margin: EdgeInsets.only(top: 2.0),
+                                        margin: EdgeInsets.only(top: 2.0,left: 5),
                                         decoration: BoxDecoration(
                                             color: AppTheme
                                                 .containerBackgroundColor,
@@ -1169,21 +1170,23 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              child: Row(
-                children: [
-                  Image.asset(
-                    AppImages.icon_upcoming,
-                    height: 14,
-                  ),
-                  SizedBox(
-                    width: 2.0,
-                  ),
-                  Text('UpComing',
-                      style: TextStyle(
-                          color: Color(0xFF1CCDCD),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal)),
-                ],
+              child: Wrap(
+                children:[Row(
+                  children: [
+                    Image.asset(
+                      AppImages.icon_upcoming,
+                      height: 14,
+                    ),
+                    SizedBox(
+                      width: 2.0,
+                    ),
+                    Text('Active',
+                        style: TextStyle(
+                            color: Color(0xFF1CCDCD),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.normal)),
+                  ],
+                ),]
               ),
             ),
             Icon(
@@ -1199,7 +1202,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                 if(!isDutyOn()){
                   return;
                 }
-                _bookingAction('Ongoing', _bookingDetailsResponse.bookings);
+                _bookingAction('On the way', _bookingDetailsResponse.bookings);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -1572,6 +1575,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       if (baseResponse != null && baseResponse.success) {
         widget.callBackMethod(_changeBookingStatus('cancel'));
         _getBookingdetails(widget.booking);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
+
       }
     } else {
       AppUtils.noNetWorkDialog(context);

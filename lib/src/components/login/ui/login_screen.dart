@@ -8,6 +8,7 @@ import 'package:marketplace_service_provider/src/components/login/bloc/login_blo
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/reset_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/model/duty_status_observer.dart';
+import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -28,13 +29,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends BaseState<LoginScreen> {
-  TextEditingController mobileCont = TextEditingController();
+  TextEditingController mobileEmailCont = TextEditingController();
   TextEditingController passwordCont = TextEditingController();
   FocusNode mobileFocusNode = FocusNode();
   FocusNode passWordFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   ValueNotifier<bool> showPassword = ValueNotifier(false);
   final LoginBloc loginBloc = LoginBloc();
+  StoreResponse storeResponse;
 
   @override
   void dispose() {
@@ -47,6 +49,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    storeResponse = VersionApiSingleton.instance.storeResponse;
     loginBloc.loginStateStream.listen((loginResult) {
       switch (loginResult.state) {
         case LoginState.progress:
@@ -147,28 +150,40 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                       height: 20,
                     ),
                     TextFormField(
-                      controller: mobileCont,
+                      controller: mobileEmailCont,
                       focusNode: mobileFocusNode,
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: storeResponse.brand.internationalOtp == "1"
+                          ? TextInputType.emailAddress
+                          : TextInputType.phone,
+                      // inputFormatters: [
+                      //   storeResponse.brand.internationalOtp != 1
+                      //       ? FilteringTextInputFormatter.digitsOnly
+                      //       : FilteringTextInputFormatter.digitsOnly
+                      // ],
+
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (value) {
                         FocusScope.of(context).requestFocus(passWordFocusNode);
                       },
-                      validator: (value) => value.isEmpty
-                          ? 'Mobile number cannot be blank'
-                          : null,
+                      // validator: (value)
+                      // => value.isEmpty
+                      //     ? 'Mobile number cannot be blank'
+                      //     : null,
                       style: TextStyle(color: AppTheme.mainTextColor),
-                      maxLength: AppConstants.mobileNumberLength,
+                      // maxLength: storeResponse.brand.internationalOtp != "1"
+                      //     ? AppConstants.mobileNumberLength
+                      //     : null,
                       decoration: InputDecoration(
-                          counterText: '',
+                        counterText: '',
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: AppTheme.borderNotFocusedColor)),
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: AppTheme.borderOnFocusedColor)),
-                        hintText: labelMobileNumber,
+                        hintText: storeResponse.brand.internationalOtp == "1"
+                            ? labelEmail
+                            : labelMobileNumber,
                         hintStyle: TextStyle(
                             color: AppTheme.subHeadingTextColor, fontSize: 14),
                         labelStyle: TextStyle(
@@ -190,7 +205,6 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                           maxLength: 4,
                           validator: (value) =>
                               value.isEmpty ? 'MPIN cannot be blank' : null,
-
                           decoration: InputDecoration(
                             hintText: hintMPIN,
                             counterText: "",
@@ -303,12 +317,25 @@ class _LoginScreenState extends BaseState<LoginScreen> {
         return;
       }
 
-      if (mobileCont.text.length < 10) {
-        AppUtils.showToast(validMobileNumber, false);
+      if (mobileEmailCont.text.isEmpty) {
+        storeResponse.brand.internationalOtp == "1"
+            ? AppUtils.showToast("Please enter email", true)
+            : AppUtils.showToast("Please enter mobile number", true);
+        return;
+      }
+      if (mobileEmailCont.text.length < 10 ||
+          !AppUtils.validateEmail(mobileEmailCont.text.trim())) {
+        storeResponse.brand.internationalOtp == "1"
+            ? AppUtils.showToast(validEmail, true)
+            : AppUtils.showToast(validMobileNumber, false);
         return;
       }
 
-      loginBloc.perfromLogin(mNumber: mobileCont.text, mPin: passwordCont.text);
+      storeResponse.brand.internationalOtp == "1"
+          ? loginBloc.perfromUserLogin(
+              email: mobileEmailCont.text, password: passwordCont.text)
+          : loginBloc.perfromLogin(
+              mNumber: mobileEmailCont.text, mPin: passwordCont.text);
     }
   }
 }

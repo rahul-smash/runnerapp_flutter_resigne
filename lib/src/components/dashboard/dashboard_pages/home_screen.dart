@@ -58,8 +58,8 @@ class _HomeScreenState extends BaseState<HomeScreen> {
     _overviewOptions.add('7 days');
     //Filter option
     _filterOptions.add('All');
-    _filterOptions.add('Upcoming');
-    _filterOptions.add('Ongoing');
+    _filterOptions.add('Active');
+    _filterOptions.add('On the way');
     _filterOptions.add('Completed');
     _filterOptions.add('Rejected');
     // _filterOptions.add('Cancelled');
@@ -784,8 +784,8 @@ class _HomeScreenState extends BaseState<HomeScreen> {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
       _filterOptions[1] =
-          '${_bookingResponse.bookingCounts.upcoming} | Upcoming';
-      _filterOptions[2] = '${_bookingResponse.bookingCounts.ongoing} | Ongoing';
+          '${_bookingResponse.bookingCounts.active} | Active';
+      _filterOptions[2] = '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[3] =
           '${_bookingResponse.bookingCounts.completed} | Completed';
       _filterOptions[4] =
@@ -903,8 +903,8 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   _changeBookingStatus(String type) {
     switch (type) {
-      case 'Ongoing':
-        return '4';
+      case 'On the way':
+        return '7';
         break;
       case 'Complete':
         return '5';
@@ -914,19 +914,19 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   _changeCounterStatus(String type) {
     switch (type) {
-      case 'Ongoing':
-        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.ongoing);
+      case 'On the way':
+        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
         ongoingCounter = ongoingCounter + 1;
-        _bookingResponse.bookingCounts.ongoing = ongoingCounter.toString();
+        _bookingResponse.bookingCounts.onTheWay = ongoingCounter.toString();
         int upcomingCounter =
-            int.parse(_bookingResponse.bookingCounts.upcoming);
+            int.parse(_bookingResponse.bookingCounts.active);
         upcomingCounter = upcomingCounter - 1;
-        _bookingResponse.bookingCounts.upcoming = upcomingCounter.toString();
+        _bookingResponse.bookingCounts.active = upcomingCounter.toString();
         break;
       case 'Complete':
-        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.ongoing);
+        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
         ongoingCounter = ongoingCounter - 1;
-        _bookingResponse.bookingCounts.ongoing = ongoingCounter.toString();
+        _bookingResponse.bookingCounts.onTheWay = ongoingCounter.toString();
 
         int completedCounter =
             int.parse(_bookingResponse.bookingCounts.completed);
