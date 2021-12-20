@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/model/forgot_password_response.dart';
+import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
+import 'package:marketplace_service_provider/src/components/resetMPIN/set_new_mpin_screen.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
@@ -9,6 +12,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
@@ -145,8 +149,8 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                             margin: EdgeInsets.only(left: 50, right: 50),
                             width: MediaQuery.of(context).size.width,
                             child: GradientElevatedButton(
-                              // onPressed:
-                              // _handleResetPINButton,
+                              onPressed:
+                              _handleResetPINButton,
                               buttonText:
                               labelResetPIN,
                               isButtonEnable: true,
@@ -166,68 +170,53 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
         ));
   }
 
-  // sendOtp() async {
-  //   try {
-  //     if (this.network.offline) {
-  //       AppUtils.showToast(AppConstants.noInternetMsg, false);
-  //       return;
-  //     }
-  //     if (mobileCont.text.isNotEmpty) {
-  //       AppUtils.showLoader(context);
-  //       forgotPasswordResponse = await getIt
-  //           .get<LoginNetworkRepository>()
-  //           .forgotPassword(mobileCont.text);
-  //       if (forgotPasswordResponse != null)
-  //         AppUtils.showToast(forgotPasswordResponse.message, false);
-  //       AppUtils.hideKeyboard(context);
-  //       AppUtils.hideLoader(context);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
-  // _handleResetPINButton() async {
-  //   String pass=otpCont.text.trim();
-  //   if (this.network.offline) {
-  //     AppUtils.showToast(AppConstants.noInternetMsg, false);
-  //     return;
-  //   }
-  //   // if (mobileCont.text.isEmpty) {
-  //   //   storeResponse.brand.internationalOtp == "1"
-  //   //       ? AppUtils.showToast("Please enter email", true)
-  //   //       : AppUtils.showToast("Please enter mobile number", true);
-  //   //   return;
-  //   // }
-  //   // if (mobileCont.text.length < 10 ||
-  //   //     !AppUtils.validateEmail(mobileCont.text.trim())) {
-  //   //   storeResponse.brand.internationalOtp == "1"
-  //   //       ? AppUtils.showToast(validEmail, true)
-  //   //       : AppUtils.showToast(validMobileNumber, false);
-  //   //   return;
-  //   // }
-  //
-  //   if (pass!=forgotPasswordResponse.otp) {
-  //     AppUtils.showToast("Please enter valid Otp!", false);
-  //     return;
-  //   }
-  //   AppUtils.showLoader(context);
-  //   baseResponse = await getIt
-  //       .get<UserAuthenticationRepository>()
-  //       .verifyResetPinOtp(otp: otpCont.text, phoneNumber: mobileCont.text);
-  //   if (baseResponse != null) {
-  //     AppUtils.showToast(baseResponse.message, false);
-  //     AppUtils.hideKeyboard(context);
-  //     AppUtils.hideLoader(context);
-  //     if (baseResponse.success) {
-  //       Navigator.pop(context);
-  //       Navigator.push(
-  //           context,
-  //           new MaterialPageRoute(
-  //             builder: (BuildContext context) =>
-  //                 SetNewMPINScreen(user_id: baseResponse.user_id),
-  //           ));
-  //     }
-  //   }
-  // }
-}
+
+  _handleResetPINButton() async {
+    String pass=otpCont.text.trim();
+    if (this.network.offline) {
+      AppUtils.showToast(AppConstants.noInternetMsg, false);
+      return;
+    }
+    // if (mobileCont.text.isEmpty) {
+    //   storeResponse.brand.internationalOtp == "1"
+    //       ? AppUtils.showToast("Please enter email", true)
+    //       : AppUtils.showToast("Please enter mobile number", true);
+    //   return;
+    // }
+    // if (mobileCont.text.length < 10 ||
+    //     !AppUtils.validateEmail(mobileCont.text.trim())) {
+    //   storeResponse.brand.internationalOtp == "1"
+    //       ? AppUtils.showToast(validEmail, true)
+    //       : AppUtils.showToast(validMobileNumber, false);
+    //   return;
+    // }
+
+    if (otpCont.text.isEmpty) {
+      AppUtils.showToast("Please enter OTP", true);
+        return;
+      }
+    if (pass!=widget.otp) {
+      AppUtils.showToast("Please enter valid Otp!", false);
+      return;
+    }
+    // AppUtils.showLoader(context);
+    // baseResponse = await getIt
+    //     .get<UserAuthenticationRepository>()
+    //     .verifyResetPinOtp(otp: otpCont.text, phoneNumber: mobileCont.text);
+    // if (baseResponse != null) {
+    //   AppUtils.showToast(baseResponse.message, false);
+    //   AppUtils.hideKeyboard(context);
+    //   AppUtils.hideLoader(context);
+    //   if (baseResponse.success) {
+    //     Navigator.pop(context);
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  SetNewMPINScreen(id: widget.userId,),
+            ));
+      }
+    }
+//   }
+// }

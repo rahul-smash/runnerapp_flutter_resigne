@@ -202,7 +202,7 @@ class _LoginScreenState extends BaseState<LoginScreen> {
                           obscureText: !value,
                           keyboardType: TextInputType.number,
                           style: TextStyle(color: AppTheme.mainTextColor),
-                          maxLength: 4,
+                          maxLength: 6,
                           validator: (value) =>
                               value.isEmpty ? 'MPIN cannot be blank' : null,
                           decoration: InputDecoration(

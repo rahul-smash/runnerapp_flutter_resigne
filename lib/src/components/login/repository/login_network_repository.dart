@@ -22,6 +22,7 @@ class LoginNetworkRepository extends DioBaseService {
   static const _setPin = '/runner_authentication/setPin';
   static const _resetPinOTP = '/runner_authentication/resetPinOTP';
   static const _forgotPassword = '/runner_authentication/forgetPasswordEmail';
+  static const _resetPassword = '/runner_authentication/resetPassword';
   static const _verifyResetPinOTP = '/runner_authentication/verifyResetPinOTP';
 
   LoginNetworkRepository._() : super(AppNetworkConstants.baseUrl);
@@ -123,7 +124,22 @@ class LoginNetworkRepository extends DioBaseService {
 
     try {
       var response = await post(apiPath(storeId, _forgotPassword), param);
-      ForgotPasswordResponse forgotPasswordResponse = forgotPasswordFromJson(jsonDecode(response));
+      ForgotPasswordResponse forgotPasswordResponse = forgotPasswordResponseFromJson(jsonDecode(json.encode(response)));
+      return forgotPasswordResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+  Future<ForgotPasswordResponse> resetPassword(String password,String id) async {
+    String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
+    Map<String, dynamic> param =
+        getIt.get<CommonNetworkUtils>().getDeviceParams();
+    param['password'] = password;
+    param['user_id'] = id;
+    try {
+      var response = await post(apiPath(storeId, _resetPassword), param);
+      ForgotPasswordResponse forgotPasswordResponse = forgotPasswordResponseFromJson(jsonDecode(json.encode(response)));
       return forgotPasswordResponse;
     } catch (e) {
       debugPrint(e.toString());
