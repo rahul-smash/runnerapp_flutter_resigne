@@ -4,6 +4,7 @@ const appValueappzName = "Valueappz.";
 // const labelWelcomeTitle = "Welcome to\nService Provider App";
 const labelWelcomeTitle = "Welcome to\nRunner App";
 const labelResetMPINTitle = "Reset MPIN";
+const labelVerifyOTPTitle = "Verify OTP";
 const labelSetNewMPINTitle = "Set New PIN";
 const labelSetNewMPINSubTitle = "Please enter 4 digit new pin";
 const labelResetPIN = "Reset PIN";
@@ -15,6 +16,10 @@ const labelResendOTP = "Resend OTP";
 const labelResendOTPIn = "Resend OTP in";
 const labelResetMPINSubTitle =
     "Enter your mobile below to reset your\nPassword";
+const labelOTPSubTitle =
+    "Enter your OTP below for verification";
+const labelResetMPINEmailSubTitle =
+    "Enter your email below to reset your\nPassword";
 const labelDummyText = ""; /*"Lorem Ipsum is simply dummy text "*/
 const labelOTPWillSentMsg = "OTP would be sent to the number ";
 const labelMobileNumber = "Mobile Number";
