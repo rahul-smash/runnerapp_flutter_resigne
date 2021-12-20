@@ -3,8 +3,10 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/login/model/forgot_password_response.dart';
+import 'package:marketplace_service_provider/src/components/login/repository/login_network_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/components/resetMPIN/set_new_mpin_screen.dart';
+import 'package:marketplace_service_provider/src/components/resetMPIN/verify_otp_screen.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
@@ -23,9 +25,11 @@ class ResetMPINScreen extends StatefulWidget {
 
 class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
   TextEditingController mobileCont = TextEditingController();
-  TextEditingController otpCont = TextEditingController();
+
+  // TextEditingController otpCont = TextEditingController();
   FocusNode mobileFocusNode = FocusNode();
-  FocusNode otpFocusNode = FocusNode();
+
+  // FocusNode otpFocusNode = FocusNode();
   BaseResponse baseResponse;
   StoreResponse storeResponse;
   ForgotPasswordResponse forgotPasswordResponse;
@@ -34,14 +38,13 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
   void initState() {
     super.initState();
     storeResponse = VersionApiSingleton.instance.storeResponse;
-
   }
 
   @override
   void dispose() {
     super.dispose();
     mobileFocusNode.dispose();
-    otpFocusNode.dispose();
+    // otpFocusNode.dispose();
   }
 
   @override
@@ -105,7 +108,9 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              labelResetMPINSubTitle,
+                              storeResponse.brand.internationalOtp == "1"
+                                  ? labelResetMPINEmailSubTitle
+                                  : labelResetMPINSubTitle,
                               style: TextStyle(
                                   color: AppTheme.subHeadingTextColor,
                                   fontSize: AppConstants.extraSmallSize,
@@ -127,10 +132,10 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                             //   FilteringTextInputFormatter.digitsOnly
                             // ],
                             textInputAction: TextInputAction.next,
-                            onFieldSubmitted: (value) {
-                              FocusScope.of(context).requestFocus(otpFocusNode);
-                              sendOtp();
-                            },
+                            // onFieldSubmitted: (value) {
+                            //   FocusScope.of(context).requestFocus(otpFocusNode);
+                            //   sendOtp();
+                            // },
                             // maxLength: AppConstants.mobileNumberLength,
                             style: TextStyle(color: AppTheme.mainTextColor),
                             decoration: InputDecoration(
@@ -153,53 +158,53 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                             ),
                           ),
                           SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  labelOTPWillSentMsg,
-                                  style: TextStyle(
-                                      color: AppTheme.subHeadingTextColor,
-                                      fontSize: AppConstants.extraXSmallSize,
-                                      fontFamily: AppConstants.fontName,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ),
-                              Text(
-                                //labelResendOTP,
-                                "",
-                                style: TextStyle(
-                                    color: AppTheme.primaryColorDark,
-                                    fontSize: AppConstants.extraXSmallSize,
-                                    fontFamily: AppConstants.fontName,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: otpCont,
-                            focusNode: otpFocusNode,
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(color: AppTheme.mainTextColor),
-                            decoration: InputDecoration(
-                              hintText: hintEnterOtp,
-                              counterText: "",
-                              hintStyle: TextStyle(
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontSize: 14),
-                              labelStyle: TextStyle(
-                                  color: AppTheme.mainTextColor, fontSize: 14),
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppTheme.borderOnFocusedColor)),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppTheme.borderNotFocusedColor)),
-                            ),
-                          ),
+                          // Row(
+                          //   children: [
+                          //     Expanded(
+                          //       child: Text(
+                          //         labelOTPWillSentMsg,
+                          //         style: TextStyle(
+                          //             color: AppTheme.subHeadingTextColor,
+                          //             fontSize: AppConstants.extraXSmallSize,
+                          //             fontFamily: AppConstants.fontName,
+                          //             fontWeight: FontWeight.normal),
+                          //       ),
+                          //     ),
+                          //     Text(
+                          //       //labelResendOTP,
+                          //       "",
+                          //       style: TextStyle(
+                          //           color: AppTheme.primaryColorDark,
+                          //           fontSize: AppConstants.extraXSmallSize,
+                          //           fontFamily: AppConstants.fontName,
+                          //           fontWeight: FontWeight.bold),
+                          //     )
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 10,
+                          // ),
+                          // TextFormField(
+                          //   controller: otpCont,
+                          //   focusNode: otpFocusNode,
+                          //   keyboardType: TextInputType.number,
+                          //   style: TextStyle(color: AppTheme.mainTextColor),
+                          //   decoration: InputDecoration(
+                          //     hintText: hintEnterOtp,
+                          //     counterText: "",
+                          //     hintStyle: TextStyle(
+                          //         color: AppTheme.subHeadingTextColor,
+                          //         fontSize: 14),
+                          //     labelStyle: TextStyle(
+                          //         color: AppTheme.mainTextColor, fontSize: 14),
+                          //     enabledBorder: UnderlineInputBorder(
+                          //         borderSide: BorderSide(
+                          //             color: AppTheme.borderOnFocusedColor)),
+                          //     focusedBorder: UnderlineInputBorder(
+                          //         borderSide: BorderSide(
+                          //             color: AppTheme.borderNotFocusedColor)),
+                          //   ),
+                          // ),
                           SizedBox(height: 26),
                           SizedBox(
                             height: 56,
@@ -209,7 +214,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                             width: MediaQuery.of(context).size.width,
                             child: GradientElevatedButton(
                               onPressed: _handleResetPINButton,
-                              buttonText: labelResetPIN,
+                              buttonText: labelSubmit,
                               isButtonEnable: true,
                             ),
                           ),
@@ -236,8 +241,8 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
   //     if (mobileCont.text.isNotEmpty) {
   //       AppUtils.showLoader(context);
   //       forgotPasswordResponse = await getIt
-  //           .get<UserAuthenticationRepository>()
-  //           .forgotPassword(email: mobileCont.text);
+  //           .get<LoginNetworkRepository>()
+  //           .forgotPassword(mobileCont.text);
   //       if (forgotPasswordResponse != null)
   //         AppUtils.showToast(forgotPasswordResponse.message, false);
   //       AppUtils.hideKeyboard(context);
@@ -249,6 +254,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
   // }
 
   _handleResetPINButton() async {
+    // String pass = otpCont.text.trim();
     if (this.network.offline) {
       AppUtils.showToast(AppConstants.noInternetMsg, false);
       return;
@@ -267,26 +273,32 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
       return;
     }
 
-    // if (otpCont.va) {
+    // if (pass != forgotPasswordResponse.otp) {
     //   AppUtils.showToast("Please enter valid Otp!", false);
     //   return;
     // }
     AppUtils.showLoader(context);
-    baseResponse = await getIt
-        .get<UserAuthenticationRepository>()
-        .verifyResetPinOtp(otp: otpCont.text, phoneNumber: mobileCont.text);
-    if (baseResponse != null) {
-      AppUtils.showToast(baseResponse.message, false);
+    forgotPasswordResponse = await getIt
+        .get<LoginNetworkRepository>()
+        .forgotPassword(mobileCont.text);
+    if (forgotPasswordResponse != null) {
+      AppUtils.showToast(forgotPasswordResponse.message, false);
       AppUtils.hideKeyboard(context);
       AppUtils.hideLoader(context);
-      if (baseResponse.success) {
+      if (forgotPasswordResponse.success) {
         Navigator.pop(context);
         Navigator.push(
             context,
-            new MaterialPageRoute(
+            new
+            MaterialPageRoute(
               builder: (BuildContext context) =>
-                  SetNewMPINScreen(user_id: baseResponse.user_id),
-            ));
+                  VerifyOTPScreen(otp: forgotPasswordResponse.otp,userId: forgotPasswordResponse.data.id,),
+            )
+            // MaterialPageRoute(
+            //   builder: (BuildContext context) =>
+            //       SetNewMPINScreen(user_id: baseResponse.user_id),
+            // )
+        );
       }
     }
   }
