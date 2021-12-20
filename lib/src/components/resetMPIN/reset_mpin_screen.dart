@@ -261,8 +261,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
       AppUtils.hideLoader(context);
       if (forgotPasswordResponse.success) {
         Navigator.pop(context);
-        Future.delayed(Duration(milliseconds: 1000), () {
-          Navigator.push(
+        Navigator.push(
               context,
               new MaterialPageRoute(
                 builder: (BuildContext context) => VerifyOTPScreen(
@@ -270,7 +269,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                   userId: forgotPasswordResponse.data.id,
                 ),
               ));
-        });
+
       }
     }
   }
