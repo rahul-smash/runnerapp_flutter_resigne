@@ -133,8 +133,6 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   @override
   Widget builder(BuildContext context) {
-    print("booking active1:${_bookingResponse.bookingCounts.active}");
-
     return new Scaffold(
       backgroundColor: AppTheme.white,
       body: SmartRefresher(
@@ -786,8 +784,9 @@ class _HomeScreenState extends BaseState<HomeScreen> {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
       _filterOptions[1] =
-          '${_bookingResponse.bookingCounts.active} | Active';
-      _filterOptions[2] = '${_bookingResponse.bookingCounts.onTheWay} | On the way';
+          '${_bookingResponse.bookingCounts.active != null ? _bookingResponse.bookingCounts.active : "0"} | Active';
+      _filterOptions[2] =
+          '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[3] =
           '${_bookingResponse.bookingCounts.completed} | Completed';
       _filterOptions[4] =
@@ -797,7 +796,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   void _bookingRequestActionMethod(
       BookingRequest bookingRequest, RequestStatus status) async {
-    if(!isDutyOn()){
+    if (!isDutyOn()) {
       return;
     }
     switch (status) {
@@ -876,15 +875,15 @@ class _HomeScreenState extends BaseState<HomeScreen> {
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
-          int tempIndex=-1;
-          for(int i=0;i<_bookingResponse.bookings.length;i++){
-            if(booking.id==_bookingResponse.bookings[i].id){
-              tempIndex=i;
+          int tempIndex = -1;
+          for (int i = 0; i < _bookingResponse.bookings.length; i++) {
+            if (booking.id == _bookingResponse.bookings[i].id) {
+              tempIndex = i;
               break;
             }
           }
           // int index = _bookingResponse.bookings.indexOf(booking);
-          if(tempIndex==-1){
+          if (tempIndex == -1) {
             return;
           }
           int index = tempIndex;
@@ -920,11 +919,10 @@ class _HomeScreenState extends BaseState<HomeScreen> {
         int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
         ongoingCounter = ongoingCounter + 1;
         _bookingResponse.bookingCounts.onTheWay = ongoingCounter.toString();
-        int upcomingCounter =
-            int.parse(_bookingResponse.bookingCounts.active);
+        int upcomingCounter = int.parse(_bookingResponse.bookingCounts.active);
         upcomingCounter = upcomingCounter - 1;
         _bookingResponse.bookingCounts.active = upcomingCounter.toString();
-        print("active===${ _bookingResponse.bookingCounts.active}");
+        print("active===${_bookingResponse.bookingCounts.active}");
         break;
       case 'Complete':
         int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
