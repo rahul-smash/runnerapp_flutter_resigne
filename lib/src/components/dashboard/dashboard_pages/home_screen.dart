@@ -133,8 +133,6 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   @override
   Widget builder(BuildContext context) {
-    print("booking active1:${_bookingResponse.bookingCounts.active}");
-
     return new Scaffold(
       backgroundColor: AppTheme.white,
       body: SmartRefresher(
