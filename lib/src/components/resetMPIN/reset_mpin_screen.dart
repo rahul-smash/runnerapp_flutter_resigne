@@ -232,29 +232,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
         ));
   }
 
-  // sendOtp() async {
-  //   try {
-  //     if (this.network.offline) {
-  //       AppUtils.showToast(AppConstants.noInternetMsg, false);
-  //       return;
-  //     }
-  //     if (mobileCont.text.isNotEmpty) {
-  //       AppUtils.showLoader(context);
-  //       forgotPasswordResponse = await getIt
-  //           .get<LoginNetworkRepository>()
-  //           .forgotPassword(mobileCont.text);
-  //       if (forgotPasswordResponse != null)
-  //         AppUtils.showToast(forgotPasswordResponse.message, false);
-  //       AppUtils.hideKeyboard(context);
-  //       AppUtils.hideLoader(context);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
   _handleResetPINButton() async {
-    // String pass = otpCont.text.trim();
     if (this.network.offline) {
       AppUtils.showToast(AppConstants.noInternetMsg, false);
       return;
@@ -273,10 +251,6 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
       return;
     }
 
-    // if (pass != forgotPasswordResponse.otp) {
-    //   AppUtils.showToast("Please enter valid Otp!", false);
-    //   return;
-    // }
     AppUtils.showLoader(context);
     forgotPasswordResponse = await getIt
         .get<UserAuthenticationRepository>()
@@ -287,19 +261,16 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
       AppUtils.hideLoader(context);
       if (forgotPasswordResponse.success) {
         Navigator.pop(context);
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-              builder: (BuildContext context) => VerifyOTPScreen(
-                otp: forgotPasswordResponse.otp,
-                userId: forgotPasswordResponse.data.id,
-              ),
-            )
-            // MaterialPageRoute(
-            //   builder: (BuildContext context) =>
-            //       SetNewMPINScreen(user_id: baseResponse.user_id),
-            // )
-            );
+        Future.delayed(Duration(milliseconds: 1000), () {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                builder: (BuildContext context) => VerifyOTPScreen(
+                  otp: forgotPasswordResponse.otp,
+                  userId: forgotPasswordResponse.data.id,
+                ),
+              ));
+        });
       }
     }
   }

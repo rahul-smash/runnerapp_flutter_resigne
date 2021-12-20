@@ -41,6 +41,11 @@ class UserAuthenticationRepository extends AuthenticationRepository {
     return await LoginNetworkRepository.instance.forgotPassword(email);
   }
 
+  //reset password
+  @override
+  Future<ForgotPasswordResponse> resetPassword({String password,String id}) async{
+    return await LoginNetworkRepository.instance.resetPassword(password,id);
+  }
   @override
   Future<BaseResponse> verifyResetPinOtp({String phoneNumber, String otp}) async{
     return await LoginNetworkRepository.instance.verifyResetPinOtpApi(phoneNumber,otp);

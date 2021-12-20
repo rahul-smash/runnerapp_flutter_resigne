@@ -1,12 +1,12 @@
 // To parse this JSON data, do
 //
-//     final forgotPassword = forgotPasswordFromJson(jsonString);
+//     final forgotPasswordResponse = forgotPasswordResponseFromJson(jsonString);
 
 import 'dart:convert';
 
-ForgotPasswordResponse forgotPasswordFromJson(String str) => ForgotPasswordResponse.fromJson(json.decode(str));
+ForgotPasswordResponse forgotPasswordResponseFromJson(String str) => ForgotPasswordResponse.fromJson(json.decode(str));
 
-String forgotPasswordToJson(ForgotPasswordResponse data) => json.encode(data.toJson());
+String forgotPasswordResponseToJson(ForgotPasswordResponse data) => json.encode(data.toJson());
 
 class ForgotPasswordResponse {
   ForgotPasswordResponse({
@@ -64,7 +64,7 @@ class Data {
     this.modified,
   });
 
-  String id;
+  dynamic id;
   String fullName;
   String lastName;
   String fbId;

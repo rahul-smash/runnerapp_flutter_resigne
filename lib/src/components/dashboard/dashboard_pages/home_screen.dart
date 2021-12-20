@@ -133,6 +133,8 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   @override
   Widget builder(BuildContext context) {
+    print("booking active1:${_bookingResponse.bookingCounts.active}");
+
     return new Scaffold(
       backgroundColor: AppTheme.white,
       body: SmartRefresher(
@@ -922,6 +924,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
             int.parse(_bookingResponse.bookingCounts.active);
         upcomingCounter = upcomingCounter - 1;
         _bookingResponse.bookingCounts.active = upcomingCounter.toString();
+        print("active===${ _bookingResponse.bookingCounts.active}");
         break;
       case 'Complete':
         int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
