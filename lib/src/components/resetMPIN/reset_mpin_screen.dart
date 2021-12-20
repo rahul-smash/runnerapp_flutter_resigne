@@ -279,8 +279,8 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
     // }
     AppUtils.showLoader(context);
     forgotPasswordResponse = await getIt
-        .get<LoginNetworkRepository>()
-        .forgotPassword(mobileCont.text);
+        .get<UserAuthenticationRepository>()
+        .forgotPassword(email: mobileCont.text);
     if (forgotPasswordResponse != null) {
       AppUtils.showToast(forgotPasswordResponse.message, false);
       AppUtils.hideKeyboard(context);
@@ -289,16 +289,17 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
         Navigator.pop(context);
         Navigator.push(
             context,
-            new
-            MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  VerifyOTPScreen(otp: forgotPasswordResponse.otp,userId: forgotPasswordResponse.data.id,),
+            new MaterialPageRoute(
+              builder: (BuildContext context) => VerifyOTPScreen(
+                otp: forgotPasswordResponse.otp,
+                userId: forgotPasswordResponse.data.id,
+              ),
             )
             // MaterialPageRoute(
             //   builder: (BuildContext context) =>
             //       SetNewMPINScreen(user_id: baseResponse.user_id),
             // )
-        );
+            );
       }
     }
   }
