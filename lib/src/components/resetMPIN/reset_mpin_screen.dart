@@ -129,7 +129,7 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                             textInputAction: TextInputAction.next,
                             onFieldSubmitted: (value) {
                               FocusScope.of(context).requestFocus(otpFocusNode);
-                              sendOtp();
+                              // sendOtp();
                             },
                             // maxLength: AppConstants.mobileNumberLength,
                             style: TextStyle(color: AppTheme.mainTextColor),
