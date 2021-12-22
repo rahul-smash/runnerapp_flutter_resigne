@@ -217,7 +217,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                             SizedBox(
                               height: 8.0,
                             ),
-                            Row(
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
@@ -253,7 +253,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                               .toLowerCase() ==
                                           'cod',
                                       child: Container(
-                                        margin: EdgeInsets.only(top: 2.0,left: 5),
+                                        margin:
+                                            EdgeInsets.only(top: 2.0, left: 5),
                                         decoration: BoxDecoration(
                                             color: AppTheme
                                                 .containerBackgroundColor,
@@ -273,7 +274,15 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     ),
                                   ],
                                 ),
-                                _getWidgetAccordingToStatus(),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    Flexible(child: Container()),
+                                    _getWidgetAccordingToStatus(),
+                                  ],
+                                ),
                               ],
                             ),
                             SizedBox(
@@ -443,20 +452,25 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   Center(
                                     child: GestureDetector(
                                       onTap: () {
-                                        double lat = double.tryParse(getCurrent() == 0
-                                            ? widget.booking.store.lat
-                                            : widget.booking.userAddress.lat) ??
+                                        double lat = double.tryParse(
+                                                getCurrent() == 0
+                                                    ? widget.booking.store.lat
+                                                    : widget.booking.userAddress
+                                                        .lat) ??
                                             0;
-                                        double lng = double.tryParse(getCurrent() == 0
-                                            ? widget.booking.store.lng
-                                            : widget.booking.userAddress.lng) ??
+                                        double lng = double.tryParse(
+                                                getCurrent() == 0
+                                                    ? widget.booking.store.lng
+                                                    : widget.booking.userAddress
+                                                        .lng) ??
                                             0;
                                         MapUtils.openMap(lat, lng);
                                       },
                                       child: Text(
                                         'Map View',
                                         style: TextStyle(
-                                            decoration: TextDecoration.underline,
+                                            decoration:
+                                                TextDecoration.underline,
                                             color: AppTheme.primaryColor,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 14.0),
@@ -466,7 +480,6 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ),
@@ -510,8 +523,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                               ),
                               Divider(),
                               Visibility(
-                                visible:
-                                    _bookingDetailsResponse.bookings.note.isNotEmpty,
+                                visible: _bookingDetailsResponse
+                                    .bookings.note.isNotEmpty,
                                 child: Column(
                                   children: [
                                     Row(
@@ -531,7 +544,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                         ),
                                         Flexible(
                                           child: Text(
-                                            _bookingDetailsResponse.bookings.note,
+                                            _bookingDetailsResponse
+                                                .bookings.note,
                                             style: TextStyle(
                                                 color: AppTheme.mainTextColor,
                                                 fontSize:
@@ -936,28 +950,25 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                           text: "$labelRiderCommission: ",
                                           style: TextStyle(
                                               color: AppTheme.mainTextColor,
-                                              fontSize:
-                                              AppConstants.largeSize,
+                                              fontSize: AppConstants.largeSize,
                                               height: 1.5,
                                               fontFamily:
-                                              AppConstants.fontName),
+                                                  AppConstants.fontName),
                                           children: <TextSpan>[
                                             TextSpan(
                                                 text:
-                                                '${AppConstants.currency}${_bookingDetailsResponse.runnerPayoutAmount}',
+                                                    '${AppConstants.currency}${_bookingDetailsResponse.runnerPayoutAmount}',
                                                 style: TextStyle(
                                                     color: AppTheme
                                                         .lightGreenColor,
-                                                    fontWeight:
-                                                    FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: AppConstants
                                                         .largeSize2X,
-                                                    fontFamily: AppConstants
-                                                        .fontName)),
+                                                    fontFamily:
+                                                        AppConstants.fontName)),
                                           ],
                                         ),
                                       )),
-
                                 ],
                               ),
                             ],
@@ -1166,12 +1177,13 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
         Container();
         break; // all
       case '1':
+      case '8':
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              child: Wrap(
-                children:[Row(
+              child: Wrap(children: [
+                Row(
                   children: [
                     Image.asset(
                       AppImages.icon_upcoming,
@@ -1180,14 +1192,14 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                     SizedBox(
                       width: 2.0,
                     ),
-                    Text('Active',
+                    Text(_getCurrentOrderStatus(widget.booking),
                         style: TextStyle(
                             color: Color(0xFF1CCDCD),
                             fontSize: 14.0,
                             fontWeight: FontWeight.normal)),
                   ],
-                ),]
-              ),
+                ),
+              ]),
             ),
             Icon(
               Icons.arrow_forward_ios,
@@ -1197,35 +1209,39 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
             SizedBox(
               width: 2.0,
             ),
-            InkWell(
-              onTap: () {
-                if(!isDutyOn()){
-                  return;
-                }
-                _bookingAction('On the way', _bookingDetailsResponse.bookings);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.optionTotalBookingBgColor,
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      AppImages.icon_ongoing,
-                      color: AppTheme.white,
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 2.0,
-                    ),
-                    Text('Ongoing',
-                        style: TextStyle(
-                            color: AppTheme.white,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal)),
-                  ],
+            Visibility(
+              visible: widget.booking.status == '8',
+              child: InkWell(
+                onTap: () {
+                  if (!isDutyOn()) {
+                    return;
+                  }
+                  _bookingAction(
+                      'On the way', _bookingDetailsResponse.bookings);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppTheme.optionTotalBookingBgColor,
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        AppImages.icon_ongoing,
+                        color: AppTheme.white,
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: 2.0,
+                      ),
+                      Text('Ongoing',
+                          style: TextStyle(
+                              color: AppTheme.white,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.normal)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1257,7 +1273,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
           ],
         );
         break;
-      case '4':
+      case '7':
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1271,7 +1287,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                   SizedBox(
                     width: 2.0,
                   ),
-                  Text('Ongoing',
+                  Text('On the way',
                       style: TextStyle(
                           color: AppTheme.optionTotalBookingBgColor,
                           fontSize: 14.0,
@@ -1289,7 +1305,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
             ),
             InkWell(
               onTap: () {
-                if(!isDutyOn()){
+                if (!isDutyOn()) {
                   return;
                 }
                 if (widget.booking.paymentMethod
@@ -1575,8 +1591,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       if (baseResponse != null && baseResponse.success) {
         widget.callBackMethod(_changeBookingStatus('cancel'));
         _getBookingdetails(widget.booking);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
-
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => DashboardScreen()));
       }
     } else {
       AppUtils.noNetWorkDialog(context);
@@ -1611,16 +1627,47 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
 
   _changeBookingStatus(String type) {
     switch (type) {
-      case 'Ongoing':
-        return '4';
-        break;
+      case 'On the way':
+        return '7';
+        break; //O
+      // case 'Ongoing':
+      //   return '4';
+      //   break;
       case 'Complete':
         return '5';
         break;
-      case 'cancel':
-        return '7';
-        break;
+      // case 'cancel':
+      //   return '';
+      //   break;
     }
+  }
+
+  String _getCurrentOrderStatus(BookingRequest booking) {
+    switch (booking.status) {
+      case '0':
+        return 'Due';
+        break; //Due
+      case '1':
+        return 'Processing';
+        break; //Processing
+      case '2':
+        return 'Rejected';
+        break; //Rejected
+      case '5':
+        return 'Delivered';
+        break; //Delivered
+      case '6':
+        return 'Cancel';
+        break; //Cancel
+      case '7':
+        return 'On the way';
+        break; //On the way
+      case '8':
+        return 'Ready to be picked';
+        break; //Ready to be picked
+    }
+
+    return '';
   }
 }
 
@@ -1655,4 +1702,3 @@ class MySeparator extends StatelessWidget {
     );
   }
 }
-

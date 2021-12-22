@@ -84,6 +84,8 @@ class DashboardNetworkRepository extends DioBaseService {
       param['user_id'] = user_id;
       param['status'] = status;
       param['filter'] = _bookingSorting;
+      print("status  "+status);
+
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_bookings}/$page/$limit'),

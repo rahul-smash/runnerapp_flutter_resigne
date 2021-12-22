@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-ForgotPasswordResponse forgotPasswordResponseFromJson(String str) => ForgotPasswordResponse.fromJson(json.decode(str));
+ForgotPasswordResponse forgotPasswordResponseFromJson(String str) =>
+    ForgotPasswordResponse.fromJson(json.decode(str));
 
-String forgotPasswordResponseToJson(ForgotPasswordResponse data) => json.encode(data.toJson());
+String forgotPasswordResponseToJson(ForgotPasswordResponse data) =>
+    json.encode(data.toJson());
 
 class ForgotPasswordResponse {
   ForgotPasswordResponse({
@@ -21,19 +23,20 @@ class ForgotPasswordResponse {
   String otp;
   Data data;
 
-  factory ForgotPasswordResponse.fromJson(Map<String, dynamic> json) => ForgotPasswordResponse(
-    success: json["success"] == null ? null : json["success"],
-    message: json["message"] == null ? null : json["message"],
-    otp: json["otp"] == null ? null : json["otp"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory ForgotPasswordResponse.fromJson(Map<String, dynamic> json) =>
+      ForgotPasswordResponse(
+        success: json["success"] == null ? null : json["success"],
+        message: json["message"] == null ? null : json["message"],
+        otp: json["otp"] == null ? null : json["otp"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success == null ? null : success,
-    "message": message == null ? null : message,
-    "otp": otp == null ? null : otp,
-    "data": data == null ? null : data.toJson(),
-  };
+        "success": success == null ? null : success,
+        "message": message == null ? null : message,
+        "otp": otp == null ? null : otp,
+        "data": data == null ? null : data.toJson(),
+      };
 }
 
 class Data {
@@ -90,56 +93,74 @@ class Data {
   DateTime modified;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    id: json["id"] == null ? null : json["id"],
-    fullName: json["full_name"] == null ? null : json["full_name"],
-    lastName: json["last_name"] == null ? null : json["last_name"],
-    fbId: json["fb_id"] == null ? null : json["fb_id"],
-    email: json["email"] == null ? null : json["email"],
-    password: json["password"] == null ? null : json["password"],
-    decodedPassword: json["decoded_password"] == null ? null : json["decoded_password"],
-    phone: json["phone"] == null ? null : json["phone"],
-    gender: json["gender"] == null ? null : json["gender"],
-    dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
-    profileImage: json["profile_image"] == null ? null : json["profile_image"],
-    otpVerify: json["otp_verify"] == null ? null : json["otp_verify"],
-    userReferCode: json["user_refer_code"] == null ? null : json["user_refer_code"],
-    userReferredBy: json["user_referred_by"] == null ? null : json["user_referred_by"],
-    status: json["status"] == null ? null : json["status"],
-    loginStatus: json["login_status"] == null ? null : json["login_status"],
-    deviceId: json["device_id"] == null ? null : json["device_id"],
-    deviceToken: json["device_token"] == null ? null : json["device_token"],
-    platform: json["platform"] == null ? null : json["platform"],
-    posCustomerId: json["pos_customer_id"] == null ? null : json["pos_customer_id"],
-    verificationCode: json["verification_code"] == null ? null : json["verification_code"],
-    verificationCodeStatus: json["verification_code_status"] == null ? null : json["verification_code_status"],
-    created: json["created"] == null ? null : DateTime.parse(json["created"]),
-    modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),
-  );
+        id: json["id"] == null ? null : json["id"],
+        fullName: json["full_name"] == null ? null : json["full_name"],
+        lastName: json["last_name"] == null ? null : json["last_name"],
+        fbId: json["fb_id"] == null ? null : json["fb_id"],
+        email: json["email"] == null ? null : json["email"],
+        password: json["password"] == null ? null : json["password"],
+        decodedPassword:
+            json["decoded_password"] == null ? null : json["decoded_password"],
+        phone: json["phone"] == null ? null : json["phone"],
+        gender: json["gender"] == null ? null : json["gender"],
+        dob: json["dob"] == null
+            ? null
+            : json["dob"].toString() == ''
+                ? null
+                : DateTime.parse(json["dob"]),
+        profileImage:
+            json["profile_image"] == null ? null : json["profile_image"],
+        otpVerify: json["otp_verify"] == null ? null : json["otp_verify"],
+        userReferCode:
+            json["user_refer_code"] == null ? null : json["user_refer_code"],
+        userReferredBy:
+            json["user_referred_by"] == null ? null : json["user_referred_by"],
+        status: json["status"] == null ? null : json["status"],
+        loginStatus: json["login_status"] == null ? null : json["login_status"],
+        deviceId: json["device_id"] == null ? null : json["device_id"],
+        deviceToken: json["device_token"] == null ? null : json["device_token"],
+        platform: json["platform"] == null ? null : json["platform"],
+        posCustomerId:
+            json["pos_customer_id"] == null ? null : json["pos_customer_id"],
+        verificationCode: json["verification_code"] == null
+            ? null
+            : json["verification_code"],
+        verificationCodeStatus: json["verification_code_status"] == null
+            ? null
+            : json["verification_code_status"],
+        created:
+            json["created"] == null ? null : DateTime.parse(json["created"]),
+        modified:
+            json["modified"] == null ? null : DateTime.parse(json["modified"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "full_name": fullName == null ? null : fullName,
-    "last_name": lastName == null ? null : lastName,
-    "fb_id": fbId == null ? null : fbId,
-    "email": email == null ? null : email,
-    "password": password == null ? null : password,
-    "decoded_password": decodedPassword == null ? null : decodedPassword,
-    "phone": phone == null ? null : phone,
-    "gender": gender == null ? null : gender,
-    "dob": dob == null ? null : "${dob.year.toString().padLeft(4, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}",
-    "profile_image": profileImage == null ? null : profileImage,
-    "otp_verify": otpVerify == null ? null : otpVerify,
-    "user_refer_code": userReferCode == null ? null : userReferCode,
-    "user_referred_by": userReferredBy == null ? null : userReferredBy,
-    "status": status == null ? null : status,
-    "login_status": loginStatus == null ? null : loginStatus,
-    "device_id": deviceId == null ? null : deviceId,
-    "device_token": deviceToken == null ? null : deviceToken,
-    "platform": platform == null ? null : platform,
-    "pos_customer_id": posCustomerId == null ? null : posCustomerId,
-    "verification_code": verificationCode == null ? null : verificationCode,
-    "verification_code_status": verificationCodeStatus == null ? null : verificationCodeStatus,
-    "created": created == null ? null : created.toIso8601String(),
-    "modified": modified == null ? null : modified.toIso8601String(),
-  };
+        "id": id == null ? null : id,
+        "full_name": fullName == null ? null : fullName,
+        "last_name": lastName == null ? null : lastName,
+        "fb_id": fbId == null ? null : fbId,
+        "email": email == null ? null : email,
+        "password": password == null ? null : password,
+        "decoded_password": decodedPassword == null ? null : decodedPassword,
+        "phone": phone == null ? null : phone,
+        "gender": gender == null ? null : gender,
+        "dob": dob == null
+            ? null
+            : "${dob.year.toString().padLeft(4, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}",
+        "profile_image": profileImage == null ? null : profileImage,
+        "otp_verify": otpVerify == null ? null : otpVerify,
+        "user_refer_code": userReferCode == null ? null : userReferCode,
+        "user_referred_by": userReferredBy == null ? null : userReferredBy,
+        "status": status == null ? null : status,
+        "login_status": loginStatus == null ? null : loginStatus,
+        "device_id": deviceId == null ? null : deviceId,
+        "device_token": deviceToken == null ? null : deviceToken,
+        "platform": platform == null ? null : platform,
+        "pos_customer_id": posCustomerId == null ? null : posCustomerId,
+        "verification_code": verificationCode == null ? null : verificationCode,
+        "verification_code_status":
+            verificationCodeStatus == null ? null : verificationCodeStatus,
+        "created": created == null ? null : created.toIso8601String(),
+        "modified": modified == null ? null : modified.toIso8601String(),
+      };
 }

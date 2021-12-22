@@ -9,7 +9,6 @@ import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
-
 class ItemBooking extends StatefulWidget {
   final BookingRequest booking;
   final Function callBackMethod;
@@ -216,29 +215,33 @@ class _ItemBookingState extends BaseState<ItemBooking> {
               SizedBox(
                 height: 12.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: /*StepViewer(
-                      stopsRadius: 8.0,
-                      pathColor: AppTheme.primaryColor,
-                      stopColor: AppTheme.primaryColor,
-                      stopValues: [
-                    'You',
-                    'Pickup',
-                    'Delivery',
-                      ],
-                      distanceValues: [
-                    '600m',
-                    '1.5km',
-                      ],
-                    )*/
-                    Container(),
-                  ),
-                  SizedBox(width: 8.0),
-                  _getWidgetAccordingToStatus()
-                ],
+              Visibility(
+                visible: widget.booking.runnerDeliveryAccepted=='1',
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child:
+                          /*StepViewer(
+                        stopsRadius: 8.0,
+                        pathColor: AppTheme.primaryColor,
+                        stopColor: AppTheme.primaryColor,
+                        stopValues: [
+                      'You',
+                      'Pickup',
+                      'Delivery',
+                        ],
+                        distanceValues: [
+                      '600m',
+                      '1.5km',
+                        ],
+                      )*/
+                          Container(),
+                    ),
+                    SizedBox(width: 8.0),
+                    _getWidgetAccordingToStatus()
+                  ],
+                ),
               ),
             ],
           ),
@@ -261,71 +264,6 @@ class _ItemBookingState extends BaseState<ItemBooking> {
       case '0':
         Container();
         break; // all
-      case '1':
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              child: Row(
-                children: [
-                  Image.asset(
-                    AppImages.icon_upcoming,
-                    height: 14,
-                  ),
-                  SizedBox(
-                    width: 2.0,
-                  ),
-                  Text('UpComing',
-                      style: TextStyle(
-                          color: Color(0xFF1CCDCD),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal)),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: AppTheme.subHeadingTextColor,
-              size: 16.0,
-            ),
-            SizedBox(
-              width: 2.0,
-            ),
-            InkWell(
-              onTap: () {
-                if(!isDutyOn()){
-                  return;
-                }
-                widget.callBackMethod('Ongoing', widget.booking);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.optionTotalBookingBgColor,
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      AppImages.icon_ongoing,
-                      color: AppTheme.white,
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 2.0,
-                    ),
-                    Text('Ongoing',
-                        style: TextStyle(
-                            color: AppTheme.white,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal)),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-        break;
       case '2':
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -351,7 +289,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
           ],
         );
         break;
-      case '4':
+      case '7':
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -365,7 +303,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
                   SizedBox(
                     width: 2.0,
                   ),
-                  Text('Ongoing',
+                  Text(_getCurrentOrderStatus(widget.booking),
                       style: TextStyle(
                           color: AppTheme.optionTotalBookingBgColor,
                           fontSize: 14.0,
@@ -383,7 +321,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
             ),
             InkWell(
               onTap: () {
-                if(!isDutyOn()){
+                if (!isDutyOn()) {
                   return;
                 }
                 if (widget.booking.paymentMethod
@@ -475,6 +413,77 @@ class _ItemBookingState extends BaseState<ItemBooking> {
           ],
         );
         break; // cancelled
+      case '1':
+      case '8':
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  Image.asset(
+                    AppImages.icon_upcoming,
+                    height: 14,
+                  ),
+                  SizedBox(
+                    width: 2.0,
+                  ),
+                  Text(_getCurrentOrderStatus(widget.booking),
+                      style: TextStyle(
+                          color: Color(0xFF1CCDCD),
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal)),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: AppTheme.subHeadingTextColor,
+              size: 16.0,
+            ),
+            SizedBox(
+              width: 2.0,
+            ),
+            Visibility(
+              visible: widget.booking.status == '8',
+              child: InkWell(
+                onTap: () {
+                  if (!isDutyOn()) {
+                    return;
+                  }
+                  //TODO: check status if order is Ready To Picked
+                  if (widget.booking.status == '8')
+                    widget.callBackMethod('On the way', widget.booking);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppTheme.optionTotalBookingBgColor,
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        AppImages.icon_ongoing,
+                        color: AppTheme.white,
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: 2.0,
+                      ),
+                      Text('On the way',
+                          style: TextStyle(
+                              color: AppTheme.white,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.normal)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+        break;
     }
   }
 
@@ -491,4 +500,31 @@ class _ItemBookingState extends BaseState<ItemBooking> {
     return address;
   }
 
+  String _getCurrentOrderStatus(BookingRequest booking) {
+    switch (booking.status) {
+      case '0':
+        return 'Due';
+        break; //Due
+      case '1':
+        return 'Processing';
+        break; //Processing
+      case '2':
+        return 'Rejected';
+        break; //Rejected
+      case '5':
+        return 'Delivered';
+        break; //Delivered
+      case '6':
+        return 'Cancel';
+        break; //Cancel
+      case '7':
+        return 'On the way';
+        break; //On the way
+      case '8':
+        return 'Ready to be picked';
+        break; //Ready to be picked
+    }
+
+    return '';
+  }
 }

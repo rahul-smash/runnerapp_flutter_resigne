@@ -20,7 +20,7 @@ class DashboardRepository {
       String status,
       FilterType bookingSorting,
       int page = 1,
-      int limit = 10}) async {
+      int limit = 1000}) async {
     return await DashboardNetworkRepository.instance
         .getBookings(userId, status, bookingSorting, page, limit);
   }

@@ -61,6 +61,7 @@ class BookingCounts {
   BookingCounts({
     this.all,
     this.active,
+    this.readyToBePicked,
     this.onTheWay,
     this.completed,
     this.rejected,
@@ -71,10 +72,12 @@ class BookingCounts {
   String onTheWay;
   String completed;
   String rejected;
+  String readyToBePicked;
 
   BookingCounts copyWith({
     String all,
     String active,
+    String readyToBePicked,
     String onTheWay,
     String completed,
     String rejected,
@@ -85,6 +88,7 @@ class BookingCounts {
         onTheWay: onTheWay ?? this.onTheWay,
         completed: completed ?? this.completed,
         rejected: rejected ?? this.rejected,
+        readyToBePicked: readyToBePicked ?? this.readyToBePicked,
       );
 
   factory BookingCounts.fromRawJson(String str) =>
@@ -94,7 +98,10 @@ class BookingCounts {
 
   factory BookingCounts.fromJson(Map<String, dynamic> json) => BookingCounts(
         all: json["all"] == null ? null : json["all"],
-        active: json["active"] == null ? null : json["active"],
+        active: json["Active"] == null ? null : json["Active"],
+        readyToBePicked: json["Ready To Be Picked"] == null
+            ? null
+            : json["Ready To Be Picked"],
         onTheWay: json["On the way"] == null ? null : json["On the way"],
         completed: json["completed"] == null ? null : json["completed"],
         rejected: json["rejected"] == null ? null : json["rejected"],
@@ -103,6 +110,7 @@ class BookingCounts {
   Map<String, dynamic> toJson() => {
         "all": all == null ? null : all,
         "active": active == null ? null : active,
+        "Ready To Be Picked": readyToBePicked == null ? null : readyToBePicked,
         "On the way": onTheWay == null ? null : onTheWay,
         "completed": completed == null ? null : completed,
         "rejected": rejected == null ? null : rejected,

@@ -46,8 +46,9 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     super.initState();
     //Filter option
     _filterOptions.add('All');
-    _filterOptions.add('Upcoming');
-    _filterOptions.add('Ongoing');
+    _filterOptions.add('Active');
+    _filterOptions.add('Ready To Be Picked');
+    _filterOptions.add('On the way');
     _filterOptions.add('Completed');
     _filterOptions.add('Rejected');
     // _filterOptions.add('Cancelled');
@@ -64,7 +65,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: userId,
-          status: _getCurrentStatus(selectedFilterIndex),
+          status: _getCurrentStatus(_filterOptions[selectedFilterIndex]),
           bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot,
           page: 1,
           limit: 1000);
@@ -81,43 +82,45 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   _getFilterCount() {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
-      _filterOptions[1] = '${_bookingResponse.bookingCounts.active} | Active';
+      _filterOptions[1] =
+      '${_bookingResponse.bookingCounts.active != null ? _bookingResponse
+          .bookingCounts.active : "0"} | Active';
       _filterOptions[2] =
-          '${_bookingResponse.bookingCounts.onTheWay} | On the way';
+      '${_bookingResponse.bookingCounts.readyToBePicked} | Ready To Be Picked';
       _filterOptions[3] =
-          '${_bookingResponse.bookingCounts.completed} | Completed';
+      '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[4] =
-          '${_bookingResponse.bookingCounts.rejected} | Rejected';
+      '${_bookingResponse.bookingCounts.completed} | Completed';
+      _filterOptions[5] =
+      '${_bookingResponse.bookingCounts.rejected} | Rejected';
     }
   }
 
-  _getCurrentStatus(int selectedFilterIndex) {
-//    0 => 'due',
-//    1 =>'processing',
+  _getCurrentStatus(String status) {
+//    0 => 'pending',
+//    1 =>'accepted',
 //    2 =>'rejected',
-//    5 =>'delivered',
-//    6 => 'cancel' // cancelled by customer
-//    7=> 'on the way'
-//    8=>'ready to be picked
-    switch (selectedFilterIndex) {
-      case 0:
-        return '0';
-        break; // all
-      case 1:
-        return '1';
-        break; // upcoming
-      case 2:
-        return '4';
-        break; // ongoing
-      case 3:
-        return '5';
-        break; // completed
-      case 4:
-        return '2';
-        break; // rejected
-      case 5:
-        return '6';
-        break; // cancelled
+//    4 =>'ongoing',
+//    5 =>'completed',
+//    6 => 'cancelled' // cancelled by customer
+//    7 => 'On the way'
+//    8 => 'Ready to be picked'
+    if (status.toLowerCase().contains('all')) {
+      return '0';
+    } else if (status.toLowerCase().contains('active')) {//processing
+      return '1';
+    } else if (status.toLowerCase().contains('ready to be picked')) {
+      return '8';
+    } else if (status.toLowerCase().contains('on the way')) {
+      return '7';
+    } else if (status.toLowerCase().contains('rejected')) {
+      return '2';
+    } else if (status.toLowerCase().contains('completed')) {
+      return '5';
+    } else if (status.toLowerCase().contains('cancelled')) {
+      return '6';
+    } else {
+      return '0';
     }
   }
 
@@ -220,8 +223,8 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
 
   _changeBookingStatus(String type) {
     switch (type) {
-      case 'Ongoing':
-        return '4';
+      case 'On the way':
+        return '7';
         break;
       case 'Complete':
         return '5';
@@ -261,6 +264,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
           if (selectedFilterIndex != 0) {
             _bookingResponse.bookings.removeAt(index);
           }
+          _refreshController.requestRefresh();
           setState(() {});
         } else {
           AppUtils.showToast(baseResponse.message, false);
