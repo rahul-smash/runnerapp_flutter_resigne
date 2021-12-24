@@ -24,6 +24,7 @@ import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/notification/notification_service.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -31,6 +32,7 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
@@ -264,7 +266,10 @@ SendPort uiSendPort;
 SendPort uiSendPort2;
 //Only for use android Platform
 Future<void> handleBackgroundFunction() async {
-  await AppSharedPref.instance.init();
+  // await AppSharedPref.instance.init();
+
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  pref.reload();
   final DateTime now = DateTime.now();
   final int isolateId = Isolate.current.hashCode;
   // if(LocationPermission.always==Geolocator.checkPermission()){
@@ -274,11 +279,14 @@ Future<void> handleBackgroundFunction() async {
   // This will be null if we're running in the background.
   uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
   uiSendPort?.send("");
-  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  AppConstants.isLoggedIn =
+      pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
   print(
       "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
   if (AppConstants.isLoggedIn) {
-    String userId = AppSharedPref.instance.getUserId();
+    // String userId = AppSharedPref.instance.getUserId();
+    String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
     DashboardRepository repository = DashboardRepository();
     String address = 'N/A';
     try {
@@ -295,7 +303,7 @@ Future<void> handleBackgroundFunction() async {
         address: address);
     if (baseResponse != null && baseResponse.success) {
       print(
-          'getCurrentPosition ===reseResponse updating lat lng====${baseResponse}');
+          'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
     }
   }
 

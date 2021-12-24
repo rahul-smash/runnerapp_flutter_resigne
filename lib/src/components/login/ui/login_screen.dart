@@ -79,6 +79,8 @@ class _LoginScreenState extends BaseState<LoginScreen> {
   }
 
   Future<void> onLoginSuccess(LoginResponse loginResponse) async {
+    print('onLoginSuccess ${loginResponse?.data?.id}');
+
     await AppSharedPref.instance.setAppUser(loginResponse);
     await AppSharedPref.instance.setLoggedIn(true);
     getIt
