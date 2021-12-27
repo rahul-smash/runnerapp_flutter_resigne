@@ -6,7 +6,9 @@ import 'package:marketplace_service_provider/core/network/connectivity/network_c
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history_details.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/due_payout_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
@@ -14,9 +16,9 @@ import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
 class DuePayoutDetailScreen extends StatefulWidget {
-   DepositDatum depositDatum;
+  // DepositDatum depositDatum;
 
-  DuePayoutDetailScreen(this.depositDatum);
+  // DuePayoutDetailScreen(this.depositDatum);
 
   @override
   _DuePayoutDetailScreenState createState() {
@@ -24,12 +26,11 @@ class DuePayoutDetailScreen extends StatefulWidget {
   }
 }
 
-class _DuePayoutDetailScreenState
-    extends BaseState<DuePayoutDetailScreen> {
+class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
   String _selectedOverviewOption = 'Monthly';
   List<String> _overviewOptions = List.empty(growable: true);
   bool isApiLoading = false;
-  DepositHistoryDetails depositHistoryDetails;
+  DuePayoutResponse duePayoutResponse;
 
   @override
   void initState() {
@@ -39,12 +40,12 @@ class _DuePayoutDetailScreenState
     _overviewOptions.add('7 days');
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _getPendingPayoutSummary();
+      _getDuePayoutSummary();
     });
   }
 
   void _onRefresh() async {
-    _getPendingPayoutSummary(isShowLoader: true);
+    _getDuePayoutSummary(isShowLoader: true);
   }
 
   @override
@@ -63,7 +64,7 @@ class _DuePayoutDetailScreenState
         backBtnColor: Colors.white,
         backgroundColor: AppTheme.primaryColor,
         title: Text(
-          'Deposit History',
+          'Due Payout',
           style: TextStyle(color: Colors.white),
         ),
         appBar: AppBar(
@@ -117,21 +118,72 @@ class _DuePayoutDetailScreenState
                       SizedBox(
                         height: Dimensions.getScaledSize(10),
                       ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10, right: 10),
+                      SizedBox(
                         height: 50,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: Text("ID"),
-                            ),
-                            Expanded(
-                              child: Text("Paid Amount"),
-                            ),
-                          ],
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: 1,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              height: 50,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    "Order ID",
+                                    overflow: TextOverflow.visible,
+                                    softWrap: true,
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    "Order recieved",
+                                    overflow: TextOverflow.ellipsis,
+                                    softWrap: true,
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    "Payment mode",
+                                    overflow: TextOverflow.visible,
+                                    softWrap: true,
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text("Paid by customer",
+                                      overflow: TextOverflow.visible,
+                                      softWrap: true),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text("Items total",
+                                      overflow: TextOverflow.visible,
+                                      softWrap: true),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text("Commission",
+                                      overflow: TextOverflow.visible,
+                                      softWrap: true),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text("Net Recievable from delivery boy",
+                                      overflow: TextOverflow.visible,
+                                      softWrap: true),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
                       Container(
@@ -141,252 +193,392 @@ class _DuePayoutDetailScreenState
                         color: Colors.grey[350],
                       ),
                       Expanded(
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            itemCount: depositHistoryDetails?.deposits?.length ?? 0,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  if (this.network.offline) {
-                                    AppUtils.showToast(
-                                        AppConstants.noInternetMsg, false);
-                                    return;
-                                  }
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  margin: EdgeInsets.fromLTRB(15, 5, 0, 5),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 15,
-                                      ),
-                                      Expanded(
-                                        child: Text(depositHistoryDetails
-                                            ?.deposits[index].displayOrderId),
-                                      ),
-                                      // Expanded(
-                                      //   child: Text(
-                                      //     depositHistoryDetails
-                                      //         ?.deposits[index].categoryTitle,
-                                      //     style: TextStyle(
-                                      //         fontWeight: FontWeight.w600,
-                                      //         color: AppTheme.mainTextColor),
-                                      //   ),
-                                      // ),
-                                      Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text("${AppConstants.currency}",
-                                                      style: TextStyle(
-                                                          color: AppTheme
-                                                              .subHeadingTextColor,
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.w600)),
-                                                  Text(
-                                                      depositHistoryDetails
-                                                          ?.deposits[index]
-                                                          .cashCollected,
-                                                      style: TextStyle(
-                                                          color: AppTheme
-                                                              .subHeadingTextColor,
-                                                          fontSize: 16,
-                                                          fontWeight: FontWeight.w600))
-                                                ],
-                                              ),
-                                              Container(
-                                                width: 50,
-                                                decoration: new BoxDecoration(
-                                                    color: AppTheme
-                                                        .containerBackgroundColor,
-                                                    borderRadius: new BorderRadius.all(
-                                                        Radius.circular(25.0))),
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 5,
-                                                      right: 5,
-                                                      top: 3,
-                                                      bottom: 3),
-                                                  child: Center(
-                                                      child: Text(
-                                                        widget.depositDatum.depositType,
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(
-                                                            color: AppTheme.mainTextColor),
-                                                      )),
-                                                ),
-                                              )
-                                            ],
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              );
+                          child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: duePayoutResponse?.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              if (this.network.offline) {
+                                AppUtils.showToast(
+                                    AppConstants.noInternetMsg, false);
+                                return;
+                              }
                             },
-                            separatorBuilder: (context, index) {
-                              return Divider();
-                            },
-                          )),
-                    ],
-                  )),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.fromLTRB(
-                          Dimensions.getScaledSize(55), 0, 40, 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                            child: SizedBox(
+                              height: 30,
+                              child: ListView.builder(
+                                  itemCount: 1,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, _) {
+                                    return Container(
+                                      // width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(15, 5, 0, 5),
+                                      child: Row(
                                         children: [
-                                          Text(
-                                            "Total Deposit",
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                              fontSize: 14.0,
-                                              color:
-                                              Colors.white.withOpacity(0.8),
-                                              fontFamily: AppConstants.fontName,
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Container(width: 60,
+                                            child: Center(
+                                              child: Text(
+                                                  duePayoutResponse?.data[index]
+                                                      .order.displayOrderId,
+                                                  overflow: TextOverflow.visible,
+                                                  softWrap: true),
                                             ),
                                           ),
-                                          Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text("${AppConstants.currency}",
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Container(width: 80,
+                                            child: Center(
+                                              child: Text(
+                                                  duePayoutResponse?.data[index]
+                                                      .order.created,
                                                   style: TextStyle(
-                                                      color: Colors.white
-                                                          .withOpacity(0.8),
-                                                      fontSize: AppConstants
-                                                          .smallSize,
-                                                      fontWeight:
-                                                      FontWeight.w600)),
-                                              Text(
-                                                  widget.depositDatum
-                                                      ?.totalOrdersAmount ??
-                                                      0,
+                                                      fontWeight: FontWeight.w600,
+                                                      color:
+                                                          AppTheme.mainTextColor),
+                                                  overflow: TextOverflow.visible,maxLines: 2,
+                                                  softWrap: true),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 25,
+                                          ),
+                                          Container(width: 100,
+                                            child: Center(
+                                              child: Text(
+                                                  duePayoutResponse?.data[index]
+                                                      .order.paymentMethod,
                                                   style: TextStyle(
-                                                      color: AppTheme.white,
-                                                      fontSize: AppConstants
-                                                          .extraLargeSize,
-                                                      fontWeight:
-                                                      FontWeight.w600))
-                                            ],
-                                          )
+                                                      fontWeight: FontWeight.w600,
+                                                      color:
+                                                          AppTheme.mainTextColor),
+                                                  overflow: TextOverflow.visible,
+                                                  softWrap: true),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Container(width: 80,
+                                            child: Center(
+                                              child: Text(
+                                                  duePayoutResponse
+                                                      ?.data[index].order.total,
+                                                  style: TextStyle(
+                                                      color: AppTheme
+                                                          .subHeadingTextColor,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w600),
+                                                  overflow: TextOverflow.visible,
+                                                  softWrap: true),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Container(width: 60,
+                                            child: Center(
+                                              child: Text(
+                                                  duePayoutResponse
+                                                      ?.data[index].order.checkoutBeforeCommission,
+                                                  style: TextStyle(
+                                                      color: AppTheme
+                                                          .subHeadingTextColor,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w600),
+                                                  overflow: TextOverflow.visible,
+                                                  softWrap: true),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Container(width: 60,
+                                            child: Center(
+                                              child: Text(
+                                                  duePayoutResponse?.data[index]
+                                                      .order.commission,
+                                                  style: TextStyle(
+                                                      color: AppTheme
+                                                          .subHeadingTextColor,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w600),
+                                                  overflow: TextOverflow.visible,
+                                                  softWrap: true),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Container(width: 60,
+                                            child: Center(
+                                              child: Text(
+                                                  duePayoutResponse
+                                                      ?.data[index].order.netPayable
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: AppTheme
+                                                          .subHeadingTextColor,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w600),
+                                                  overflow: TextOverflow.visible,
+                                                  softWrap: true),
+                                            ),
+                                          ),
+                                          // Expanded(flex: 1,
+                                          //     child: Column(
+                                          //       crossAxisAlignment:
+                                          //       CrossAxisAlignment.start,
+                                          //       children: [
+                                          //         Row(
+                                          //           crossAxisAlignment:
+                                          //           CrossAxisAlignment.start,
+                                          //           children: [
+                                          //             // Text("${AppConstants.currency}",
+                                          //             //     style: TextStyle(
+                                          //             //         color: AppTheme
+                                          //             //             .subHeadingTextColor,
+                                          //             //         fontSize: 14,
+                                          //             //         fontWeight: FontWeight.w600)),
+                                          //             Text(
+                                          //                 duePayoutResponse
+                                          //                     ?.data[index]
+                                          //                     .order.paymentMethod.toString(),//TODO change params
+                                          //                 style: TextStyle(
+                                          //                     color: AppTheme
+                                          //                         .subHeadingTextColor,
+                                          //                     fontSize: 16,
+                                          //                     fontWeight: FontWeight.w600)),
+                                          //             Text(
+                                          //                 duePayoutResponse
+                                          //                     ?.data[index]
+                                          //                     .order.paid!=null? duePayoutResponse
+                                          //                     ?.data[index]
+                                          //                     .order.paid:"0",
+                                          //                 style: TextStyle(
+                                          //                     color: AppTheme
+                                          //                         .subHeadingTextColor,
+                                          //                     fontSize: 16,
+                                          //                     fontWeight: FontWeight.w600)),
+                                          //             Text(
+                                          //                 duePayoutResponse
+                                          //                     ?.data[index]
+                                          //                     .order.total,//TODO change params
+                                          //                 style: TextStyle(
+                                          //                     color: AppTheme
+                                          //                         .subHeadingTextColor,
+                                          //                     fontSize: 16,
+                                          //                     fontWeight: FontWeight.w600)),
+                                          //             Text(
+                                          //                 duePayoutResponse
+                                          //                     ?.data[index]
+                                          //                     .order.commission,//TODO change params
+                                          //                 style: TextStyle(
+                                          //                     color: AppTheme
+                                          //                         .subHeadingTextColor,
+                                          //                     fontSize: 16,
+                                          //                     fontWeight: FontWeight.w600)),
+                                          //             Text(
+                                          //                 duePayoutResponse
+                                          //                     ?.data[index]
+                                          //                     .order.netPayable.toString(),//TODO change params
+                                          //                 style: TextStyle(
+                                          //                     color: AppTheme
+                                          //                         .subHeadingTextColor,
+                                          //                     fontSize: 16,
+                                          //                     fontWeight: FontWeight.w600))
+                                          //           ],
+                                          //         ),
+                                          //         // Container(
+                                          //         //   width: 50,
+                                          //         //   decoration: new BoxDecoration(
+                                          //         //       color: AppTheme
+                                          //         //           .containerBackgroundColor,
+                                          //         //       borderRadius: new BorderRadius.all(
+                                          //         //           Radius.circular(25.0))),
+                                          //         //   child: Padding(
+                                          //         //     padding: EdgeInsets.only(
+                                          //         //         left: 5,
+                                          //         //         right: 5,
+                                          //         //         top: 3,
+                                          //         //         bottom: 3),
+                                          //         //     child: Center(
+                                          //         //         child: Text(
+                                          //         //          "asr",//change here
+                                          //         //           textAlign: TextAlign.center,
+                                          //         //           style: TextStyle(
+                                          //         //               color: AppTheme.mainTextColor),
+                                          //         //         )),
+                                          //         //   ),
+                                          //         // )
+                                          //       ],
+                                          //     )),
+                                          Divider()
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                                  width: 1,
-                                  height: 40,
-                                  color: Colors.white.withOpacity(0.7),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "No. of Orders",
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                            fontSize: 14.0,
-                                            color:
-                                            Colors.white.withOpacity(0.8),
-                                            fontFamily: AppConstants.fontName,
-                                          ),
-                                        ),
-                                        Row(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                widget.depositDatum
-                                                    ?.totalOrders ??
-                                                    0,
-                                                style: TextStyle(
-                                                    color: AppTheme.white,
-                                                    fontSize: AppConstants
-                                                        .largeSize2X,
-                                                    fontWeight:
-                                                    FontWeight.w600))
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    );
+                                  }),
                             ),
-                          ),
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: Image.asset(
-                              "lib/src/components/dashboard/images/top_header_tick.png",
-                              width: Dimensions.getScaledSize(55),
-                              height: Dimensions.getScaledSize(55),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(Dimensions.getScaledSize(65),
-                          30, Dimensions.getScaledSize(40), 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: Colors.white,
-                              fontFamily: AppConstants.fontName,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "${AppUtils.convertDateFromFormat(widget.depositDatum?.depositDateTime?.toString() ?? DateTime.now().toString(), parsingPattern: AppUtils.dateTimeAppDisplayPattern_1)}",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.white,
-                                  fontFamily: AppConstants.fontName,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
+                          );
+                        },
+                        // separatorBuilder: (context, index) {
+                        //   return Divider();
+                        // },
+                      )),
+                    ],
+                  )),
+              // Align(
+              //   alignment: Alignment.topLeft,
+              //   child: Column(
+              //     children: [
+              //       Container(
+              //         margin: EdgeInsets.fromLTRB(
+              //             Dimensions.getScaledSize(55), 0, 40, 0),
+              //         child: Row(
+              //           children: [
+              //             Expanded(
+              //               child: Row(
+              //                 children: [
+              //                   Container(
+              //                     margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+              //                     child: Column(
+              //                       crossAxisAlignment:
+              //                           CrossAxisAlignment.start,
+              //                       children: [
+              //                         Column(
+              //                           crossAxisAlignment:
+              //                               CrossAxisAlignment.start,
+              //                           children: [
+              //                             Text(
+              //                               "Total Deposit",
+              //                               textAlign: TextAlign.start,
+              //                               style: TextStyle(
+              //                                 fontSize: 14.0,
+              //                                 color:
+              //                                     Colors.white.withOpacity(0.8),
+              //                                 fontFamily: AppConstants.fontName,
+              //                               ),
+              //                             ),
+              //                             Row(
+              //                               crossAxisAlignment:
+              //                                   CrossAxisAlignment.start,
+              //                               children: [
+              //                                 Text("${AppConstants.currency}",
+              //                                     style: TextStyle(
+              //                                         color: Colors.white
+              //                                             .withOpacity(0.8),
+              //                                         fontSize: AppConstants
+              //                                             .smallSize,
+              //                                         fontWeight:
+              //                                             FontWeight.w600)),
+              //                                 Text("0", //change here
+              //                                     style: TextStyle(
+              //                                         color: AppTheme.white,
+              //                                         fontSize: AppConstants
+              //                                             .extraLargeSize,
+              //                                         fontWeight:
+              //                                             FontWeight.w600))
+              //                               ],
+              //                             )
+              //                           ],
+              //                         ),
+              //                       ],
+              //                     ),
+              //                   ),
+              //                   Container(
+              //                     margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+              //                     width: 1,
+              //                     height: 40,
+              //                     color: Colors.white.withOpacity(0.7),
+              //                   ),
+              //                   Column(
+              //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //                     children: [
+              //                       Column(
+              //                         crossAxisAlignment:
+              //                             CrossAxisAlignment.start,
+              //                         children: [
+              //                           Text(
+              //                             "No. of Orders",
+              //                             textAlign: TextAlign.start,
+              //                             style: TextStyle(
+              //                               fontSize: 14.0,
+              //                               color:
+              //                                   Colors.white.withOpacity(0.8),
+              //                               fontFamily: AppConstants.fontName,
+              //                             ),
+              //                           ),
+              //                           Row(
+              //                             crossAxisAlignment:
+              //                                 CrossAxisAlignment.start,
+              //                             children: [
+              //                               Text("0", //change here
+              //                                   style: TextStyle(
+              //                                       color: AppTheme.white,
+              //                                       fontSize: AppConstants
+              //                                           .largeSize2X,
+              //                                       fontWeight:
+              //                                           FontWeight.w600))
+              //                             ],
+              //                           )
+              //                         ],
+              //                       ),
+              //                     ],
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //             Align(
+              //               alignment: Alignment.topCenter,
+              //               child: Image.asset(
+              //                 "lib/src/components/dashboard/images/top_header_tick.png",
+              //                 width: Dimensions.getScaledSize(55),
+              //                 height: Dimensions.getScaledSize(55),
+              //               ),
+              //             )
+              //           ],
+              //         ),
+              //       ),
+              //       Container(
+              //         margin: EdgeInsets.fromLTRB(Dimensions.getScaledSize(65),
+              //             30, Dimensions.getScaledSize(40), 0),
+              //         child: Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Text(
+              //               "",
+              //               textAlign: TextAlign.center,
+              //               style: TextStyle(
+              //                 fontSize: 14.0,
+              //                 color: Colors.white,
+              //                 fontFamily: AppConstants.fontName,
+              //               ),
+              //             ),
+              //             // Row(
+              //             //   children: [
+              //             //     Text("gkuch bhi",
+              //             //       // "${AppUtils.convertDateFromFormat(widget.depositDatum?.depositDateTime?.toString() ?? DateTime.now().toString(), parsingPattern: AppUtils.dateTimeAppDisplayPattern_1)}",
+              //             //       textAlign: TextAlign.center,
+              //             //       style: TextStyle(
+              //             //         fontSize: 14.0,
+              //             //         color: Colors.white,
+              //             //         fontFamily: AppConstants.fontName,
+              //             //       ),
+              //             //     ),
+              //             //   ],
+              //             // )
+              //           ],
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -394,14 +586,13 @@ class _DuePayoutDetailScreenState
     );
   }
 
-  void _getPendingPayoutSummary({bool isShowLoader = true}) async {
+  void _getDuePayoutSummary({bool isShowLoader = true}) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isApiLoading = true;
-      depositHistoryDetails = await getIt
+      duePayoutResponse = await getIt
           .get<PayoutRepository>()
-          .getDepositsCompletedPayoutDetail(
-          userId: userId, batchId: widget.depositDatum.id);
+          .getDuePayoutData(runnerID: AppSharedPref.instance.getUserId());
       setState(() {});
       AppUtils.hideLoader(context);
       isApiLoading = false;

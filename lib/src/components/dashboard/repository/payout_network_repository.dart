@@ -200,9 +200,10 @@ class PayoutNetworkRepository extends DioBaseService {
     try {
       Map<String, dynamic> param =
       getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['runner_id']=runnerID;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
-              '${_duePayout}/${runnerID}'),
+              '${_duePayout}'),
           param);
       DuePayoutResponse duePayoutResponse =
       DuePayoutResponse.fromJson(jsonDecode(response));

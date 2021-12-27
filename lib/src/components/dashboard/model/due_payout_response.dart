@@ -125,7 +125,7 @@ class Order {
   String userAddress;
   String gmapAttribute;
   String paid;
-  PaymentMethod paymentMethod;
+  String paymentMethod;
   CustomerRefund discount;
   String cartSaving;
   CustomerRefund walletRefund;
@@ -170,7 +170,7 @@ class Order {
   String deliverySlot;
   String distance;
   String travelTime;
-  DateTime created;
+  String created;
   DateTime modified;
   double netPayable;
   Formula formula;
@@ -188,7 +188,7 @@ class Order {
     userAddress: json["user_address"] == null ? null : json["user_address"],
     gmapAttribute: json["gmap_attribute"] == null ? null : json["gmap_attribute"],
     paid: json["paid"] == null ? null : json["paid"],
-    paymentMethod: json["payment_method"] == null ? null : paymentMethodValues.map[json["payment_method"]],
+    paymentMethod: json["payment_method"] == null ? null : json["payment_method"],
     discount: json["discount"] == null ? null : customerRefundValues.map[json["discount"]],
     cartSaving: json["cart_saving"] == null ? null : json["cart_saving"],
     walletRefund: json["wallet_refund"] == null ? null : customerRefundValues.map[json["wallet_refund"]],
@@ -228,12 +228,12 @@ class Order {
     diningTable: json["dining_table"] == null ? null : json["dining_table"],
     orderFacility: json["order_facility"] == null ? null : orderFacilityValues.map[json["order_facility"]],
     status: json["status"] == null ? null : json["status"],
+    created: json["created"] == null ? null : json["created"],
     orderRejectionNote: json["order_rejection_note"] == null ? null : json["order_rejection_note"],
     deliveryTimeSlot: json["delivery_time_slot"] == null ? null : json["delivery_time_slot"],
     deliverySlot: json["delivery_slot"] == null ? null : json["delivery_slot"],
     distance: json["distance"] == null ? null : json["distance"],
     travelTime: json["travel_time"] == null ? null : json["travel_time"],
-    created: json["created"] == null ? null : DateTime.parse(json["created"]),
     modified: json["modified"] == null ? null : DateTime.parse(json["modified"]),
     netPayable: json["net_payable"] == null ? null : json["net_payable"].toDouble(),
     formula: json["formula"] == null ? null : formulaValues.map[json["formula"]],
@@ -297,7 +297,7 @@ class Order {
     "delivery_slot": deliverySlot == null ? null : deliverySlot,
     "distance": distance == null ? null : distance,
     "travel_time": travelTime == null ? null : travelTime,
-    "created": created == null ? null : created.toIso8601String(),
+    "created": created == null ? null : created,
     "modified": modified == null ? null : modified.toIso8601String(),
     "net_payable": netPayable == null ? null : netPayable,
     "formula": formula == null ? null : formulaValues.reverse[formula],
