@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/payout_pag
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/payout_completed.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/payout_pages/pending_payouts.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_repository.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/due_payout_detail_screen.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
@@ -752,6 +753,69 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                         SizedBox(
                           height: 20,
                         ),
+                        // due payout
+                        InkWell(
+                          onTap: () {
+                            _openDuePayoutDetail();
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              left: Dimensions.getScaledSize(22),
+                              right: Dimensions.getScaledSize(22),
+                            ),
+                            padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
+                            decoration: BoxDecoration(
+                                color: AppTheme.white,
+                                border: Border.all(
+                                    color: AppTheme.primaryColor, width: 1.0),
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(30))),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    labelDuePayout
+                                    ,
+                                    style: TextStyle(
+                                        color: AppTheme.primaryColor,
+                                        fontSize: AppConstants.largeSize,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomRight,
+                                      end: Alignment.topRight,
+                                      stops: [0.1, 0.9],
+                                      colors: [
+                                        AppTheme.primaryColorDark,
+                                        AppTheme.primaryColor,
+                                      ],
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      Image.asset(
+                                        AppImages.icon_next_arrow,
+                                        height: 12,
+                                        color: AppTheme.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
                       ],
                     ),
                   ),
@@ -768,6 +832,11 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
     //TODO: handle this
     Navigator.push(context,
         MaterialPageRoute(builder: (builder) => DepositHistoryScreen()));
+  }
+  void _openDuePayoutDetail() {
+    //TODO: handle this
+    // Navigator.push(context,
+    //     MaterialPageRoute(builder: (builder) => DuePayoutDetailScreen()));
   }
 
   Widget _createTopCard(

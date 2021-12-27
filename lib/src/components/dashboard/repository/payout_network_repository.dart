@@ -7,6 +7,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/comp
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/due_payout_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -29,6 +30,8 @@ class PayoutNetworkRepository extends DioBaseService {
       '/runner_deposits/completedDeposits'; //Completed Deposit List
   static const _depositsCompletedPayoutDetail =
       '/runner_deposits/depositHistory'; //Completed Deposit History List
+  static const _duePayout =
+      '/runner_orders/getOrderPayoutDetail'; //due Payout list
 
   PayoutNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -186,6 +189,24 @@ class PayoutNetworkRepository extends DioBaseService {
       DepositHistoryDetails depositHistoryDetails =
           DepositHistoryDetails.fromJson(jsonDecode(response));
       return depositHistoryDetails;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+//for due payout
+  Future<DuePayoutResponse> duePayoutData(
+      String runnerID) async {
+    try {
+      Map<String, dynamic> param =
+      getIt.get<CommonNetworkUtils>().getDeviceParams();
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '${_duePayout}/${runnerID}'),
+          param);
+      DuePayoutResponse duePayoutResponse =
+      DuePayoutResponse.fromJson(jsonDecode(response));
+      return duePayoutResponse;
     } catch (e) {
       print(e);
     }

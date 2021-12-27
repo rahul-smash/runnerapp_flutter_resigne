@@ -83,6 +83,7 @@ const labelNeedPermission = "Need Permission for better performance";
 const labelPayout = 'Payout';
 const labelDeposits = 'Deposits';
 const labelDepositHistory = 'Deposit History';
+const labelDuePayout = 'Due Payout';
 const labelNumberOfOrder = 'Number of Orders';
 const labelPayoutPendingTitle = 'Payout Pending';
 const labelChoosePaymentMethodTitle = 'Choose Your\nPayment Method';
