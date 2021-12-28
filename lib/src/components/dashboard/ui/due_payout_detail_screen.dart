@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
@@ -193,7 +194,10 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
                         color: Colors.grey[350],
                       ),
                       Expanded(
-                          child: ListView.builder(
+                          child: ListView.separated(
+                            separatorBuilder: (context, index) {
+                              return Divider();
+                            },
                         shrinkWrap: true,
                         itemCount: duePayoutResponse?.data?.length ?? 0,
                         itemBuilder: (context, index) {
@@ -206,14 +210,16 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
                               }
                             },
                             child: SizedBox(
-                              height: 30,
+                              height: 50,
                               child: ListView.builder(
+
                                   itemCount: 1,
                                   physics: AlwaysScrollableScrollPhysics(),
                                   scrollDirection: Axis.horizontal,
                                   shrinkWrap: true,
                                   itemBuilder: (context, _) {
                                     return Container(
+
                                       // width: double.infinity,
                                       margin: EdgeInsets.fromLTRB(15, 5, 0, 5),
                                       child: Row(
@@ -236,8 +242,8 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
                                           Container(width: 80,
                                             child: Center(
                                               child: Text(
-                                                  duePayoutResponse?.data[index]
-                                                      .order.created,
+                                                  convertedDate(duePayoutResponse?.data[index]
+                                                      .order.created),
                                                   style: TextStyle(
                                                       fontWeight: FontWeight.w600,
                                                       color:
@@ -331,94 +337,7 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
                                                   softWrap: true),
                                             ),
                                           ),
-                                          // Expanded(flex: 1,
-                                          //     child: Column(
-                                          //       crossAxisAlignment:
-                                          //       CrossAxisAlignment.start,
-                                          //       children: [
-                                          //         Row(
-                                          //           crossAxisAlignment:
-                                          //           CrossAxisAlignment.start,
-                                          //           children: [
-                                          //             // Text("${AppConstants.currency}",
-                                          //             //     style: TextStyle(
-                                          //             //         color: AppTheme
-                                          //             //             .subHeadingTextColor,
-                                          //             //         fontSize: 14,
-                                          //             //         fontWeight: FontWeight.w600)),
-                                          //             Text(
-                                          //                 duePayoutResponse
-                                          //                     ?.data[index]
-                                          //                     .order.paymentMethod.toString(),//TODO change params
-                                          //                 style: TextStyle(
-                                          //                     color: AppTheme
-                                          //                         .subHeadingTextColor,
-                                          //                     fontSize: 16,
-                                          //                     fontWeight: FontWeight.w600)),
-                                          //             Text(
-                                          //                 duePayoutResponse
-                                          //                     ?.data[index]
-                                          //                     .order.paid!=null? duePayoutResponse
-                                          //                     ?.data[index]
-                                          //                     .order.paid:"0",
-                                          //                 style: TextStyle(
-                                          //                     color: AppTheme
-                                          //                         .subHeadingTextColor,
-                                          //                     fontSize: 16,
-                                          //                     fontWeight: FontWeight.w600)),
-                                          //             Text(
-                                          //                 duePayoutResponse
-                                          //                     ?.data[index]
-                                          //                     .order.total,//TODO change params
-                                          //                 style: TextStyle(
-                                          //                     color: AppTheme
-                                          //                         .subHeadingTextColor,
-                                          //                     fontSize: 16,
-                                          //                     fontWeight: FontWeight.w600)),
-                                          //             Text(
-                                          //                 duePayoutResponse
-                                          //                     ?.data[index]
-                                          //                     .order.commission,//TODO change params
-                                          //                 style: TextStyle(
-                                          //                     color: AppTheme
-                                          //                         .subHeadingTextColor,
-                                          //                     fontSize: 16,
-                                          //                     fontWeight: FontWeight.w600)),
-                                          //             Text(
-                                          //                 duePayoutResponse
-                                          //                     ?.data[index]
-                                          //                     .order.netPayable.toString(),//TODO change params
-                                          //                 style: TextStyle(
-                                          //                     color: AppTheme
-                                          //                         .subHeadingTextColor,
-                                          //                     fontSize: 16,
-                                          //                     fontWeight: FontWeight.w600))
-                                          //           ],
-                                          //         ),
-                                          //         // Container(
-                                          //         //   width: 50,
-                                          //         //   decoration: new BoxDecoration(
-                                          //         //       color: AppTheme
-                                          //         //           .containerBackgroundColor,
-                                          //         //       borderRadius: new BorderRadius.all(
-                                          //         //           Radius.circular(25.0))),
-                                          //         //   child: Padding(
-                                          //         //     padding: EdgeInsets.only(
-                                          //         //         left: 5,
-                                          //         //         right: 5,
-                                          //         //         top: 3,
-                                          //         //         bottom: 3),
-                                          //         //     child: Center(
-                                          //         //         child: Text(
-                                          //         //          "asr",//change here
-                                          //         //           textAlign: TextAlign.center,
-                                          //         //           style: TextStyle(
-                                          //         //               color: AppTheme.mainTextColor),
-                                          //         //         )),
-                                          //         //   ),
-                                          //         // )
-                                          //       ],
-                                          //     )),
+
                                           Divider()
                                         ],
                                       ),
@@ -427,9 +346,7 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
                             ),
                           );
                         },
-                        // separatorBuilder: (context, index) {
-                        //   return Divider();
-                        // },
+
                       )),
                     ],
                   )),
@@ -621,6 +538,15 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
       }
     } else {
       return 'monthly';
+    }
+  }
+  convertedDate(String date) {
+    if (date != null) {
+      DateTime tempDate = new DateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
+      String newdate = DateFormat("dd MMM yyyy hh:mm aaa").format(tempDate);
+      return newdate.toString();
+    } else {
+      return "";
     }
   }
 }
