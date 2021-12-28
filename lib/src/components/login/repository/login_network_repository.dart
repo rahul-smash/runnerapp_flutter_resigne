@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
@@ -68,7 +69,7 @@ class LoginNetworkRepository extends DioBaseService {
       param['password'] = password;
       var data = getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['device_token'] = data['device_token'];
-
+      param['platform']=Platform.isIOS ? "ios" : "android";
       log(param.toString());
       print('@@UserLoginCredentails---'+param.toString());
       var response = await post(

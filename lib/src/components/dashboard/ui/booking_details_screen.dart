@@ -2,6 +2,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -28,6 +30,7 @@ class BookingDetailsScreen extends StatefulWidget {
   BookingRequest booking;
   Function callBackMethod;
 
+
   BookingDetailsScreen(this.booking, {this.callBackMethod});
 
   @override
@@ -46,6 +49,11 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getBookingdetails(widget.booking, isShowLoader: false);
     });
+  }
+
+  getLatLng(Position position)async{
+    position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 
   @override
@@ -166,6 +174,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                             height: 25,
                                           ),
                                           onTap: () {
+                                            print("call");
                                             AppUtils.launchCaller(widget
                                                 .booking.store.contactNumber);
                                           }),
@@ -395,13 +404,32 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                             SizedBox(
                               height: 12.0,
                             ),
-                            Text(
-                              'Delivery Slot',
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: AppConstants.smallSize,
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontWeight: FontWeight.w400),
+                            Row(
+                              children: [
+                                Text(
+                                  'Delivery Slot',
+                                  style: TextStyle(
+                                      fontFamily: AppConstants.fontName,
+                                      fontSize: AppConstants.smallSize,
+                                      color: AppTheme.subHeadingTextColor,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                InkWell(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child:Icon(Icons.add_location)
+                                      // Image(
+                                      //   image: AssetImage(
+                                      //     AppImages.icon_whatsapp,
+                                      //   ),
+                                      //   height: 25,
+                                      // ),
+                                    ),
+                                    onTap: () {
+                                      AppUtils.launchMaps("30.900965","75.857277");
+                                    }),
+                              ],
                             ),
                             SizedBox(
                               height: 4.0,
@@ -1078,7 +1106,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                 ),
               ),
               Text(
-                  'Qunatity: ${_bookingDetailsResponse.bookings.cart[index].quantity}'
+                  'Quantity: ${_bookingDetailsResponse.bookings.cart[index].quantity}'
                   '${_bookingDetailsResponse.bookings.cart[index].unitType}',
                   style: TextStyle(
                       color: AppTheme.mainTextColor,

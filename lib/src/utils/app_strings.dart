@@ -40,11 +40,11 @@ const labelErrorEmail = "Enter Email";
 const labelErrorAboutUs = "Please write few words about yourself";
 const labelErrorOTPNumber = "Enter valid OTP";
 const labelErrorMPINNumber = "Enter valid MPIN";
-const labelErrorMPINNotMatched = "MPIN Doesn't not Match";
+const labelErrorMPINNotMatched = "MPIN Doesn't Match";
 const labelErrorTermCondition =
     "You need to accept Terms & Condition and Privacy Policy";
 
-const labelTermAndConditionString1 = "I agree check mark for agreeing ";
+const labelTermAndConditionString1 = "I agree checkmark for agreeing ";
 const labelTermAndConditionString2 = " and ";
 const labelTermAndConditionString = "Terms & Condition";
 const labelUnderDevelopment = "Under Development";
@@ -56,7 +56,7 @@ const labelRegistrationThanksMsg = "Thank you for registering with\n";
 const labelsetupMPINMsg1 = "Please setup the ";
 const labelMPIN = "MPIN";
 const labelsetupMPINMsg2 = " using\nbelow button.";
-const labelSetFourDigitPinTitle = "Please Set a 4 Digit\nLogin Pin";
+const labelSetFourDigitPinTitle = "Please Set a 6 Digit\nLogin Pin";
 const labelHome = 'Home';
 const labelMyBooking = 'My Booking';
 const labelGallery = 'Gallery';
