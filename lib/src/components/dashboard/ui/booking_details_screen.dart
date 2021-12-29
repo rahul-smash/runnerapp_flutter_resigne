@@ -30,7 +30,6 @@ class BookingDetailsScreen extends StatefulWidget {
   BookingRequest booking;
   Function callBackMethod;
 
-
   BookingDetailsScreen(this.booking, {this.callBackMethod});
 
   @override
@@ -51,7 +50,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
     });
   }
 
-  getLatLng(Position position)async{
+  getLatLng(Position position) async {
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
   }
@@ -366,15 +365,53 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                             SizedBox(
                               height: 4.0,
                             ),
-                            Text(
-                              widget.booking.bookingRequestUserAddress,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: AppConstants.smallSize,
-                                  color: AppTheme.mainTextColor,
-                                  fontWeight: FontWeight.normal),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    widget.booking.bookingRequestUserAddress,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                        fontFamily: AppConstants.fontName,
+                                        fontSize: AppConstants.smallSize,
+                                        color: AppTheme.mainTextColor,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Visibility(
+                                  visible:
+                                      _bookingDetailsResponse
+                                                  .bookings.userAddress.lat !=
+                                              null &&
+                                          _bookingDetailsResponse.bookings
+                                              .userAddress.lat.isNotEmpty &&
+                                          _bookingDetailsResponse
+                                                  .bookings.userAddress.lng !=
+                                              null &&
+                                          _bookingDetailsResponse.bookings
+                                              .userAddress.lng.isNotEmpty,
+                                  child: InkWell(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Icon(
+                                          Icons.gps_fixed_outlined,
+                                          size: 25.0,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        AppUtils.openMap(
+                                            _bookingDetailsResponse
+                                                .bookings.userAddress.lat,
+                                            _bookingDetailsResponse
+                                                .bookings.userAddress.lng);
+                                      }),
+                                ),
+                              ],
                             ),
                             SizedBox(
                               height: 12.0,
@@ -404,32 +441,13 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                             SizedBox(
                               height: 12.0,
                             ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Delivery Slot',
-                                  style: TextStyle(
-                                      fontFamily: AppConstants.fontName,
-                                      fontSize: AppConstants.smallSize,
-                                      color: AppTheme.subHeadingTextColor,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                InkWell(
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child:Icon(Icons.add_location)
-                                      // Image(
-                                      //   image: AssetImage(
-                                      //     AppImages.icon_whatsapp,
-                                      //   ),
-                                      //   height: 25,
-                                      // ),
-                                    ),
-                                    onTap: () {
-                                      AppUtils.launchMaps("30.900965","75.857277");
-                                    }),
-                              ],
+                            Text(
+                              'Delivery Slot',
+                              style: TextStyle(
+                                  fontFamily: AppConstants.fontName,
+                                  fontSize: AppConstants.smallSize,
+                                  color: AppTheme.subHeadingTextColor,
+                                  fontWeight: FontWeight.w400),
                             ),
                             SizedBox(
                               height: 4.0,

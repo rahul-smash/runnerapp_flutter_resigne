@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
@@ -12,6 +14,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -40,6 +43,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   FilterType _selectedSortingType = FilterType.Delivery_Time_Slot;
 
   List<String> _sortingType = ['Booking Date', 'Delivery Date'];
+  StreamSubscription fcmEventStream;
 
   @override
   void initState() {
@@ -55,6 +59,33 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getMyBookingOrders(bookingSorting: FilterType.Delivery_Time_Slot);
     });
+
+    fcmEventStream = eventBus.on<FCMNotificationEvent>().listen((event) {
+      if (event != null && event.data != null)
+        switch (event.data.notifyType) {
+          case "runner_allocation":
+            //TODO:
+            _refreshController.requestRefresh();
+            break;
+          case "user_runner_assigned":
+            //TODO: refresh page Home page and open order detail page
+            selectedFilterIndex = 1;
+            _refreshController.requestRefresh();
+            break;
+          case "ORDER_READY_DELIVERYBOY":
+            //TODO: refresh page Home page and open order detail page
+            selectedFilterIndex = 2;
+            _refreshController.requestRefresh();
+
+            break;
+        }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (fcmEventStream != null) fcmEventStream.cancel();
   }
 
   void _getMyBookingOrders(
@@ -83,16 +114,15 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
       _filterOptions[1] =
-      '${_bookingResponse.bookingCounts.active != null ? _bookingResponse
-          .bookingCounts.active : "0"} | Active';
+          '${_bookingResponse.bookingCounts.active != null ? _bookingResponse.bookingCounts.active : "0"} | Active';
       _filterOptions[2] =
-      '${_bookingResponse.bookingCounts.readyToBePicked} | Ready To Be Picked';
+          '${_bookingResponse.bookingCounts.readyToBePicked} | Ready To Be Picked';
       _filterOptions[3] =
-      '${_bookingResponse.bookingCounts.onTheWay} | On the way';
+          '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[4] =
-      '${_bookingResponse.bookingCounts.completed} | Completed';
+          '${_bookingResponse.bookingCounts.completed} | Completed';
       _filterOptions[5] =
-      '${_bookingResponse.bookingCounts.rejected} | Rejected';
+          '${_bookingResponse.bookingCounts.rejected} | Rejected';
     }
   }
 
@@ -107,7 +137,8 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
 //    8 => 'Ready to be picked'
     if (status.toLowerCase().contains('all')) {
       return '0';
-    } else if (status.toLowerCase().contains('active')) {//processing
+    } else if (status.toLowerCase().contains('active')) {
+      //processing
       return '1';
     } else if (status.toLowerCase().contains('ready to be picked')) {
       return '8';

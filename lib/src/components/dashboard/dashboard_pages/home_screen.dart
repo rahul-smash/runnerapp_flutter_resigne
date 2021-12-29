@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
@@ -17,6 +19,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -39,7 +42,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
   String _selectedOverviewOption = 'Today';
   final PageController _pageController = PageController(initialPage: 0);
   RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   DashboardResponseSummary _dashboardResponse;
   BookingResponse _bookingResponse;
@@ -48,6 +51,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
   bool isBookingApiLoading = true;
 
   int selectedBookingFilterIndex = 0;
+  StreamSubscription fcmEventStream;
 
   @override
   void initState() {
@@ -68,20 +72,38 @@ class _HomeScreenState extends BaseState<HomeScreen> {
       _getDashboardSummary();
       _getMyBookingOrders();
     });
+    fcmEventStream = eventBus.on<FCMNotificationEvent>().listen((event) {
+      if (event != null && event.data != null)
+        switch (event.data.notifyType) {
+          case "runner_allocation":
+            //TODO:
+            _refreshController.requestRefresh();
+            break;
+          case "user_runner_assigned":
+          //TODO: refresh page Home page and open order detail page
+            selectedBookingFilterIndex=1;
+            _refreshController.requestRefresh();
+            break;
+          case "ORDER_READY_DELIVERYBOY":
+          //TODO: refresh page Home page and open order detail page
+            selectedBookingFilterIndex=2;
+            _refreshController.requestRefresh();
+
+            break;
+        }
+    });
   }
 
   void _getDashboardSummary(
       {bool isShowLoader = true, String selectedFilter}) async {
-    if (!getIt
-        .get<NetworkConnectionObserver>()
-        .offline) {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isDashboardApiLoading = true;
       _dashboardResponse = await getIt
           .get<DashboardRepository>()
           .getDashboardSummary(
-          userId: userId,
-          filterOption: _selectedFilterParam(selectedFilter));
+              userId: userId,
+              filterOption: _selectedFilterParam(selectedFilter));
       AppUtils.hideLoader(context);
       isDashboardApiLoading = false;
       _refreshController.refreshCompleted();
@@ -106,21 +128,19 @@ class _HomeScreenState extends BaseState<HomeScreen> {
   }
 
   void _getMyBookingOrders({bool isShowLoader = true}) async {
-    if (!getIt
-        .get<NetworkConnectionObserver>()
-        .offline) {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: userId,
-          status: _getCurrentStatus(_filterOptions[selectedBookingFilterIndex])
-    );
-    _getFilterCount();
-    setState(() {});
-    AppUtils.hideLoader(context);
-    isBookingApiLoading = false;
+          status:
+              _getCurrentStatus(_filterOptions[selectedBookingFilterIndex]));
+      _getFilterCount();
+      setState(() {});
+      AppUtils.hideLoader(context);
+      isBookingApiLoading = false;
     } else {
-    AppUtils.noNetWorkDialog(context);
+      AppUtils.noNetWorkDialog(context);
     }
     setState(() {});
   }
@@ -129,6 +149,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
   void dispose() {
     super.dispose();
     _pageController.dispose();
+    if (fcmEventStream != null) fcmEventStream.cancel();
   }
 
   void _onRefresh() async {
@@ -155,9 +176,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Hi, ${AppSharedPref.instance
-                          .getUserName()} ${AppSharedPref.instance
-                          .getUserLastName()}",
+                      "Hi, ${AppSharedPref.instance.getUserName()} ${AppSharedPref.instance.getUserLastName()}",
                       style: TextStyle(
                           fontSize: Dimensions.getScaledSize(20),
                           fontWeight: FontWeight.bold,
@@ -199,7 +218,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                         topLeft: const Radius.circular(30.0),
                         topRight: const Radius.circular(30.0))),
                 margin:
-                EdgeInsets.only(top: Dimensions.getHeight(percentage: 6.0)),
+                    EdgeInsets.only(top: Dimensions.getHeight(percentage: 6.0)),
                 child: Column(
                   children: [
                     SizedBox(
@@ -253,7 +272,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                               },
                               shape: RoundedRectangleBorder(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(15.0))),
+                                      BorderRadius.all(Radius.circular(15.0))),
                               itemBuilder: (BuildContext context) {
                                 return _overviewOptions.map((String choice) {
                                   return PopupMenuItem(
@@ -261,13 +280,13 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           choice,
                                           style: TextStyle(
                                               color: _selectedOverviewOption ==
-                                                  choice
+                                                      choice
                                                   ? AppTheme.primaryColorDark
                                                   : AppTheme.mainTextColor),
                                         ),
@@ -317,7 +336,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                                   ),
                                   Padding(
                                     padding:
-                                    EdgeInsets.all(Dimensions.pixels_10),
+                                        EdgeInsets.all(Dimensions.pixels_10),
                                     child: Column(
                                       children: [
                                         SizedBox(
@@ -328,17 +347,17 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                                               text: '${AppConstants.currency} ',
                                               style: TextStyle(
                                                   fontSize:
-                                                  AppConstants.smallSize,
+                                                      AppConstants.smallSize,
                                                   color: AppTheme.white,
                                                   fontFamily:
-                                                  AppConstants.fontName,
+                                                      AppConstants.fontName,
                                                   fontWeight:
-                                                  FontWeight.normal),
+                                                      FontWeight.normal),
                                               children: <TextSpan>[
                                                 TextSpan(
                                                     text: _dashboardResponse
-                                                        ?.summery
-                                                        ?.totalEarning ??
+                                                            ?.summery
+                                                            ?.totalEarning ??
                                                         '--',
                                                     style: TextStyle(
                                                         fontSize: AppConstants
@@ -347,7 +366,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                                                         fontFamily: AppConstants
                                                             .fontName,
                                                         fontWeight:
-                                                        FontWeight.bold)),
+                                                            FontWeight.bold)),
                                               ],
                                             ),
                                             textAlign: TextAlign.center),
@@ -357,7 +376,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                                               color: AppTheme.white,
                                               fontFamily: AppConstants.fontName,
                                               fontSize:
-                                              AppConstants.extraSmallSize),
+                                                  AppConstants.extraSmallSize),
                                         ),
                                         SizedBox(
                                           height: 10,
@@ -391,17 +410,17 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                                   ),
                                   Padding(
                                     padding:
-                                    EdgeInsets.all(Dimensions.pixels_10),
+                                        EdgeInsets.all(Dimensions.pixels_10),
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                                          CrossAxisAlignment.center,
                                       children: [
                                         SizedBox(
                                           height: 15,
                                         ),
                                         Text(
                                           _dashboardResponse
-                                              ?.summery?.totalBookings ??
+                                                  ?.summery?.totalBookings ??
                                               '--',
                                           style: TextStyle(
                                               fontSize: AppConstants.largeSize,
@@ -415,7 +434,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                                               color: AppTheme.white,
                                               fontFamily: AppConstants.fontName,
                                               fontSize:
-                                              AppConstants.extraSmallSize),
+                                                  AppConstants.extraSmallSize),
                                         ),
                                         SizedBox(
                                           height: 10,
@@ -506,103 +525,102 @@ class _HomeScreenState extends BaseState<HomeScreen> {
     return Stack(
       children: [
         !isDashboardApiLoading &&
-            _dashboardResponse != null &&
-            _dashboardResponse.bookingRequests != null &&
-            _dashboardResponse.bookingRequests.isNotEmpty
+                _dashboardResponse != null &&
+                _dashboardResponse.bookingRequests != null &&
+                _dashboardResponse.bookingRequests.isNotEmpty
             ? Container(
-          height: 350,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(30.0),
-                topLeft: Radius.circular(30.0)),
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              stops: [0.1, 0.5, 0.7, 0.9],
-              colors: [
-                AppTheme.primaryColorDark,
-                AppTheme.primaryColor,
-                AppTheme.primaryColor,
-                AppTheme.primaryColor,
-              ],
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 18.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                height: 350,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(30.0),
+                      topLeft: Radius.circular(30.0)),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    stops: [0.1, 0.5, 0.7, 0.9],
+                    colors: [
+                      AppTheme.primaryColorDark,
+                      AppTheme.primaryColor,
+                      AppTheme.primaryColor,
+                      AppTheme.primaryColor,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'Order Request',
-                      style: TextStyle(
-                          fontSize: AppConstants.smallSize,
-                          color: AppTheme.white,
-                          fontFamily: AppConstants.fontName),
+                    SizedBox(
+                      height: 18.0,
                     ),
-                    InkWell(
-                      onTap: () async {
-                        bool refreshData =
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  NewRequestBookingScreen(
-                                    userId: userId,
-                                    filter: _selectedFilterParam(
-                                        _selectedOverviewOption),
-                                  )),
-                        );
-                        if (refreshData != null && refreshData) {
-                          _refreshController.requestRefresh();
-                        }
-                      },
-                      child: Text(
-                        'View All',
-                        style: TextStyle(
-                            fontSize: AppConstants.smallSize,
-                            color: AppTheme.white,
-                            fontFamily: AppConstants.fontName),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Order Request',
+                            style: TextStyle(
+                                fontSize: AppConstants.smallSize,
+                                color: AppTheme.white,
+                                fontFamily: AppConstants.fontName),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              bool refreshData =
+                                  await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        NewRequestBookingScreen(
+                                          userId: userId,
+                                          filter: _selectedFilterParam(
+                                              _selectedOverviewOption),
+                                        )),
+                              );
+                              if (refreshData != null && refreshData) {
+                                _refreshController.requestRefresh();
+                              }
+                            },
+                            child: Text(
+                              'View All',
+                              style: TextStyle(
+                                  fontSize: AppConstants.smallSize,
+                                  color: AppTheme.white,
+                                  fontFamily: AppConstants.fontName),
+                            ),
+                          )
+                        ],
                       ),
-                    )
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    SizedBox(
+                      height: 250,
+                      child: PageView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _pageController,
+                        children: _dashboardResponse.bookingRequests
+                            .map((bookingRequest) => ItemViewOrderRequests(
+                                bookingRequest: bookingRequest,
+                                callback: _bookingRequestActionMethod))
+                            .toList(),
+                      ),
+                    ),
+                    SmoothPageIndicator(
+                        controller: _pageController,
+                        count: _dashboardResponse.bookingRequests.length,
+                        effect: ExpandingDotsEffect(
+                          radius: 8,
+                          dotHeight: 6,
+                          dotWidth: 6,
+                          expansionFactor: 4,
+                          dotColor: Colors.white30,
+                          activeDotColor: AppTheme.white,
+                          spacing: 5,
+                        )),
                   ],
                 ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              SizedBox(
-                height: 250,
-                child: PageView(
-                  scrollDirection: Axis.horizontal,
-                  controller: _pageController,
-                  children: _dashboardResponse.bookingRequests
-                      .map((bookingRequest) =>
-                      ItemViewOrderRequests(
-                          bookingRequest: bookingRequest,
-                          callback: _bookingRequestActionMethod))
-                      .toList(),
-                ),
-              ),
-              SmoothPageIndicator(
-                  controller: _pageController,
-                  count: _dashboardResponse.bookingRequests.length,
-                  effect: ExpandingDotsEffect(
-                    radius: 8,
-                    dotHeight: 6,
-                    dotWidth: 6,
-                    expansionFactor: 4,
-                    dotColor: Colors.white30,
-                    activeDotColor: AppTheme.white,
-                    spacing: 5,
-                  )),
-            ],
-          ),
-        )
+              )
             : Container(),
         Container(
           decoration: BoxDecoration(
@@ -613,110 +631,109 @@ class _HomeScreenState extends BaseState<HomeScreen> {
               )),
           margin: EdgeInsets.only(
             top: _dashboardResponse != null &&
-                _dashboardResponse.bookingRequests != null &&
-                _dashboardResponse.bookingRequests.isNotEmpty
+                    _dashboardResponse.bookingRequests != null &&
+                    _dashboardResponse.bookingRequests.isNotEmpty
                 ? 320
                 : 0,
           ),
           child: Center(
               child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 24.0, vertical: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Recent Orders',
-                          style: TextStyle(
-                              fontSize: AppConstants.smallSize,
-                              color: AppTheme.subHeadingTextColor,
-                              fontFamily: AppConstants.fontName),
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            if (widget.callback != null) widget.callback();
-                          },
-                          child: Text(
-                            'View All',
-                            style: TextStyle(
-                                fontSize: AppConstants.smallSize,
-                                color: AppTheme.primaryColor,
-                                fontFamily: AppConstants.fontName),
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Recent Orders',
+                      style: TextStyle(
+                          fontSize: AppConstants.smallSize,
+                          color: AppTheme.subHeadingTextColor,
+                          fontFamily: AppConstants.fontName),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        if (widget.callback != null) widget.callback();
+                      },
+                      child: Text(
+                        'View All',
+                        style: TextStyle(
+                            fontSize: AppConstants.smallSize,
+                            color: AppTheme.primaryColor,
+                            fontFamily: AppConstants.fontName),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: 36.0,
+                child: ListView.builder(
+                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                  itemCount: _filterOptions.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () async {
+                        setState(() {
+                          selectedBookingFilterIndex = index;
+                          _getMyBookingOrders();
+                        });
+                      },
+                      child: Container(
+                          margin: EdgeInsets.only(left: 4, right: 4),
+                          padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+                          decoration: BoxDecoration(
+                              color: selectedBookingFilterIndex == index
+                                  ? AppTheme.primaryColor.withOpacity(0.1)
+                                  : AppTheme.borderNotFocusedColor,
+                              border: Border.all(
+                                  color: selectedBookingFilterIndex == index
+                                      ? AppTheme.primaryColor
+                                      : AppTheme.borderNotFocusedColor,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(30)),
+                          child: Row(
+                            children: [
+                              Text('${_filterOptions[index]}',
+                                  style: TextStyle(
+                                      color: AppTheme.mainTextColor,
+                                      fontSize: AppConstants.smallSize)),
+                            ],
+                          )),
+                    );
+                  },
+                ),
+              ),
+              isBookingApiLoading
+                  ? Container(
+                      height: Dimensions.getHeight(percentage: 60),
+                    )
+                  : _bookingResponse != null &&
+                          _bookingResponse.bookings != null &&
+                          _bookingResponse.bookings.isNotEmpty
+                      ? Container(
+                          child: ListView.separated(
+                            padding: EdgeInsets.all(18.0),
+                            shrinkWrap: true,
+                            itemCount: _bookingResponse.bookings.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (BuildContext context, int index) {
+                              return ItemBooking(
+                                  _bookingResponse.bookings[index],
+                                  _bookingAction);
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return SizedBox(
+                                height: 8.0,
+                              );
+                            },
                           ),
                         )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: 36.0,
-                    child: ListView.builder(
-                      padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                      itemCount: _filterOptions.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () async {
-                            setState(() {
-                              selectedBookingFilterIndex = index;
-                              _getMyBookingOrders();
-                            });
-                          },
-                          child: Container(
-                              margin: EdgeInsets.only(left: 4, right: 4),
-                              padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
-                              decoration: BoxDecoration(
-                                  color: selectedBookingFilterIndex == index
-                                      ? AppTheme.primaryColor.withOpacity(0.1)
-                                      : AppTheme.borderNotFocusedColor,
-                                  border: Border.all(
-                                      color: selectedBookingFilterIndex == index
-                                          ? AppTheme.primaryColor
-                                          : AppTheme.borderNotFocusedColor,
-                                      width: 1),
-                                  borderRadius: BorderRadius.circular(30)),
-                              child: Row(
-                                children: [
-                                  Text('${_filterOptions[index]}',
-                                      style: TextStyle(
-                                          color: AppTheme.mainTextColor,
-                                          fontSize: AppConstants.smallSize)),
-                                ],
-                              )),
-                        );
-                      },
-                    ),
-                  ),
-                  isBookingApiLoading
-                      ? Container(
-                    height: Dimensions.getHeight(percentage: 60),
-                  )
-                      : _bookingResponse != null &&
-                      _bookingResponse.bookings != null &&
-                      _bookingResponse.bookings.isNotEmpty
-                      ? Container(
-                    child: ListView.separated(
-                      padding: EdgeInsets.all(18.0),
-                      shrinkWrap: true,
-                      itemCount: _bookingResponse.bookings.length,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (BuildContext context, int index) {
-                        return ItemBooking(
-                            _bookingResponse.bookings[index],
-                            _bookingAction);
-                      },
-                      separatorBuilder:
-                          (BuildContext context, int index) {
-                        return SizedBox(
-                          height: 8.0,
-                        );
-                      },
-                    ),
-                  )
                       : _noOrderContainer(),
-                ],
-              )),
+            ],
+          )),
         ),
       ],
     );
@@ -772,7 +789,8 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 //    8 => 'Ready to be picked'
     if (status.toLowerCase().contains('all')) {
       return '0';
-    } else if (status.toLowerCase().contains('active')) {//processing
+    } else if (status.toLowerCase().contains('active')) {
+      //processing
       return '1';
     } else if (status.toLowerCase().contains('ready to be picked')) {
       return '8';
@@ -793,39 +811,36 @@ class _HomeScreenState extends BaseState<HomeScreen> {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
       _filterOptions[1] =
-      '${_bookingResponse.bookingCounts.active != null ? _bookingResponse
-          .bookingCounts.active : "0"} | Active';
+          '${_bookingResponse.bookingCounts.active != null ? _bookingResponse.bookingCounts.active : "0"} | Active';
       _filterOptions[2] =
-      '${_bookingResponse.bookingCounts.readyToBePicked} | Ready To Be Picked';
+          '${_bookingResponse.bookingCounts.readyToBePicked} | Ready To Be Picked';
       _filterOptions[3] =
-      '${_bookingResponse.bookingCounts.onTheWay} | On the way';
+          '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[4] =
-      '${_bookingResponse.bookingCounts.completed} | Completed';
+          '${_bookingResponse.bookingCounts.completed} | Completed';
       _filterOptions[5] =
-      '${_bookingResponse.bookingCounts.rejected} | Rejected';
+          '${_bookingResponse.bookingCounts.rejected} | Rejected';
     }
   }
 
-  void _bookingRequestActionMethod(BookingRequest bookingRequest,
-      RequestStatus status) async {
+  void _bookingRequestActionMethod(
+      BookingRequest bookingRequest, RequestStatus status) async {
     if (!isDutyOn()) {
       return;
     }
     switch (status) {
       case RequestStatus.accept:
-        if (!getIt
-            .get<NetworkConnectionObserver>()
-            .offline) {
+        if (!getIt.get<NetworkConnectionObserver>().offline) {
           AppUtils.showLoader(context);
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-              userId: userId, orderId: bookingRequest.id, status: '1');
+                  userId: userId, orderId: bookingRequest.id, status: '1');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
               bool isAccepted =
-              _dashboardResponse.bookingRequests.remove(bookingRequest);
+                  _dashboardResponse.bookingRequests.remove(bookingRequest);
               _pageController.jumpToPage(0);
               if (isAccepted) {
                 appPrintLog('Your Booking request is accepted');
@@ -841,19 +856,17 @@ class _HomeScreenState extends BaseState<HomeScreen> {
         }
         break;
       case RequestStatus.reject:
-        if (!getIt
-            .get<NetworkConnectionObserver>()
-            .offline) {
+        if (!getIt.get<NetworkConnectionObserver>().offline) {
           AppUtils.showLoader(context);
           BaseResponse baseResponse = await getIt
               .get<DashboardRepository>()
               .changeBookingRequestAction(
-              userId: userId, orderId: bookingRequest.id, status: '2');
+                  userId: userId, orderId: bookingRequest.id, status: '2');
           AppUtils.hideLoader(context);
           if (baseResponse != null) {
             if (baseResponse.success) {
               bool isDeleted =
-              _dashboardResponse.bookingRequests.remove(bookingRequest);
+                  _dashboardResponse.bookingRequests.remove(bookingRequest);
               _pageController.jumpToPage(0);
               if (isDeleted) {
                 appPrintLog('Your Booking request is Rejected');
@@ -871,11 +884,11 @@ class _HomeScreenState extends BaseState<HomeScreen> {
     }
   }
 
-  _bookingAction(String type,
-      dynamic booking,) async {
-    if (!getIt
-        .get<NetworkConnectionObserver>()
-        .offline) {
+  _bookingAction(
+    String type,
+    dynamic booking,
+  ) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
         setState(() {});
@@ -885,9 +898,9 @@ class _HomeScreenState extends BaseState<HomeScreen> {
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .changeBookingAction(
-          userId: userId,
-          orderId: booking.id,
-          status: _changeBookingStatus(type));
+              userId: userId,
+              orderId: booking.id,
+              status: _changeBookingStatus(type));
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
@@ -935,9 +948,11 @@ class _HomeScreenState extends BaseState<HomeScreen> {
         int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
         ongoingCounter = ongoingCounter + 1;
         _bookingResponse.bookingCounts.onTheWay = ongoingCounter.toString();
-        int readyToBePickedCounter = int.parse(_bookingResponse.bookingCounts.readyToBePicked);
+        int readyToBePickedCounter =
+            int.parse(_bookingResponse.bookingCounts.readyToBePicked);
         readyToBePickedCounter = readyToBePickedCounter - 1;
-        _bookingResponse.bookingCounts.readyToBePicked = readyToBePickedCounter.toString();
+        _bookingResponse.bookingCounts.readyToBePicked =
+            readyToBePickedCounter.toString();
         print("active===${_bookingResponse.bookingCounts.readyToBePicked}");
         break;
       case 'Complete':
@@ -946,7 +961,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
         _bookingResponse.bookingCounts.onTheWay = ongoingCounter.toString();
 
         int completedCounter =
-        int.parse(_bookingResponse.bookingCounts.completed);
+            int.parse(_bookingResponse.bookingCounts.completed);
         completedCounter = completedCounter + 1;
         _bookingResponse.bookingCounts.completed = completedCounter.toString();
         break;
