@@ -37,6 +37,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
+import 'src/components/dashboard/model/reminder_order_count_response.dart';
 import 'src/components/dashboard/repository/dashboard_repository.dart';
 import 'src/singleton/store_config_singleton.dart';
 
@@ -191,10 +192,13 @@ Future<void> initAlarm() async {
 }
 
 Future<void> initReminderAlarm() async {
-  bool isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-  print(
-      "isAndroid ${Platform.isAndroid} IsLoggedIn $isLoggedIn IsReminderEnabled ${AppSharedPref.instance.isReminderAlarmEnabled()}");
-  if (Platform.isAndroid && AppSharedPref.instance.isReminderAlarmEnabled()) {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  pref.reload();
+  bool isLoggedIn =
+      pref.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+  bool isReminderAlarmEnabled =
+      pref.getBool(AppSharePrefConstants.prefKeyAppReminderAlarm) ?? false;
+  if (Platform.isAndroid && isLoggedIn && isReminderAlarmEnabled) {
     IsolateNameServer.registerPortWithName(
       port2.sendPort,
       isolateName2,
@@ -217,17 +221,20 @@ Future<void> handleReminderAlarm() async {
   uiSendPort2 ??= IsolateNameServer.lookupPortByName(isolateName2);
   uiSendPort2?.send("");
   print('handleReminderAlarm ${DateTime.now()}');
-  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  pref.reload();
+  AppConstants.isLoggedIn =
+      pref.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
   if (AppConstants.isLoggedIn) {
-    String userId = AppSharedPref.instance.getUserId();
+    String userId = pref.getString(AppSharePrefConstants.prefKeyAppUserId);
     DashboardRepository repository = DashboardRepository();
-    // fixme:: store is null here
-    // String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
-    Map<String, dynamic> order =
-        await repository.ordersCount(storeId: '1', userId: userId);
-    if (order != null && order["success"]) {
-      if (order["order_count"] > 0) {
-        startForegroundService(order["message"]);
+    ConfigModel configModel = await getConfigureModel();
+    ReminderOrderCountResponse reminderResponse = await repository.ordersCount(
+        storeId: configModel.storeId, userId: userId);
+    if (reminderResponse != null && reminderResponse.success) {
+      if (int.parse(reminderResponse.orderCountManual) > 0 ||
+          int.parse(reminderResponse.orderCountAuto) > 0) {
+        startForegroundService('You have pending orders');
       }
     }
   }
@@ -255,6 +262,9 @@ void startForegroundService(String message) async {
 cancelReminderAlarm() async {
   if (Platform.isAndroid) AndroidAlarmManager.cancel(1);
   await FlutterNotificationPlugin.stopForegroundService();
+}
+dismissReminderAlarm() async {
+  // await FlutterNotificationPlugin.setServiceMethod(serviceMethod);
 }
 
 cancelAllAlarm() {
@@ -296,11 +306,14 @@ Future<void> handleBackgroundFunction() async {
     } catch (e) {
       debugPrint(e);
     }
+    ConfigModel configModel = await getConfigureModel();
+
     BaseResponse baseResponse = await repository.updateRunnerLatlng(
         userId: userId,
         lat: '${position.latitude}',
         lng: '${position.longitude}',
-        address: address);
+        address: address,
+        storeID: configModel.storeId);
     if (baseResponse != null && baseResponse.success) {
       print(
           'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
@@ -308,6 +321,13 @@ Future<void> handleBackgroundFunction() async {
   }
 
   // }
+}
+
+Future<ConfigModel> getConfigureModel() async {
+  String jsonResult = await loadAsset();
+  final parsed = json.decode(jsonResult);
+  ConfigModel configObject = ConfigModel.fromJson(parsed);
+  return configObject;
 }
 
 /*Setting Store Currency*/

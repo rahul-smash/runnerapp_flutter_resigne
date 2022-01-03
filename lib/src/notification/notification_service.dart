@@ -147,7 +147,7 @@ class NotificationService {
   void _handlePushWhileOpen(RemoteMessage message) {
     // appStateBloc.getNotifications();
     print('---------handlePushWhileOpen---------=${message.data}');
-
+    eventBus.fire(FCMNotificationEvent( parseNotificationData(message.data, false)));
     //Log firebase event
     // FirebaseAnalytics().logEvent(
     //   name: 'fcm_notification_foreground',
