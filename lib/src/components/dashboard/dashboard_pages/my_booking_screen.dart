@@ -372,73 +372,73 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         elevation: 0.0,
       ),
       widgets: [
-        Container(
-          child: PopupMenuButton(
-            elevation: 3.2,
-            iconSize: 5.0,
-            onCanceled: () {
-              print('You have not choosed anything');
-            },
-            tooltip: 'Sorting',
-            child: Row(
-              children: [
-                Text(
-                  'Sort By',
-                  style: TextStyle(
-                      color: AppTheme.subHeadingTextColor,
-                      fontSize: AppConstants.smallSize,
-                      fontWeight: FontWeight.w500),
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Image.asset(
-                  AppImages.icon_dropdownarrow,
-                  height: 5,
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-              ],
-            ),
-            onSelected: (value) {
-              if (value == 'Booking Date') {
-                _selectedSortingType = FilterType.Booking_Date;
-              } else {
-                _selectedSortingType = FilterType.Delivery_Time_Slot;
-              }
-              _refreshController.requestRefresh();
-            },
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15.0))),
-            itemBuilder: (BuildContext context) {
-              return _sortingType.map((String choice) {
-                return PopupMenuItem(
-                  value: choice,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        choice,
-                        style: TextStyle(
-                            color: _checkSelected(choice)
-                                ? AppTheme.primaryColorDark
-                                : AppTheme.mainTextColor),
-                      ),
-                      Visibility(
-                          visible: _checkSelected(choice),
-                          child: Icon(
-                            Icons.check,
-                            color: AppTheme.primaryColorDark,
-                          ))
-                    ],
-                  ),
-                );
-              }).toList();
-            },
-          ),
-        )
+        // Container(
+        //   child: PopupMenuButton(
+        //     elevation: 3.2,
+        //     iconSize: 5.0,
+        //     onCanceled: () {
+        //       print('You have not choosed anything');
+        //     },
+        //     tooltip: 'Sorting',
+        //     child: Row(
+        //       children: [
+        //         Text(
+        //           'Sort By',
+        //           style: TextStyle(
+        //               color: AppTheme.subHeadingTextColor,
+        //               fontSize: AppConstants.smallSize,
+        //               fontWeight: FontWeight.w500),
+        //         ),
+        //         SizedBox(
+        //           width: 5,
+        //         ),
+        //         Image.asset(
+        //           AppImages.icon_dropdownarrow,
+        //           height: 5,
+        //         ),
+        //         SizedBox(
+        //           width: 15,
+        //         ),
+        //       ],
+        //     ),
+        //     onSelected: (value) {
+        //       if (value == 'Booking Date') {
+        //         _selectedSortingType = FilterType.Booking_Date;
+        //       } else {
+        //         _selectedSortingType = FilterType.Delivery_Time_Slot;
+        //       }
+        //       _refreshController.requestRefresh();
+        //     },
+        //     shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.all(Radius.circular(15.0))),
+        //     itemBuilder: (BuildContext context) {
+        //       return _sortingType.map((String choice) {
+        //         return PopupMenuItem(
+        //           value: choice,
+        //           child: Row(
+        //             mainAxisSize: MainAxisSize.max,
+        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //             children: [
+        //               Text(
+        //                 choice,
+        //                 style: TextStyle(
+        //                     color: _checkSelected(choice)
+        //                         ? AppTheme.primaryColorDark
+        //                         : AppTheme.mainTextColor),
+        //               ),
+        //               Visibility(
+        //                   visible: _checkSelected(choice),
+        //                   child: Icon(
+        //                     Icons.check,
+        //                     color: AppTheme.primaryColorDark,
+        //                   ))
+        //             ],
+        //           ),
+        //         );
+        //       }).toList();
+        //     },
+        //   ),
+        // )
       ],
     );
   }
