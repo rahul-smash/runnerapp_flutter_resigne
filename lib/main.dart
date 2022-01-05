@@ -212,7 +212,7 @@ Future<void> initReminderAlarm() async {
       print(e);
     }
     await AndroidAlarmManager.periodic(
-        Duration(seconds: 20), 1, handleReminderAlarm,
+        Duration(seconds: 5), 1, handleReminderAlarm,
         rescheduleOnReboot: true, wakeup: true);
   }
 }
@@ -263,6 +263,7 @@ cancelReminderAlarm() async {
   if (Platform.isAndroid) AndroidAlarmManager.cancel(1);
   await FlutterNotificationPlugin.stopForegroundService();
 }
+
 dismissReminderAlarm() async {
   // await FlutterNotificationPlugin.setServiceMethod(serviceMethod);
 }
@@ -413,12 +414,18 @@ class _MainWidgetState extends State<MainWidget> {
     });
 
     eventBus.on<ReminderAlarmEvent>().listen((event) {
-      if (event.event == 'start') {
+      if (event.event == ReminderAlarmEvent.start) {
         initReminderAlarm();
-      } else if (event.event == 'cancel') {
+      } else if (event.event == ReminderAlarmEvent.cancel) {
         cancelReminderAlarm();
+      } else if (event.event == ReminderAlarmEvent.notificationDismiss) {
+        dismissReminderNotification();
       }
     });
+  }
+
+  void dismissReminderNotification() async {
+    await FlutterNotificationPlugin.stopForegroundService();
   }
 
   @override

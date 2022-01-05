@@ -33,6 +33,7 @@ class DashboardNetworkRepository extends DioBaseService {
   //OLD api
   // static const _orderCounts = '/runner_orders/OrderAssignmentCount';
   static const _orderCounts = '/runner_orders/orderCount/';
+  static const _readBooking = '/runner_orders/runnerReadManualAssignment';
   // Payment Summery
   // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/paymentSummery/31
   // Pending Payout
@@ -315,6 +316,27 @@ class DashboardNetworkRepository extends DioBaseService {
       );
       ReminderOrderCountResponse reminderOrderCountResponse = ReminderOrderCountResponse.fromJson(jsonDecode(response));
       return reminderOrderCountResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+  Future<BaseResponse> getReadBooking(
+      String userId,
+      String orderId,
+      ) async {
+    try {
+      Map<String, dynamic> param =
+      getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['runner_id'] = userId;
+      param['order_id'] = orderId;
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '${_readBooking}'),
+          param);
+      BaseResponse baseResponse =
+      BaseResponse.fromJson(jsonDecode(response));
+      return baseResponse;
     } catch (e) {
       debugPrint(e.toString());
     }

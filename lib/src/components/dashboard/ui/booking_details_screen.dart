@@ -47,6 +47,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
     storeResponse = VersionApiSingleton.instance.storeResponse;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getBookingdetails(widget.booking, isShowLoader: false);
+      //read notification
+      _getReadOrder(widget.booking);
     });
   }
 
@@ -1616,6 +1618,19 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
           .getBookingsdetails(userId: userId, orderId: booking.id);
       AppUtils.hideLoader(context);
       isBookingDetailsApiLoading = false;
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
+    setState(() {});
+  }
+
+  void _getReadOrder(
+    BookingRequest booking,
+  ) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      await getIt
+          .get<DashboardRepository>()
+          .getReadBooking(userId: userId, orderId: booking.id);
     } else {
       AppUtils.noNetWorkDialog(context);
     }

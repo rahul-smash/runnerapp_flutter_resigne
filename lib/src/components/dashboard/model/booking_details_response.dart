@@ -102,6 +102,7 @@ class Bookings {
     this.serviceDuration,
     this.storeAmt,
     this.operatorCommission,
+    this.isManualAssignment,
   });
 
   dynamic riderToStoreDistance;
@@ -149,6 +150,7 @@ class Bookings {
   dynamic distance;
   String storeAmt;
   String operatorCommission;
+  String isManualAssignment;
 
   Bookings copyWith({
     String id,
@@ -196,6 +198,7 @@ class Bookings {
     dynamic distance,
     String storeAmt,
     String operatorCommission,
+    String isManualAssignment,
   }) =>
       Bookings(
         riderToStoreDistance: riderToStoreDistance ?? this.riderToStoreDistance,
@@ -244,6 +247,7 @@ class Bookings {
         serviceDuration: serviceDuration ?? this.serviceDuration,
         storeAmt: storeAmt ?? this.storeAmt,
         operatorCommission: operatorCommission ?? this.operatorCommission,
+        isManualAssignment: isManualAssignment ?? this.isManualAssignment,
       );
 
   factory Bookings.fromRawJson(String str) =>
@@ -333,6 +337,9 @@ class Bookings {
         operatorCommission: json["operator_commission"] == null
             ? null
             : json["operator_commission"].toString(),
+    isManualAssignment: json["is_manual_assignment"] == null
+            ? null
+            : json["is_manual_assignment"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -392,6 +399,8 @@ class Bookings {
         "store_amt": storeAmt == null ? null : storeAmt,
         "operator_commission":
             operatorCommission == null ? null : operatorCommission,
+    "is_manual_assignment":
+    isManualAssignment == null ? null : isManualAssignment,
       };
 }
 

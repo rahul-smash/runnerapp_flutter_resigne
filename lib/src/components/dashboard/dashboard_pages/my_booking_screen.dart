@@ -233,8 +233,13 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                             itemCount: _bookingResponse.bookings.length,
                             itemBuilder: (BuildContext context, int index) {
                               return ItemBooking(
-                                  _bookingResponse.bookings[index],
-                                  _bookingAction);
+                                _bookingResponse.bookings[index],
+                                _bookingAction,
+                                readStatusChange: () {
+                                  _bookingResponse.bookings[index].readStatus =
+                                      '1';
+                                },
+                              );
                             },
                             separatorBuilder:
                                 (BuildContext context, int index) {

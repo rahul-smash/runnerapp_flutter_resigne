@@ -80,13 +80,13 @@ class _HomeScreenState extends BaseState<HomeScreen> {
             _refreshController.requestRefresh();
             break;
           case "user_runner_assigned":
-          //TODO: refresh page Home page and open order detail page
-            selectedBookingFilterIndex=1;
+            //TODO: refresh page Home page and open order detail page
+            selectedBookingFilterIndex = 1;
             _refreshController.requestRefresh();
             break;
           case "ORDER_READY_DELIVERYBOY":
-          //TODO: refresh page Home page and open order detail page
-            selectedBookingFilterIndex=2;
+            //TODO: refresh page Home page and open order detail page
+            selectedBookingFilterIndex = 2;
             _refreshController.requestRefresh();
 
             break;
@@ -720,8 +720,13 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
                               return ItemBooking(
-                                  _bookingResponse.bookings[index],
-                                  _bookingAction);
+                                _bookingResponse.bookings[index],
+                                _bookingAction,
+                                readStatusChange: () {
+                                  _bookingResponse.bookings[index].readStatus =
+                                      '1';
+                                },
+                              );
                             },
                             separatorBuilder:
                                 (BuildContext context, int index) {
@@ -825,6 +830,8 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   void _bookingRequestActionMethod(
       BookingRequest bookingRequest, RequestStatus status) async {
+    eventBus.fire(ReminderAlarmEvent.dismissNotification(
+        ReminderAlarmEvent.notificationDismiss));
     if (!isDutyOn()) {
       return;
     }

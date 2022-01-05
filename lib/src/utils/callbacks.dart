@@ -31,10 +31,14 @@ class AlarmEvent {
 
 class ReminderAlarmEvent {
   String event;
+  static final notificationDismiss='notificationDismiss';
+  static final start='start';
+  static final cancel='cancel';
 
   ReminderAlarmEvent.startPeriodicAlarm(this.event);
 
   ReminderAlarmEvent.cancelAllAlarm(this.event);
+  ReminderAlarmEvent.dismissNotification(this.event);
 }
 
 class FCMNotificationEvent {

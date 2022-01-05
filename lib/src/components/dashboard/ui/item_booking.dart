@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
+import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/booking_details_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/step_viewer.dart';
+import 'package:marketplace_service_provider/src/model/base_response.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
+
 class ItemBooking extends StatefulWidget {
   final BookingRequest booking;
   final Function callBackMethod;
+  final VoidCallback readStatusChange;
 
-  ItemBooking(this.booking, this.callBackMethod);
+  ItemBooking(this.booking, this.callBackMethod, {this.readStatusChange});
 
   @override
   _ItemBookingState createState() => _ItemBookingState();
@@ -216,7 +223,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
                 height: 12.0,
               ),
               Visibility(
-                visible: widget.booking.runnerDeliveryAccepted=='1',
+                visible: widget.booking.runnerDeliveryAccepted == '1',
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -240,6 +247,44 @@ class _ItemBookingState extends BaseState<ItemBooking> {
                     ),
                     SizedBox(width: 8.0),
                     _getWidgetAccordingToStatus()
+                  ],
+                ),
+              ),
+              Visibility(
+                visible: widget.booking.runnerDeliveryAccepted == '1' &&
+                    widget.booking.isManualAssignment == '1' &&
+                    widget.booking.readStatus == '0',
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        _getReadOrder(widget.booking);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            stops: [0.1, 0.5, 0.5, 0.9],
+                            colors: [
+                              AppTheme.primaryColorDark,
+                              AppTheme.primaryColor,
+                              AppTheme.primaryColor,
+                              AppTheme.primaryColor,
+                            ],
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                        child: Text('Mark as read',
+                            style: TextStyle(
+                                color: AppTheme.white,
+                                fontSize: AppConstants.extraSmallSize,
+                                fontWeight: FontWeight.normal)),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -526,5 +571,23 @@ class _ItemBookingState extends BaseState<ItemBooking> {
     }
 
     return '';
+  }
+
+  void _getReadOrder(
+    BookingRequest booking,
+  ) async {
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      BaseResponse baseResponse = await getIt
+          .get<DashboardRepository>()
+          .getReadBooking(userId: userId, orderId: booking.id);
+      if (baseResponse != null && baseResponse.success) {
+        widget.booking.readStatus = '1';
+        widget.readStatusChange();
+        setState(() {});
+      }
+    } else {
+      AppUtils.noNetWorkDialog(context);
+    }
+    setState(() {});
   }
 }

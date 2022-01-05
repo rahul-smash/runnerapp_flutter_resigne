@@ -88,7 +88,11 @@ class DashboardRepository {
     return await DashboardNetworkRepository.instance
         .ordersCount(storeId, userId);
   }
-
+  Future<BaseResponse> getReadBooking(
+      {String userId, String orderId}) async {
+    return await DashboardNetworkRepository.instance
+        .getReadBooking(userId, orderId);
+  }
   Future<NotificationModel> getNotifications({String userId}) async {
     return await DashboardNetworkRepository.instance.getNotifications(userId);
   }
