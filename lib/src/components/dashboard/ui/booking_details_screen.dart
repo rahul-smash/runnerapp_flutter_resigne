@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';

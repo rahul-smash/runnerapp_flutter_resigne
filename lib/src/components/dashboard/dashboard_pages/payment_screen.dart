@@ -360,397 +360,397 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                           SizedBox(
                             height: 10,
                           ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(
-                                Dimensions.getScaledSize(26),
-                                Dimensions.getScaledSize(15),
-                                Dimensions.getScaledSize(26),
-                                Dimensions.getScaledSize(10)),
-                            child: Text(
-                              labelDeposits,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: Dimensions.getScaledSize(
-                                      AppConstants.largeSize2X),
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(
-                                Dimensions.getScaledSize(22),
-                                0,
-                                Dimensions.getScaledSize(22),
-                                0),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (builder) =>
-                                            DepositCashScreen()));
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(25.0),
-                                child: Card(
-                                  shadowColor: AppTheme.borderOnFocusedColor,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color:
-                                            AppTheme.optionTotalBookingBgColor),
-                                    borderRadius: BorderRadius.circular(25.0),
-                                  ),
-                                  elevation: 4,
-                                  color: AppTheme.optionTotalBookingBgColor,
-                                  margin: EdgeInsets.zero,
-                                  child: Stack(
-                                    alignment: Alignment.topRight,
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topRight,
-                                        child: Container(
-                                          padding:
-                                              EdgeInsets.fromLTRB(20, 15, 10, 15),
-                                          decoration: BoxDecoration(
-                                            color: AppTheme.white,
-                                            borderRadius: BorderRadius.only(
-                                                bottomLeft: Radius.circular(30)),
-                                          ),
-                                          child: Image.asset(
-                                            AppImages.icon_next_arrow,
-                                            height: 12,
-                                            color: AppTheme
-                                                .optionTotalCustomerBgColor,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                          Dimensions.getScaledSize(20),
-                                          Dimensions.getScaledSize(20),
-                                          Dimensions.getScaledSize(20),
-                                          Dimensions.getScaledSize(15),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Container(
-                                                  child: CircularPercentIndicator(
-                                                    radius: 70.0,
-                                                    lineWidth: 6.0,
-                                                    percent: isApiLoading ||
-                                                            payoutSummaryResponse ==
-                                                                null
-                                                        ? 0.0
-                                                        : double.parse(
-                                                                payoutSummaryResponse
-                                                                    .summery
-                                                                    .deposite
-                                                                    .depositePercentage) /
-                                                            100,
-                                                    circularStrokeCap:
-                                                        CircularStrokeCap.round,
-                                                    animation: true,
-                                                    animationDuration: 500,
-                                                    center: new Text(
-                                                      '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.depositePercentage}%',
-                                                      style: TextStyle(
-                                                          color: AppTheme.white,
-                                                          fontSize: AppConstants
-                                                              .largeSize,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    progressColor: AppTheme.white,
-                                                    backgroundColor: AppTheme.darken(
-                                                        AppTheme
-                                                            .optionTotalBookingBgColor,
-                                                        .05),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                    child: Row(
-                                                  children: [
-                                                    Flexible(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            labelDepositCash,
-                                                            textAlign:
-                                                                TextAlign.center,
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize:
-                                                                    AppConstants
-                                                                        .smallSize,
-                                                                color:
-                                                                    Colors.white),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    2.0),
-                                                            child: Text(
-                                                              labelCashInHand,
-                                                              textAlign: TextAlign
-                                                                  .center,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                  fontSize:
-                                                                      AppConstants
-                                                                          .extraSmallSize,
-                                                                  color: Colors
-                                                                      .white70),
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 8.0,
-                                                                    right: 8.0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  AppConstants
-                                                                      .currency,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      fontSize:
-                                                                          AppConstants
-                                                                              .extraSmallSize,
-                                                                      color: Colors
-                                                                          .white70),
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 2,
-                                                                ),
-                                                                Text(
-                                                                  '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.cashInHand}',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          AppConstants
-                                                                              .largeSize,
-                                                                      color: Colors
-                                                                          .white),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 15,
-                                                    ),
-                                                    Flexible(
-                                                      child: Container(
-                                                        width: double.maxFinite,
-                                                        padding: EdgeInsets.only(
-                                                            left: 5, right: 5),
-                                                        decoration: BoxDecoration(
-                                                            border: Border(
-                                                                left: BorderSide(
-                                                                    color: AppTheme
-                                                                        .white))),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                              labelCashLimit,
-                                                              textAlign: TextAlign
-                                                                  .center,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize:
-                                                                      AppConstants
-                                                                          .smallSize,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsets.only(
-                                                                      left: 8.0,
-                                                                      right: 8.0),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    AppConstants
-                                                                        .currency,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .normal,
-                                                                        fontSize:
-                                                                            AppConstants
-                                                                                .extraSmallSize,
-                                                                        color: Colors
-                                                                            .white70),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 2,
-                                                                  ),
-                                                                  Text(
-                                                                    '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.cashLimit}',
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            AppConstants
-                                                                                .largeSize,
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )),
-                                              ],
-                                            ),
-                                            Visibility(
-                                              visible: false,
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 8.0, right: 8.0),
-                                                child: Text(
-                                                  '${labelUpdatedAt}${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.lastUpdated}',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      fontSize:
-                                                          AppConstants.tinySize,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              _openDepositHistoryScreen();
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                left: Dimensions.getScaledSize(22),
-                                right: Dimensions.getScaledSize(22),
-                              ),
-                              padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
-                              decoration: BoxDecoration(
-                                  color: AppTheme.white,
-                                  border: Border.all(
-                                      color: AppTheme.primaryColor, width: 1.0),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30))),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      labelDepositHistory,
-                                      style: TextStyle(
-                                          color: AppTheme.primaryColor,
-                                          fontSize: AppConstants.largeSize,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: LinearGradient(
-                                        begin: Alignment.bottomRight,
-                                        end: Alignment.topRight,
-                                        stops: [0.1, 0.9],
-                                        colors: [
-                                          AppTheme.primaryColorDark,
-                                          AppTheme.primaryColor,
-                                        ],
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 2,
-                                        ),
-                                        Image.asset(
-                                          AppImages.icon_next_arrow,
-                                          height: 12,
-                                          color: AppTheme.white,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: EdgeInsets.fromLTRB(
+                          //       Dimensions.getScaledSize(26),
+                          //       Dimensions.getScaledSize(15),
+                          //       Dimensions.getScaledSize(26),
+                          //       Dimensions.getScaledSize(10)),
+                          //   child: Text(
+                          //     labelDeposits,
+                          //     style: TextStyle(
+                          //         color: Colors.black,
+                          //         fontSize: Dimensions.getScaledSize(
+                          //             AppConstants.largeSize2X),
+                          //         fontWeight: FontWeight.w600),
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: EdgeInsets.fromLTRB(
+                          //       Dimensions.getScaledSize(22),
+                          //       0,
+                          //       Dimensions.getScaledSize(22),
+                          //       0),
+                          //   child: InkWell(
+                          //     onTap: () {
+                          //       Navigator.push(
+                          //           context,
+                          //           MaterialPageRoute(
+                          //               builder: (builder) =>
+                          //                   DepositCashScreen()));
+                          //     },
+                          //     child: ClipRRect(
+                          //       borderRadius: BorderRadius.circular(25.0),
+                          //       child: Card(
+                          //         shadowColor: AppTheme.borderOnFocusedColor,
+                          //         shape: RoundedRectangleBorder(
+                          //           side: BorderSide(
+                          //               color:
+                          //                   AppTheme.optionTotalBookingBgColor),
+                          //           borderRadius: BorderRadius.circular(25.0),
+                          //         ),
+                          //         elevation: 4,
+                          //         color: AppTheme.optionTotalBookingBgColor,
+                          //         margin: EdgeInsets.zero,
+                          //         child: Stack(
+                          //           alignment: Alignment.topRight,
+                          //           children: [
+                          //             Align(
+                          //               alignment: Alignment.topRight,
+                          //               child: Container(
+                          //                 padding:
+                          //                     EdgeInsets.fromLTRB(20, 15, 10, 15),
+                          //                 decoration: BoxDecoration(
+                          //                   color: AppTheme.white,
+                          //                   borderRadius: BorderRadius.only(
+                          //                       bottomLeft: Radius.circular(30)),
+                          //                 ),
+                          //                 child: Image.asset(
+                          //                   AppImages.icon_next_arrow,
+                          //                   height: 12,
+                          //                   color: AppTheme
+                          //                       .optionTotalCustomerBgColor,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             Padding(
+                          //               padding: EdgeInsets.fromLTRB(
+                          //                 Dimensions.getScaledSize(20),
+                          //                 Dimensions.getScaledSize(20),
+                          //                 Dimensions.getScaledSize(20),
+                          //                 Dimensions.getScaledSize(15),
+                          //               ),
+                          //               child: Column(
+                          //                 crossAxisAlignment:
+                          //                     CrossAxisAlignment.end,
+                          //                 children: [
+                          //                   Row(
+                          //                     crossAxisAlignment:
+                          //                         CrossAxisAlignment.center,
+                          //                     mainAxisAlignment:
+                          //                         MainAxisAlignment.spaceBetween,
+                          //                     children: [
+                          //                       Container(
+                          //                         child: CircularPercentIndicator(
+                          //                           radius: 70.0,
+                          //                           lineWidth: 6.0,
+                          //                           percent: isApiLoading ||
+                          //                                   payoutSummaryResponse ==
+                          //                                       null
+                          //                               ? 0.0
+                          //                               : double.parse(
+                          //                                       payoutSummaryResponse
+                          //                                           .summery
+                          //                                           .deposite
+                          //                                           .depositePercentage) /
+                          //                                   100,
+                          //                           circularStrokeCap:
+                          //                               CircularStrokeCap.round,
+                          //                           animation: true,
+                          //                           animationDuration: 500,
+                          //                           center: new Text(
+                          //                             '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.depositePercentage}%',
+                          //                             style: TextStyle(
+                          //                                 color: AppTheme.white,
+                          //                                 fontSize: AppConstants
+                          //                                     .largeSize,
+                          //                                 fontWeight:
+                          //                                     FontWeight.bold),
+                          //                           ),
+                          //                           progressColor: AppTheme.white,
+                          //                           backgroundColor: AppTheme.darken(
+                          //                               AppTheme
+                          //                                   .optionTotalBookingBgColor,
+                          //                               .05),
+                          //                         ),
+                          //                       ),
+                          //                       SizedBox(
+                          //                         width: 10,
+                          //                       ),
+                          //                       Expanded(
+                          //                           child: Row(
+                          //                         children: [
+                          //                           Flexible(
+                          //                             child: Column(
+                          //                               crossAxisAlignment:
+                          //                                   CrossAxisAlignment
+                          //                                       .start,
+                          //                               children: [
+                          //                                 Text(
+                          //                                   labelDepositCash,
+                          //                                   textAlign:
+                          //                                       TextAlign.center,
+                          //                                   style: TextStyle(
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .bold,
+                          //                                       fontSize:
+                          //                                           AppConstants
+                          //                                               .smallSize,
+                          //                                       color:
+                          //                                           Colors.white),
+                          //                                 ),
+                          //                                 Padding(
+                          //                                   padding:
+                          //                                       EdgeInsets.all(
+                          //                                           2.0),
+                          //                                   child: Text(
+                          //                                     labelCashInHand,
+                          //                                     textAlign: TextAlign
+                          //                                         .center,
+                          //                                     style: TextStyle(
+                          //                                         fontWeight:
+                          //                                             FontWeight
+                          //                                                 .normal,
+                          //                                         fontSize:
+                          //                                             AppConstants
+                          //                                                 .extraSmallSize,
+                          //                                         color: Colors
+                          //                                             .white70),
+                          //                                   ),
+                          //                                 ),
+                          //                                 Padding(
+                          //                                   padding:
+                          //                                       EdgeInsets.only(
+                          //                                           left: 8.0,
+                          //                                           right: 8.0),
+                          //                                   child: Row(
+                          //                                     mainAxisSize:
+                          //                                         MainAxisSize
+                          //                                             .min,
+                          //                                     crossAxisAlignment:
+                          //                                         CrossAxisAlignment
+                          //                                             .start,
+                          //                                     children: [
+                          //                                       Text(
+                          //                                         AppConstants
+                          //                                             .currency,
+                          //                                         textAlign:
+                          //                                             TextAlign
+                          //                                                 .center,
+                          //                                         style: TextStyle(
+                          //                                             fontWeight:
+                          //                                                 FontWeight
+                          //                                                     .normal,
+                          //                                             fontSize:
+                          //                                                 AppConstants
+                          //                                                     .extraSmallSize,
+                          //                                             color: Colors
+                          //                                                 .white70),
+                          //                                       ),
+                          //                                       SizedBox(
+                          //                                         width: 2,
+                          //                                       ),
+                          //                                       Text(
+                          //                                         '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.cashInHand}',
+                          //                                         textAlign:
+                          //                                             TextAlign
+                          //                                                 .center,
+                          //                                         style: TextStyle(
+                          //                                             fontWeight:
+                          //                                                 FontWeight
+                          //                                                     .bold,
+                          //                                             fontSize:
+                          //                                                 AppConstants
+                          //                                                     .largeSize,
+                          //                                             color: Colors
+                          //                                                 .white),
+                          //                                       ),
+                          //                                     ],
+                          //                                   ),
+                          //                                 ),
+                          //                               ],
+                          //                             ),
+                          //                           ),
+                          //                           SizedBox(
+                          //                             width: 15,
+                          //                           ),
+                          //                           Flexible(
+                          //                             child: Container(
+                          //                               width: double.maxFinite,
+                          //                               padding: EdgeInsets.only(
+                          //                                   left: 5, right: 5),
+                          //                               decoration: BoxDecoration(
+                          //                                   border: Border(
+                          //                                       left: BorderSide(
+                          //                                           color: AppTheme
+                          //                                               .white))),
+                          //                               child: Column(
+                          //                                 crossAxisAlignment:
+                          //                                     CrossAxisAlignment
+                          //                                         .center,
+                          //                                 mainAxisSize:
+                          //                                     MainAxisSize.min,
+                          //                                 children: [
+                          //                                   Text(
+                          //                                     labelCashLimit,
+                          //                                     textAlign: TextAlign
+                          //                                         .center,
+                          //                                     style: TextStyle(
+                          //                                         fontWeight:
+                          //                                             FontWeight
+                          //                                                 .w600,
+                          //                                         fontSize:
+                          //                                             AppConstants
+                          //                                                 .smallSize,
+                          //                                         color: Colors
+                          //                                             .white),
+                          //                                   ),
+                          //                                   Padding(
+                          //                                     padding:
+                          //                                         EdgeInsets.only(
+                          //                                             left: 8.0,
+                          //                                             right: 8.0),
+                          //                                     child: Row(
+                          //                                       mainAxisSize:
+                          //                                           MainAxisSize
+                          //                                               .min,
+                          //                                       crossAxisAlignment:
+                          //                                           CrossAxisAlignment
+                          //                                               .start,
+                          //                                       children: [
+                          //                                         Text(
+                          //                                           AppConstants
+                          //                                               .currency,
+                          //                                           textAlign:
+                          //                                               TextAlign
+                          //                                                   .center,
+                          //                                           style: TextStyle(
+                          //                                               fontWeight:
+                          //                                                   FontWeight
+                          //                                                       .normal,
+                          //                                               fontSize:
+                          //                                                   AppConstants
+                          //                                                       .extraSmallSize,
+                          //                                               color: Colors
+                          //                                                   .white70),
+                          //                                         ),
+                          //                                         SizedBox(
+                          //                                           width: 2,
+                          //                                         ),
+                          //                                         Text(
+                          //                                           '${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.cashLimit}',
+                          //                                           textAlign:
+                          //                                               TextAlign
+                          //                                                   .center,
+                          //                                           style: TextStyle(
+                          //                                               fontWeight:
+                          //                                                   FontWeight
+                          //                                                       .bold,
+                          //                                               fontSize:
+                          //                                                   AppConstants
+                          //                                                       .largeSize,
+                          //                                               color: Colors
+                          //                                                   .white),
+                          //                                         ),
+                          //                                       ],
+                          //                                     ),
+                          //                                   ),
+                          //                                 ],
+                          //                               ),
+                          //                             ),
+                          //                           ),
+                          //                         ],
+                          //                       )),
+                          //                     ],
+                          //                   ),
+                          //                   Visibility(
+                          //                     visible: false,
+                          //                     child: Padding(
+                          //                       padding: EdgeInsets.only(
+                          //                           left: 8.0, right: 8.0),
+                          //                       child: Text(
+                          //                         '${labelUpdatedAt}${isApiLoading || payoutSummaryResponse == null ? '--' : payoutSummaryResponse.summery.deposite.lastUpdated}',
+                          //                         textAlign: TextAlign.center,
+                          //                         style: TextStyle(
+                          //                             fontWeight:
+                          //                                 FontWeight.normal,
+                          //                             fontSize:
+                          //                                 AppConstants.tinySize,
+                          //                             color: Colors.white),
+                          //                       ),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
+                          // InkWell(
+                          //   onTap: () {
+                          //     _openDepositHistoryScreen();
+                          //   },
+                          //   child: Container(
+                          //     margin: EdgeInsets.only(
+                          //       left: Dimensions.getScaledSize(22),
+                          //       right: Dimensions.getScaledSize(22),
+                          //     ),
+                          //     padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
+                          //     decoration: BoxDecoration(
+                          //         color: AppTheme.white,
+                          //         border: Border.all(
+                          //             color: AppTheme.primaryColor, width: 1.0),
+                          //         borderRadius:
+                          //             BorderRadius.all(Radius.circular(30))),
+                          //     child: Row(
+                          //       children: [
+                          //         Expanded(
+                          //           child: Text(
+                          //             labelDepositHistory,
+                          //             style: TextStyle(
+                          //                 color: AppTheme.primaryColor,
+                          //                 fontSize: AppConstants.largeSize,
+                          //                 fontWeight: FontWeight.w600),
+                          //           ),
+                          //         ),
+                          //         Container(
+                          //           padding: EdgeInsets.all(10),
+                          //           decoration: BoxDecoration(
+                          //             shape: BoxShape.circle,
+                          //             gradient: LinearGradient(
+                          //               begin: Alignment.bottomRight,
+                          //               end: Alignment.topRight,
+                          //               stops: [0.1, 0.9],
+                          //               colors: [
+                          //                 AppTheme.primaryColorDark,
+                          //                 AppTheme.primaryColor,
+                          //               ],
+                          //             ),
+                          //           ),
+                          //           child: Row(
+                          //             children: [
+                          //               SizedBox(
+                          //                 width: 2,
+                          //               ),
+                          //               Image.asset(
+                          //                 AppImages.icon_next_arrow,
+                          //                 height: 12,
+                          //                 color: AppTheme.white,
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                           SizedBox(
                             height: 20,
                           ),

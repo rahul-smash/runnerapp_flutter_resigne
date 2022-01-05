@@ -12,7 +12,7 @@ class CommonNetworkUtils{
 
     Map<String, dynamic> param = {
       'device_id': deviceId,
-      'device_token': deviceToken,
+      '`device_token': deviceToken,
       'platform': platform
     };*/
     return DeviceInfo.getInstance().deviceInfo;
