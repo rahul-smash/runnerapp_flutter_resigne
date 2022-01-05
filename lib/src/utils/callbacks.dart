@@ -52,3 +52,7 @@ class FCMNotificationEvent {
 
   FCMNotificationEvent.orderReadyDeliveryBoy(this.data);
 }
+
+class RefreshEvent{
+  RefreshEvent();
+}

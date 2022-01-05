@@ -52,6 +52,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
   int selectedBookingFilterIndex = 0;
   StreamSubscription fcmEventStream;
+  StreamSubscription refreshEventStream;
 
   @override
   void initState() {
@@ -91,6 +92,11 @@ class _HomeScreenState extends BaseState<HomeScreen> {
 
             break;
         }
+    });
+
+    refreshEventStream = eventBus.on<RefreshEvent>().listen((event) {
+      if (mounted && _refreshController != null)
+        _refreshController.requestRefresh();
     });
   }
 
@@ -150,6 +156,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
     super.dispose();
     _pageController.dispose();
     if (fcmEventStream != null) fcmEventStream.cancel();
+    if (refreshEventStream != null) refreshEventStream.cancel();
   }
 
   void _onRefresh() async {

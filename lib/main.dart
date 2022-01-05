@@ -235,6 +235,7 @@ Future<void> handleReminderAlarm() async {
       if (int.parse(reminderResponse.orderCountManual) > 0 ||
           int.parse(reminderResponse.orderCountAuto) > 0) {
         startForegroundService('You have pending orders');
+        if (eventBus != null) eventBus.fire(RefreshEvent());
       }
     }
   }

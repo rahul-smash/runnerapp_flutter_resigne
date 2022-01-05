@@ -12,6 +12,7 @@ import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 
@@ -36,6 +37,9 @@ class _ItemBookingState extends BaseState<ItemBooking> {
   Widget builder(BuildContext context) {
     return InkWell(
       onTap: () {
+        widget.booking.readStatus = '1';
+        widget.readStatusChange();
+        setState(() {});
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -259,6 +263,8 @@ class _ItemBookingState extends BaseState<ItemBooking> {
                   children: [
                     InkWell(
                       onTap: () {
+                        eventBus.fire(ReminderAlarmEvent.dismissNotification(
+                            ReminderAlarmEvent.notificationDismiss));
                         _getReadOrder(widget.booking);
                       },
                       child: Container(

@@ -19,6 +19,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/utils/map_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
@@ -49,6 +50,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
       //read notification
       _getReadOrder(widget.booking);
     });
+    eventBus.fire(ReminderAlarmEvent.dismissNotification(
+        ReminderAlarmEvent.notificationDismiss));
   }
 
   getLatLng(Position position) async {
@@ -294,6 +297,51 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                 ),
                               ],
                             ),
+                            SizedBox(
+                              height: 12.0,
+                            ),
+                            // Visibility(
+                            //   visible: widget.booking.runnerDeliveryAccepted ==
+                            //           '1' &&
+                            //       widget.booking.isManualAssignment == '1' &&
+                            //       widget.booking.readStatus == '0',
+                            //   child: Row(
+                            //     mainAxisAlignment:
+                            //         MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       InkWell(
+                            //         onTap: () {
+                            //           _getReadOrder(widget.booking);
+                            //         },
+                            //         child: Container(
+                            //           decoration: BoxDecoration(
+                            //             borderRadius: BorderRadius.all(
+                            //                 Radius.circular(30)),
+                            //             gradient: LinearGradient(
+                            //               begin: Alignment.topRight,
+                            //               end: Alignment.bottomLeft,
+                            //               stops: [0.1, 0.5, 0.5, 0.9],
+                            //               colors: [
+                            //                 AppTheme.primaryColorDark,
+                            //                 AppTheme.primaryColor,
+                            //                 AppTheme.primaryColor,
+                            //                 AppTheme.primaryColor,
+                            //               ],
+                            //             ),
+                            //           ),
+                            //           padding: EdgeInsets.symmetric(
+                            //               vertical: 8.0, horizontal: 12.0),
+                            //           child: Text('Mark as read',
+                            //               style: TextStyle(
+                            //                   color: AppTheme.white,
+                            //                   fontSize:
+                            //                       AppConstants.extraSmallSize,
+                            //                   fontWeight: FontWeight.normal)),
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                             SizedBox(
                               height: 12.0,
                             ),
@@ -1627,9 +1675,14 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
     BookingRequest booking,
   ) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
-      await getIt
+      BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .getReadBooking(userId: userId, orderId: booking.id);
+      if (baseResponse != null) {
+        widget.booking.readStatus = '1';
+        _bookingDetailsResponse.bookings.readStatus = '1';
+        setState(() {});
+      }
     } else {
       AppUtils.noNetWorkDialog(context);
     }

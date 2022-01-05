@@ -44,6 +44,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
 
   List<String> _sortingType = ['Booking Date', 'Delivery Date'];
   StreamSubscription fcmEventStream;
+  StreamSubscription refreshEventStream;
 
   @override
   void initState() {
@@ -80,12 +81,18 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
             break;
         }
     });
+
+    refreshEventStream = eventBus.on<RefreshEvent>().listen((event) {
+      if (mounted && _refreshController != null)
+        _refreshController.requestRefresh();
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     if (fcmEventStream != null) fcmEventStream.cancel();
+    if (refreshEventStream != null) refreshEventStream.cancel();
   }
 
   void _getMyBookingOrders(

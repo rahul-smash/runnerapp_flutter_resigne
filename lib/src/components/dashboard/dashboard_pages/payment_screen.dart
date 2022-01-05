@@ -277,12 +277,11 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                       topLeft: const Radius.circular(30.0),
                       topRight: const Radius.circular(30.0))),
               margin: EdgeInsets.only(top: Dimensions.getScaledSize(110)),
-              child: SingleChildScrollView(
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Image.asset(AppImages.icon_payout_bottom_bg),
-                    Container(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  SingleChildScrollView(
+                    child: Container(
                       // height: double.maxFinite,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -770,13 +769,12 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                                   border: Border.all(
                                       color: AppTheme.primaryColor, width: 1.0),
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(30))),
+                                      BorderRadius.all(Radius.circular(30))),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      labelDuePayout
-                                      ,
+                                      labelDuePayout,
                                       style: TextStyle(
                                           color: AppTheme.primaryColor,
                                           fontSize: AppConstants.largeSize,
@@ -820,10 +818,13 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+            // Positioned(
+            //   child: Image.asset(AppImages.icon_payout_bottom_bg),
+            // ),
           ],
         )),
       ),
@@ -835,6 +836,7 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
     Navigator.push(context,
         MaterialPageRoute(builder: (builder) => DepositHistoryScreen()));
   }
+
   void _openDuePayoutDetail() {
     //TODO: handle this
     Navigator.push(context,
