@@ -63,7 +63,7 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
         } else if (selectedFilter == _overviewOptions[1]) {
           return 'yesterday';
         } else if (selectedFilter == _overviewOptions[2]) {
-          return 'sevendays';
+          return 'weekly';
         }
       } else {
         return 'today';
