@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'api_exception.dart';
 
 abstract class DioBaseService {
-  static const REQUEST_TIME_OUT = 10000;
-  static const RESPONSE_TIME_OUT = 10000;
+  static const REQUEST_TIME_OUT = 60000;
+  static const RESPONSE_TIME_OUT = 60000;
   static const CONNECTION_TIME_OUT = 30000;
   Dio _dioClient;
   String _baseUrl;
