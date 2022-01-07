@@ -865,53 +865,53 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   SizedBox(
                                     height: 20,
                                   ),
+                                  // Visibility(
+                                  //   visible: _bookingDetailsResponse != null &&
+                                  //       _bookingDetailsResponse
+                                  //           .bookings.storeAmt.isNotEmpty,
+                                  //   child: Padding(
+                                  //       padding: EdgeInsets.only(
+                                  //           top: 4.0, bottom: 4.0),
+                                  //       child: RichText(
+                                  //         text: TextSpan(
+                                  //           text: "$labelPleasePay ",
+                                  //           style: TextStyle(
+                                  //               color: AppTheme
+                                  //                   .subHeadingTextColor,
+                                  //               fontSize:
+                                  //                   AppConstants.largeSize,
+                                  //               fontFamily:
+                                  //                   AppConstants.fontName),
+                                  //           children: <TextSpan>[
+                                  //             TextSpan(
+                                  //                 text:
+                                  //                     '${AppConstants.currency}${_bookingDetailsResponse.bookings.storeAmt}',
+                                  //                 style: TextStyle(
+                                  //                     color: AppTheme.errorRed,
+                                  //                     fontSize: AppConstants
+                                  //                         .largeSize2X,
+                                  //                     fontWeight:
+                                  //                         FontWeight.bold,
+                                  //                     fontFamily: AppConstants
+                                  //                         .fontName)),
+                                  //             TextSpan(
+                                  //               text: ' $labelToStop',
+                                  //               style: TextStyle(
+                                  //                   color: AppTheme
+                                  //                       .subHeadingTextColor,
+                                  //                   fontSize:
+                                  //                       AppConstants.largeSize,
+                                  //                   fontFamily:
+                                  //                       AppConstants.fontName),
+                                  //             ),
+                                  //           ],
+                                  //         ),
+                                  //       )),
+                                  // ),
                                   Visibility(
                                     visible: _bookingDetailsResponse != null &&
-                                        _bookingDetailsResponse
-                                            .bookings.storeAmt.isNotEmpty,
-                                    child: Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 4.0, bottom: 4.0),
-                                        child: RichText(
-                                          text: TextSpan(
-                                            text: "$labelPleasePay ",
-                                            style: TextStyle(
-                                                color: AppTheme
-                                                    .subHeadingTextColor,
-                                                fontSize:
-                                                    AppConstants.largeSize,
-                                                fontFamily:
-                                                    AppConstants.fontName),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                  text:
-                                                      '${AppConstants.currency}${_bookingDetailsResponse.bookings.storeAmt}',
-                                                  style: TextStyle(
-                                                      color: AppTheme.errorRed,
-                                                      fontSize: AppConstants
-                                                          .largeSize2X,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontFamily: AppConstants
-                                                          .fontName)),
-                                              TextSpan(
-                                                text: ' $labelToStop',
-                                                style: TextStyle(
-                                                    color: AppTheme
-                                                        .subHeadingTextColor,
-                                                    fontSize:
-                                                        AppConstants.largeSize,
-                                                    fontFamily:
-                                                        AppConstants.fontName),
-                                              ),
-                                            ],
-                                          ),
-                                        )),
-                                  ),
-                                  Visibility(
-                                    visible: _bookingDetailsResponse != null &&
-                                        _bookingDetailsResponse
-                                            .bookings.storeAmt.isNotEmpty &&
+                                        // _bookingDetailsResponse
+                                        //     .bookings.storeAmt.isNotEmpty &&
                                         _bookingDetailsResponse
                                                 .bookings.paymentMethod ==
                                             'cod',
@@ -977,8 +977,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   ),
                                   Visibility(
                                     visible: _bookingDetailsResponse != null &&
-                                        _bookingDetailsResponse
-                                            .bookings.storeAmt.isNotEmpty &&
+                                        // _bookingDetailsResponse
+                                        //     .bookings.storeAmt.isNotEmpty &&
                                         _bookingDetailsResponse
                                                 .bookings.paymentMethod !=
                                             'cod',
@@ -1037,33 +1037,33 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     color: Color(0xFFE1E1E1),
                                     height: 1,
                                   ),
-                                  Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 4.0, bottom: 4.0),
-                                      child: RichText(
-                                        text: TextSpan(
-                                          text: "$labelRiderCommission: ",
-                                          style: TextStyle(
-                                              color: AppTheme.mainTextColor,
-                                              fontSize: AppConstants.largeSize,
-                                              height: 1.5,
-                                              fontFamily:
-                                                  AppConstants.fontName),
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                                text:
-                                                    '${AppConstants.currency}${_bookingDetailsResponse.runnerPayoutAmount}',
-                                                style: TextStyle(
-                                                    color: AppTheme
-                                                        .lightGreenColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: AppConstants
-                                                        .largeSize2X,
-                                                    fontFamily:
-                                                        AppConstants.fontName)),
-                                          ],
-                                        ),
-                                      )),
+                                  // Padding(
+                                  //     padding: EdgeInsets.only(
+                                  //         top: 4.0, bottom: 4.0),
+                                  //     child: RichText(
+                                  //       text: TextSpan(
+                                  //         text: "$labelRiderCommission: ",
+                                  //         style: TextStyle(
+                                  //             color: AppTheme.mainTextColor,
+                                  //             fontSize: AppConstants.largeSize,
+                                  //             height: 1.5,
+                                  //             fontFamily:
+                                  //                 AppConstants.fontName),
+                                  //         children: <TextSpan>[
+                                  //           TextSpan(
+                                  //               text:
+                                  //                   '${AppConstants.currency}${_bookingDetailsResponse.runnerPayoutAmount}',
+                                  //               style: TextStyle(
+                                  //                   color: AppTheme
+                                  //                       .lightGreenColor,
+                                  //                   fontWeight: FontWeight.bold,
+                                  //                   fontSize: AppConstants
+                                  //                       .largeSize2X,
+                                  //                   fontFamily:
+                                  //                       AppConstants.fontName)),
+                                  //         ],
+                                  //       ),
+                                  //     )),
                                 ],
                               ),
                             ],
@@ -1679,8 +1679,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
           .get<DashboardRepository>()
           .getReadBooking(userId: userId, orderId: booking.id);
       if (baseResponse != null) {
-        widget.booking.readStatus = '1';
-        _bookingDetailsResponse.bookings.readStatus = '1';
+        // widget.booking.readStatus = '1';
+        // _bookingDetailsResponse.bookings.readStatus = '1';
         setState(() {});
       }
     } else {

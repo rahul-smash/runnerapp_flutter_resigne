@@ -108,7 +108,6 @@ class LoginNetworkRepository extends DioBaseService {
 
     try {
       print('@@resetPinOtpApi---'+param.toString());
-
       var response = await post(apiPath(storeId, _resetPinOTP), param);
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
       return baseResponse;
@@ -176,6 +175,7 @@ class LoginNetworkRepository extends DioBaseService {
     param['pin'] = mPin;
     param['confirm_pin'] = mPin;
     param['user_id'] = userId;
+
     try {
       print('@@_setPin---'+param.toString());
       var response = await post(apiPath(storeId, _setPin), param);

@@ -319,19 +319,19 @@ class _LoginScreenState extends BaseState<LoginScreen> {
         return;
       }
 
-      if (mobileEmailCont.text.isEmpty) {
-        storeResponse.brand.internationalOtp == "1"
-            ? AppUtils.showToast("Please enter email", true)
-            : AppUtils.showToast("Please enter mobile number", true);
-        return;
-      }
-      if (mobileEmailCont.text.length < 10 ||
-          !AppUtils.validateEmail(mobileEmailCont.text.trim())) {
-        storeResponse.brand.internationalOtp == "1"
-            ? AppUtils.showToast(validEmail, true)
-            : AppUtils.showToast(validMobileNumber, false);
-        return;
-      }
+      // if (mobileEmailCont.text.isEmpty) {
+      //   storeResponse.brand.internationalOtp == "1"
+      //       ? AppUtils.showToast("Please enter email", true)
+      //       : AppUtils.showToast("Please enter mobile number", true);
+      //   return;
+      // }
+      // if (mobileEmailCont.text.length < 11 ||
+      //     !AppUtils.validateEmail(mobileEmailCont.text.trim())) {
+      //   storeResponse.brand.internationalOtp == "1"
+      //       ? AppUtils.showToast(validEmail, true)
+      //       : AppUtils.showToast(validMobileNumber, true);
+      //   return;
+      // }
 
       storeResponse.brand.internationalOtp == "1"
           ? loginBloc.perfromUserLogin(

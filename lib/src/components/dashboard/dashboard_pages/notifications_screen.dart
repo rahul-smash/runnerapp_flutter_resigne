@@ -82,6 +82,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   _buildNotificationView(int index) {
+    print("check date:${_notificationResponse.data.notification[index].date}");
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
