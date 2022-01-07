@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
@@ -12,6 +14,7 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -40,20 +43,56 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
   FilterType _selectedSortingType = FilterType.Delivery_Time_Slot;
 
   List<String> _sortingType = ['Booking Date', 'Delivery Date'];
+  StreamSubscription fcmEventStream;
+  StreamSubscription refreshEventStream;
 
   @override
   void initState() {
     super.initState();
     //Filter option
     _filterOptions.add('All');
-    _filterOptions.add('Upcoming');
-    _filterOptions.add('Ongoing');
+    _filterOptions.add('Active');
+    _filterOptions.add('Ready To Be Picked');
+    _filterOptions.add('On the way');
     _filterOptions.add('Completed');
     _filterOptions.add('Rejected');
     // _filterOptions.add('Cancelled');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getMyBookingOrders(bookingSorting: FilterType.Delivery_Time_Slot);
     });
+
+    fcmEventStream = eventBus.on<FCMNotificationEvent>().listen((event) {
+      if (event != null && event.data != null)
+        switch (event.data.notifyType) {
+          case "runner_allocation":
+            //TODO:
+            _refreshController.requestRefresh();
+            break;
+          case "user_runner_assigned":
+            //TODO: refresh page Home page and open order detail page
+            selectedFilterIndex = 1;
+            _refreshController.requestRefresh();
+            break;
+          case "ORDER_READY_DELIVERYBOY":
+            //TODO: refresh page Home page and open order detail page
+            selectedFilterIndex = 2;
+            _refreshController.requestRefresh();
+
+            break;
+        }
+    });
+
+    refreshEventStream = eventBus.on<RefreshEvent>().listen((event) {
+      if (mounted && _refreshController != null)
+        _refreshController.requestRefresh();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (fcmEventStream != null) fcmEventStream.cancel();
+    if (refreshEventStream != null) refreshEventStream.cancel();
   }
 
   void _getMyBookingOrders(
@@ -64,7 +103,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: userId,
-          status: _getCurrentStatus(selectedFilterIndex),
+          status: _getCurrentStatus(_filterOptions[selectedFilterIndex]),
           bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot,
           page: 1,
           limit: 1000);
@@ -82,41 +121,44 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
       _filterOptions[1] =
-          '${_bookingResponse.bookingCounts.upcoming} | Upcoming';
-      _filterOptions[2] = '${_bookingResponse.bookingCounts.ongoing} | Ongoing';
+          '${_bookingResponse.bookingCounts.active != null ? _bookingResponse.bookingCounts.active : "0"} | Active';
+      _filterOptions[2] =
+          '${_bookingResponse.bookingCounts.readyToBePicked} | Ready To Be Picked';
       _filterOptions[3] =
-          '${_bookingResponse.bookingCounts.completed} | Completed';
+          '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[4] =
+          '${_bookingResponse.bookingCounts.completed} | Completed';
+      _filterOptions[5] =
           '${_bookingResponse.bookingCounts.rejected} | Rejected';
     }
   }
 
-  _getCurrentStatus(int selectedFilterIndex) {
+  _getCurrentStatus(String status) {
 //    0 => 'pending',
 //    1 =>'accepted',
 //    2 =>'rejected',
 //    4 =>'ongoing',
 //    5 =>'completed',
 //    6 => 'cancelled' // cancelled by customer
-    switch (selectedFilterIndex) {
-      case 0:
-        return '0';
-        break; // all
-      case 1:
-        return '1';
-        break; // upcoming
-      case 2:
-        return '4';
-        break; // ongoing
-      case 3:
-        return '5';
-        break; // completed
-      case 4:
-        return '2';
-        break; // rejected
-      case 5:
-        return '6';
-        break; // cancelled
+//    7 => 'On the way'
+//    8 => 'Ready to be picked'
+    if (status.toLowerCase().contains('all')) {
+      return '0';
+    } else if (status.toLowerCase().contains('active')) {
+      //processing
+      return '1';
+    } else if (status.toLowerCase().contains('ready to be picked')) {
+      return '8';
+    } else if (status.toLowerCase().contains('on the way')) {
+      return '7';
+    } else if (status.toLowerCase().contains('rejected')) {
+      return '2';
+    } else if (status.toLowerCase().contains('completed')) {
+      return '5';
+    } else if (status.toLowerCase().contains('cancelled')) {
+      return '6';
+    } else {
+      return '0';
     }
   }
 
@@ -198,8 +240,13 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                             itemCount: _bookingResponse.bookings.length,
                             itemBuilder: (BuildContext context, int index) {
                               return ItemBooking(
-                                  _bookingResponse.bookings[index],
-                                  _bookingAction);
+                                _bookingResponse.bookings[index],
+                                _bookingAction,
+                                readStatusChange: () {
+                                  _bookingResponse.bookings[index].readStatus =
+                                      '1';
+                                },
+                              );
                             },
                             separatorBuilder:
                                 (BuildContext context, int index) {
@@ -219,8 +266,8 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
 
   _changeBookingStatus(String type) {
     switch (type) {
-      case 'Ongoing':
-        return '4';
+      case 'On the way':
+        return '7';
         break;
       case 'Complete':
         return '5';
@@ -228,7 +275,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
     }
   }
 
-  _bookingAction(String type, BookingRequest booking) async {
+  _bookingAction(String type, dynamic booking) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
@@ -244,11 +291,23 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
-          int index = _bookingResponse.bookings.indexOf(booking);
+          int tempIndex = -1;
+          for (int i = 0; i < _bookingResponse.bookings.length; i++) {
+            if (booking.id == _bookingResponse.bookings[i].id) {
+              tempIndex = i;
+              break;
+            }
+          }
+          // int index = _bookingResponse.bookings.indexOf(booking);
+          if (tempIndex == -1) {
+            return;
+          }
+          int index = tempIndex;
           _bookingResponse.bookings[index].status = _changeBookingStatus(type);
           if (selectedFilterIndex != 0) {
             _bookingResponse.bookings.removeAt(index);
           }
+          _refreshController.requestRefresh();
           setState(() {});
         } else {
           AppUtils.showToast(baseResponse.message, false);
@@ -325,73 +384,73 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
         elevation: 0.0,
       ),
       widgets: [
-        Container(
-          child: PopupMenuButton(
-            elevation: 3.2,
-            iconSize: 5.0,
-            onCanceled: () {
-              print('You have not chossed anything');
-            },
-            tooltip: 'Sorting',
-            child: Row(
-              children: [
-                Text(
-                  'Sort By',
-                  style: TextStyle(
-                      color: AppTheme.subHeadingTextColor,
-                      fontSize: AppConstants.smallSize,
-                      fontWeight: FontWeight.w500),
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Image.asset(
-                  AppImages.icon_dropdownarrow,
-                  height: 5,
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-              ],
-            ),
-            onSelected: (value) {
-              if (value == 'Booking Date') {
-                _selectedSortingType = FilterType.Booking_Date;
-              } else {
-                _selectedSortingType = FilterType.Delivery_Time_Slot;
-              }
-              _refreshController.requestRefresh();
-            },
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15.0))),
-            itemBuilder: (BuildContext context) {
-              return _sortingType.map((String choice) {
-                return PopupMenuItem(
-                  value: choice,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        choice,
-                        style: TextStyle(
-                            color: _checkSelected(choice)
-                                ? AppTheme.primaryColorDark
-                                : AppTheme.mainTextColor),
-                      ),
-                      Visibility(
-                          visible: _checkSelected(choice),
-                          child: Icon(
-                            Icons.check,
-                            color: AppTheme.primaryColorDark,
-                          ))
-                    ],
-                  ),
-                );
-              }).toList();
-            },
-          ),
-        )
+        // Container(
+        //   child: PopupMenuButton(
+        //     elevation: 3.2,
+        //     iconSize: 5.0,
+        //     onCanceled: () {
+        //       print('You have not choosed anything');
+        //     },
+        //     tooltip: 'Sorting',
+        //     child: Row(
+        //       children: [
+        //         Text(
+        //           'Sort By',
+        //           style: TextStyle(
+        //               color: AppTheme.subHeadingTextColor,
+        //               fontSize: AppConstants.smallSize,
+        //               fontWeight: FontWeight.w500),
+        //         ),
+        //         SizedBox(
+        //           width: 5,
+        //         ),
+        //         Image.asset(
+        //           AppImages.icon_dropdownarrow,
+        //           height: 5,
+        //         ),
+        //         SizedBox(
+        //           width: 15,
+        //         ),
+        //       ],
+        //     ),
+        //     onSelected: (value) {
+        //       if (value == 'Booking Date') {
+        //         _selectedSortingType = FilterType.Booking_Date;
+        //       } else {
+        //         _selectedSortingType = FilterType.Delivery_Time_Slot;
+        //       }
+        //       _refreshController.requestRefresh();
+        //     },
+        //     shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.all(Radius.circular(15.0))),
+        //     itemBuilder: (BuildContext context) {
+        //       return _sortingType.map((String choice) {
+        //         return PopupMenuItem(
+        //           value: choice,
+        //           child: Row(
+        //             mainAxisSize: MainAxisSize.max,
+        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //             children: [
+        //               Text(
+        //                 choice,
+        //                 style: TextStyle(
+        //                     color: _checkSelected(choice)
+        //                         ? AppTheme.primaryColorDark
+        //                         : AppTheme.mainTextColor),
+        //               ),
+        //               Visibility(
+        //                   visible: _checkSelected(choice),
+        //                   child: Icon(
+        //                     Icons.check,
+        //                     color: AppTheme.primaryColorDark,
+        //                   ))
+        //             ],
+        //           ),
+        //         );
+        //       }).toList();
+        //     },
+        //   ),
+        // )
       ],
     );
   }

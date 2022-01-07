@@ -24,6 +24,7 @@ import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
 import 'package:marketplace_service_provider/src/notification/notification_service.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
@@ -31,10 +32,12 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/dimensions/size_config.dart';
 import 'core/dimensions/size_custom_config.dart';
 import 'core/network/connectivity/network_connection_observer.dart';
+import 'src/components/dashboard/model/reminder_order_count_response.dart';
 import 'src/components/dashboard/repository/dashboard_repository.dart';
 import 'src/singleton/store_config_singleton.dart';
 
@@ -189,10 +192,13 @@ Future<void> initAlarm() async {
 }
 
 Future<void> initReminderAlarm() async {
-  bool isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-  print(
-      "isAndroid ${Platform.isAndroid} IsLoggedIn $isLoggedIn IsReminderEnabled ${AppSharedPref.instance.isReminderAlarmEnabled()}");
-  if (Platform.isAndroid && AppSharedPref.instance.isReminderAlarmEnabled()) {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  pref.reload();
+  bool isLoggedIn =
+      pref.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+  bool isReminderAlarmEnabled =
+      pref.getBool(AppSharePrefConstants.prefKeyAppReminderAlarm) ?? false;
+  if (Platform.isAndroid && isLoggedIn && isReminderAlarmEnabled) {
     IsolateNameServer.registerPortWithName(
       port2.sendPort,
       isolateName2,
@@ -206,7 +212,7 @@ Future<void> initReminderAlarm() async {
       print(e);
     }
     await AndroidAlarmManager.periodic(
-        Duration(seconds: 20), 1, handleReminderAlarm,
+        Duration(seconds: 5), 1, handleReminderAlarm,
         rescheduleOnReboot: true, wakeup: true);
   }
 }
@@ -215,17 +221,21 @@ Future<void> handleReminderAlarm() async {
   uiSendPort2 ??= IsolateNameServer.lookupPortByName(isolateName2);
   uiSendPort2?.send("");
   print('handleReminderAlarm ${DateTime.now()}');
-  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  pref.reload();
+  AppConstants.isLoggedIn =
+      pref.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
   if (AppConstants.isLoggedIn) {
-    String userId = AppSharedPref.instance.getUserId();
+    String userId = pref.getString(AppSharePrefConstants.prefKeyAppUserId);
     DashboardRepository repository = DashboardRepository();
-    // fixme:: store is null here
-    // String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
-    Map<String, dynamic> order =
-        await repository.ordersCount(storeId: '1', userId: userId);
-    if (order != null && order["success"]) {
-      if (order["order_count"] > 0) {
-        startForegroundService(order["message"]);
+    ConfigModel configModel = await getConfigureModel();
+    ReminderOrderCountResponse reminderResponse = await repository.ordersCount(
+        storeId: configModel.storeId, userId: userId);
+    if (reminderResponse != null && reminderResponse.success) {
+      if (int.parse(reminderResponse.orderCountManual) > 0 ||
+          int.parse(reminderResponse.orderCountAuto) > 0) {
+        startForegroundService('You have pending orders');
+        if (eventBus != null) eventBus.fire(RefreshEvent());
       }
     }
   }
@@ -255,6 +265,10 @@ cancelReminderAlarm() async {
   await FlutterNotificationPlugin.stopForegroundService();
 }
 
+dismissReminderAlarm() async {
+  // await FlutterNotificationPlugin.setServiceMethod(serviceMethod);
+}
+
 cancelAllAlarm() {
   if (Platform.isAndroid) AndroidAlarmManager.cancel(0);
 }
@@ -264,7 +278,10 @@ SendPort uiSendPort;
 SendPort uiSendPort2;
 //Only for use android Platform
 Future<void> handleBackgroundFunction() async {
-  await AppSharedPref.instance.init();
+  // await AppSharedPref.instance.init();
+
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  pref.reload();
   final DateTime now = DateTime.now();
   final int isolateId = Isolate.current.hashCode;
   // if(LocationPermission.always==Geolocator.checkPermission()){
@@ -274,11 +291,14 @@ Future<void> handleBackgroundFunction() async {
   // This will be null if we're running in the background.
   uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
   uiSendPort?.send("");
-  AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  AppConstants.isLoggedIn =
+      pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
   print(
       "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
   if (AppConstants.isLoggedIn) {
-    String userId = AppSharedPref.instance.getUserId();
+    // String userId = AppSharedPref.instance.getUserId();
+    String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
     DashboardRepository repository = DashboardRepository();
     String address = 'N/A';
     try {
@@ -288,18 +308,28 @@ Future<void> handleBackgroundFunction() async {
     } catch (e) {
       debugPrint(e);
     }
+    ConfigModel configModel = await getConfigureModel();
+
     BaseResponse baseResponse = await repository.updateRunnerLatlng(
         userId: userId,
         lat: '${position.latitude}',
         lng: '${position.longitude}',
-        address: address);
+        address: address,
+        storeID: configModel.storeId);
     if (baseResponse != null && baseResponse.success) {
       print(
-          'getCurrentPosition ===reseResponse updating lat lng====${baseResponse}');
+          'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
     }
   }
 
   // }
+}
+
+Future<ConfigModel> getConfigureModel() async {
+  String jsonResult = await loadAsset();
+  final parsed = json.decode(jsonResult);
+  ConfigModel configObject = ConfigModel.fromJson(parsed);
+  return configObject;
 }
 
 /*Setting Store Currency*/
@@ -385,12 +415,18 @@ class _MainWidgetState extends State<MainWidget> {
     });
 
     eventBus.on<ReminderAlarmEvent>().listen((event) {
-      if (event.event == 'start') {
+      if (event.event == ReminderAlarmEvent.start) {
         initReminderAlarm();
-      } else if (event.event == 'cancel') {
+      } else if (event.event == ReminderAlarmEvent.cancel) {
         cancelReminderAlarm();
+      } else if (event.event == ReminderAlarmEvent.notificationDismiss) {
+        dismissReminderNotification();
       }
     });
+  }
+
+  void dismissReminderNotification() async {
+    await FlutterNotificationPlugin.stopForegroundService();
   }
 
   @override

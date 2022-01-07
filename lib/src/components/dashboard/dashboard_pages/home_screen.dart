@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
@@ -17,6 +19,8 @@ import 'package:marketplace_service_provider/src/utils/app_images.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
+import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -31,7 +35,7 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends BaseState<HomeScreen> {
   String userId;
   List<String> _overviewOptions = List.empty(growable: true);
   List<String> _filterOptions = List.empty(growable: true);
@@ -47,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isBookingApiLoading = true;
 
   int selectedBookingFilterIndex = 0;
+  StreamSubscription fcmEventStream;
+  StreamSubscription refreshEventStream;
 
   @override
   void initState() {
@@ -57,14 +63,40 @@ class _HomeScreenState extends State<HomeScreen> {
     _overviewOptions.add('7 days');
     //Filter option
     _filterOptions.add('All');
-    _filterOptions.add('Upcoming');
-    _filterOptions.add('Ongoing');
+    _filterOptions.add('Active');
+    _filterOptions.add('Ready To Be Picked');
+    _filterOptions.add('On the way');
     _filterOptions.add('Completed');
     _filterOptions.add('Rejected');
     // _filterOptions.add('Cancelled');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _getDashboardSummary();
       _getMyBookingOrders();
+    });
+    fcmEventStream = eventBus.on<FCMNotificationEvent>().listen((event) {
+      if (event != null && event.data != null)
+        switch (event.data.notifyType) {
+          case "runner_allocation":
+            //TODO:
+            _refreshController.requestRefresh();
+            break;
+          case "user_runner_assigned":
+            //TODO: refresh page Home page and open order detail page
+            selectedBookingFilterIndex = 1;
+            _refreshController.requestRefresh();
+            break;
+          case "ORDER_READY_DELIVERYBOY":
+            //TODO: refresh page Home page and open order detail page
+            selectedBookingFilterIndex = 2;
+            _refreshController.requestRefresh();
+
+            break;
+        }
+    });
+
+    refreshEventStream = eventBus.on<RefreshEvent>().listen((event) {
+      if (mounted && _refreshController != null)
+        _refreshController.requestRefresh();
     });
   }
 
@@ -107,7 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
       isBookingApiLoading = true;
       _bookingResponse = await getIt.get<DashboardRepository>().getBookings(
           userId: userId,
-          status: _getCurrentStatus(selectedBookingFilterIndex));
+          status:
+              _getCurrentStatus(_filterOptions[selectedBookingFilterIndex]));
       _getFilterCount();
       setState(() {});
       AppUtils.hideLoader(context);
@@ -122,6 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     super.dispose();
     _pageController.dispose();
+    if (fcmEventStream != null) fcmEventStream.cancel();
+    if (refreshEventStream != null) refreshEventStream.cancel();
   }
 
   void _onRefresh() async {
@@ -131,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget builder(BuildContext context) {
     return new Scaffold(
       backgroundColor: AppTheme.white,
       body: SmartRefresher(
@@ -692,8 +727,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
                               return ItemBooking(
-                                  _bookingResponse.bookings[index],
-                                  _bookingAction);
+                                _bookingResponse.bookings[index],
+                                _bookingAction,
+                                readStatusChange: () {
+                                  _bookingResponse.bookings[index].readStatus =
+                                      '1';
+                                },
+                              );
                             },
                             separatorBuilder:
                                 (BuildContext context, int index) {
@@ -750,32 +790,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _getCurrentStatus(int selectedFilterIndex) {
+  _getCurrentStatus(String status) {
 //    0 => 'pending',
 //    1 =>'accepted',
 //    2 =>'rejected',
 //    4 =>'ongoing',
 //    5 =>'completed',
 //    6 => 'cancelled' // cancelled by customer
-    switch (selectedFilterIndex) {
-      case 0:
-        return '0';
-        break; // all
-      case 1:
-        return '1';
-        break; // upcoming
-      case 2:
-        return '4';
-        break; // ongoing
-      case 3:
-        return '5';
-        break; // completed
-      case 4:
-        return '2';
-        break; // rejected
-      case 5:
-        return '6';
-        break; // cancelled
+//    7 => 'On the way'
+//    8 => 'Ready to be picked'
+    if (status.toLowerCase().contains('all')) {
+      return '0';
+    } else if (status.toLowerCase().contains('active')) {
+      //processing
+      return '1';
+    } else if (status.toLowerCase().contains('ready to be picked')) {
+      return '8';
+    } else if (status.toLowerCase().contains('on the way')) {
+      return '7';
+    } else if (status.toLowerCase().contains('rejected')) {
+      return '2';
+    } else if (status.toLowerCase().contains('completed')) {
+      return '5';
+    } else if (status.toLowerCase().contains('cancelled')) {
+      return '6';
+    } else {
+      return '0';
     }
   }
 
@@ -783,17 +823,25 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_bookingResponse != null && _bookingResponse.bookingCounts != null) {
       _filterOptions[0] = '${_bookingResponse.bookingCounts.all} | All';
       _filterOptions[1] =
-          '${_bookingResponse.bookingCounts.upcoming} | Upcoming';
-      _filterOptions[2] = '${_bookingResponse.bookingCounts.ongoing} | Ongoing';
+          '${_bookingResponse.bookingCounts.active != null ? _bookingResponse.bookingCounts.active : "0"} | Active';
+      _filterOptions[2] =
+          '${_bookingResponse.bookingCounts.readyToBePicked} | Ready To Be Picked';
       _filterOptions[3] =
-          '${_bookingResponse.bookingCounts.completed} | Completed';
+          '${_bookingResponse.bookingCounts.onTheWay} | On the way';
       _filterOptions[4] =
+          '${_bookingResponse.bookingCounts.completed} | Completed';
+      _filterOptions[5] =
           '${_bookingResponse.bookingCounts.rejected} | Rejected';
     }
   }
 
   void _bookingRequestActionMethod(
       BookingRequest bookingRequest, RequestStatus status) async {
+    eventBus.fire(ReminderAlarmEvent.dismissNotification(
+        ReminderAlarmEvent.notificationDismiss));
+    if (!isDutyOn()) {
+      return;
+    }
     switch (status) {
       case RequestStatus.accept:
         if (!getIt.get<NetworkConnectionObserver>().offline) {
@@ -852,7 +900,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _bookingAction(
     String type,
-    BookingRequest booking,
+    dynamic booking,
   ) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
@@ -870,7 +918,18 @@ class _HomeScreenState extends State<HomeScreen> {
       AppUtils.hideLoader(context);
       if (baseResponse != null) {
         if (baseResponse.success) {
-          int index = _bookingResponse.bookings.indexOf(booking);
+          int tempIndex = -1;
+          for (int i = 0; i < _bookingResponse.bookings.length; i++) {
+            if (booking.id == _bookingResponse.bookings[i].id) {
+              tempIndex = i;
+              break;
+            }
+          }
+          // int index = _bookingResponse.bookings.indexOf(booking);
+          if (tempIndex == -1) {
+            return;
+          }
+          int index = tempIndex;
           _changeCounterStatus(type);
           _bookingResponse.bookings[index].status = _changeBookingStatus(type);
           if (selectedBookingFilterIndex != 0) {
@@ -888,8 +947,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _changeBookingStatus(String type) {
     switch (type) {
-      case 'Ongoing':
-        return '4';
+      case 'On the way':
+        return '7';
         break;
       case 'Complete':
         return '5';
@@ -899,19 +958,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _changeCounterStatus(String type) {
     switch (type) {
-      case 'Ongoing':
-        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.ongoing);
+      case 'On the way':
+        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
         ongoingCounter = ongoingCounter + 1;
-        _bookingResponse.bookingCounts.ongoing = ongoingCounter.toString();
-        int upcomingCounter =
-            int.parse(_bookingResponse.bookingCounts.upcoming);
-        upcomingCounter = upcomingCounter - 1;
-        _bookingResponse.bookingCounts.upcoming = upcomingCounter.toString();
+        _bookingResponse.bookingCounts.onTheWay = ongoingCounter.toString();
+        int readyToBePickedCounter =
+            int.parse(_bookingResponse.bookingCounts.readyToBePicked);
+        readyToBePickedCounter = readyToBePickedCounter - 1;
+        _bookingResponse.bookingCounts.readyToBePicked =
+            readyToBePickedCounter.toString();
+        print("active===${_bookingResponse.bookingCounts.readyToBePicked}");
         break;
       case 'Complete':
-        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.ongoing);
+        int ongoingCounter = int.parse(_bookingResponse.bookingCounts.onTheWay);
         ongoingCounter = ongoingCounter - 1;
-        _bookingResponse.bookingCounts.ongoing = ongoingCounter.toString();
+        _bookingResponse.bookingCounts.onTheWay = ongoingCounter.toString();
 
         int completedCounter =
             int.parse(_bookingResponse.bookingCounts.completed);

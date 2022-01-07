@@ -33,6 +33,18 @@ class LoginBloc {
       ..state = loginResponse.success ? LoginState.success : LoginState.failed
       ..data = loginResponse;
   }
+  Future<void> perfromUserLogin({String email, String password}) async {
+    loginStateSink = LoginResult()..state = LoginState.progress;
+
+    LoginResponse loginResponse =
+        await LoginNetworkRepository.instance.userloginApi(email, password);
+    print('@@userLoginResponse-'+loginResponse.toString());
+    print('@@userLoginResponse-'+LoginNetworkRepository.instance.userloginApi(email, password).toString());
+
+    loginStateSink = new LoginResult()
+      ..state = loginResponse.success ? LoginState.success : LoginState.failed
+      ..data = loginResponse;
+  }
 
   void dispose() {
     _loginController.close();

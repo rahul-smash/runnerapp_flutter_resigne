@@ -199,4 +199,5 @@ class AppSharedPref extends BaseSharedPreference
     return await sharepref?.setString(
         AppSharePrefConstants.prefKeyAppLocationId, locationId);
   }
+
 }

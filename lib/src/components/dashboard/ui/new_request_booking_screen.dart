@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_appbar.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 
@@ -152,6 +153,8 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
 
   void _bookingActionMethod(
       BookingRequest bookingRequest, RequestStatus requestStatus) async {
+    eventBus.fire(ReminderAlarmEvent.dismissNotification(
+        ReminderAlarmEvent.notificationDismiss));
     switch (requestStatus) {
       case RequestStatus.accept:
         if (!getIt.get<NetworkConnectionObserver>().offline) {

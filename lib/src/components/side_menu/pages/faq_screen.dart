@@ -85,7 +85,7 @@ class _FaqScreenState extends BaseState<FaqScreen> {
                       return Text('Error: ${snapshot.error}');
                     else
                       return Expanded(
-                          child: ExpandableTheme(
+                          child:snapshot.data!=null? ExpandableTheme(
                         data: const ExpandableThemeData(
                             iconPlacement: ExpandablePanelIconPlacement.right),
                         child: ListView.builder(
@@ -96,7 +96,7 @@ class _FaqScreenState extends BaseState<FaqScreen> {
                             itemCount: snapshot.data.data.length,
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true),
-                      ));
+                      ):Container());
                 }
               },
             ),

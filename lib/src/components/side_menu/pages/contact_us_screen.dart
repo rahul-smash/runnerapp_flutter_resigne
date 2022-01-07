@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/img_picker/image_picker_handler.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/repository/menu_option_repository_impl.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -379,6 +381,7 @@ class _ContactUsScreenState extends BaseState<ContactUsScreen>
                       AppUtils.hideLoader(context);
                       AppUtils.showToast(baseresponse.message, true);
                       AppUtils.hideKeyboard(context);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
                     },
                   ),
                 ),

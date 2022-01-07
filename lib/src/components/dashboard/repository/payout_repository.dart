@@ -3,6 +3,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/comp
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_history_details.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/deposit_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/due_payout_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/payout_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/pending_summary_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/payout_network_repository.dart';
@@ -65,5 +66,12 @@ class PayoutRepository {
       {String userId, String batchId}) async {
     return await PayoutNetworkRepository.instance
         .getDepositsCompletedPayoutDetail(userId, batchId);
+  }
+
+  //for due payout
+  Future<DuePayoutResponse> getDuePayoutData(
+      {String runnerID}) async {
+    return await PayoutNetworkRepository.instance
+        .duePayoutData(runnerID);
   }
 }

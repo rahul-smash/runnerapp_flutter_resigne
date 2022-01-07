@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/model/forgot_password_response.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/login/repository/user_authentication_repository.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
@@ -15,9 +16,12 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 
 class SetNewMPINScreen extends StatefulWidget {
+  final String id;
 
-  String user_id;
-  SetNewMPINScreen({this.user_id});
+  const SetNewMPINScreen({Key key, this.id}) : super(key: key);
+
+
+
 
   @override
   _SetNewMPINScreenState createState() => _SetNewMPINScreenState();
@@ -113,7 +117,7 @@ class _SetNewMPINScreenState extends BaseState<SetNewMPINScreen> {
                           onFieldSubmitted: (value) {
                             FocusScope.of(context).requestFocus(confirmPinFocusNode);
                           },
-                          maxLength: 4,
+                          maxLength: 6,
                           style: TextStyle(color: AppTheme.mainTextColor),
                           decoration: InputDecoration(
                             counterText: "",
@@ -137,8 +141,8 @@ class _SetNewMPINScreenState extends BaseState<SetNewMPINScreen> {
                         TextFormField(
                           controller: confirmPinCont,
                           focusNode: confirmPinFocusNode,
-                          keyboardType: TextInputType.text,
-                          maxLength: 4,
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
                           style: TextStyle(color: AppTheme.mainTextColor),
                           decoration: InputDecoration(
                             hintText: hintReEnterNewMPIN,
@@ -187,12 +191,16 @@ class _SetNewMPINScreenState extends BaseState<SetNewMPINScreen> {
       AppUtils.showToast(AppConstants.noInternetMsg, false);
       return;
     }
+    if(newPinCont.text.length<6 && confirmPinCont.text.length<6){
+      AppUtils.showToast("Length of password should be atleast 6 characters.", false);
+      return;
+    }
     if (newPinCont.text.isEmpty){
-      AppUtils.showToast("Please enter valid phone number!", false);
+      AppUtils.showToast("Please enter new MPIN!", false);
       return;
     }
     if (confirmPinCont.text.isEmpty){
-      AppUtils.showToast("Please enter valid Otp!", false);
+      AppUtils.showToast("Please enter Confirm MPIN!", false);
       return;
     }
     if(!AppUtils.equalsIgnoreCase(newPinCont.text,confirmPinCont.text)){
@@ -200,8 +208,8 @@ class _SetNewMPINScreenState extends BaseState<SetNewMPINScreen> {
       return;
     }
     AppUtils.showLoader(context);
-    LoginResponse response =
-        await getIt.get<UserAuthenticationRepository>().setMpin(mPin: newPinCont.text,userId: widget.user_id);
+    ForgotPasswordResponse response =
+        await getIt.get<UserAuthenticationRepository>().resetPassword(password: newPinCont.text,id: widget.id);
     if(response != null)
       AppUtils.showToast(response.message, false);
     AppUtils.hideKeyboard(context);

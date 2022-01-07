@@ -5,25 +5,28 @@
 import 'dart:convert';
 
 class BookingDetailsResponse {
-  BookingDetailsResponse({
-    this.success,
-    this.bookingCounts,
-    this.bookings,
-  });
+  BookingDetailsResponse(
+      {this.success,
+      this.bookingCounts,
+      this.bookings,
+      this.runnerPayoutAmount});
 
   bool success;
   String bookingCounts;
   Bookings bookings;
+  String runnerPayoutAmount;
 
   BookingDetailsResponse copyWith({
     bool success,
     String bookingCounts,
     Bookings bookings,
+    String runnerPayoutAmount,
   }) =>
       BookingDetailsResponse(
         success: success ?? this.success,
         bookingCounts: bookingCounts ?? this.bookingCounts,
         bookings: bookings ?? this.bookings,
+        runnerPayoutAmount: runnerPayoutAmount ?? this.runnerPayoutAmount,
       );
 
   factory BookingDetailsResponse.fromRawJson(String str) =>
@@ -39,62 +42,71 @@ class BookingDetailsResponse {
         bookings: json["bookings"] == null
             ? null
             : Bookings.fromJson(json["bookings"]),
+        runnerPayoutAmount: json["runner_payout_amount"] == null
+            ? null
+            : json["runner_payout_amount"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
         "success": success == null ? null : success,
         "booking_counts": bookingCounts == null ? null : bookingCounts,
         "bookings": bookings == null ? null : bookings.toJson(),
+        "runner_payout_amount":
+            runnerPayoutAmount == null ? null : runnerPayoutAmount,
       };
 }
 
 class Bookings {
-  Bookings({
-    this.distance,
-    this.riderToStoreDistance,
-    this.id,
-    this.displayOrderId,
-    this.brandId,
-    this.storeId,
-    this.userId,
-    this.runnerId,
-    this.runnerDeliveryAccepted,
-    this.userAddressId,
-    this.bookingsUserAddress,
-    this.paymentMethod,
-    this.discount,
-    this.cartSaving,
-    this.onlineMethod,
-    this.platform,
-    this.paymentRequestId,
-    this.paymentId,
-    this.note,
-    this.couponCode,
-    this.total,
-    this.rating,
-    this.checkout,
-    this.shippingCharges,
-    this.shippingTax,
-    this.shippingTaxRate,
-    this.tax,
-    this.storeTaxRateDetail,
-    this.calculatedTaxDetail,
-    this.storeFixedTaxDetail,
-    this.orderFacility,
-    this.status,
-    this.runnerAssigned,
-    this.deliveryTimeSlot,
-    this.created,
-    this.modified,
-    this.userAddress,
-    this.user,
-    this.cart,
-    this.bookingDateTime,
-    this.categoryTitle,
-    this.serviceCount,
-    this.serviceDuration,
-  });
-dynamic riderToStoreDistance;
+  Bookings(
+      {this.distance,
+      this.riderToStoreDistance,
+      this.id,
+      this.displayOrderId,
+      this.brandId,
+      this.storeId,
+      this.userId,
+      this.runnerId,
+      this.runnerDeliveryAccepted,
+      this.userAddressId,
+      this.bookingsUserAddress,
+      this.paymentMethod,
+      this.discount,
+      this.cartSaving,
+      this.onlineMethod,
+      this.platform,
+      this.paymentRequestId,
+      this.paymentId,
+      this.note,
+      this.couponCode,
+      this.total,
+      this.rating,
+      this.checkout,
+      this.shippingCharges,
+      this.shippingTax,
+      this.shippingTaxRate,
+      this.tax,
+      this.storeTaxRateDetail,
+      this.calculatedTaxDetail,
+      this.storeFixedTaxDetail,
+      this.orderFacility,
+      this.status,
+      this.runnerAssigned,
+      this.deliveryTimeSlot,
+      this.created,
+      this.modified,
+      this.userAddress,
+      this.user,
+      this.cart,
+      this.bookingDateTime,
+      this.categoryTitle,
+      this.serviceCount,
+      this.serviceDuration,
+      this.storeAmt,
+      this.operatorCommission,
+      this.isManualAssignment,
+      this.readStatus});
+
+  dynamic riderToStoreDistance;
   String id;
   String displayOrderId;
   String brandId;
@@ -137,53 +149,59 @@ dynamic riderToStoreDistance;
   String serviceCount;
   String serviceDuration;
   dynamic distance;
+  String storeAmt;
+  String operatorCommission;
+  String isManualAssignment;
+  String readStatus;
 
-  Bookings copyWith({
-
-    String id,
-    String displayOrderId,
-    String brandId,
-    String storeId,
-    String userId,
-    String runnerId,
-    String runnerDeliveryAccepted,
-    String userAddressId,
-    String bookingsUserAddress,
-    String paymentMethod,
-    String discount,
-    String cartSaving,
-    String onlineMethod,
-    String platform,
-    String paymentRequestId,
-    String paymentId,
-    String note,
-    String couponCode,
-    String total,
-    String rating,
-    dynamic checkout,
-    String shippingCharges,
-    String shippingTax,
-    String shippingTaxRate,
-    String tax,
-    String storeTaxRateDetail,
-    String calculatedTaxDetail,
-    String storeFixedTaxDetail,
-    String orderFacility,
-    String status,
-    String runnerAssigned,
-    String deliveryTimeSlot,
-    String created,
-    String modified,
-    UserAddress userAddress,
-    User user,
-    List<Cart> cart,
-    String bookingDateTime,
-    String categoryTitle,
-    String serviceCount,
-    String serviceDuration,
-    dynamic riderToStoreDistance,
-    dynamic distance,
-  }) =>
+  Bookings copyWith(
+          {String id,
+          String displayOrderId,
+          String brandId,
+          String storeId,
+          String userId,
+          String runnerId,
+          String runnerDeliveryAccepted,
+          String userAddressId,
+          String bookingsUserAddress,
+          String paymentMethod,
+          String discount,
+          String cartSaving,
+          String onlineMethod,
+          String platform,
+          String paymentRequestId,
+          String paymentId,
+          String note,
+          String couponCode,
+          String total,
+          String rating,
+          dynamic checkout,
+          String shippingCharges,
+          String shippingTax,
+          String shippingTaxRate,
+          String tax,
+          String storeTaxRateDetail,
+          String calculatedTaxDetail,
+          String storeFixedTaxDetail,
+          String orderFacility,
+          String status,
+          String runnerAssigned,
+          String deliveryTimeSlot,
+          String created,
+          String modified,
+          UserAddress userAddress,
+          User user,
+          List<Cart> cart,
+          String bookingDateTime,
+          String categoryTitle,
+          String serviceCount,
+          String serviceDuration,
+          dynamic riderToStoreDistance,
+          dynamic distance,
+          String storeAmt,
+          String operatorCommission,
+          String isManualAssignment,
+          String readStatus}) =>
       Bookings(
         riderToStoreDistance: riderToStoreDistance ?? this.riderToStoreDistance,
         distance: distance ?? this.distance,
@@ -229,6 +247,10 @@ dynamic riderToStoreDistance;
         categoryTitle: categoryTitle ?? this.categoryTitle,
         serviceCount: serviceCount ?? this.serviceCount,
         serviceDuration: serviceDuration ?? this.serviceDuration,
+        storeAmt: storeAmt ?? this.storeAmt,
+        operatorCommission: operatorCommission ?? this.operatorCommission,
+        isManualAssignment: isManualAssignment ?? this.isManualAssignment,
+        readStatus: readStatus ?? this.readStatus,
       );
 
   factory Bookings.fromRawJson(String str) =>
@@ -237,10 +259,11 @@ dynamic riderToStoreDistance;
   String toRawJson() => json.encode(toJson());
 
   factory Bookings.fromJson(Map<String, dynamic> json) => Bookings(
-
         id: json["id"] == null ? null : json["id"],
         distance: json["distance"] == null ? null : json["distance"],
-        riderToStoreDistance: json["riderToStoreDistance"] == null ? null : json["riderToStoreDistance"],
+        riderToStoreDistance: json["riderToStoreDistance"] == null
+            ? null
+            : json["riderToStoreDistance"],
         displayOrderId:
             json["display_order_id"] == null ? null : json["display_order_id"],
         brandId: json["brand_id"] == null ? null : json["brand_id"],
@@ -312,13 +335,23 @@ dynamic riderToStoreDistance;
             json["service_count"] == null ? null : json["service_count"],
         serviceDuration:
             json["service_duration"] == null ? null : json["service_duration"],
+        storeAmt:
+            json["store_amt"] == null ? null : json["store_amt"].toString(),
+        operatorCommission: json["operator_commission"] == null
+            ? null
+            : json["operator_commission"].toString(),
+        isManualAssignment: json["is_manual_assignment"] == null
+            ? null
+            : json["is_manual_assignment"].toString(),
+        readStatus:
+            json["read_status"] == null ? null : json["read_status"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
-
         "id": id == null ? null : id,
         "distance": distance == null ? null : distance,
-        "riderToStoreDistance": riderToStoreDistance == null ? null : riderToStoreDistance,
+        "riderToStoreDistance":
+            riderToStoreDistance == null ? null : riderToStoreDistance,
         "display_order_id": displayOrderId == null ? null : displayOrderId,
         "brand_id": brandId == null ? null : brandId,
         "store_id": storeId == null ? null : storeId,
@@ -368,6 +401,12 @@ dynamic riderToStoreDistance;
         "category_title": categoryTitle == null ? null : categoryTitle,
         "service_count": serviceCount == null ? null : serviceCount,
         "service_duration": serviceDuration == null ? null : serviceDuration,
+        "store_amt": storeAmt == null ? null : storeAmt,
+        "operator_commission":
+            operatorCommission == null ? null : operatorCommission,
+        "is_manual_assignment":
+            isManualAssignment == null ? null : isManualAssignment,
+        "read_status": readStatus == null ? null : readStatus,
       };
 }
 

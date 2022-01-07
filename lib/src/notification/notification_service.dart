@@ -16,8 +16,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/notification/notification_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -145,7 +147,7 @@ class NotificationService {
   void _handlePushWhileOpen(RemoteMessage message) {
     // appStateBloc.getNotifications();
     print('---------handlePushWhileOpen---------=${message.data}');
-
+    eventBus.fire(FCMNotificationEvent( parseNotificationData(message.data, false)));
     //Log firebase event
     // FirebaseAnalytics().logEvent(
     //   name: 'fcm_notification_foreground',
@@ -182,7 +184,7 @@ class NotificationService {
         parseBackgroundNotificationData(message.data);
 
     //Handle action
-    _handleAction(notificationData.action, notificationData.data, false);
+    _handleAction(notificationData, false);
 
     return Future.sync(() => null);
   }
@@ -192,37 +194,31 @@ class NotificationService {
     NotificationData notificationData = parseNotificationData(data, false);
 
     //Handle action
-    _handleAction(notificationData.action, notificationData.data, false);
+    _handleAction(notificationData, true);
   }
 
-  void handleInApp(NotificationModel notification) {
-    //Log firebase event
-    // FirebaseAnalytics().logEvent(
-    //   name: 'fcm_in_app_message_action',
-    //   parameters: <String, dynamic>{
-    //     'message_id': notification?.id,
-    //     'message_title': notification?.title,
-    //     'message_device_time': DateTime.now().toIso8601String(),
-    //   },
-    // );
-
-    //Handle action
-    NotificationData notificationData =
-        parseNotificationData(json.decode(notification.data), true);
-
-    //Handle action
-    _handleAction(notificationData.action, notificationData.data, true);
+  void _handleAction(NotificationData notificationData, bool inApp) async {
+    eventBus.fire(FCMNotificationEvent(notificationData));
+    // switch (notificationData.notifyType) {
+    //   case "runner_allocation":
+    //     //TODO:
+    //     break;
+    //     case "user_runner_assigned":
+    //     //TODO: refresh page and open order detail page
+    //     break;
+    //     case "ORDER_READY_DELIVERYBOY":
+    //     //TODO: refresh page Home page and open order detail page
+    //     break;
+    // }
   }
-
-  void _handleAction(String action, dynamic data, bool inApp) async {}
 
   void _showNotification(RemoteMessage message) async {
     String title = message.notification.title;
     String body = message.notification.body;
 
     var android = AndroidNotificationDetails(
-      'appventure',
-      'appventure_channel ',
+      'apprunner',
+      'apprunner_channel ',
       'description',
       priority: Priority.max,
       importance: Importance.max,

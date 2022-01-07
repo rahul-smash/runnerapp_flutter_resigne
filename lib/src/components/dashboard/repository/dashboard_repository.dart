@@ -4,6 +4,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/book
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/notification_data.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/reminder_order_count_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_network_repository.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
@@ -20,7 +21,7 @@ class DashboardRepository {
       String status,
       FilterType bookingSorting,
       int page = 1,
-      int limit = 10}) async {
+      int limit = 1000}) async {
     return await DashboardNetworkRepository.instance
         .getBookings(userId, status, bookingSorting, page, limit);
   }
@@ -73,17 +74,25 @@ class DashboardRepository {
   }
 
   Future<BaseResponse> updateRunnerLatlng(
-      {String userId, String lat, String lng, String address}) async {
+      {String userId,
+      String lat,
+      String lng,
+      String address,
+      String storeID}) async {
     return await DashboardNetworkRepository.instance
-        .updateRunnerLatlng(userId, lat, lng, address);
+        .updateRunnerLatlng(userId, lat, lng, address, storeID);
   }
 
-  Future<Map<String, dynamic>> ordersCount(
+  Future<ReminderOrderCountResponse> ordersCount(
       {String storeId, String userId}) async {
     return await DashboardNetworkRepository.instance
         .ordersCount(storeId, userId);
   }
-
+  Future<BaseResponse> getReadBooking(
+      {String userId, String orderId}) async {
+    return await DashboardNetworkRepository.instance
+        .getReadBooking(userId, orderId);
+  }
   Future<NotificationModel> getNotifications({String userId}) async {
     return await DashboardNetworkRepository.instance.getNotifications(userId);
   }

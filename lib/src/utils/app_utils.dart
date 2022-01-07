@@ -321,7 +321,7 @@ class AppUtils {
   // ...somewhere in your Flutter app...
   static launchWhatsApp(String number) async {
     final link = WhatsAppUnilink(
-      phoneNumber: '+91$number',
+      phoneNumber: '$number',
       text: "",
     );
     // Convert the WhatsAppUnilink instance to a string.
@@ -501,8 +501,7 @@ class AppUtils {
       builder: (BuildContext context) {
         return WillPopScope(
           onWillPop: () {
-            //print("onWillPop onWillPop");
-            //Navigator.pop(context);
+            return Future(()=>false);
           },
           child: Dialog(
               shape: RoundedRectangleBorder(
@@ -567,6 +566,76 @@ class AppUtils {
                                 else {
                                   SystemNavigator.pop();
                                 }
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        );
+      },
+    );
+  }
+
+  static Future<bool> callCommonDialog(
+      BuildContext context, String title, String message,) async {
+    return await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () {
+           return Future(()=>false);
+          },
+          child: Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              child: Container(
+                child: Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+                      child: Center(
+                        child: Text(
+                          "$title",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: AppTheme.mainTextColor, fontSize: 18),
+                        ),
+                      ),
+                    ),
+                    Container(
+                        height: 1,
+                        color: Colors.black45,
+                        width: MediaQuery.of(context).size.width),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
+                      child: Center(
+                        child: Text(
+                          "$message",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                            child: FlatButton(
+                              child: Text('Ok'),
+                              color: AppTheme.primaryColor,
+                              textColor: Colors.white,
+                              onPressed: () {
+                                  Navigator.pop(context,true);
                               },
                             ),
                           )

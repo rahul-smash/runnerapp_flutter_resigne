@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/login/model/forgot_password_response.dart';
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/components/signUp/model/register_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
@@ -15,10 +17,13 @@ class LoginNetworkRepository extends DioBaseService {
   static LoginNetworkRepository _instance;
 
   static const _login = '/runner_authentication/login';
+  static const _userLogin='/runner_authentication/userLogin';
   static const _sendOTP = '/runner_authentication/sendOTP';
   static const _registration = '/runner_authentication/registration';
   static const _setPin = '/runner_authentication/setPin';
   static const _resetPinOTP = '/runner_authentication/resetPinOTP';
+  static const _forgotPassword = '/runner_authentication/forgetPasswordEmail';
+  static const _resetPassword = '/runner_authentication/resetPassword';
   static const _verifyResetPinOTP = '/runner_authentication/verifyResetPinOTP';
 
   LoginNetworkRepository._() : super(AppNetworkConstants.baseUrl);
@@ -57,6 +62,28 @@ class LoginNetworkRepository extends DioBaseService {
     }
     return null;
   }
+  Future<LoginResponse> userloginApi(String email, String password) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['email'] = email;
+      param['password'] = password;
+      var data = getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['device_token'] = data['device_token'];
+      param['platform']=Platform.isIOS ? "ios" : "android";
+      log(param.toString());
+      print('@@UserLoginCredentails---'+param.toString());
+      var response = await post(
+          apiPath(
+              StoreConfigurationSingleton.instance.configModel.storeId, _userLogin),
+          param);
+      LoginResponse loginResponse =
+      LoginResponse.fromJson(jsonDecode(response));
+      return loginResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
 
   Future<BaseResponse> sendOtpApi(String _phone) async {
     String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
@@ -85,6 +112,36 @@ class LoginNetworkRepository extends DioBaseService {
       var response = await post(apiPath(storeId, _resetPinOTP), param);
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
       return baseResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+  Future<ForgotPasswordResponse> forgotPassword(String email) async {
+    String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
+    Map<String, dynamic> param =
+        getIt.get<CommonNetworkUtils>().getDeviceParams();
+    param['email'] = email;
+
+    try {
+      var response = await post(apiPath(storeId, _forgotPassword), param);
+      ForgotPasswordResponse forgotPasswordResponse = forgotPasswordResponseFromJson(jsonDecode(json.encode(response)));
+      return forgotPasswordResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+  Future<ForgotPasswordResponse> resetPassword(String password,String id) async {
+    String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
+    Map<String, dynamic> param =
+        getIt.get<CommonNetworkUtils>().getDeviceParams();
+    param['password'] = password;
+    param['user_id'] = id;
+    try {
+      var response = await post(apiPath(storeId, _resetPassword), param);
+      ForgotPasswordResponse forgotPasswordResponse = forgotPasswordResponseFromJson(jsonDecode(json.encode(response)));
+      return forgotPasswordResponse;
     } catch (e) {
       debugPrint(e.toString());
     }

@@ -71,16 +71,8 @@ class _AboutUsScreenState extends BaseState<AboutUsScreen> {
             Container(
               color: Colors.white,
               padding: EdgeInsets.all(10),
-              child: Expanded(
-                child: SingleChildScrollView(
-                  /*child: Html(
-                    shrinkWrap: true,
-                    data: VersionApiSingleton.instance.storeResponse.brand.aboutUs,
-                  ),*/
-                  child: AppUtils.getHtmlView(
-                      VersionApiSingleton.instance.storeResponse.brand.aboutUs),
-                ),
-              ),
+              child: VersionApiSingleton.instance.storeResponse.brand.aboutUs.isNotEmpty ?AppUtils.getHtmlView(
+                  VersionApiSingleton.instance.storeResponse.brand.aboutUs):Container(),
             ),
           ],
         ),

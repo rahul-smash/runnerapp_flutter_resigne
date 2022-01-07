@@ -9,6 +9,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/book
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/notification_data.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/reminder_order_count_response.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/network/app_network_constants.dart';
 import 'package:marketplace_service_provider/src/network/components/common_network_utils.dart';
@@ -29,9 +30,10 @@ class DashboardNetworkRepository extends DioBaseService {
   static const _updateRunnerLatlng =
       '/runner_authentication/updateRunnerLatlng';
   static const _notificationRequest = '/runner_notifications/getNotifications';
-
-  static const _orderCounts = '/runner_orders/OrderAssignmentCount';
-
+  //OLD api
+  // static const _orderCounts = '/runner_orders/OrderAssignmentCount';
+  static const _orderCounts = '/runner_orders/orderCount/';
+  static const _readBooking = '/runner_orders/runnerReadManualAssignment';
   // Payment Summery
   // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/paymentSummery/31
   // Pending Payout
@@ -84,6 +86,8 @@ class DashboardNetworkRepository extends DioBaseService {
       param['user_id'] = user_id;
       param['status'] = status;
       param['filter'] = _bookingSorting;
+      print("status  "+status);
+
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_bookings}/$page/$limit'),
@@ -278,7 +282,7 @@ class DashboardNetworkRepository extends DioBaseService {
   }
 
   Future<BaseResponse> updateRunnerLatlng(
-      String userId, String lat, String lng, String address) async {
+      String userId, String lat, String lng, String address,String storeID) async {
     print('getCurrentPosition ===start updating lat lng====');
     try {
       // Map<String, dynamic> param =
@@ -291,7 +295,7 @@ class DashboardNetworkRepository extends DioBaseService {
       param['lng'] = lng;
       param['address'] = address;
       print(" param... $param");
-      var response = await post(apiPath('2', '${_updateRunnerLatlng}'), param);
+      var response = await post(apiPath(storeID, '${_updateRunnerLatlng}'), param);
       print('getCurrentPosition ===hit updating lat lng====');
 
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
@@ -304,14 +308,35 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<Map<String, dynamic>> ordersCount(
+  Future<ReminderOrderCountResponse> ordersCount(
       String storeId, String userId) async {
     try {
       var response = await get(
         apiPath(storeId, '$_orderCounts/$userId'),
       );
-      print(response.toString());
-      return jsonDecode(response);
+      ReminderOrderCountResponse reminderOrderCountResponse = ReminderOrderCountResponse.fromJson(jsonDecode(response));
+      return reminderOrderCountResponse;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+  Future<BaseResponse> getReadBooking(
+      String userId,
+      String orderId,
+      ) async {
+    try {
+      Map<String, dynamic> param =
+      getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['runner_id'] = userId;
+      param['order_id'] = orderId;
+      var response = await post(
+          apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
+              '${_readBooking}'),
+          param);
+      BaseResponse baseResponse =
+      BaseResponse.fromJson(jsonDecode(response));
+      return baseResponse;
     } catch (e) {
       debugPrint(e.toString());
     }

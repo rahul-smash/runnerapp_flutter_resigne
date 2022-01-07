@@ -7,15 +7,19 @@ import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/login_user_singleton.dart';
 import 'package:marketplace_service_provider/src/singleton/store_config_singleton.dart';
+import 'package:marketplace_service_provider/src/utils/app_strings.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/language_utils.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state_interface.dart';
 
-abstract class BaseState<T extends StatefulWidget> extends State<T>  implements BaseStateInterface {
-
-  final NetworkConnectionObserver network = getIt.get<NetworkConnectionObserver>();
+abstract class BaseState<T extends StatefulWidget> extends State<T>
+    implements BaseStateInterface {
+  final NetworkConnectionObserver network =
+      getIt.get<NetworkConnectionObserver>();
   final DutyStatusObserver dutyStatusObserver = getIt.get<DutyStatusObserver>();
   final String userId = AppSharedPref.instance.getUserId();
-  final ConfigModel configModel = StoreConfigurationSingleton.instance.configModel;
+  final ConfigModel configModel =
+      StoreConfigurationSingleton.instance.configModel;
 
   Widget futureBuild<T>(
       {Future<T> future,
@@ -64,5 +68,20 @@ abstract class BaseState<T extends StatefulWidget> extends State<T>  implements 
       child: child,
     );
     return gesture;
+  }
+
+  bool isDutyOn() {
+    bool isDutyOFF = dutyStatusObserver.status == '1';
+    if (!isDutyOFF) {
+      displayDutyOffDialog();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool displayDutyOffDialog() {
+    AppUtils.callCommonDialog(context, labelDutyOFF, labelUserDutyOFF);
+    return false;
   }
 }

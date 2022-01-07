@@ -73,7 +73,7 @@ class _HelpVideoScreenState extends BaseState<HelpVideoScreen> {
                         return Text('Error: ${snapshot.error}');
                       else
                         return Expanded(
-                          child: ListView.builder(
+                          child:snapshot.data!=null? ListView.builder(
                             itemCount: snapshot.data.data.length,
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
@@ -178,7 +178,7 @@ class _HelpVideoScreenState extends BaseState<HelpVideoScreen> {
                                 ),
                               );
                             },
-                          ),
+                          ):Container(),
                         );
                   }
                 },

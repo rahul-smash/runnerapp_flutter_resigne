@@ -117,6 +117,8 @@ class BookingRequest {
     this.serviceCount,
     this.serviceDuration,
     this.services,
+    this.isManualAssignment,
+    this.readStatus,
   });
 
   String id;
@@ -181,9 +183,11 @@ class BookingRequest {
   String serviceCount;
   String serviceDuration;
   String services;
+  String isManualAssignment;
+  String readStatus;
 
   factory BookingRequest.fromJson(Map<String, dynamic> json) => BookingRequest(
-    id: json["id"] == null ? null : json["id"],
+        id: json["id"] == null ? null : json["id"],
         displayOrderId:
             json["display_order_id"] == null ? null : json["display_order_id"],
         posOrderId: json["pos_order_id"] == null ? null : json["pos_order_id"],
@@ -292,6 +296,12 @@ class BookingRequest {
         serviceDuration:
             json["service_duration"] == null ? null : json["service_duration"],
         services: json["services"] == null ? null : json["services"],
+        isManualAssignment: json["is_manual_assignment"] == null
+            ? null
+            : json["is_manual_assignment"],
+    readStatus: json["read_status"] == null
+            ? null
+            : json["read_status"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -373,6 +383,8 @@ class BookingRequest {
         "service_count": serviceCount == null ? null : serviceCount,
         "service_duration": serviceDuration == null ? null : serviceDuration,
         "services": services == null ? null : services,
+        "is_manual_assignment": isManualAssignment == null ? null : isManualAssignment,
+        "read_status": readStatus == null ? null : readStatus,
       };
 }
 
