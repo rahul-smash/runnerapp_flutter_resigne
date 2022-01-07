@@ -119,235 +119,440 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
                       SizedBox(
                         height: Dimensions.getScaledSize(10),
                       ),
-                      SizedBox(
-                        height: 50,
+                      Expanded(
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           shrinkWrap: true,
                           physics: ScrollPhysics(),
                           itemCount: 1,
                           itemBuilder: (context, index) {
-                            return Container(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              height: 50,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    width: 20,
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  height: 50,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(
+                                        "Order ID",
+                                        overflow: TextOverflow.visible,
+                                        softWrap: true,
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(
+                                        "Order recieved",
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: true,
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(
+                                        "Payment mode",
+                                        overflow: TextOverflow.visible,
+                                        softWrap: true,
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text("Paid by customer",
+                                          overflow: TextOverflow.visible,
+                                          softWrap: true),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text("Items total",
+                                          overflow: TextOverflow.visible,
+                                          softWrap: true),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text("Commission",
+                                          overflow: TextOverflow.visible,
+                                          softWrap: true),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text("Net Recievable from delivery boy",
+                                          overflow: TextOverflow.visible,
+                                          softWrap: true),
+                                    ],
                                   ),
-                                  Text(
-                                    "Order ID",
-                                    overflow: TextOverflow.visible,
-                                    softWrap: true,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: SizeConfig.getDeviceHeight(context),
+                                    width: Dimensions.getWidth(percentage: 200),
+                                    child: ListView.separated(
+                                      separatorBuilder: (context, index) {
+                                        return Divider();
+                                      },
+                                      shrinkWrap: true,
+                                      itemCount:
+                                          duePayoutResponse?.data?.length ?? 0,
+                                      itemBuilder: (context, index) {
+                                        return InkWell(
+                                            onTap: () {
+                                              if (this.network.offline) {
+                                                AppUtils.showToast(
+                                                    AppConstants.noInternetMsg,
+                                                    false);
+                                                return;
+                                              }
+                                            },
+                                            child:
+                                                // ListView.builder(
+                                                //     itemCount: 1,
+                                                //     physics: ScrollPhysics(),
+                                                //     scrollDirection: Axis.horizontal,
+                                                //     shrinkWrap: true,
+                                                //     itemBuilder: (context, _) {
+                                                //       return
+                                                Container(
+                                              width: double.infinity,
+                                              margin: EdgeInsets.fromLTRB(
+                                                  35, 5, 0, 5),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    child: Text(
+                                                        duePayoutResponse
+                                                            ?.data[index]
+                                                            .order
+                                                            .displayOrderId,
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: true),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 30,
+                                                  ),
+                                                  Container(
+                                                    width: Dimensions.getWidth(
+                                                        percentage: 25),
+                                                    child: Text(
+                                                        convertedDate(
+                                                            duePayoutResponse
+                                                                ?.data[index]
+                                                                .order
+                                                                .created),
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600,
+                                                            color: AppTheme
+                                                                .mainTextColor),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        maxLines: 2,
+                                                        softWrap: true),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  Container(
+                                                    width: Dimensions.getWidth(
+                                                        percentage: 20),
+                                                    child: Text(
+                                                        duePayoutResponse
+                                                            ?.data[index]
+                                                            .order
+                                                            .paymentMethod,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: AppTheme
+                                                                .mainTextColor),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: true),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    width: Dimensions.getWidth(
+                                                        percentage: 35),
+                                                    child: Text(
+                                                        duePayoutResponse
+                                                            ?.data[index]
+                                                            .order
+                                                            .total,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: AppTheme
+                                                                .subHeadingTextColor,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: true),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Container(
+                                                    width: Dimensions.getWidth(
+                                                        percentage: 20),
+                                                    child: Text(
+                                                        duePayoutResponse
+                                                            ?.data[index]
+                                                            .order
+                                                            .checkoutBeforeCommission,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: AppTheme
+                                                                .subHeadingTextColor,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: true),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Container(
+                                                    width: Dimensions.getWidth(
+                                                        percentage: 20),
+                                                    child: Text(
+                                                        duePayoutResponse
+                                                            ?.data[index]
+                                                            .order
+                                                            .commission,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: AppTheme
+                                                                .subHeadingTextColor,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: true),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  Container(
+                                                    width: Dimensions.getWidth(
+                                                        percentage: 20),
+                                                    child: Text(
+                                                        duePayoutResponse
+                                                            ?.data[index]
+                                                            .order
+                                                            .netPayable
+                                                            .toString(),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: AppTheme
+                                                                .subHeadingTextColor,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: true),
+                                                  ),
+                                                  Divider()
+                                                ],
+                                              ),
+                                              // );
+                                              // }
+                                              // ),
+                                            ));
+                                      },
+                                    ),
                                   ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(
-                                    "Order recieved",
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: true,
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(
-                                    "Payment mode",
-                                    overflow: TextOverflow.visible,
-                                    softWrap: true,
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text("Paid by customer",
-                                      overflow: TextOverflow.visible,
-                                      softWrap: true),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text("Items total",
-                                      overflow: TextOverflow.visible,
-                                      softWrap: true),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text("Commission",
-                                      overflow: TextOverflow.visible,
-                                      softWrap: true),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text("Net Recievable from delivery boy",
-                                      overflow: TextOverflow.visible,
-                                      softWrap: true),
-                                ],
-                              ),
+                                )
+                              ],
                             );
                           },
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                        width: double.infinity,
-                        height: 2,
-                        color: Colors.grey[350],
-                      ),
-                      Expanded(
-                          child: ListView.separated(
-                            separatorBuilder: (context, index) {
-                              return Divider();
-                            },
-                        shrinkWrap: true,
-                        itemCount: duePayoutResponse?.data?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              if (this.network.offline) {
-                                AppUtils.showToast(
-                                    AppConstants.noInternetMsg, false);
-                                return;
-                              }
-                            },
-                            child: SizedBox(
-                              height: 50,
-                              child: ListView.builder(
-
-                                  itemCount: 1,
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, _) {
-                                    return Container(
-
-                                      // width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(15, 5, 0, 5),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Container(width: 60,
-                                            child: Center(
-                                              child: Text(
-                                                  duePayoutResponse?.data[index]
-                                                      .order.displayOrderId,
-                                                  overflow: TextOverflow.visible,
-                                                  softWrap: true),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Container(width: 80,
-                                            child: Center(
-                                              child: Text(
-                                                  convertedDate(duePayoutResponse?.data[index]
-                                                      .order.created),
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.w600,
-                                                      color:
-                                                          AppTheme.mainTextColor),
-                                                  overflow: TextOverflow.visible,maxLines: 2,
-                                                  softWrap: true),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 25,
-                                          ),
-                                          Container(width: 100,
-                                            child: Center(
-                                              child: Text(
-                                                  duePayoutResponse?.data[index]
-                                                      .order.paymentMethod,
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.w600,
-                                                      color:
-                                                          AppTheme.mainTextColor),
-                                                  overflow: TextOverflow.visible,
-                                                  softWrap: true),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Container(width: 80,
-                                            child: Center(
-                                              child: Text(
-                                                  duePayoutResponse
-                                                      ?.data[index].order.total,
-                                                  style: TextStyle(
-                                                      color: AppTheme
-                                                          .subHeadingTextColor,
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.w600),
-                                                  overflow: TextOverflow.visible,
-                                                  softWrap: true),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Container(width: 60,
-                                            child: Center(
-                                              child: Text(
-                                                  duePayoutResponse
-                                                      ?.data[index].order.checkoutBeforeCommission,
-                                                  style: TextStyle(
-                                                      color: AppTheme
-                                                          .subHeadingTextColor,
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.w600),
-                                                  overflow: TextOverflow.visible,
-                                                  softWrap: true),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Container(width: 60,
-                                            child: Center(
-                                              child: Text(
-                                                  duePayoutResponse?.data[index]
-                                                      .order.commission,
-                                                  style: TextStyle(
-                                                      color: AppTheme
-                                                          .subHeadingTextColor,
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.w600),
-                                                  overflow: TextOverflow.visible,
-                                                  softWrap: true),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Container(width: 60,
-                                            child: Center(
-                                              child: Text(
-                                                  duePayoutResponse
-                                                      ?.data[index].order.netPayable
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                      color: AppTheme
-                                                          .subHeadingTextColor,
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.w600),
-                                                  overflow: TextOverflow.visible,
-                                                  softWrap: true),
-                                            ),
-                                          ),
-
-                                          Divider()
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          );
-                        },
-
-                      )),
+                      // Container(
+                      //   margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                      //   width: double.infinity,
+                      //   height: 2,
+                      //   color: Colors.grey[350],
+                      // ),
+                      // Expanded(
+                      //     child: ListView.separated(
+                      //       physics: ScrollPhysics(),
+                      //       separatorBuilder: (context, index) {
+                      //         return Divider();
+                      //       },
+                      //   shrinkWrap: true,
+                      //   itemCount: duePayoutResponse?.data?.length ?? 0,
+                      //   itemBuilder: (context, index) {
+                      //     return InkWell(
+                      //       onTap: () {
+                      //         if (this.network.offline) {
+                      //           AppUtils.showToast(
+                      //               AppConstants.noInternetMsg, false);
+                      //           return;
+                      //         }
+                      //       },
+                      //       child: SizedBox(
+                      //         height: 50,
+                      //         child: ListView.builder(
+                      //
+                      //             itemCount: 1,
+                      //             physics: AlwaysScrollableScrollPhysics(),
+                      //             scrollDirection: Axis.horizontal,
+                      //             shrinkWrap: true,
+                      //             itemBuilder: (context, _) {
+                      //               return Container(
+                      //
+                      //                 // width: double.infinity,
+                      //                 margin: EdgeInsets.fromLTRB(15, 5, 0, 5),
+                      //                 child: Row(
+                      //                   children: [
+                      //                     SizedBox(
+                      //                       width: 15,
+                      //                     ),
+                      //                     Container(width: 60,
+                      //                       child: Center(
+                      //                         child: Text(
+                      //                             duePayoutResponse?.data[index]
+                      //                                 .order.displayOrderId,
+                      //                             overflow: TextOverflow.visible,
+                      //                             softWrap: true),
+                      //                       ),
+                      //                     ),
+                      //                     SizedBox(
+                      //                       width: 15,
+                      //                     ),
+                      //                     Container(width: 80,
+                      //                       child: Center(
+                      //                         child: Text(
+                      //                             convertedDate(duePayoutResponse?.data[index]
+                      //                                 .order.created),
+                      //                             style: TextStyle(
+                      //                                 fontWeight: FontWeight.w600,
+                      //                                 color:
+                      //                                     AppTheme.mainTextColor),
+                      //                             overflow: TextOverflow.visible,maxLines: 2,
+                      //                             softWrap: true),
+                      //                       ),
+                      //                     ),
+                      //                     SizedBox(
+                      //                       width: 25,
+                      //                     ),
+                      //                     Container(width: 100,
+                      //                       child: Center(
+                      //                         child: Text(
+                      //                             duePayoutResponse?.data[index]
+                      //                                 .order.paymentMethod,
+                      //                             style: TextStyle(
+                      //                                 fontWeight: FontWeight.w600,
+                      //                                 color:
+                      //                                     AppTheme.mainTextColor),
+                      //                             overflow: TextOverflow.visible,
+                      //                             softWrap: true),
+                      //                       ),
+                      //                     ),
+                      //                     SizedBox(
+                      //                       width: 15,
+                      //                     ),
+                      //                     Container(width: 80,
+                      //                       child: Center(
+                      //                         child: Text(
+                      //                             duePayoutResponse
+                      //                                 ?.data[index].order.total,
+                      //                             style: TextStyle(
+                      //                                 color: AppTheme
+                      //                                     .subHeadingTextColor,
+                      //                                 fontSize: 16,
+                      //                                 fontWeight: FontWeight.w600),
+                      //                             overflow: TextOverflow.visible,
+                      //                             softWrap: true),
+                      //                       ),
+                      //                     ),
+                      //                     SizedBox(
+                      //                       width: 15,
+                      //                     ),
+                      //                     Container(width: 60,
+                      //                       child: Center(
+                      //                         child: Text(
+                      //                             duePayoutResponse
+                      //                                 ?.data[index].order.checkoutBeforeCommission,
+                      //                             style: TextStyle(
+                      //                                 color: AppTheme
+                      //                                     .subHeadingTextColor,
+                      //                                 fontSize: 16,
+                      //                                 fontWeight: FontWeight.w600),
+                      //                             overflow: TextOverflow.visible,
+                      //                             softWrap: true),
+                      //                       ),
+                      //                     ),
+                      //                     SizedBox(
+                      //                       width: 15,
+                      //                     ),
+                      //                     Container(width: 60,
+                      //                       child: Center(
+                      //                         child: Text(
+                      //                             duePayoutResponse?.data[index]
+                      //                                 .order.commission,
+                      //                             style: TextStyle(
+                      //                                 color: AppTheme
+                      //                                     .subHeadingTextColor,
+                      //                                 fontSize: 16,
+                      //                                 fontWeight: FontWeight.w600),
+                      //                             overflow: TextOverflow.visible,
+                      //                             softWrap: true),
+                      //                       ),
+                      //                     ),
+                      //                     SizedBox(
+                      //                       width: 15,
+                      //                     ),
+                      //                     Container(width: 60,
+                      //                       child: Center(
+                      //                         child: Text(
+                      //                             duePayoutResponse
+                      //                                 ?.data[index].order.netPayable
+                      //                                 .toString(),
+                      //                             style: TextStyle(
+                      //                                 color: AppTheme
+                      //                                     .subHeadingTextColor,
+                      //                                 fontSize: 16,
+                      //                                 fontWeight: FontWeight.w600),
+                      //                             overflow: TextOverflow.visible,
+                      //                             softWrap: true),
+                      //                       ),
+                      //                     ),
+                      //
+                      //                     Divider()
+                      //                   ],
+                      //                 ),
+                      //               );
+                      //             }),
+                      //       ),
+                      //     );
+                      //   },
+                      //
+                      // )),
                     ],
                   )),
               // Align(
@@ -540,6 +745,7 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
       return 'monthly';
     }
   }
+
   convertedDate(String date) {
     if (date != null) {
       DateTime tempDate = new DateFormat("yyyy-MM-dd HH:mm:ss").parse(date);

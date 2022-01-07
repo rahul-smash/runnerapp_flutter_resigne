@@ -48,7 +48,7 @@ class PayoutNetworkRepository extends DioBaseService {
           getIt.get<CommonNetworkUtils>().getDeviceParams();
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
-              '${_paymentSummery}/${user_id}'),
+              '${_paymentSummery}/${user_id}/${filterOption}'),
           param);
       PayoutSummaryResponse payoutSummaryResponse =
           PayoutSummaryResponse.fromJson(jsonDecode(response));
