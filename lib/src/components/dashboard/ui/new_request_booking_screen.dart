@@ -92,7 +92,9 @@ class _NewRequestBookingScreenState extends BaseState<NewRequestBookingScreen> {
                       Padding(
                         padding: EdgeInsets.only(left: 16.0, top: 16.0),
                         child: Text(
-                          '${_dashboardResponse.bookingRequests.length} Order',
+                          _dashboardResponse.bookingRequests.length == 1
+                              ? '${_dashboardResponse.bookingRequests.length} Order'
+                              : '${_dashboardResponse.bookingRequests.length} Orders',
                           style: TextStyle(
                               fontSize: AppConstants.smallSize,
                               color: Colors.white,
