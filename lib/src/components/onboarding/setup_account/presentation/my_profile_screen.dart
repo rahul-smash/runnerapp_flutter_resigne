@@ -492,8 +492,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                               height: 20,
                             ),
                             Visibility(
-                              visible:
-                                  widget.isComingFromAccount ? true : false,
+                              // visible:
+                              //     widget.isComingFromAccount ? true : false,
                               child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -544,9 +544,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                 child: TextFormField(
                                   //focusNode: _nodeText1,
                                   controller: userCommentController,
-                                  enabled:
-                                      widget.isComingFromAccount ? false : true,
-                                  readOnly: widget.isComingFromAccount,
+                                  // enabled:
+                                  //     widget.isComingFromAccount ? false : true,
+                                  // readOnly: widget.isComingFromAccount,
                                   validator: (val) =>
                                       val.isEmpty ? labelErrorAboutUs : null,
                                   keyboardType: TextInputType.multiline,
@@ -586,11 +586,13 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                 runSpacing: 5,
                                 children: addressProofsList.map((tag) {
                                   return InkWell(
+
                                       onTap: () {
-                                        // if (!widget.isComingFromAccount) {
-                                        //   setState(() {
-                                        //     _selectedProofTypeTag = tag;
-                                        //   });
+                                        print("card");
+                                        // if (widget.isComingFromAccount) {
+                                          setState(() {
+                                            _selectedProofTypeTag = tag;
+                                          });
                                         // }
                                       },
                                       child: Container(
@@ -730,11 +732,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                               children: [
                                 Visibility(
                                   //visible: _selectedImg1 == null ? true : false,
-                                  visible: widget.isComingFromAccount
-                                      ? false
-                                      : _selectedImg1 == null
-                                          ? true
-                                          : false,
+                                  // visible: widget.isComingFromAccount
+                                  //     ? false
+                                  //     : _selectedImg1 == null
+                                  //         ? true
+                                  //         : false,
                                   child: InkWell(
                                     child: DottedBorder(
                                       dashPattern: [3, 3, 3, 3],
@@ -780,12 +782,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                       ),
                                     ),
                                     onTap: () {
-                                      if (!widget.isComingFromAccount) {
+                                      // if (!widget.isComingFromAccount) {
                                         imagePicker.showDialog(context,
                                             docImage1: true,
                                             profileImage: false,
                                             docImage2: false);
-                                      }
+                                      // }
                                     },
                                   ),
                                 ),

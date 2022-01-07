@@ -129,7 +129,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
         return 'sevendays';
       }
     } else {
-      return 'today';
+      return 'yesterday';
     }
   }
 
@@ -142,7 +142,8 @@ class _HomeScreenState extends BaseState<HomeScreen> {
           status:
               _getCurrentStatus(_filterOptions[selectedBookingFilterIndex]));
       _getFilterCount();
-      setState(() {});
+      if(mounted){ setState(() {});}
+
       AppUtils.hideLoader(context);
       isBookingApiLoading = false;
     } else {

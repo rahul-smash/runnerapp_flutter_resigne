@@ -220,8 +220,8 @@ class NotificationService {
       'apprunner',
       'apprunner_channel ',
       'description',
-      priority: Priority.max,
-      importance: Importance.max,
+      priority: Priority.high,
+      importance: Importance.high,
       fullScreenIntent: true,
     );
 
