@@ -37,15 +37,17 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends BaseState<DashboardScreen> {
   int _selectedTabIndex = 0;
+  DateTime currentBackPressTime;
 
   @override
   void initState() {
     super.initState();
     initFirebase();
-   // AppSharedPref.instance.setUserId("120");
+    // AppSharedPref.instance.setUserId("120");
     AppSharedPref.instance.getUserId();
     try {
-      appPrintLog("---login imagelink---=${AppSharedPref.instance.getUserProfileImage()}");
+      appPrintLog(
+          "---login imagelink---=${AppSharedPref.instance.getUserProfileImage()}");
       appPrintLog("AppConstants.isLoggedIn=${AppConstants.isLoggedIn}");
       appPrintLog("---login user---=${AppSharedPref.instance.getUserId()}");
       appPrintLog(
@@ -92,8 +94,20 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   @override
   Widget builder(BuildContext context) {
-    return Scaffold(
-      body: _getNavigationMenu(),
+    return WillPopScope(
+      onWillPop: () {
+        DateTime now = DateTime.now();
+        if (currentBackPressTime == null ||
+            now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+          currentBackPressTime = now;
+          AppUtils.showToast('Please click BACK again to exit', false);
+          return Future.value(false);
+        }
+        return Future.value(true);
+      },
+      child: Scaffold(
+        body: _getNavigationMenu(),
+      ),
     );
   }
 
