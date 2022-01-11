@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/notification_data.dart';
@@ -158,5 +159,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
     setState(() {
       isLoadingApi = false;
     });
+  }
+
+  convertedDate(String date) {
+    if (date != null) {
+      DateTime tempDate = new DateFormat("yyyy-MM-dd HH:mm:ss").parse(date).toLocal();
+      String newdate = DateFormat("dd MMM yyyy hh:mm aaa").format(tempDate);
+      return newdate.toString();
+    } else {
+      return "";
+    }
   }
 }

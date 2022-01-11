@@ -441,6 +441,7 @@ class Cart {
     this.gstType,
     this.gstTaxRate,
     this.gstState,
+    this.variants,
     this.status,
     this.created,
     this.modified,
@@ -481,6 +482,7 @@ class Cart {
   String status;
   String created;
   String modified;
+  List<Variant> variants;
   String image10080;
   String image300200;
   String image;
@@ -579,6 +581,10 @@ class Cart {
         mrpPrice: json["mrp_price"] == null ? null : json["mrp_price"],
         price: json["price"] == null ? null : json["price"],
         discount: json["discount"] == null ? null : json["discount"],
+        variants: json["variants"] == null
+            ? null
+            : List<Variant>.from(
+                json["variants"].map((x) => Variant.fromJson(x))),
         servicePayout:
             json["service_payout"] == null ? null : json["service_payout"],
         walletRefundAmount: json["wallet_refund_amount"] == null
@@ -632,6 +638,9 @@ class Cart {
         "isTaxEnable": isTaxEnable == null ? null : isTaxEnable,
         "hsn_code": hsnCode == null ? null : hsnCode,
         "gst_detail": gstDetail == null ? null : gstDetail,
+        "variants": variants == null
+            ? null
+            : List<dynamic>.from(variants.map((x) => x.toJson())),
         "cgst": cgst == null ? null : cgst,
         "sgst": sgst == null ? null : sgst,
         "igst": igst == null ? null : igst,
@@ -644,6 +653,102 @@ class Cart {
         "image_100_80": image10080 == null ? null : image10080,
         "image_300_200": image300200 == null ? null : image300200,
         "image": image == null ? null : image,
+      };
+}
+
+class Variant {
+  Variant({
+    this.id,
+    this.storeId,
+    this.productId,
+    this.posProductId,
+    this.sku,
+    this.weight,
+    this.mrpPrice,
+    this.price,
+    this.discount,
+    this.unitType,
+    this.customField1,
+    this.customField2,
+    this.customField3,
+    this.customField4,
+    this.orderBy,
+    this.sort,
+    this.isExportFromFile,
+    this.created,
+    this.modified,
+  });
+
+  String id;
+  String storeId;
+  String productId;
+  String posProductId;
+  String sku;
+  String weight;
+  String mrpPrice;
+  String price;
+  String discount;
+  String unitType;
+  String customField1;
+  String customField2;
+  String customField3;
+  String customField4;
+  String orderBy;
+  String sort;
+  String isExportFromFile;
+  String created;
+  String modified;
+
+  factory Variant.fromJson(Map<String, dynamic> json) => Variant(
+        id: json["id"] == null ? null : json["id"],
+        storeId: json["store_id"] == null ? null : json["store_id"],
+        productId: json["product_id"] == null ? null : json["product_id"],
+        posProductId:
+            json["pos_product_id"] == null ? null : json["pos_product_id"],
+        sku: json["sku"] == null ? null : json["sku"],
+        weight: json["weight"] == null ? null : json["weight"],
+        mrpPrice: json["mrp_price"] == null ? null : json["mrp_price"],
+        price: json["price"] == null ? null : json["price"],
+        discount: json["discount"] == null ? null : json["discount"],
+        unitType: json["unit_type"] == null ? null : json["unit_type"],
+        customField1:
+            json["custom_field1"] == null ? null : json["custom_field1"],
+        customField2:
+            json["custom_field2"] == null ? null : json["custom_field2"],
+        customField3:
+            json["custom_field3"] == null ? null : json["custom_field3"],
+        customField4:
+            json["custom_field4"] == null ? null : json["custom_field4"],
+        orderBy: json["order_by"] == null ? null : json["order_by"],
+        sort: json["sort"] == null ? null : json["sort"],
+        isExportFromFile: json["is_export_from_file"] == null
+            ? null
+            : json["is_export_from_file"],
+        created: json["created"] == null ? null : json["created"],
+        modified: json["modified"] == null ? null : json["modified"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id == null ? null : id,
+        "store_id": storeId == null ? null : storeId,
+        "product_id": productId == null ? null : productId,
+        "pos_product_id": posProductId == null ? null : posProductId,
+        "sku": sku == null ? null : sku,
+        "weight": weight == null ? null : weight,
+        "mrp_price": mrpPrice == null ? null : mrpPrice,
+        "price": price == null ? null : price,
+        "discount": discount == null ? null : discount,
+        "unit_type": unitType == null ? null : unitType,
+        "custom_field1": customField1 == null ? null : customField1,
+        "custom_field2": customField2 == null ? null : customField2,
+        "custom_field3": customField3 == null ? null : customField3,
+        "custom_field4": customField4 == null ? null : customField4,
+        "order_by": orderBy == null ? null : orderBy,
+        "sort": sort == null ? null : sort,
+        "is_export_from_file":
+            isExportFromFile == null ? null : isExportFromFile,
+        "created": created == null ? null : created,
+        "modified": modified == null ? null : modified,
       };
 }
 

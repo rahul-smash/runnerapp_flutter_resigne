@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_notification_plugin/flutter_notification_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/provider/booking_provider.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/login/ui/login_screen.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
@@ -32,6 +33,7 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/no_network_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/dimensions/size_config.dart';
@@ -142,7 +144,9 @@ void main() async {
     } else {
       shouldForceUpdate = false;
     }
-    runApp(MyApp(shouldForceUpdate, _navigatorKey));
+    runApp(MultiProvider(providers: [
+      ChangeNotifierProvider<BookingProvider>(create: (_) => BookingProvider()),
+    ], child: MyApp(shouldForceUpdate, _navigatorKey)));
   } else {
     runApp(NoNetworkApp(_navigatorKey));
   }

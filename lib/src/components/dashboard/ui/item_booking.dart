@@ -5,6 +5,7 @@ import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/booking_details_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/edit_order_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/step_viewer.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
@@ -43,7 +44,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => BookingDetailsScreen(
+                builder: (BuildContext context) => EditBookingDetailsScreen(
                         widget.booking, callBackMethod: (status) {
                       widget.booking.status = status;
                       if (mounted) {
