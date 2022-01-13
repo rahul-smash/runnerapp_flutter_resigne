@@ -45,12 +45,12 @@ class EditBookingDetailsScreen extends StatefulWidget {
 
 class _EditBookingDetailsScreenState
     extends BaseState<EditBookingDetailsScreen> {
-
-  int quantity=0;
-  String _variantSelected;
+  int quantity = 0;
   bool isBookingDetailsApiLoading = true;
   BookingDetailsResponse _bookingDetailsResponse;
   StoreResponse storeResponse;
+
+  List<dynamic> editCartList;
 
   @override
   void initState() {
@@ -612,7 +612,6 @@ class _EditBookingDetailsScreenState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ListView.separated(
-
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 /*  itemCount: _bookingDetailsResponse
@@ -621,7 +620,6 @@ class _EditBookingDetailsScreenState
                                         ?.bookings?.cart?.length ??
                                     0,
                                 itemBuilder: (context, index) {
-                                  quantity=int.parse(_bookingDetailsResponse.bookings.cart[index].quantity);
                                   return listItem(context, index);
                                 },
                                 separatorBuilder:
@@ -762,7 +760,7 @@ class _EditBookingDetailsScreenState
                                   //                   )),
                                   //             ),
                                   //             Text(
-                                  //                 "${AppConstants.currency}${_bookingDetailsResponse.bookings.cartSaving != null ? _bookingDetailsResponse.bookings.cartSaving : '0.00'}",
+                                  //                 "${AppConstants.currency}${editCartListSaving != null ? editCartListSaving : '0.00'}",
                                   //                 style: TextStyle(
                                   //                     color: AppTheme.black,
                                   //                     fontSize: 16,
@@ -1140,8 +1138,6 @@ class _EditBookingDetailsScreenState
     );
   }
 
-
-
   String getStoreAddress() {
     String address = widget.booking.store?.location ?? "";
     if (widget.booking.store?.city != null &&
@@ -1168,9 +1164,8 @@ class _EditBookingDetailsScreenState
   }
 
   Widget listItem(BuildContext context, int index) {
-    double totalPrice =
-        (double.parse(_bookingDetailsResponse.bookings.cart[index].price)) *
-            (int.parse(_bookingDetailsResponse.bookings.cart[index].quantity));
+    double totalPrice = (double.parse(editCartList[index].price)) *
+        (int.parse(editCartList[index].quantity));
 
     return Container(
       color: Colors.white,
@@ -1209,8 +1204,7 @@ class _EditBookingDetailsScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                              '${_bookingDetailsResponse.bookings.cart[index].productName}',
+                          Text('${editCartList[index].productName}',
                               style: TextStyle(
                                   color: AppTheme.mainTextColor,
                                   fontWeight: FontWeight.w500,
@@ -1234,7 +1228,7 @@ class _EditBookingDetailsScreenState
                           Row(
                             children: [
                               Text(
-                                  "${AppConstants.currency} ${_bookingDetailsResponse.bookings.cart[index].price}",
+                                  "${AppConstants.currency} ${editCartList[index].price}",
                                   style: TextStyle(
                                       color: AppTheme.black,
                                       fontSize: AppConstants.smallSize,
@@ -1256,16 +1250,7 @@ class _EditBookingDetailsScreenState
                                 child: Row(
                                   children: [
                                     InkWell(
-                                        onTap: () {
-                                          if(_bookingDetailsResponse.bookings.cart[index].quantity!=null)
-                                            quantity--;
-
-                                            Provider.of<BookingProvider>(context, listen: false)
-                                                .updateQuantity(quantity);
-
-                                            print("quantity minus:$quantity");
-
-                                        },
+                                        onTap: () {},
                                         child: Icon(
                                           Icons.remove,
                                           color: AppTheme.black,
@@ -1281,27 +1266,20 @@ class _EditBookingDetailsScreenState
                                               BorderRadius.circular(3),
                                           color: AppTheme.backgroundColor),
                                       child: Consumer<BookingProvider>(
-                                     builder: (context, value, child){
-                                       print("value:${value.quantity.toString()}");
-                                       return Text(
-                                         '${value.quantity.toString()}',
-                                         style: TextStyle(
-                                             color: AppTheme.black,
-                                             fontSize: 16),
-                                       );
-                                     },
-
+                                        builder: (context, value, child) {
+                                          print(
+                                              "value:${value.quantity.toString()}");
+                                          return Text(
+                                            '${value.quantity.toString()}',
+                                            style: TextStyle(
+                                                color: AppTheme.black,
+                                                fontSize: 16),
+                                          );
+                                        },
                                       ),
                                     ),
                                     InkWell(
-                                        onTap: () {
-                                          if(_bookingDetailsResponse.bookings.cart[index].quantity!=null)
-                                            quantity++;
-                                            Provider.of<BookingProvider>(context, listen: false)
-                                                .updateQuantity(quantity);
-
-                                            print("quantity plus:$quantity");
-                                        },
+                                        onTap: () {},
                                         child: Icon(
                                           Icons.add,
                                           color: AppTheme.black,
@@ -1328,8 +1306,8 @@ class _EditBookingDetailsScreenState
               ),
 
               // Text(
-              //     'Quantity: ${_bookingDetailsResponse.bookings.cart[index].quantity}'
-              //         '${_bookingDetailsResponse.bookings.cart[index].unitType}',
+              //     'Quantity: ${editCartList[index].quantity}'
+              //         '${editCartList[index].unitType}',
               //     style: TextStyle(
               //         color: AppTheme.mainTextColor,
               //         fontWeight: FontWeight.w500,
@@ -1352,7 +1330,7 @@ class _EditBookingDetailsScreenState
               //   ],
               // ),
               // Text(
-              //   _bookingDetailsResponse.bookings.cart[index].price,
+              //   editCartList[index].price,
               //   style: TextStyle(
               //       fontFamily: AppConstants.fontName,
               //       fontSize: AppConstants.largeSize,
@@ -1361,12 +1339,16 @@ class _EditBookingDetailsScreenState
               // ),
             ],
           ),
-          VariantChips(
-            variant: _bookingDetailsResponse.bookings.cart[index].variants,
-            onOptionSelected: (value) {
-              _variantSelected = value;
-              setState(() {});
-            },
+          Visibility(
+            visible: editCartList[index].variants.isNotEmpty,
+            child: VariantChips(
+              variant: editCartList[index].variants,
+              variantID: editCartList[index].variantId,
+              onOptionSelected: (value) {
+                editCartList[index].variantId = value.id;
+                setState(() {});
+              },
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -1378,7 +1360,7 @@ class _EditBookingDetailsScreenState
                       color: AppTheme.subHeadingTextColor)),
               Expanded(
                 child: Text(
-                  '${_bookingDetailsResponse.bookings.cart[index].comment}',
+                  '${editCartList[index].comment}',
                   style: AppTheme.theme.textTheme.subtitle2.copyWith(
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
@@ -1394,8 +1376,7 @@ class _EditBookingDetailsScreenState
             height: 6.0,
           ),
           Visibility(
-            visible:
-                _bookingDetailsResponse.bookings.cart[index].comment.isNotEmpty,
+            visible: editCartList[index].comment.isNotEmpty,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1411,7 +1392,7 @@ class _EditBookingDetailsScreenState
                 ),
                 Flexible(
                   child: Text(
-                    _bookingDetailsResponse.bookings.cart[index].comment,
+                    editCartList[index].comment,
                     style: TextStyle(
                         color: AppTheme.mainTextColor,
                         fontSize: AppConstants.smallSize,
@@ -1848,6 +1829,9 @@ class _EditBookingDetailsScreenState
           .get<DashboardRepository>()
           .getBookingsdetails(userId: userId, orderId: booking.id);
       AppUtils.hideLoader(context);
+      if (_bookingDetailsResponse != null && _bookingDetailsResponse.success) {
+        editCartList = _bookingDetailsResponse.bookings.cart;
+      }
       isBookingDetailsApiLoading = false;
     } else {
       AppUtils.noNetWorkDialog(context);
@@ -1965,6 +1949,75 @@ class _EditBookingDetailsScreenState
     }
 
     return '';
+  }
+
+  void logicBuilder() {
+    /*0 => no changes
+              1 => quantity changes
+              2 => removed
+              3 => newly added*/
+
+    //TODO: handle case of madness if remove all items
+    //Loop and condition to check for removed products
+    for (int cartCounter = 0;
+        cartCounter < _bookingDetailsResponse.bookings.cart.length;
+        cartCounter++) {
+      bool productFound = false;
+      innerLoop:
+      for (int editListCounter = 0;
+          editListCounter < editCartList.length;
+          editListCounter++) {
+        if (editCartList[editListCounter].productId ==
+            _bookingDetailsResponse.bookings.cart[cartCounter].productId) {
+          productFound = true;
+          break innerLoop;
+        }
+        if (!productFound) {
+          //removed product
+        }
+      }
+    }
+
+    for (int editListCounter = 0;
+        editListCounter < editCartList.length;
+        editListCounter++) {
+      bool productFound = false;
+      for (int cartCounter = 0;
+          cartCounter < _bookingDetailsResponse.bookings.cart.length;
+          cartCounter++) {
+        if (editCartList[editListCounter].productId ==
+            _bookingDetailsResponse.bookings.cart[cartCounter].productId) {
+          productFound = true;
+          /*  0 => no changes
+              1 => quantity changes
+              2 => removed
+             */
+          if (editCartList[editListCounter].variantId !=
+              _bookingDetailsResponse.bookings.cart[cartCounter].variantId) {
+            //Variant changed
+            //add new variant and old added as removed
+          } else if (editCartList[editListCounter].quantity !=
+              _bookingDetailsResponse.bookings.cart[cartCounter].quantity) {
+            //check if all quantity is zero then remove this product
+            if (int.parse(editCartList[editListCounter].quantity) == 0) {
+              //remove product
+            } else {
+              //add new quantity and old quantity
+            }
+          } else {
+            //No change
+            // add same product
+          }
+          break;
+        }
+      }
+
+      if (!productFound) {
+        //TODO: handle this new added product
+        // 3 => newly added
+
+      }
+    }
   }
 }
 
