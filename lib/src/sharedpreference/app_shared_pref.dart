@@ -2,6 +2,7 @@ import 'package:marketplace_service_provider/core/sharedpreference/base_shared_p
 import 'package:marketplace_service_provider/src/components/login/model/login_response.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_constants.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_interface.dart';
+import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 
 class AppSharedPref extends BaseSharedPreference
     implements AppSharePrefInterface {
@@ -198,6 +199,17 @@ class AppSharedPref extends BaseSharedPreference
   Future<bool> setLocationId(String locationId) async {
     return await sharepref?.setString(
         AppSharePrefConstants.prefKeyAppLocationId, locationId);
+  }
+
+  String getStoreCurrency() {
+    return sharepref
+        ?.getString(AppConstants.VALUEAPPZ_ADMIN_STORE_CURRENCY) ??
+        "";
+  }
+
+  void setStoreCurrency(String value) {
+    sharepref?.setString(
+        AppConstants.VALUEAPPZ_ADMIN_STORE_CURRENCY, value);
   }
 
 }

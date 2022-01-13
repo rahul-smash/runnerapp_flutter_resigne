@@ -1,5 +1,6 @@
 import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref_constants.dart';
 import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref_interface.dart';
+import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BaseSharedPreference implements BaseSharedPrefInterface {
@@ -30,4 +31,6 @@ abstract class BaseSharedPreference implements BaseSharedPrefInterface {
     return await sharepref?.setString(
         BaseSharedPrefConstants.prefKeyDevicePlatform, devicePlatform);
   }
+
+
 }

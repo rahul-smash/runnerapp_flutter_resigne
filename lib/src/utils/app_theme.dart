@@ -56,11 +56,15 @@ class AppTheme {
   static Color buttonShadowColor = Color(0xffC8CFF2);
   static Color optionTotalEarningColor = Color(0xff29C6C6);
   static Color optionTotalBookingBgColor = Color(0xffFD7443);
+  static const rejectColor = Color(0xffdf4c4c);
   static Color optionTotalCustomerBgColor = Color(0xffFE5767);
   static Color errorRed = Color(0xffFC5666);
   static Color orange = Color(0xffFF7443);
   static Color whiteDisable = Colors.white38;
   static Color white70 = Colors.white70;
+  static const chipsBackgroundColor = Color(0xffe1e1e1);
+  static const textLightColor = Color(0xff7f7e83);
+
   static Color grayLightColor = Color(0xFFEEEEEE);
   static Color payoutCompleteGreen = Color(0xFF29C7C7);
 

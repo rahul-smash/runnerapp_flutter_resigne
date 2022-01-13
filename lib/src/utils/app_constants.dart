@@ -27,6 +27,8 @@ class AppConstants {
   static String noInternetMsg = "No internet connection!";
 
   static String currency = '';
+  static const VALUEAPPZ_ADMIN_STORE_CURRENCY = "VALUEAPPZ_ADMIN_STORE_CURRENCY";
+
 }
 
 //Booking sorting type

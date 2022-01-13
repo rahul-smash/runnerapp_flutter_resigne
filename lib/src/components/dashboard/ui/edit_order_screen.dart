@@ -436,6 +436,7 @@ class _EditBookingDetailsScreenState
                                         fontFamily: AppConstants.fontName,
                                         fontSize: AppConstants.smallSize,
                                         color: AppTheme.mainTextColor,
+
                                         fontWeight: FontWeight.normal),
                                   ),
                                 ),

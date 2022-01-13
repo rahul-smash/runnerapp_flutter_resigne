@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
+import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/user_response.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/model/device_info.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
@@ -27,6 +30,19 @@ import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
+}
+EventBus commonBus = EventBus();
+class OnRedeemCoupon {
+  String amount;
+  String code;
+  String points;
+  String type;
+  OnRedeemCoupon(this.amount, this.code,this.points,this.type);
+}
+
+class OnAddAddress {
+  List<CustomerAddress> address;
+  OnAddAddress(this.address);
 }
 
 class AppUtils {
@@ -649,4 +665,81 @@ class AppUtils {
       },
     );
   }
+
+  static String getCurrencyPrice(dynamic price) {
+    String currency = AppSharedPref.instance.getStoreCurrency();
+    NumberFormat format = NumberFormat.simpleCurrency(name: currency, decimalDigits: 2);
+    return format.format(price);
+  }
+  static Future<Map<String, dynamic>> initPlatformState() async {
+    Map<String, dynamic> deviceData = {};
+
+    final deviceInfoPlugin = DeviceInfoPlugin();
+
+    try {
+      if (Platform.isAndroid) {
+        deviceData = readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+      } else if (Platform.isIOS) {
+        deviceData = readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+      }
+    } on PlatformException {
+      deviceData = <String, dynamic>{
+        'Error': 'Failed to get platform version.'
+      };
+    }
+
+    return deviceData;
+  }
+
+  static Map<String, dynamic> readAndroidBuildData(AndroidDeviceInfo build) {
+    return <String, dynamic>{
+      'version.securityPatch': build.version.securityPatch,
+      'version.sdkInt': build.version.sdkInt,
+      'version.release': build.version.release,
+      'version.previewSdkInt': build.version.previewSdkInt,
+      'version.incremental': build.version.incremental,
+      'version.codename': build.version.codename,
+      'version.baseOS': build.version.baseOS,
+      'board': build.board,
+      'bootloader': build.bootloader,
+      'brand': build.brand,
+      'device': build.device,
+      'display': build.display,
+      'fingerprint': build.fingerprint,
+      'hardware': build.hardware,
+      'host': build.host,
+      'id': build.id,
+      'manufacturer': build.manufacturer,
+      'model': build.model,
+      'product': build.product,
+      'supported32BitAbis': build.supported32BitAbis,
+      'supported64BitAbis': build.supported64BitAbis,
+      'supportedAbis': build.supportedAbis,
+      'tags': build.tags,
+      'type': build.type,
+      'isPhysicalDevice': build.isPhysicalDevice,
+      'androidId': build.androidId,
+      'systemFeatures': build.systemFeatures,
+    };
+  }
+
+  static Map<String, dynamic> readIosDeviceInfo(IosDeviceInfo data) {
+    return <String, dynamic>{
+      'name': data.name,
+      'systemName': data.systemName,
+      'systemVersion': data.systemVersion,
+      'model': data.model,
+      'localizedModel': data.localizedModel,
+      'identifierForVendor': data.identifierForVendor,
+      'isPhysicalDevice': data.isPhysicalDevice,
+      'utsname.sysname:': data.utsname.sysname,
+      'utsname.nodename:': data.utsname.nodename,
+      'utsname.release:': data.utsname.release,
+      'utsname.version:': data.utsname.version,
+      'utsname.machine:': data.utsname.machine,
+    };
+  }
+
+
+
 }
