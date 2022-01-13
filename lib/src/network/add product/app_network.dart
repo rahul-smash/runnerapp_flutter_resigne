@@ -17,7 +17,7 @@ import '../app_network_constants.dart';
 
 class AppNetwork {
   static Dio _dio;
-
+  static const REQUEST_CATEGORIES = "/getCategories";
   static void init() {
     _dio = new Dio();
     _dio
@@ -35,7 +35,7 @@ class AppNetwork {
   }
 
 
-  static Future<BestProduct> getCategoryProducts(Map<String, dynamic> param) async {
+  static Future<BestProduct> getCategoryProducts(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -60,7 +60,7 @@ class AppNetwork {
     }
   }
 
-  static Future<LoyaltyResponse> getLoyaltyPoints(Map<String, dynamic> param) async {
+  static Future<LoyaltyResponse> getLoyaltyPoints(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -83,7 +83,7 @@ class AppNetwork {
     }
   }
 
-  static Future<CalculateShipping> calculateShipping(Map<String, dynamic> param) async {
+  static Future<CalculateShipping> calculateShipping(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -106,7 +106,7 @@ class AppNetwork {
     }
   }
 
-  static Future<CalculateAmount> calculateAmount(Map<String, dynamic> param) async {
+  static Future<CalculateAmount> calculateAmount(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -130,7 +130,7 @@ class AppNetwork {
       print(e);
     }
   }
-  static Future<ApplyCouponResponse> validateCoupon(Map<String, dynamic> param) async {
+  static Future<ApplyCouponResponse> validateCoupon(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -154,7 +154,7 @@ class AppNetwork {
       print(e);
     }
   }
-  static Future<CustomerData> getCustomerByPhone(Map<String, dynamic> param) async {
+  static Future<CustomerData> getCustomerByPhone(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -181,15 +181,15 @@ class AppNetwork {
   }
 
   static Future<CategoriesResponse> getCategories(
-      Map<String, dynamic> param) async {
+      Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
           AppNetworkConstants.baseUrl +
-              "/${SharedPrefs.getBrandId()}" +
-              NetworkConstant.API_PATH +
-              "/${SharedPrefs.getStoreId()}" +
-              NetworkConstant.REQUEST_CATEGORIES,
+              "${ AppNetworkConstants.baseStoreParam}" +
+              AppNetworkConstants.productRoute +
+              "/${storeID}" +
+              REQUEST_CATEGORIES,
           data: formData);
       print("response Get Categories=${response.data.toString()}");
       print("statusCode=${response.statusCode}");
@@ -203,7 +203,8 @@ class AppNetwork {
       throw new CustomException(e.response.data, e.response.statusCode);
     }
   }
-  static Future<BestProduct> getBestProducts(Map<String, dynamic> param) async {
+
+  static Future<BestProduct> getBestProducts(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -228,7 +229,7 @@ class AppNetwork {
     }
   }
 
-  static Future<CouponResponse> getCoupons() async {
+  static Future<CouponResponse> getCoupons({String storeID}) async {
     try {
       Response response = await _dio.get(
         AppNetworkConstants.baseUrl +
@@ -253,7 +254,7 @@ class AppNetwork {
     }
   }
 
-  static Future<DeliverySlot> getDeliverySlots(Map<String, dynamic> param) async {
+  static Future<DeliverySlot> getDeliverySlots(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -283,7 +284,7 @@ class AppNetwork {
     }
   }
 
-  static Future<AddCustomerResponse> addCustomer(Map<String, dynamic> param) async {
+  static Future<AddCustomerResponse> addCustomer(Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -315,7 +316,7 @@ class AppNetwork {
 
 
   static Future<AddAddressResponse> deliveryAddress(
-      Map<String, dynamic> param) async {
+      Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -344,7 +345,7 @@ class AppNetwork {
     }
   }
   static Future<CalculateShipping> pickupPlaceOrder(
-      Map<String, dynamic> param) async {
+      Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -369,7 +370,7 @@ class AppNetwork {
     }
   }
   static Future<CalculateShipping> placeOrder(
-      Map<String, dynamic> param) async {
+      Map<String, dynamic> param,{String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(

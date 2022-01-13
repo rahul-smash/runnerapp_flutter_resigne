@@ -1013,8 +1013,8 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
 
   void _getCategories() async {
     Map<String, dynamic> param = {"page": 1, "pagelength": 1000};
-
-    AppNetwork.getCategories(param).then(
+//TODO: send storeID
+    AppNetwork.getCategories(param,storeID: '').then(
             (value) => _handleCategoriesResponse(value),
         onError: (error) => _handleError(error));
   }
