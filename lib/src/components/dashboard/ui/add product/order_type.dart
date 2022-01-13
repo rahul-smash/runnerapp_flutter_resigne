@@ -60,7 +60,7 @@ class OrderTypeState extends State<OrderType> with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
-    _getDeliverySlot();
+    // _getDeliverySlot();
     if(widget.phone!=null){
       _checkNumber();
     }
@@ -724,9 +724,9 @@ class OrderTypeState extends State<OrderType> with TickerProviderStateMixin{
     );
   }
 
-  _getDeliverySlot(){
+  _getDeliverySlot(String storeId){
     Map<String, dynamic> param = {
-      "store_id": store_id,
+      "store_id": storeId,
     };
     EasyLoading.show(dismissOnTap: false);
     AppNetwork.getDeliverySlots(param)
@@ -1213,8 +1213,8 @@ class OrderTypeState extends State<OrderType> with TickerProviderStateMixin{
       _checkNumberOnNExt();
     }
     Map<String, dynamic> param = {
-      "storeLat": SharedPrefs.getStoreLatitude(),
-      "storeLng":SharedPrefs.getStoreLongitude(),
+      // "storeLat": SharedPrefs.getStoreLatitude(),
+      // "storeLng":SharedPrefs.getStoreLongitude(),
       "userLat": lat,
       "userlng": lng,
     };

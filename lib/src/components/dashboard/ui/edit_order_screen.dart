@@ -30,6 +30,7 @@ import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'package:provider/provider.dart';
 
+import 'add product/book_order_screen.dart';
 import 'chip/variant_chip_widget.dart';
 
 class EditBookingDetailsScreen extends StatefulWidget {
@@ -882,7 +883,9 @@ class _EditBookingDetailsScreenState
                                   ),
                                   Visibility(
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>BookOrder()));
+                                      },
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
