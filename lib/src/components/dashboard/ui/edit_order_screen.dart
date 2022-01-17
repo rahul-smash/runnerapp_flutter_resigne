@@ -37,7 +37,7 @@ class EditBookingDetailsScreen extends StatefulWidget {
   BookingRequest booking;
   Function callBackMethod;
 
-  EditBookingDetailsScreen(this.booking, {this.callBackMethod});
+  EditBookingDetailsScreen({this.booking, this.callBackMethod});
 
   @override
   _EditBookingDetailsScreenState createState() =>

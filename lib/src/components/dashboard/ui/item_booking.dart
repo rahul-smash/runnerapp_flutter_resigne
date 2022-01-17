@@ -44,7 +44,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => EditBookingDetailsScreen(
+                builder: (BuildContext context) => EditBookingDetailsScreen(booking:
                         widget.booking, callBackMethod: (status) {
                       widget.booking.status = status;
                       if (mounted) {

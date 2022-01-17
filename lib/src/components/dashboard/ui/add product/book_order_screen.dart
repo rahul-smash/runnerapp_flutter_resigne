@@ -7,6 +7,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/add%
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/calculate_amount_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/categories_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/product_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/edit_order_screen.dart';
 import 'package:marketplace_service_provider/src/network/add%20product/app_network.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
@@ -184,8 +185,9 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       length: 2,
       child: Scaffold(
           appBar: AppBar(
+            backgroundColor: AppTheme.primaryColor,
             elevation: 0.0,
-            centerTitle: true,
+            centerTitle: false,
             title:
             Text("Book Order"),
           ),
@@ -290,11 +292,13 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                       padding: const EdgeInsets.all(8.0),
                       child: InkWell(
                         onTap: (){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => OrderType(customerId:widget.customerId,phone:widget.customerPhone),
-                              ));
+                          Navigator.pop(context);
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => OrderType(customerId:widget.customerId,phone:widget.customerPhone),
+                          //       // builder: (context) => EditBookingDetailsScreen(),//TODO uncomment  while merging
+                          //     ));
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 12.0),
@@ -310,8 +314,8 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("${OderCart.getOrderCartMap().length.toString()} items",style: TextStyle(fontSize: 12,color: Colors.white),),
-                                  Text("${AppUtils.getCurrencyPrice(double.parse(calculatedAmount!=null?calculatedAmount.itemSubTotal:"0"))}",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                  // Text("${OderCart.getOrderCartMap().length.toString()} items",style: TextStyle(fontSize: 12,color: Colors.white),),
+                                  // Text("${AppUtils.getCurrencyPrice(double.parse(calculatedAmount!=null?calculatedAmount.itemSubTotal:"0"))}",style: TextStyle(fontSize: 14,color: Colors.white),),
                                 ],
                               ),
                               Row(
@@ -660,7 +664,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                     alignment: Alignment.center,
                     children: [
                       Positioned(
-                        top: 0, left: 100, right: 0,
+                        top: 0, left: 90, right: 0,
                         child: Column(
                           children: [
                             Container(
@@ -711,7 +715,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                           _getImageOrPlaceholder(categoryProduct[index].image),
                           Text(categoryProduct[index].title!=null?categoryProduct[index].title:"", overflow: TextOverflow.ellipsis,),
                           Container(
-                            width: 78,
+                            width: 92,
                             padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 8.0),
                             decoration: BoxDecoration(
                               border: Border.all(color: AppTheme.textLightColor),
@@ -819,7 +823,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       "sub_cat_ids": selectedSubCategoryId,
     };
 
-    AppNetwork.getCategoryProducts(param).then((value) => _handleProductResponse(value),
+    AppNetwork.getCategoryProducts(param,storeID: widget.storeId).then((value) => _handleProductResponse(value),
         onError: (error) => _handleError(error));
   }
   /* _handleProductResponse(BestProduct value) {
@@ -907,7 +911,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       "keyword": searchQuery
     };
 
-    AppNetwork.getBestProducts(param).then((value) => _handleBestProductResponse(value),
+    AppNetwork.getBestProducts(param,storeID: widget.storeId).then((value) => _handleBestProductResponse(value),
         onError: (error) => _handleError(error));
   }
 
@@ -989,7 +993,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       "order_detail":jsonEncode(productModels),
     };
 
-    AppNetwork.calculateAmount(param).then((value) => _handleTaxCalculationResponse(value),
+    AppNetwork.calculateAmount(param,storeID: widget.storeId).then((value) => _handleTaxCalculationResponse(value),
         onError: (error) => _handleError(error));
   }
 
@@ -1015,9 +1019,10 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   void _getCategories() async {
     Map<String, dynamic> param = {"page": 1, "pagelength": 1000};
 //TODO: send storeID
-    AppNetwork.getCategories(param).then(
+    AppNetwork.getCategories(param,storeID: widget.storeId).then(
             (value) => _handleCategoriesResponse(value),
         onError: (error) => _handleError(error));
+    print("store id====${widget.storeId}");
   }
 
   _handleCategoriesResponse(CategoriesResponse value) {
