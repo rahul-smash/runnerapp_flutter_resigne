@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/best_product_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/calculate_amount_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/categories_response.dart';
@@ -900,8 +899,9 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
         showList = false;
         selected = -1;
       });
-      EasyLoading.showToast('Data not found',
-          toastPosition: EasyLoadingToastPosition.bottom);
+      AppUtils.showToast("Data not found", false);
+      // EasyLoading.showToast('Data not found',
+      //     toastPosition: EasyLoadingToastPosition.bottom);
     }
   }
   void _getBestProducts() async {
@@ -1009,10 +1009,11 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
     }
   }
   void _handleError(error) {
-    EasyLoading.dismiss();
+    // EasyLoading.dismiss();
     if (error is CustomException) {
-      EasyLoading.showToast(error.toString(),
-          toastPosition: EasyLoadingToastPosition.bottom);
+      AppUtils.showToast(error.toString(), false);
+      // EasyLoading.showToast(error.toString(),
+      //     toastPosition: EasyLoadingToastPosition.bottom);
     }
   }
 
