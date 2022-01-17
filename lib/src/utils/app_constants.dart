@@ -28,6 +28,7 @@ class AppConstants {
 
   static String currency = '';
   static const VALUEAPPZ_ADMIN_STORE_CURRENCY = "VALUEAPPZ_ADMIN_STORE_CURRENCY";
+  static const VALUEAPPZ_ADMIN_STORE_ID = "VALUEAPPZ_ADMIN_STORE_ID";
 
 }
 

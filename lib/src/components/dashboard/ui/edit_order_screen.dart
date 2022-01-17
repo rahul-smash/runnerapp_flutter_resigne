@@ -884,7 +884,7 @@ class _EditBookingDetailsScreenState
                                   Visibility(
                                     child: GestureDetector(
                                       onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>BookOrder()));
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>BookOrder(storeId:_bookingDetailsResponse.bookings.storeId)));
                                       },
                                       child: Row(
                                         mainAxisAlignment:

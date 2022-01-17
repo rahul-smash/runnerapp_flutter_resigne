@@ -10,6 +10,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_notification_plugin/flutter_notification_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -23,6 +24,7 @@ import 'package:marketplace_service_provider/src/model/app_theme_color.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/config_model.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/network/add%20product/app_network.dart';
 import 'package:marketplace_service_provider/src/notification/notification_service.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref_constants.dart';
@@ -68,6 +70,7 @@ void main() async {
   //initialization of shared preferences
   await AppSharedPref.instance.init();
   await Firebase.initializeApp();
+  AppNetwork.init();
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -450,6 +453,7 @@ getMaterialApp(
   GlobalKey<NavigatorState> navigatorKey,
 ) {
   return MaterialApp(
+      builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       title: appName,
       navigatorKey: navigatorKey,

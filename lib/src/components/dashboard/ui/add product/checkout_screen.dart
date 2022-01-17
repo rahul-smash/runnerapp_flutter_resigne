@@ -532,7 +532,7 @@ class _CheckOutState extends State<CheckOut> {
       List<Variants> selectedVariant = productData.variants;
       if(productData.selectedVariantIndex==null){
         model.variantId = selectedVariant[0].id;
-        model.unitType = selectedVariant[0].unitType;
+        model.unitType = selectedVariant[0].unitType.toString();
         model.mrpPrice = selectedVariant[0].mrpPrice;
         model.weight = selectedVariant[0].weight;
         model.discount = selectedVariant[0].discount;
@@ -540,7 +540,7 @@ class _CheckOutState extends State<CheckOut> {
       }else{
         int variantIndex = productData.selectedVariantIndex;
         model.variantId = selectedVariant[variantIndex].id;
-        model.unitType = selectedVariant[variantIndex].unitType;
+        model.unitType = selectedVariant[variantIndex].unitType.toString();
         model.mrpPrice = selectedVariant[variantIndex].mrpPrice;
         model.weight = selectedVariant[variantIndex].weight;
         model.discount = selectedVariant[variantIndex].discount;
@@ -593,7 +593,7 @@ class _CheckOutState extends State<CheckOut> {
       List<Variants> selectedVariant = productData.variants;
       if(productData.selectedVariantIndex==null){
         model.variantId = selectedVariant[0].id;
-        model.unitType = selectedVariant[0].unitType;
+        model.unitType = selectedVariant[0].unitType.toString();
         model.mrpPrice = selectedVariant[0].mrpPrice;
         model.weight = selectedVariant[0].weight;
         model.discount = selectedVariant[0].discount;
@@ -601,7 +601,7 @@ class _CheckOutState extends State<CheckOut> {
       }else{
         int variantIndex = productData.selectedVariantIndex;
         model.variantId = selectedVariant[variantIndex].id;
-        model.unitType = selectedVariant[variantIndex].unitType;
+        model.unitType = selectedVariant[variantIndex].unitType.toString();
         model.mrpPrice = selectedVariant[variantIndex].mrpPrice;
         model.weight = selectedVariant[variantIndex].weight;
         model.discount = selectedVariant[variantIndex].discount;

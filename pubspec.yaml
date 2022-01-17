@@ -103,6 +103,7 @@ flutter:
     - lib/src/components/dashboard/images/
     - lib/src/components/onboarding/images/
     - lib/src/components/side_menu/images/
+    - assets/images/
 
   #
   #   - images/a_dot_ham.jpeg

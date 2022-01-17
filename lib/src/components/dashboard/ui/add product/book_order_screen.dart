@@ -15,9 +15,10 @@ import 'order_type.dart';
 
 double total=0;
 class BookOrder extends StatefulWidget {
+  var storeId;
   var customerId;
   var customerPhone;
-  BookOrder({Key key, this.customerId,this.customerPhone}) : super(key: key);
+  BookOrder({Key key, this.customerId,this.customerPhone,this.storeId}) : super(key: key);
 
   @override
   _BookOrderState createState() {
@@ -163,7 +164,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                     onTap: () {
                       setState(() {
                         variantWeight = variants[index].weight;
-                        variantUnittype = variants[index].unitType;
+                        variantUnittype = variants[index].unitType.toString();
                         variantPrice = variants[index].price;
 
                       });
@@ -963,7 +964,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       List<Variants> selectedVariant = productData.variants;
       if(productData.selectedVariantIndex==null){
         model.variantId = selectedVariant[0].id;
-        model.unitType = selectedVariant[0].unitType;
+        model.unitType = selectedVariant[0].unitType.toString();
         model.mrpPrice = selectedVariant[0].mrpPrice;
         model.weight = selectedVariant[0].weight;
         model.discount = selectedVariant[0].discount;
@@ -971,7 +972,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       }else{
         int variantIndex = productData.selectedVariantIndex;
         model.variantId = selectedVariant[variantIndex].id;
-        model.unitType = selectedVariant[variantIndex].unitType;
+        model.unitType = selectedVariant[variantIndex].unitType.toString();
         model.mrpPrice = selectedVariant[variantIndex].mrpPrice;
         model.weight = selectedVariant[variantIndex].weight;
         model.discount = selectedVariant[variantIndex].discount;
@@ -1014,7 +1015,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   void _getCategories() async {
     Map<String, dynamic> param = {"page": 1, "pagelength": 1000};
 //TODO: send storeID
-    AppNetwork.getCategories(param,storeID: '5').then(
+    AppNetwork.getCategories(param).then(
             (value) => _handleCategoriesResponse(value),
         onError: (error) => _handleError(error));
   }

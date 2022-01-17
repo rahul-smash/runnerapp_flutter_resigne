@@ -212,4 +212,13 @@ class AppSharedPref extends BaseSharedPreference
         AppConstants.VALUEAPPZ_ADMIN_STORE_CURRENCY, value);
   }
 
+   String getStoreId() {
+    return sharepref?.getString(AppConstants.VALUEAPPZ_ADMIN_STORE_ID) ??
+        "";
+  }
+
+   void setStoreId(String value) {
+     sharepref?.setString(AppConstants.VALUEAPPZ_ADMIN_STORE_ID, value);
+  }
+
 }
