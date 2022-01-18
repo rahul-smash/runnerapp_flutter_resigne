@@ -10,7 +10,8 @@ class VariantChips extends StatefulWidget {
   final Function(Variant) onOptionSelected;
   String variantID;
 
-  VariantChips({Key key, this.onOptionSelected, this.variant,this.variantID=''})
+  VariantChips(
+      {Key key, this.onOptionSelected, this.variant, this.variantID = ''})
       : super(key: key);
 
   @override
@@ -19,6 +20,10 @@ class VariantChips extends StatefulWidget {
 
 class _VariantChipsState extends State<VariantChips> {
   // List<String> options = ['500g', '1Kg','2Kg','3Kg'];
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +38,10 @@ class _VariantChipsState extends State<VariantChips> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '${widget.variant[index].weight}${widget.variant[index].unitType}',
+                  '${widget.variant[index].weight}${widget.variant[index].unitType}'
+                          .isEmpty
+                      ? '--'
+                      : '${widget.variant[index].weight}${widget.variant[index].unitType}',
                   style: widget.variant[index].id == widget.variantID
                       ? AppTheme.theme.textTheme.subtitle2.copyWith(
                           fontWeight: FontWeight.bold,
@@ -51,7 +59,8 @@ class _VariantChipsState extends State<VariantChips> {
             onSelected: (bool selected) {
               if (widget.variantID == widget.variant[index].id) return;
               setState(() {
-                widget.variantID = selected ? widget.variant[index].toString() : null;
+                widget.variantID =
+                    selected ? widget.variant[index].toString() : null;
                 widget.onOptionSelected(widget.variant[index]);
               });
             },
