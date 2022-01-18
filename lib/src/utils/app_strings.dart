@@ -146,3 +146,4 @@ const reminderOn = "Reminder On";
 const reminderOff = "Reminder Off";
 const validMobileNumber = "Please enter valid mobile number";
 const validEmail = "Please enter valid email";
+const labelEditOrder = "Edit Order";
