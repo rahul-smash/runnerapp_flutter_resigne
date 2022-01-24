@@ -20,53 +20,63 @@ class VariantChips extends StatefulWidget {
 
 class _VariantChipsState extends State<VariantChips> {
   // List<String> options = ['500g', '1Kg','2Kg','3Kg'];
+  List<Variant> variantList = List.empty(growable: true);
+
   @override
   void initState() {
     super.initState();
+    for (int i = 0; i < widget.variant.length; i++) {
+      if ('${widget.variant[i].weight}${widget.variant[i].unitType}'
+          .isNotEmpty) {
+        variantList.add(widget.variant[i]);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: AppConstants.extraSmallSize,
-      children: List<Widget>.generate(
-        widget.variant.length,
-        (int index) {
-          return ChoiceChip(
-            backgroundColor: AppTheme.borderNotFocusedColor,
-            label: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${widget.variant[index].weight}${widget.variant[index].unitType}'
-                          .isEmpty
-                      ? '--'
-                      : '${widget.variant[index].weight}${widget.variant[index].unitType}',
-                  style: widget.variant[index].id == widget.variantID
-                      ? AppTheme.theme.textTheme.subtitle2.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: AppTheme.backgroundColor)
-                      : AppTheme.theme.textTheme.subtitle2.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: AppTheme.subHeadingTextColor),
-                ),
-              ],
-            ),
-            selected: widget.variantID == widget.variant[index].id,
-            selectedColor: AppTheme.primaryColor,
-            onSelected: (bool selected) {
-              if (widget.variantID == widget.variant[index].id) return;
-              setState(() {
-                widget.variantID =
-                    selected ? widget.variant[index].toString() : null;
-                widget.onOptionSelected(widget.variant[index]);
-              });
-            },
+    return variantList.isEmpty
+        ? Container()
+        : Wrap(
+            spacing: AppConstants.extraSmallSize,
+            children: List<Widget>.generate(
+              variantList.length,
+              (int index) {
+                return ChoiceChip(
+                  backgroundColor: AppTheme.borderNotFocusedColor,
+                  label: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${variantList[index].weight}${variantList[index].unitType}'
+                                .isEmpty
+                            ? '--'
+                            : '${variantList[index].weight}${variantList[index].unitType}',
+                        style: variantList[index].id == widget.variantID
+                            ? AppTheme.theme.textTheme.subtitle2.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: AppTheme.backgroundColor)
+                            : AppTheme.theme.textTheme.subtitle2.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: AppTheme.subHeadingTextColor),
+                      ),
+                    ],
+                  ),
+                  selected: widget.variantID == variantList[index].id,
+                  selectedColor: AppTheme.primaryColor,
+                  onSelected: (bool selected) {
+                    if (widget.variantID == variantList[index].id) return;
+                    setState(() {
+                      widget.variantID =
+                          selected ? variantList[index].toString() : null;
+                      widget.onOptionSelected(variantList[index]);
+                    });
+                  },
+                );
+              },
+            ).toList(),
           );
-        },
-      ).toList(),
-    );
   }
 }

@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/sharedpreference/base_shared_pref.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/user_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/onboarding/setup_account/models/placemark_model.dart';
 import 'package:marketplace_service_provider/src/model/device_info.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
@@ -31,17 +32,21 @@ import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
 }
+
 EventBus commonBus = EventBus();
+
 class OnRedeemCoupon {
   String amount;
   String code;
   String points;
   String type;
-  OnRedeemCoupon(this.amount, this.code,this.points,this.type);
+
+  OnRedeemCoupon(this.amount, this.code, this.points, this.type);
 }
 
 class OnAddAddress {
   List<CustomerAddress> address;
+
   OnAddAddress(this.address);
 }
 
@@ -517,7 +522,7 @@ class AppUtils {
       builder: (BuildContext context) {
         return WillPopScope(
           onWillPop: () {
-            return Future(()=>false);
+            return Future(() => false);
           },
           child: Dialog(
               shape: RoundedRectangleBorder(
@@ -597,14 +602,17 @@ class AppUtils {
   }
 
   static Future<bool> callCommonDialog(
-      BuildContext context, String title, String message,) async {
+    BuildContext context,
+    String title,
+    String message,
+  ) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return WillPopScope(
           onWillPop: () {
-           return Future(()=>false);
+            return Future(() => false);
           },
           child: Dialog(
               shape: RoundedRectangleBorder(
@@ -651,7 +659,7 @@ class AppUtils {
                               color: AppTheme.primaryColor,
                               textColor: Colors.white,
                               onPressed: () {
-                                  Navigator.pop(context,true);
+                                Navigator.pop(context, true);
                               },
                             ),
                           )
@@ -668,9 +676,11 @@ class AppUtils {
 
   static String getCurrencyPrice(dynamic price) {
     String currency = AppSharedPref.instance.getStoreCurrency();
-    NumberFormat format = NumberFormat.simpleCurrency(name: currency, decimalDigits: 2);
+    NumberFormat format =
+        NumberFormat.simpleCurrency(name: currency, decimalDigits: 2);
     return format.format(price);
   }
+
   static Future<Map<String, dynamic>> initPlatformState() async {
     Map<String, dynamic> deviceData = {};
 
@@ -740,6 +750,127 @@ class AppUtils {
     };
   }
 
+  static Cart copyWithProduct(
+      dynamic product,
+      dynamic selectedVariant,
+      String userId,
+      String orderId,
+      String deviceId,
+      String deviceToken,
+      String platform) {
+    return AppUtils.copyWith(
+      id: product.id,
+      storeId: product.storeId,
+      userId: userId,
+      orderId: orderId,
+      deviceId: deviceId,
+      deviceToken: deviceToken,
+      platform: platform,
+      productId: product.id,
+      productName: product.title,
+      variantId: selectedVariant.id,
+      weight: selectedVariant.weight,
+      mrpPrice: selectedVariant.mrpPrice,
+      price: selectedVariant.price,
+      discount: selectedVariant.discount,
+      servicePayout: '',
+      walletRefundAmount: '',
+      refundStatus: '',
+      unitType: selectedVariant.unitType,
+      quantity: product.count.toString(),
+      comment: '',
+      isTaxEnable: product.isTaxEnable,
+      hsnCode: product.hsnCode,
+      gstDetail: product.posTaxDetail,
+      cgst: '',
+      sgst: '',
+      igst: '',
+      gstType: product.gstTaxType,
+      gstTaxRate: product.gstTaxRate,
+      gstState: '',
+      status: product.status,
+      created: product.created,
+      modified: product.created,
+      image10080: product.image10080,
+      image300200: product.image300200,
+      image: product.image,
+      variants: product.variants,
+    );
+  }
 
-
+  static Cart copyWith(
+          {String id,
+          String storeId,
+          String userId,
+          String orderId,
+          String deviceId,
+          String deviceToken,
+          String platform,
+          String productId,
+          String productName,
+          String variantId,
+          String weight,
+          String mrpPrice,
+          String price,
+          String discount,
+          String servicePayout,
+          String walletRefundAmount,
+          String refundStatus,
+          String unitType,
+          String quantity,
+          String comment,
+          String isTaxEnable,
+          String hsnCode,
+          String gstDetail,
+          String cgst,
+          String sgst,
+          String igst,
+          String gstType,
+          String gstTaxRate,
+          String gstState,
+          String status,
+          String created,
+          String modified,
+          String image10080,
+          String image300200,
+          String image,
+          List<dynamic> variants}) =>
+      Cart(
+        id: id,
+        storeId: storeId,
+        userId: userId,
+        orderId: orderId,
+        deviceId: deviceId,
+        deviceToken: deviceToken,
+        platform: platform,
+        productId: productId,
+        productName: productName,
+        variantId: variantId,
+        weight: weight,
+        mrpPrice: mrpPrice,
+        price: price,
+        discount: discount,
+        servicePayout: servicePayout,
+        walletRefundAmount: walletRefundAmount,
+        refundStatus: refundStatus,
+        unitType: unitType,
+        quantity: quantity,
+        comment: comment,
+        isTaxEnable: isTaxEnable,
+        hsnCode: hsnCode,
+        gstDetail: gstDetail,
+        cgst: cgst,
+        sgst: sgst,
+        igst: igst,
+        gstType: gstType,
+        gstTaxRate: gstTaxRate,
+        gstState: gstState,
+        status: status,
+        created: created,
+        modified: modified,
+        image10080: image10080,
+        image300200: image300200,
+        image: image,
+        // variants: variants,
+      );
 }

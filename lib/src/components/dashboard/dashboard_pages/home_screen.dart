@@ -129,7 +129,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
         return 'sevendays';
       }
     } else {
-      return 'yesterday';
+      return 'today';
     }
   }
 

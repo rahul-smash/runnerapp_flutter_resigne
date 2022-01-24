@@ -19,6 +19,7 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/notification/notification_model.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -73,6 +74,8 @@ class NotificationService {
 
     var fcmToken = await _firebaseMessaging.getToken();
     _instance._saveFcmToken(fcmToken);
+    await AppUtils.getDeviceInfo();
+
 
     _firebaseMessaging.getInitialMessage().then((message) {
       if (message != null) {

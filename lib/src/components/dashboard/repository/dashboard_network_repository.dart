@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/core/network/api/dio_base_service.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/TaxCalculationResponse.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
@@ -30,10 +31,18 @@ class DashboardNetworkRepository extends DioBaseService {
   static const _updateRunnerLatlng =
       '/runner_authentication/updateRunnerLatlng';
   static const _notificationRequest = '/runner_notifications/getNotifications';
+
   //OLD api
   // static const _orderCounts = '/runner_orders/OrderAssignmentCount';
   static const _orderCounts = '/runner_orders/orderCount/';
   static const _readBooking = '/runner_orders/runnerReadManualAssignment';
+
+  //taxCalculation API
+  static const _runnerTaxCalculation =
+      '/brandID/v1/storeID/tax_calculation/runnerTaxCalOnEdit';
+  static const _runnerEditedPlaceOrder =
+      '/brandID/v1/storeID/orders/runnerEditedPlaceOrder';
+
   // Payment Summery
   // https://devservicemarketplace.valueappz.com/1/runner_v1/runner_payouts/paymentSummery/31
   // Pending Payout
@@ -86,7 +95,7 @@ class DashboardNetworkRepository extends DioBaseService {
       param['user_id'] = user_id;
       param['status'] = status;
       param['filter'] = _bookingSorting;
-      print("status  "+status);
+      print("status  " + status);
 
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
@@ -267,7 +276,7 @@ class DashboardNetworkRepository extends DioBaseService {
       param['order_id'] = orderId;
       param['reason_option'] = reasonOption;
       param['reason'] = reason;
-      print('params--11-'+param.toString());
+      print('params--11-' + param.toString());
 
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
@@ -281,8 +290,8 @@ class DashboardNetworkRepository extends DioBaseService {
     return null;
   }
 
-  Future<BaseResponse> updateRunnerLatlng(
-      String userId, String lat, String lng, String address,String storeID) async {
+  Future<BaseResponse> updateRunnerLatlng(String userId, String lat, String lng,
+      String address, String storeID) async {
     print('getCurrentPosition ===start updating lat lng====');
     try {
       // Map<String, dynamic> param =
@@ -295,7 +304,8 @@ class DashboardNetworkRepository extends DioBaseService {
       param['lng'] = lng;
       param['address'] = address;
       print(" param... $param");
-      var response = await post(apiPath(storeID, '${_updateRunnerLatlng}'), param);
+      var response =
+          await post(apiPath(storeID, '${_updateRunnerLatlng}'), param);
       print('getCurrentPosition ===hit updating lat lng====');
 
       BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
@@ -314,28 +324,29 @@ class DashboardNetworkRepository extends DioBaseService {
       var response = await get(
         apiPath(storeId, '$_orderCounts/$userId'),
       );
-      ReminderOrderCountResponse reminderOrderCountResponse = ReminderOrderCountResponse.fromJson(jsonDecode(response));
+      ReminderOrderCountResponse reminderOrderCountResponse =
+          ReminderOrderCountResponse.fromJson(jsonDecode(response));
       return reminderOrderCountResponse;
     } catch (e) {
       debugPrint(e.toString());
     }
     return null;
   }
+
   Future<BaseResponse> getReadBooking(
-      String userId,
-      String orderId,
-      ) async {
+    String userId,
+    String orderId,
+  ) async {
     try {
       Map<String, dynamic> param =
-      getIt.get<CommonNetworkUtils>().getDeviceParams();
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
       param['runner_id'] = userId;
       param['order_id'] = orderId;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_readBooking}'),
           param);
-      BaseResponse baseResponse =
-      BaseResponse.fromJson(jsonDecode(response));
+      BaseResponse baseResponse = BaseResponse.fromJson(jsonDecode(response));
       return baseResponse;
     } catch (e) {
       debugPrint(e.toString());
@@ -355,6 +366,95 @@ class DashboardNetworkRepository extends DioBaseService {
               '$_notificationRequest'),
           param);
       return NotificationModel.fromJson(jsonDecode(response));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<TaxCalculationResponse> taxCalculationApi(
+      String userId,
+      String shipping,
+      String userWallet,
+      String discount,
+      String tax,
+      String fixedDiscountAmount,
+      String orderDetail,
+      String storeID) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['user_id'] = userId;
+      param['shipping'] = shipping;
+      param['user_wallet'] = userWallet;
+      param['discount'] = discount;
+      param['tax'] = tax;
+      param['fixed_discount_amount'] = fixedDiscountAmount;
+      param['order_detail'] = orderDetail;
+      print("$param");
+      var response = await post(
+          _runnerTaxCalculation
+              .replaceAll('brandID',
+                  StoreConfigurationSingleton.instance.configModel.storeId)
+              .replaceAll('storeID', storeID),
+          param);
+      return TaxCalculationResponse.fromJson('', jsonDecode(response));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<BaseResponse> editPlaceOrder(
+    String orderId,
+    String deviceId,
+    String deviceToken,
+    String userAddressId,
+    String userAddress,
+    String platform,
+    String total,
+    String discount,
+    String paymentMethod,
+    String couponCode,
+    String checkout,
+    String userId,
+    String shippingCharges,
+    String userWallet,
+    String tax,
+    String fixedDiscountAmount,
+    String orders,
+    String storeID,
+  ) async {
+    try {
+      Map<String, dynamic> param =
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['order_id'] = orderId;
+      param['device_id'] = deviceId;
+      param['device_token'] = deviceToken;
+      param['user_address_id'] = userAddressId;
+      param['user_address'] = userAddress;
+      param['platform'] = platform;
+      param['total'] = total;
+      param['discount'] = discount;
+      param['tax'] = tax;
+      param['payment_method'] = paymentMethod;
+      param['coupon_code'] = couponCode;
+      param['checkout'] = checkout;
+      param['user_id'] = userId;
+      param['user_wallet'] = userWallet;
+      param['fixed_discount_amount'] = fixedDiscountAmount;
+      param['shipping_charges'] = shippingCharges;
+      param['orders'] = orders;
+
+      print('dssdffsd  $param');
+      print('dssdffsd  $orders');
+      var response = await post(
+          _runnerEditedPlaceOrder
+              .replaceAll('brandID',
+                  StoreConfigurationSingleton.instance.configModel.storeId)
+              .replaceAll('storeID', storeID),
+          param);
+      return BaseResponse.fromJson(jsonDecode(response));
     } catch (e) {
       debugPrint(e.toString());
     }

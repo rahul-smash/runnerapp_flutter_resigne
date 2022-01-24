@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,14 +9,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/TaxCalculationResponse.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/TaxOrderProductItem.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/provider/booking_provider.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/add%20product/order_cart.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/step_viewer.dart';
 import 'package:marketplace_service_provider/src/model/base_response.dart';
 import 'package:marketplace_service_provider/src/model/store_response_model.dart';
+import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_images.dart';
@@ -50,6 +55,7 @@ class _EditBookingDetailsScreenState
   BookingDetailsResponse _bookingDetailsResponse;
   StoreResponse storeResponse;
 
+  TaxCalculationResponse taxCalculationResponse;
   List<dynamic> editCartList = new List.empty(growable: true);
 
   @override
@@ -57,9 +63,9 @@ class _EditBookingDetailsScreenState
     super.initState();
     storeResponse = VersionApiSingleton.instance.storeResponse;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      //Clearing existing cart
+      OderCart.clearOrderCartMap();
       _getBookingdetails(widget.booking, isShowLoader: false);
-      //read notification
-      _getReadOrder(widget.booking);
     });
     eventBus.fire(ReminderAlarmEvent.dismissNotification(
         ReminderAlarmEvent.notificationDismiss));
@@ -71,7 +77,7 @@ class _EditBookingDetailsScreenState
   }
 
   @override
-  Widget builder(BuildContext context) {
+  Widget builder(BuildContext builderContext) {
     return Scaffold(
       backgroundColor: AppTheme.borderNotFocusedColor,
       appBar: BaseAppBar(
@@ -88,37 +94,13 @@ class _EditBookingDetailsScreenState
           color: AppTheme.black,
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(builderContext);
           },
         ),
         appBar: AppBar(
           elevation: 0.0,
         ),
-        widgets: <Widget>[
-          // Visibility(
-          //   visible: _bookingDetailsResponse?.bookings != null &&
-          //       showCancelButton(_bookingDetailsResponse.bookings.status),
-          //   child: InkWell(
-          //       onTap: () async {
-          //         if(!isDutyOn()){
-          //           return;
-          //         }
-          //         cancelOrderBottomSheet(
-          //             context, _bookingDetailsResponse.bookings);
-          //       },
-          //       child: Center(
-          //         child: Padding(
-          //             padding: EdgeInsets.only(right: 16, left: 16),
-          //             child: Text(
-          //               'Cancel Order',
-          //               style: TextStyle(
-          //                   color: AppTheme.primaryColorDark,
-          //                   fontSize: AppConstants.smallSize,
-          //                   fontWeight: FontWeight.w400),
-          //             )),
-          //       )),
-          // ),
-        ],
+        widgets: <Widget>[],
       ),
       body: isBookingDetailsApiLoading
           ? Center(
@@ -614,11 +596,7 @@ class _EditBookingDetailsScreenState
                               ListView.separated(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
-                                /*  itemCount: _bookingDetailsResponse
-                                    .bookings.cart.length,*/
-                                itemCount: _bookingDetailsResponse
-                                        ?.bookings?.cart?.length ??
-                                    0,
+                                itemCount: editCartList.length,
                                 itemBuilder: (context, index) {
                                   return listItem(context, index);
                                 },
@@ -665,195 +643,39 @@ class _EditBookingDetailsScreenState
                                   ],
                                 ),
                               ),
-                              Visibility(
-                                visible: false,
-                                child: Column(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 4.0, bottom: 4.0),
+                              Column(
+                                // crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        logicBuilder(builderContext,
+                                            hitPlaceOrder: false);
+                                      },
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Flexible(
-                                            child: Text('Total',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize:
-                                                      AppConstants.smallSize,
-                                                  fontWeight: FontWeight.w500,
-                                                )),
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.refresh_sharp,
+                                            color: AppTheme.primaryColor,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
                                           ),
                                           Text(
-                                              "${AppConstants.currency}${_bookingDetailsResponse.bookings.total}",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize:
-                                                      AppConstants.smallSize,
-                                                  fontWeight: FontWeight.w500))
+                                            labelRefresh,
+                                            style: TextStyle(
+                                                color: AppTheme.primaryColor),
+                                          )
                                         ],
                                       ),
                                     ),
-                                    Visibility(
-                                        visible: _bookingDetailsResponse
-                                                    .bookings.shippingCharges ==
-                                                "0.00"
-                                            ? false
-                                            : true,
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 4, bottom: 4),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Flexible(
-                                                  child: Text('Discount',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xff74BA33),
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      )),
-                                                ),
-                                                Text(
-                                                    "${AppConstants.currency}${_bookingDetailsResponse.bookings.discount}",
-                                                    style: TextStyle(
-                                                        color: AppTheme.black,
-                                                        fontSize: AppConstants
-                                                            .smallSize,
-                                                        fontWeight:
-                                                            FontWeight.w500))
-                                              ],
-                                            ))),
-                                    //TODO add service charges if required
-                                    // Visibility(
-                                    //     visible: _bookingDetailsResponse
-                                    //                 .bookings.cartSaving !=
-                                    //             null &&
-                                    //         (_bookingDetailsResponse
-                                    //                 .bookings.cartSaving !=
-                                    //             '0.00'),
-                                    //     child: Padding(
-                                    //         padding: EdgeInsets.only(
-                                    //             top: 4, bottom: 4),
-                                    //         child: Row(
-                                    //           mainAxisAlignment:
-                                    //               MainAxisAlignment.spaceBetween,
-                                    //           mainAxisSize: MainAxisSize.max,
-                                    //           crossAxisAlignment:
-                                    //               CrossAxisAlignment.center,
-                                    //           children: <Widget>[
-                                    //             Flexible(
-                                    //               child: Text('Service Charges',
-                                    //                   style: TextStyle(
-                                    //                     color: AppTheme.black,
-                                    //                     fontSize: 16,
-                                    //                     fontWeight:
-                                    //                         FontWeight.w500,
-                                    //                   )),
-                                    //             ),
-                                    //             Text(
-                                    //                 "${AppConstants.currency}${editCartListSaving != null ? editCartListSaving : '0.00'}",
-                                    //                 style: TextStyle(
-                                    //                     color: AppTheme.black,
-                                    //                     fontSize: 16,
-                                    //                     fontWeight:
-                                    //                         FontWeight.w500))
-                                    //           ],
-                                    //         ))),
-                                    Visibility(
-                                        visible: _bookingDetailsResponse
-                                                .bookings.discount.isNotEmpty &&
-                                            _bookingDetailsResponse
-                                                    .bookings.discount !=
-                                                '0.00',
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 4, bottom: 4),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Flexible(
-                                                  child:
-                                                      Text('Delivery Charges',
-                                                          style: TextStyle(
-                                                            color: AppTheme
-                                                                .lightGreenColor,
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          )),
-                                                ),
-                                                Text(
-                                                    "${AppConstants.currency}${_bookingDetailsResponse.bookings.shippingCharges != null ? _bookingDetailsResponse.bookings.shippingCharges : '0.00'}",
-                                                    style: TextStyle(
-                                                        color: AppTheme
-                                                            .lightGreenColor,
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500))
-                                              ],
-                                            ))),
-                                    Visibility(
-                                        visible: _bookingDetailsResponse
-                                                    .bookings.tax ==
-                                                "0.00"
-                                            ? false
-                                            : true,
-                                        child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 4, bottom: 4),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Flexible(
-                                                  child: Text('Tax Charges',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: AppConstants
-                                                            .smallSize,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      )),
-                                                ),
-                                                Text(
-                                                    "${AppConstants.currency}${_bookingDetailsResponse.bookings.tax}",
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: AppConstants
-                                                            .smallSize,
-                                                        fontWeight:
-                                                            FontWeight.w600))
-                                              ],
-                                            ))),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.only(top: 4, bottom: 4),
-                                      color: Color(0xFFE1E1E1),
-                                      height: 1,
-                                    ),
-                                    Row(
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 4.0, bottom: 4.0),
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.max,
@@ -861,65 +683,306 @@ class _EditBookingDetailsScreenState
                                           CrossAxisAlignment.center,
                                       children: <Widget>[
                                         Flexible(
-                                          child: Text('Payable Amount',
+                                          child: Text('Total',
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 17,
+                                                fontSize:
+                                                    AppConstants.smallSize,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                         ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: <Widget>[
-                                            Text(
-                                                "${AppConstants.currency}${_bookingDetailsResponse.bookings.total}",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 17,
-                                                    fontWeight:
-                                                        FontWeight.w500)),
-                                          ],
-                                        )
+                                        Text(
+                                            "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.itemSubTotal : _bookingDetailsResponse.bookings.checkout}",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize:
+                                                    AppConstants.smallSize,
+                                                fontWeight: FontWeight.w500))
                                       ],
                                     ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  Visibility(
+                                      visible: taxCalculationResponse != null
+                                          ? taxCalculationResponse
+                                                  .taxCalculation
+                                                  .discount
+                                                  .isNotEmpty &&
+                                              taxCalculationResponse
+                                                      .taxCalculation
+                                                      .discount !=
+                                                  '0.00'
+                                          : _bookingDetailsResponse
+                                                      .bookings.discount ==
+                                                  "0.00"
+                                              ? false
+                                              : true,
+                                      child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 4, bottom: 4),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Flexible(
+                                                child: Text('Discount',
+                                                    style: TextStyle(
+                                                      color: Color(0xff74BA33),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    )),
+                                              ),
+                                              Text(
+                                                  "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.discount : _bookingDetailsResponse.bookings.discount}",
+                                                  style: TextStyle(
+                                                      color: AppTheme.black,
+                                                      fontSize: AppConstants
+                                                          .smallSize,
+                                                      fontWeight:
+                                                          FontWeight.w500))
+                                            ],
+                                          ))),
+                                  Visibility(
+                                      visible: taxCalculationResponse != null
+                                          ? taxCalculationResponse
+                                                  .taxCalculation
+                                                  .shipping
+                                                  .isNotEmpty &&
+                                              taxCalculationResponse
+                                                      .taxCalculation
+                                                      .shipping !=
+                                                  '0.00' &&
+                                              taxCalculationResponse
+                                                      .taxCalculation
+                                                      .shipping !=
+                                                  '0'
+                                          : _bookingDetailsResponse.bookings
+                                                      .shippingCharges ==
+                                                  "0.00"
+                                              ? false
+                                              : true,
+                                      child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 4, bottom: 4),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Flexible(
+                                                child: Text('Delivery Charges',
+                                                    style: TextStyle(
+                                                      color: AppTheme
+                                                          .lightGreenColor,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    )),
+                                              ),
+                                              Text(
+                                                  "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.shipping : _bookingDetailsResponse.bookings.shippingCharges != null ? _bookingDetailsResponse.bookings.shippingCharges : '0.00'}",
+                                                  style: TextStyle(
+                                                      color: AppTheme
+                                                          .lightGreenColor,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500))
+                                            ],
+                                          ))),
+                                  Visibility(
+                                      visible: taxCalculationResponse != null
+                                          ? taxCalculationResponse
+                                                  .taxCalculation
+                                                  .tax
+                                                  .isNotEmpty &&
+                                              taxCalculationResponse
+                                                      .taxCalculation.tax !=
+                                                  '0.00'
+                                          : _bookingDetailsResponse
+                                                      .bookings.tax ==
+                                                  "0.00"
+                                              ? false
+                                              : true,
+                                      child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 4, bottom: 4),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Flexible(
+                                                child: Text('Tax Charges',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: AppConstants
+                                                          .smallSize,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    )),
+                                              ),
+                                              Text(
+                                                  "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.tax : _bookingDetailsResponse.bookings.tax}",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: AppConstants
+                                                          .smallSize,
+                                                      fontWeight:
+                                                          FontWeight.w600))
+                                            ],
+                                          ))),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 4, bottom: 4),
+                                    color: Color(0xFFE1E1E1),
+                                    height: 1,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: Text('Payable Amount',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w500,
+                                            )),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: <Widget>[
+                                          Text(
+                                              "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.total : _bookingDetailsResponse.bookings.total}",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500)),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
                               ),
                               Column(
                                 children: [
                                   GestureDetector(
-                                    onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>BookOrder(storeId:_bookingDetailsResponse.bookings.storeId)));
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.add,
-                                            size: 12,
-                                            color: AppTheme.primaryColor,
-                                          ),
-                                          Text(
-                                            "Add Product",
-                                            style: TextStyle(
-                                                color: AppTheme.primaryColor,
-                                                decoration:
-                                                    TextDecoration.underline),
-                                          )
-                                        ],
+                                    onTap: () async {
+                                      bool returnValue = await Navigator.push(
+                                          builderContext,
+                                          MaterialPageRoute(
+                                              builder: (context) => BookOrder(
+                                                  storeId:
+                                                      _bookingDetailsResponse
+                                                          .bookings.storeId)));
+                                      if (returnValue) {
+                                        for (int i = 0;
+                                            i <
+                                                OderCart.orderCartMap.values
+                                                    .toList()
+                                                    .length;
+                                            i++) {
+                                          dynamic product = OderCart
+                                              .orderCartMap.values
+                                              .toList()[i];
+                                          dynamic selectedVariant =
+                                              product.variants[
+                                                  product.selectedVariantIndex];
+                                          String userId =
+                                              _bookingDetailsResponse
+                                                  .bookings.cart.first.userId;
+                                          String orderId =
+                                              _bookingDetailsResponse
+                                                  .bookings.cart.first.orderId;
+                                          String deviceId =
+                                              _bookingDetailsResponse
+                                                  .bookings.cart.first.deviceId;
+                                          String deviceToken =
+                                              _bookingDetailsResponse.bookings
+                                                  .cart.first.deviceToken;
+                                          String platform =
+                                              _bookingDetailsResponse
+                                                  .bookings.cart.first.platform;
+                                          dynamic toBeAddProduct =
+                                              AppUtils.copyWithProduct(
+                                                  product,
+                                                  selectedVariant,
+                                                  userId,
+                                                  orderId,
+                                                  deviceId,
+                                                  deviceToken,
+                                                  platform);
+                                          bool productFound = false;
+                                          for (int j = 0;
+                                              j < editCartList.length;
+                                              j++) {
+                                            if (editCartList[j].productId ==
+                                                OderCart.orderCartMap.values
+                                                    .toList()[i]
+                                                    .id) {
+                                              productFound = true;
+                                              //update New Product here
+                                              if (selectedVariant.id !=
+                                                  editCartList[j].variantId) {
+                                                editCartList
+                                                    .add(toBeAddProduct);
+                                              } else {
+                                                editCartList[j].quantity =
+                                                    OderCart.orderCartMap.values
+                                                        .toList()[i]
+                                                        .count
+                                                        .toString();
+                                              }
 
+                                              // break;
+                                            }
+                                          }
+                                          if (!productFound) {
+                                            editCartList.add(toBeAddProduct);
+                                          }
+                                        }
+                                      }
+                                      setState(() {});
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.add,
+                                          size: 12,
+                                          color: AppTheme.primaryColor,
+                                        ),
+                                        Text(
+                                          "Add Product",
+                                          style: TextStyle(
+                                              color: AppTheme.primaryColor,
+                                              decoration:
+                                                  TextDecoration.underline),
+                                        )
+                                      ],
                                     ),
                                   ),
                                   SizedBox(height: 10),
                                   MaterialButton(
                                     height: 40,
                                     elevation: 8,
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      logicBuilder(context);
+                                    },
                                     color: AppTheme.primaryColor,
                                     minWidth:
                                         Dimensions.getWidth(percentage: 50),
@@ -982,7 +1045,6 @@ class _EditBookingDetailsScreenState
   Widget listItem(BuildContext context, int index) {
     double totalPrice = (double.parse(editCartList[index].price)) *
         (int.parse(editCartList[index].quantity));
-
     return Container(
       color: Colors.white,
       child: Column(
@@ -1002,11 +1064,9 @@ class _EditBookingDetailsScreenState
                   children: <Widget>[
                     ClipRRect(
                         borderRadius: new BorderRadius.circular(16),
-                        child: _bookingDetailsResponse
-                                .bookings.cart[index].image300200.isNotEmpty
+                        child: editCartList[index].image300200.isNotEmpty
                             ? Image.network(
-                                _bookingDetailsResponse
-                                    .bookings.cart[index].image300200,
+                                editCartList[index].image300200,
                                 height: 80,
                                 width: 80,
                                 fit: BoxFit.cover,
@@ -1025,36 +1085,98 @@ class _EditBookingDetailsScreenState
                                   color: AppTheme.mainTextColor,
                                   fontWeight: FontWeight.w500,
                                   fontSize: AppConstants.largeSize)),
-                          Container(
-                              margin: EdgeInsets.only(top: 6.0),
-                              padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: AppTheme.borderNotFocusedColor),
-                                color: AppTheme.borderNotFocusedColor,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16.0)),
-                              ),
-                              child: Text(
-                                  '${_bookingDetailsResponse.bookings.categoryTitle}',
-                                  style: TextStyle(
-                                    color: AppTheme.subHeadingTextColor,
-                                    fontSize: 13.0,
-                                  ))),
+                          Visibility(
+                            visible: _bookingDetailsResponse
+                                .bookings.categoryTitle
+                                .trim()
+                                .isNotEmpty,
+                            child: Container(
+                                margin: EdgeInsets.only(top: 6.0),
+                                padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppTheme.borderNotFocusedColor),
+                                  color: AppTheme.borderNotFocusedColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16.0)),
+                                ),
+                                child: Text(
+                                    '${_bookingDetailsResponse.bookings.categoryTitle}',
+                                    style: TextStyle(
+                                      color: AppTheme.subHeadingTextColor,
+                                      fontSize: 13.0,
+                                    ))),
+                          ),
                           Row(
                             children: [
-                              Text(
-                                  "${AppConstants.currency} ${editCartList[index].price}",
-                                  style: TextStyle(
+                              Visibility(
+                                visible: !editCartList[index].isEditPrice,
+                                child: Text(
+                                    "${AppConstants.currency} ${editCartList[index].price}",
+                                    style: TextStyle(
+                                        color: AppTheme.black,
+                                        fontSize: AppConstants.smallSize,
+                                        fontWeight: FontWeight.w700)),
+                              ),
+                              Visibility(
+                                visible: editCartList[index].isEditPrice,
+                                child: SizedBox(
+                                  width: 50,
+                                  child: TextFormField(
+                                    controller: TextEditingController(
+                                        text: editCartList[index].price),
+                                    keyboardType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    validator: (value) =>
+                                        value.isEmpty ? 'enter amount' : null,
+                                    style: TextStyle(
+                                        color: AppTheme.mainTextColor),
+                                    onFieldSubmitted: (value) {
+                                      editCartList[index].price = value;
+                                      editCartList[index].mrpPrice = value;
+                                    },
+                                    onChanged: (value) {
+                                      editCartList[index].price = value;
+                                      editCartList[index].mrpPrice = value;
+                                    },
+                                    decoration: InputDecoration(
+                                      counterText: '',
+                                      enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .borderNotFocusedColor)),
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .borderOnFocusedColor)),
+                                      hintText: labelPrice,
+                                      hintStyle: TextStyle(
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontSize: 14),
+                                      labelStyle: TextStyle(
+                                          color: AppTheme.mainTextColor,
+                                          fontSize: 14),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                  onTap: () {
+                                    editCartList[index].isEditPrice =
+                                        !editCartList[index].isEditPrice;
+                                    setState(() {});
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Icon(
+                                      editCartList[index].isEditPrice
+                                          ? Icons.check
+                                          : Icons.edit,
                                       color: AppTheme.black,
-                                      fontSize: AppConstants.smallSize,
-                                      fontWeight: FontWeight.w700)),
-                              InkWell(
-                                  onTap: () {},
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: AppTheme.black,
-                                    size: 14,
+                                      size: editCartList[index].isEditPrice
+                                          ? 20
+                                          : 14,
+                                    ),
                                   )),
                               Spacer(),
                               Container(
@@ -1072,7 +1194,8 @@ class _EditBookingDetailsScreenState
                                                           .quantity) >
                                                   0
                                               ? int.parse(editCartList[index]
-                                                      .quantity) - 1
+                                                      .quantity) -
+                                                  1
                                               : 0;
                                           editCartList[index].quantity =
                                               quantityInt.toString();
@@ -1133,43 +1256,11 @@ class _EditBookingDetailsScreenState
                   ],
                 ),
               ),
-
-              // Text(
-              //     'Quantity: ${editCartList[index].quantity}'
-              //         '${editCartList[index].unitType}',
-              //     style: TextStyle(
-              //         color: AppTheme.mainTextColor,
-              //         fontWeight: FontWeight.w500,
-              //         fontSize: AppConstants.largeSize)),
-
-              //TODO: commeted price
-              // Column(
-              //   children: [
-              //     Text(
-              //       AppConstants.currency,
-              //       style: TextStyle(
-              //           fontFamily: AppConstants.fontName,
-              //           fontSize: AppConstants.extraSmallSize,
-              //           color: AppTheme.mainTextColor,
-              //           fontWeight: FontWeight.w500),
-              //     ),
-              //     SizedBox(
-              //       height: 3,
-              //     ),
-              //   ],
-              // ),
-              // Text(
-              //   editCartList[index].price,
-              //   style: TextStyle(
-              //       fontFamily: AppConstants.fontName,
-              //       fontSize: AppConstants.largeSize,
-              //       color: AppTheme.mainTextColor,
-              //       fontWeight: FontWeight.w500),
-              // ),
             ],
           ),
           Visibility(
-            visible: editCartList[index].variants.isNotEmpty,
+            visible: editCartList[index].variants != null &&
+                editCartList[index].variants.isNotEmpty,
             child: VariantChips(
               variant: editCartList[index].variants,
               variantID: editCartList[index].variantId,
@@ -1208,7 +1299,7 @@ class _EditBookingDetailsScreenState
             height: 6.0,
           ),
           Visibility(
-            visible: editCartList[index].comment.isNotEmpty,
+            visible: false,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1663,7 +1754,10 @@ class _EditBookingDetailsScreenState
       AppUtils.hideLoader(context);
       if (_bookingDetailsResponse != null && _bookingDetailsResponse.success) {
         editCartList.clear();
-        editCartList.addAll(_bookingDetailsResponse.bookings.cart);
+        // editCartList.addAll(_bookingDetailsResponse.bookings.cart);
+        editCartList = _bookingDetailsResponse.bookings.cart
+            .map((e) => e.copyObject(item: e))
+            .toList();
       }
       isBookingDetailsApiLoading = false;
     } else {
@@ -1784,13 +1878,14 @@ class _EditBookingDetailsScreenState
     return '';
   }
 
-  void logicBuilder() {
-    /*0 => no changes
-              1 => quantity changes
-              2 => removed
-              3 => newly added*/
+  void logicBuilder(BuildContext buildContext,
+      {bool hitPlaceOrder = true}) async {
+    String noChanges = '0',
+        quantityChanges = '1',
+        removed = '2',
+        newlyAdded = '3';
+    List<TaxOrderProductItem> editJsonList = List.empty(growable: true);
 
-    //TODO: handle case of madness if remove all items
     //Loop and condition to check for removed products
     for (int cartCounter = 0;
         cartCounter < _bookingDetailsResponse.bookings.cart.length;
@@ -1805,9 +1900,19 @@ class _EditBookingDetailsScreenState
           productFound = true;
           break innerLoop;
         }
-        if (!productFound) {
-          //removed product
-        }
+      }
+
+      if (!productFound) {
+        //removed product
+        editJsonList.add(TaxOrderProductItem.copyWith(
+            item: _bookingDetailsResponse.bookings.cart[cartCounter],
+            variantId:
+                _bookingDetailsResponse.bookings.cart[cartCounter].variantId,
+            price: _bookingDetailsResponse.bookings.cart[cartCounter].price,
+            oldQuantity:
+                _bookingDetailsResponse.bookings.cart[cartCounter].quantity,
+            quantity: '0',
+            changeStatus: removed));
       }
     }
 
@@ -1821,25 +1926,65 @@ class _EditBookingDetailsScreenState
         if (editCartList[editListCounter].productId ==
             _bookingDetailsResponse.bookings.cart[cartCounter].productId) {
           productFound = true;
-          /*  0 => no changes
-              1 => quantity changes
-              2 => removed
-             */
           if (editCartList[editListCounter].variantId !=
               _bookingDetailsResponse.bookings.cart[cartCounter].variantId) {
             //Variant changed
             //add new variant and old added as removed
+
+            //removed product
+            editJsonList.add(TaxOrderProductItem.copyWith(
+                item: _bookingDetailsResponse.bookings.cart[cartCounter],
+                variantId: _bookingDetailsResponse
+                    .bookings.cart[cartCounter].variantId,
+                price: _bookingDetailsResponse.bookings.cart[cartCounter].price,
+                oldQuantity:
+                    _bookingDetailsResponse.bookings.cart[cartCounter].quantity,
+                quantity: '0',
+                changeStatus: removed));
+
+            //new added product
+            editJsonList.add(TaxOrderProductItem.copyWith(
+                item: editCartList[editListCounter],
+                variantId: editCartList[editListCounter].variantId,
+                price: editCartList[editListCounter].price,
+                oldQuantity: editCartList[editListCounter].quantity,
+                quantity: editCartList[editListCounter].quantity,
+                changeStatus: newlyAdded));
           } else if (editCartList[editListCounter].quantity !=
               _bookingDetailsResponse.bookings.cart[cartCounter].quantity) {
             //check if all quantity is zero then remove this product
             if (int.parse(editCartList[editListCounter].quantity) == 0) {
-              //remove product
+              //removed product
+              editJsonList.add(TaxOrderProductItem.copyWith(
+                  item: editCartList[editListCounter],
+                  variantId: editCartList[editListCounter].variantId,
+                  price: editCartList[editListCounter].price,
+                  oldQuantity: _bookingDetailsResponse
+                      .bookings.cart[cartCounter].quantity,
+                  quantity: editCartList[editListCounter].quantity,
+                  changeStatus: removed));
             } else {
               //add new quantity and old quantity
+              //new added product
+              editJsonList.add(TaxOrderProductItem.copyWith(
+                  item: editCartList[editListCounter],
+                  variantId: editCartList[editListCounter].variantId,
+                  price: editCartList[editListCounter].price,
+                  oldQuantity: _bookingDetailsResponse
+                      .bookings.cart[cartCounter].quantity,
+                  quantity: editCartList[editListCounter].quantity,
+                  changeStatus: quantityChanges));
             }
           } else {
             //No change
             // add same product
+            editJsonList.add(TaxOrderProductItem.copyWith(
+                item: editCartList[editListCounter],
+                variantId: editCartList[editListCounter].variantId,
+                price: editCartList[editListCounter].price,
+                oldQuantity: editCartList[editListCounter].quantity,
+                quantity: editCartList[editListCounter].quantity,
+                changeStatus: noChanges));
           }
           break;
         }
@@ -1848,8 +1993,88 @@ class _EditBookingDetailsScreenState
       if (!productFound) {
         //TODO: handle this new added product
         // 3 => newly added
-
+        editJsonList.add(TaxOrderProductItem.copyWith(
+            item: editCartList[editListCounter],
+            variantId: editCartList[editListCounter].variantId,
+            price: editCartList[editListCounter].price,
+            oldQuantity: editCartList[editListCounter].quantity,
+            quantity: editCartList[editListCounter].quantity,
+            changeStatus: newlyAdded));
       }
+    }
+
+    //
+    List jsonList = TaxOrderProductItem.encodeListToJson(editJsonList);
+    if (jsonList.length != 0) {
+      String orderDetail = jsonEncode(jsonList);
+      if (!getIt.get<NetworkConnectionObserver>().offline) {
+        if (hitPlaceOrder) AppUtils.showLoader(buildContext);
+        taxCalculationResponse = await getIt
+            .get<DashboardRepository>()
+            .taxCalculationApi(
+                userId: userId,
+                shipping: _bookingDetailsResponse.bookings.shippingCharges,
+                discount: _bookingDetailsResponse.bookings.discount,
+                tax: _bookingDetailsResponse.bookings.tax,
+                fixedDiscountAmount: _bookingDetailsResponse.bookings.discount,
+                userWallet: '0',
+                orderDetail: orderDetail,
+                storeID: _bookingDetailsResponse.bookings.storeId);
+        if (taxCalculationResponse != null &&
+            taxCalculationResponse.success &&
+            hitPlaceOrder) {
+          placeOrderApi(orderDetail);
+        } else {
+          if (hitPlaceOrder) AppUtils.hideLoader(buildContext);
+        }
+        setState(() {});
+        isBookingDetailsApiLoading = false;
+      } else {
+        AppUtils.noNetWorkDialog(context);
+      }
+    } else {
+      return null;
+    }
+  }
+
+  void placeOrderApi(String orderDetail) async {
+    String orders =
+        jsonEncode(taxCalculationResponse.taxCalculation.orderDetail);
+    String deviceId = AppSharedPref.instance.getDeviceId();
+    String deviceToken = AppSharedPref.instance.getDeviceToken();
+    String platform = Platform.isIOS ? "IOS" : "Android";
+    if (!getIt.get<NetworkConnectionObserver>().offline) {
+      AppUtils.showLoader(context);
+      BaseResponse baseResponse = await getIt
+          .get<DashboardRepository>()
+          .editPlaceOrder(
+              orderId: _bookingDetailsResponse.bookings.id,
+              deviceId: deviceId,
+              deviceToken: deviceToken,
+              userAddressId: _bookingDetailsResponse.bookings.userAddressId,
+              userAddress:
+                  _bookingDetailsResponse.bookings.userAddress.completAddress,
+              platform: platform,
+              total: taxCalculationResponse.taxCalculation.total,
+              discount: taxCalculationResponse.taxCalculation.discount,
+              paymentMethod: _bookingDetailsResponse.bookings.paymentMethod,
+              couponCode: _bookingDetailsResponse.bookings.couponCode,
+              checkout: taxCalculationResponse.taxCalculation.itemSubTotal,
+              userId: _bookingDetailsResponse.bookings.userAddress.userId,
+              shippingCharges: taxCalculationResponse.taxCalculation.shipping,
+              userWallet: '0',
+              tax: taxCalculationResponse.taxCalculation.tax,
+              fixedDiscountAmount:
+                  taxCalculationResponse.taxCalculation.discount,
+              orders: orderDetail,
+              storeID: _bookingDetailsResponse.bookings.storeId);
+      AppUtils.hideLoader(context);
+      if (baseResponse != null && baseResponse.success) {
+        Navigator.pop(context, 'refreshPage');
+      }
+      isBookingDetailsApiLoading = false;
+    } else {
+      AppUtils.noNetWorkDialog(context);
     }
   }
 }

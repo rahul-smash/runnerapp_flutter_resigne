@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:marketplace_service_provider/src/components/dashboard/model/TaxCalculationResponse.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
@@ -88,12 +89,76 @@ class DashboardRepository {
     return await DashboardNetworkRepository.instance
         .ordersCount(storeId, userId);
   }
-  Future<BaseResponse> getReadBooking(
-      {String userId, String orderId}) async {
+
+  Future<BaseResponse> getReadBooking({String userId, String orderId}) async {
     return await DashboardNetworkRepository.instance
         .getReadBooking(userId, orderId);
   }
+
   Future<NotificationModel> getNotifications({String userId}) async {
     return await DashboardNetworkRepository.instance.getNotifications(userId);
+  }
+
+  Future<TaxCalculationResponse> taxCalculationApi({
+    String userId,
+    String shipping,
+    String userWallet,
+    String discount,
+    String tax,
+    String fixedDiscountAmount,
+    String orderDetail,
+    String storeID,
+  }) async {
+    return await DashboardNetworkRepository.instance.taxCalculationApi(
+        userId,
+        shipping,
+        userWallet,
+        discount,
+        tax,
+        fixedDiscountAmount,
+        orderDetail,
+        storeID);
+  }
+
+  Future<BaseResponse> editPlaceOrder({
+    String orderId,
+    String deviceId,
+    String deviceToken,
+    String userAddressId,
+    String userAddress,
+    String platform,
+    String total,
+    String discount,
+    String paymentMethod,
+    String couponCode,
+    String checkout,
+    String userId,
+    String shippingCharges,
+    String userWallet,
+    String tax,
+    String fixedDiscountAmount,
+    String orders,
+    String storeID,
+  }) async {
+    return await DashboardNetworkRepository.instance.editPlaceOrder(
+      orderId,
+      deviceId,
+      deviceToken,
+      userAddressId,
+      userAddress,
+      platform,
+      total,
+      discount,
+      paymentMethod,
+      couponCode,
+      checkout,
+      userId,
+      shippingCharges,
+      userWallet,
+      tax,
+      fixedDiscountAmount,
+      orders,
+      storeID,
+    );
   }
 }
