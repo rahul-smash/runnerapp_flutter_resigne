@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/best_product_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/calculate_amount_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/categories_response.dart';
@@ -73,7 +74,6 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
 
     calculateAmount();
   }
-
   _handleTabSelection() {
     setState(() {});
     if (_tabController.index == 0) {
@@ -90,14 +90,13 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
     }
   }
 
-  cartDialog() {
-    if (OderCart.getOrderCartMap().length > 0) {
-      calculateAmount();
-      return Future.delayed(Duration.zero, () => showAlert(context));
-    }
-    return;
-  }
-
+  // cartDialog() {
+  //   if (OderCart.getOrderCartMap().length > 0) {
+  //     calculateAmount();
+  //     return Future.delayed(Duration.zero, () => showAlert(context));
+  //   }
+  //   return;
+  // }
   void _initScrollListener() {
     _scrollController.addListener(() {
       if (_scrollController.position.maxScrollExtent ==
@@ -177,7 +176,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                     title: Text(
                       variants[index].weight != null
                           ? '${variants[index].weight}  ${variants[index].unitType}'
-                          : "",
+                          : "--",
                       overflow: TextOverflow.ellipsis,
                     ),
                     onTap: () {
@@ -1076,6 +1075,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
         image: imageUrl,
         width: 60.0,
         height: 60.0,
+        fit: BoxFit.cover,
         imageErrorBuilder: (context, error, stackTrace) {
           return Image.asset(
             'assets/images/add_image_icon.png',
@@ -1276,9 +1276,8 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       "order_detail": jsonEncode(productModels),
     };
 
-    // AppNetwork.calculateAmount(param, storeID: widget.storeId).then(
-    //     (value) => _handleTaxCalculationResponse(value),
-    //     onError: (error) => _handleError(error));
+    AppNetwork.calculateAmount(param,storeID: widget.storeId).then((value) => _handleTaxCalculationResponse(value),
+        onError: (error) => _handleError(error));
   }
 
   _handleTaxCalculationResponse(CalculateAmount value) {
