@@ -60,6 +60,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   List<SubCategory> _categoryList = [];
   TabController _tabController;
   double price = 0;
+  PageStorageKey _key;
 
   @override
   void initState() {
@@ -74,6 +75,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
 
     calculateAmount();
   }
+
   _handleTabSelection() {
     setState(() {});
     if (_tabController.index == 0) {
@@ -432,7 +434,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                         productList[index].selectedVariantIndex]
                                     .price);
                                 // total!=null? total+=price: total=price;
-                                calculateAmount();
+                                // calculateAmount();
                               });
                             },
                             child: Container(
@@ -536,92 +538,89 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                             : "",
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        child: Container(
-                                          width: double.infinity,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8.0, horizontal: 8.0),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color:
-                                                      AppTheme.textLightColor)),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Center(
-                                                child: Text(
-                                                  productList[index].variants !=
-                                                          null
-                                                      ? productList[index]
-                                                                      .variants[
-                                                                  productList[
-                                                                          index]
-                                                                      .selectedVariantIndex] !=
-                                                              null
-                                                          ? productList[index]
-                                                                      .variants[
-                                                                          productList[index]
-                                                                              .selectedVariantIndex]
-                                                                      .weight !=
-                                                                  null
-                                                              ? '${productList[index].variants[productList[index].selectedVariantIndex]?.weight}'
-                                                                  '${productList[index].variants[productList[index].selectedVariantIndex]?.unitType}'
-                                                              : ""
-                                                          : ""
-                                                      : "",
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              productList[index]
-                                                          .variants
-                                                          .length >
-                                                      1
-                                                  ? Material(
-                                                      child: InkWell(
-                                                          splashColor:
-                                                              Colors.grey,
-                                                          onTap: () {
-                                                            _askVariant(productList[
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 7.0),
+                                        // width: double.infinity,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.0, horizontal: 8.0),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color:
+                                                    AppTheme.textLightColor)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Center(
+                                              child: Text(
+                                                productList[index].variants !=
+                                                        null
+                                                    ? productList[index]
+                                                                    .variants[
+                                                                productList[
                                                                         index]
-                                                                    .variants)
-                                                                .then((value) {
-                                                              setState(() {
-                                                                if (value !=
-                                                                        null &&
-                                                                    int.parse(
-                                                                            value) !=
-                                                                        productList[index]
-                                                                            .selectedVariantIndex) {
+                                                                    .selectedVariantIndex] !=
+                                                            null
+                                                        ? productList[index]
+                                                                    .variants[productList[
+                                                                            index]
+                                                                        .selectedVariantIndex]
+                                                                    .weight !=
+                                                                null
+                                                            ? '${productList[index].variants[productList[index].selectedVariantIndex]?.weight}'
+                                                                '${productList[index].variants[productList[index].selectedVariantIndex]?.unitType}'
+                                                            : ""
+                                                        : ""
+                                                    : "",
+                                                overflow: TextOverflow.visible,
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                            productList[index].variants.length >
+                                                    1
+                                                ? Material(
+                                                    child: InkWell(
+                                                        splashColor:
+                                                            Colors.grey,
+                                                        onTap: () {
+                                                          _askVariant(
                                                                   productList[
                                                                           index]
-                                                                      .count = 0;
-                                                                  OderCart.removeOrder(
+                                                                      .variants)
+                                                              .then((value) {
+                                                            setState(() {
+                                                              if (value !=
+                                                                      null &&
+                                                                  int.parse(
+                                                                          value) !=
                                                                       productList[
                                                                               index]
-                                                                          .id);
-                                                                }
-                                                                productList[index]
-                                                                        .selectedVariantIndex =
-                                                                    int.parse(
-                                                                        value);
-                                                              });
+                                                                          .selectedVariantIndex) {
+                                                                productList[
+                                                                        index]
+                                                                    .count = 0;
+                                                                OderCart.removeOrder(
+                                                                    productList[
+                                                                            index]
+                                                                        .id);
+                                                              }
+                                                              productList[index]
+                                                                      .selectedVariantIndex =
+                                                                  int.parse(
+                                                                      value);
                                                             });
-                                                          },
-                                                          child: Icon(
-                                                            Icons
-                                                                .arrow_drop_down,
-                                                            size: 20,
-                                                          )),
-                                                    )
-                                                  : new Container(),
-                                            ],
-                                          ),
+                                                          });
+                                                        },
+                                                        child: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          size: 20,
+                                                        )),
+                                                  )
+                                                : new Container(),
+                                          ],
                                         ),
                                       ),
                                       Text(
@@ -722,8 +721,9 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                 horizontal: 10, vertical: 5),
                             child: Container(
                               width: double.infinity,
-                              color: Colors.grey[100],
+                              color: Colors.pink[100],
                               child: ExpansionTile(
+
                                 collapsedTextColor: AppTheme.black,
                                 textColor: AppTheme.black,
                                 trailing: Text(" "),
@@ -767,8 +767,13 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                     SizedBox(
                                       width: 8,
                                     ),
-                                    Text(
-                                      _categoryList[index].title,
+                                    InkWell(
+                                      onTap: (){
+                                        print("category title:${_categoryList[0]}");
+                                      },
+                                      child: Text(
+                                        _categoryList[index].title,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -819,6 +824,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                     return index < categoryProduct.length
                         ? InkWell(
                             onTap: () {
+                              print("waheguru ${categoryProduct[0]}");
                               setState(() {
                                 categoryProduct[index].count += 1;
                                 OderCart.putOrder(categoryProduct[index]);
@@ -827,7 +833,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                         .selectedVariantIndex]
                                     .price);
                                 // total!=null? total+=price: total=price;
-                                calculateAmount();
+                                // calculateAmount();
                               });
                             },
                             child: Container(
@@ -895,7 +901,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                                       .count -= 1;
                                                   OderCart.putOrder(
                                                       categoryProduct[index]);
-                                                  calculateAmount();
+                                                  // calculateAmount();
                                                 }
                                               });
                                             },
@@ -934,7 +940,9 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Container(
-                                        width: 92,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 7.0),
+                                        // width: 92,
                                         padding: EdgeInsets.symmetric(
                                             vertical: 8.0, horizontal: 8.0),
                                         decoration: BoxDecoration(
@@ -1142,6 +1150,8 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   _handleProductResponse(BestProduct value) {
     loading = false;
     categoryProduct.clear();
+
+
     if (value.success) {
       List<Data> newList = [];
       value.data.forEach((data) {
@@ -1276,7 +1286,8 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       "order_detail": jsonEncode(productModels),
     };
 
-    AppNetwork.calculateAmount(param,storeID: widget.storeId).then((value) => _handleTaxCalculationResponse(value),
+    AppNetwork.calculateAmount(param, storeID: widget.storeId).then(
+        (value) => _handleTaxCalculationResponse(value),
         onError: (error) => _handleError(error));
   }
 

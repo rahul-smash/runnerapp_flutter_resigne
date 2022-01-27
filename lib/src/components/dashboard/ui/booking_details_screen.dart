@@ -144,7 +144,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        '#${_bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateFromFormat(_bookingDetailsResponse.bookings.created)}',
+                                        '#${_bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
                                         style: TextStyle(
                                             fontSize: 12.0,
                                             color: AppTheme.subHeadingTextColor,
@@ -661,7 +661,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                         }
                                       },
                                       child: Text(
-                                        labelEditOrder,
+                                      _bookingDetailsResponse.bookings.status=="1"? labelEditOrder:"",
                                         style: TextStyle(
                                             fontSize: AppConstants.largeSize,
                                             color: AppTheme.primaryColor,

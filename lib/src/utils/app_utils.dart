@@ -93,6 +93,14 @@ class AppUtils {
     );
   }
 
+  static convertDateTime(String utcTime){
+    var dateFormat = DateFormat("dd MMM yyyy, hh:mm aa"); // you can change the format here
+    var utcDate = dateFormat.format(DateTime.parse(utcTime)); // pass the UTC time here
+    var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
+    String createdDate = dateFormat.format(DateTime.parse(localDate)); // you will local time
+    return createdDate;
+  }
+
   static void getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = await DeviceInfoPlugin();
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails();

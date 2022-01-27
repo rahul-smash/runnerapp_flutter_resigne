@@ -125,9 +125,9 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                             controller: mobileCont,
                             focusNode: mobileFocusNode,
                             keyboardType:
-                                storeResponse.brand.internationalOtp == "1"
-                                    ? TextInputType.emailAddress
-                                    : TextInputType.phone,
+                                // storeResponse.brand.internationalOtp == "1"
+                                    TextInputType.emailAddress,
+                                    // : TextInputType.phone,
                             // inputFormatters: [
                             //   FilteringTextInputFormatter.digitsOnly
                             // ],
@@ -147,9 +147,9 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
                                   borderSide: BorderSide(
                                       color: AppTheme.borderOnFocusedColor)),
                               hintText:
-                                  storeResponse.brand.internationalOtp == "1"
-                                      ? labelEmail
-                                      : labelMobileNumber,
+                                  // storeResponse.brand.internationalOtp == "1"?
+                                      labelEmail,
+                                      // : labelMobileNumber,
                               hintStyle: TextStyle(
                                   color: AppTheme.subHeadingTextColor,
                                   fontSize: 14),
@@ -238,16 +238,17 @@ class _ResetMPINScreenState extends BaseState<ResetMPINScreen> {
       return;
     }
     if (mobileCont.text.isEmpty) {
-      storeResponse.brand.internationalOtp == "1"
-          ? AppUtils.showToast("Please enter email", true)
-          : AppUtils.showToast("Please enter mobile number", true);
+      // storeResponse.brand.internationalOtp == "1"?
+           AppUtils.showToast("Please enter email", true);
+          // : AppUtils.showToast("Please enter mobile number", true);
       return;
     }
-    if (mobileCont.text.length < 10 ||
+    if (
+    // mobileCont.text.length != 10 &&
         !AppUtils.validateEmail(mobileCont.text.trim())) {
-      storeResponse.brand.internationalOtp == "1"
-          ? AppUtils.showToast(validEmail, true)
-          : AppUtils.showToast(validMobileNumber, false);
+      // storeResponse.brand.internationalOtp == "1"
+          AppUtils.showToast(validEmail, true);
+          // : AppUtils.showToast(validMobileNumber, false);
       return;
     }
 

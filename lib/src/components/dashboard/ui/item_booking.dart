@@ -64,7 +64,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '#${widget.booking.displayOrderId} | ${AppUtils.convertDateFromFormat(widget.booking.created)}',
+                '#${widget.booking.displayOrderId} | ${AppUtils.convertDateTime(widget.booking.created)}',
                 style: TextStyle(
                     fontSize: 12.0,
                     color: AppTheme.subHeadingTextColor,
