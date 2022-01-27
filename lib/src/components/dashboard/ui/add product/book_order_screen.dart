@@ -767,13 +767,8 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                     SizedBox(
                                       width: 8,
                                     ),
-                                    InkWell(
-                                      onTap: (){
-                                        print("category title:${_categoryList[0]}");
-                                      },
-                                      child: Text(
-                                        _categoryList[index].title,
-                                      ),
+                                    Text(
+                                      _categoryList[index].title,
                                     ),
                                   ],
                                 ),
@@ -824,7 +819,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                     return index < categoryProduct.length
                         ? InkWell(
                             onTap: () {
-                              print("waheguru ${categoryProduct[0]}");
+
                               setState(() {
                                 categoryProduct[index].count += 1;
                                 OderCart.putOrder(categoryProduct[index]);
