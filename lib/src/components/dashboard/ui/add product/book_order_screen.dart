@@ -2,20 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/best_product_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/calculate_amount_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/categories_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/product_response.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/ui/edit_order_screen.dart';
 import 'package:marketplace_service_provider/src/network/add%20product/app_network.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
+import 'ExpansionTileWidget.dart';
 import 'order_cart.dart';
-import 'order_type.dart';
 
 double total = 0;
-
 class BookOrder extends StatefulWidget {
   var storeId;
   var customerId;
@@ -46,8 +43,6 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   List<Data> productList = [];
   bool isClose = false;
   List<Data> categoryProduct = [];
-
-  // List<Data> categoryProduct = [];
   String searchQuery = '',
       imageUrl,
       variantPrice,
@@ -60,7 +55,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   List<SubCategory> _categoryList = [];
   TabController _tabController;
   double price = 0;
-  PageStorageKey _key;
+
 
   @override
   void initState() {
@@ -434,7 +429,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                         productList[index].selectedVariantIndex]
                                     .price);
                                 // total!=null? total+=price: total=price;
-                                // calculateAmount();
+                                calculateAmount();
                               });
                             },
                             child: Container(
@@ -716,68 +711,9 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                   itemCount: _categoryList.length,
                   itemBuilder: (context, index) {
                     return index < _categoryList.length
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: Container(
-                              width: double.infinity,
-                              color: Colors.pink[100],
-                              child: ExpansionTile(
-
-                                collapsedTextColor: AppTheme.black,
-                                textColor: AppTheme.black,
-                                trailing: Text(" "),
-                                // key: Key(index.toString()),
-                                // tilePadding: EdgeInsets.all(8.0),
-                                initiallyExpanded: index == selected,
-                                maintainState: false,
-                                onExpansionChanged: (newState) {
-                                  setState(() {
-                                    if (newState) {
-                                      // this.isExpanded = newState;
-                                      selected = index;
-                                    } else {
-                                      // this.isExpanded = false;
-                                      selected = -1;
-                                    }
-                                    selectedCategoryId =
-                                        _categoryList[index].categoryId;
-                                    selectedSubCategoryId =
-                                        _categoryList[index].id;
-                                    // if(ExpandableCategories.getProductDataMap().containsKey(int.parse(selectedSubCategoryId))) {
-                                    //   print("category existing product");
-                                    //   print(ExpandableCategories.getProductDataMap());
-                                    //   categoryProduct =
-                                    //   ExpandableCategories.getProductDataMap()[int.parse(selectedSubCategoryId)];
-                                    //   // print(jsonEncode(categoryProduct));
-                                    // }else{
-                                    _getProducts();
-
-                                    // }
-                                  });
-                                },
-                                title: Row(
-                                  children: [
-                                    Icon(
-                                      selected == index
-                                          ? Icons.arrow_drop_up
-                                          : Icons.arrow_drop_down,
-                                      color: AppTheme.black,
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      _categoryList[index].title,
-                                    ),
-                                  ],
-                                ),
-                                // textColor: AppColor.textDarkColor,
-                                children: [
-                                  _categoryProduct(),
-                                ],
-                              ),
-                            ),
+                        ? ExpansionTileWidget(categoryList: _categoryList[index],
+                            storeID: widget.storeId,
+                            index: index,
                           )
                         : new Container();
                   },
@@ -819,7 +755,6 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                     return index < categoryProduct.length
                         ? InkWell(
                             onTap: () {
-
                               setState(() {
                                 categoryProduct[index].count += 1;
                                 OderCart.putOrder(categoryProduct[index]);
@@ -828,7 +763,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                         .selectedVariantIndex]
                                     .price);
                                 // total!=null? total+=price: total=price;
-                                // calculateAmount();
+                                calculateAmount();
                               });
                             },
                             child: Container(
@@ -896,7 +831,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                                       .count -= 1;
                                                   OderCart.putOrder(
                                                       categoryProduct[index]);
-                                                  // calculateAmount();
+                                                  calculateAmount();
                                                 }
                                               });
                                             },
@@ -1146,7 +1081,6 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
     loading = false;
     categoryProduct.clear();
 
-
     if (value.success) {
       List<Data> newList = [];
       value.data.forEach((data) {
@@ -1312,7 +1246,6 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
     AppNetwork.getCategories(param, storeID: widget.storeId).then(
         (value) => _handleCategoriesResponse(value),
         onError: (error) => _handleError(error));
-    print("store id====${widget.storeId}");
   }
 
   _handleCategoriesResponse(CategoriesResponse value) {

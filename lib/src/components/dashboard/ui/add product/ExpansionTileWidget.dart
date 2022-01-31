@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/best_product_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/calculate_amount_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/categories_response.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/product_response.dart';
 import 'package:marketplace_service_provider/src/network/add%20product/app_network.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
 import 'package:marketplace_service_provider/src/utils/app_utils.dart';
@@ -8,17 +12,20 @@ import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'order_cart.dart';
 
 class ExpansionTileWidget extends StatefulWidget {
-  final storeID;
-  final index;
-  const ExpansionTileWidget({Key key, this.index, this.storeID}) : super(key: key);
+  var customerId;
+  SubCategory categoryList ;
+  var storeID;
+  var  index;
+   ExpansionTileWidget({Key key, this.index, this.storeID,this.customerId,this.categoryList}) : super(key: key);
 
   @override
   _ExpansionTileWidgetState createState() => _ExpansionTileWidgetState();
 }
 
 class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
+  AmountData calculatedAmount;
+  List<ProductModel> productModels = [ProductModel()];
   String variantPrice, variantWeight, variantUnittype;
-  List<SubCategory> _categoryList = [];
   bool loading = false;
   int selected;
   double price = 0;
@@ -53,9 +60,9 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
                 selected = -1;
               }
               selectedCategoryId =
-                  _categoryList[widget.index].categoryId;
+                  widget.categoryList.categoryId;
               selectedSubCategoryId =
-                  _categoryList[widget.index].id;
+                  widget.categoryList.id;
               // if(ExpandableCategories.getProductDataMap().containsKey(int.parse(selectedSubCategoryId))) {
               //   print("category existing product");
               //   print(ExpandableCategories.getProductDataMap());
@@ -80,7 +87,7 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
                 width: 8,
               ),
               Text(
-                _categoryList[widget.index].title,
+                widget.categoryList.title,
               ),
             ],
           ),
@@ -183,13 +190,14 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
                 onTap: () {
                   setState(() {
                     categoryProduct[index].count += 1;
+                    print("category count:${ categoryProduct[index].count}");
                     OderCart.putOrder(categoryProduct[index]);
-                    price = double.parse(categoryProduct[index]
-                        .variants[categoryProduct[index]
-                        .selectedVariantIndex]
-                        .price);
+                    // price = double.parse(categoryProduct[index]
+                    //     .variants[categoryProduct[index]
+                    //     .selectedVariantIndex]
+                    //     .price);
                     // total!=null? total+=price: total=price;
-                    // calculateAmount();
+                    calculateAmount();
                   });
                 },
                 child: Container(
@@ -488,5 +496,58 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
             ),
           );
         });
+  }
+
+  calculateAmount() {
+    productModels.clear();
+    for (Data productData in OderCart.getOrderCartMap().values) {
+      ProductModel model = new ProductModel();
+      model.productId = productData.id;
+      model.productName = productData.title;
+      model.isTaxEnable = productData.isTaxEnable;
+      model.quantity = productData.count;
+
+      List<Variants> selectedVariant = productData.variants;
+      if (productData.selectedVariantIndex == null) {
+        model.variantId = selectedVariant[0].id;
+        model.unitType = selectedVariant[0].unitType.toString();
+        model.mrpPrice = selectedVariant[0].mrpPrice;
+        model.weight = selectedVariant[0].weight;
+        model.discount = selectedVariant[0].discount;
+        model.price = selectedVariant[0].price;
+      } else {
+        int variantIndex = productData.selectedVariantIndex;
+        model.variantId = selectedVariant[variantIndex].id;
+        model.unitType = selectedVariant[variantIndex].unitType.toString();
+        model.mrpPrice = selectedVariant[variantIndex].mrpPrice;
+        model.weight = selectedVariant[variantIndex].weight;
+        model.discount = selectedVariant[variantIndex].discount;
+        model.price = selectedVariant[variantIndex].price;
+      }
+      productModels.add(model);
+    }
+    Map<String, dynamic> param = {
+      "user_id": widget.customerId,
+      "shipping": "0",
+      "discount": 0,
+      "tax": 0,
+      "fixed_discount_amount": "0",
+      "order_detail": jsonEncode(productModels),
+    };
+
+    AppNetwork.calculateAmount(param, storeID: widget.storeID).then(
+            (value) => _handleTaxCalculationResponse(value),
+        onError: (error) => _handleError(error));
+  }
+
+  _handleTaxCalculationResponse(CalculateAmount value) {
+    if (value.success) {
+      setState(() {
+        calculatedAmount = value.data;
+      });
+    } else {
+      // EasyLoading.showToast('No Data',
+      //     toastPosition: EasyLoadingToastPosition.bottom);
+    }
   }
 }
