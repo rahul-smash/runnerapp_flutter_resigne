@@ -63,19 +63,26 @@ final ReceivePort port2 = ReceivePort();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterNotificationPlugin.stopForegroundService();
-  initAlarm();
-  initReminderAlarm();
+  if (Platform.isAndroid) {
+    await FlutterNotificationPlugin.stopForegroundService();
+    initAlarm();
+    initReminderAlarm();
+  }
   serviceLocator();
   //initialization of shared preferences
   await AppSharedPref.instance.init();
-  await Firebase.initializeApp();
   AppNetwork.init();
+  GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  if (Platform.isAndroid){
+    await Firebase.initializeApp();
+
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    NotificationService.initialize(_navigatorKey);
+}
 
-  GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  NotificationService.initialize(_navigatorKey);
+
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
@@ -414,21 +421,23 @@ class _MainWidgetState extends State<MainWidget> {
   void initState() {
     super.initState();
     eventBus.on<AlarmEvent>().listen((event) {
+      if(Platform.isAndroid){
       if (event.event == 'start') {
         initAlarm();
       } else if (event.event == 'cancel') {
         cancelAllAlarm();
-      }
+      }}
     });
 
     eventBus.on<ReminderAlarmEvent>().listen((event) {
+      if(Platform.isAndroid){
       if (event.event == ReminderAlarmEvent.start) {
         initReminderAlarm();
       } else if (event.event == ReminderAlarmEvent.cancel) {
         cancelReminderAlarm();
       } else if (event.event == ReminderAlarmEvent.notificationDismiss) {
         dismissReminderNotification();
-      }
+      }}
     });
   }
 
