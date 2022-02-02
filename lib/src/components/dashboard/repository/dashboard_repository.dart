@@ -104,6 +104,7 @@ class DashboardRepository {
     String shipping,
     String userWallet,
     String discount,
+    String cartSaving,
     String tax,
     String fixedDiscountAmount,
     String orderDetail,
@@ -113,7 +114,7 @@ class DashboardRepository {
         userId,
         shipping,
         userWallet,
-        discount,
+        discount,cartSaving,
         tax,
         fixedDiscountAmount,
         orderDetail,
@@ -129,6 +130,7 @@ class DashboardRepository {
     String platform,
     String total,
     String discount,
+    String cartSaving,
     String paymentMethod,
     String couponCode,
     String checkout,
@@ -141,6 +143,7 @@ class DashboardRepository {
     String storeID,
   }) async {
     return await DashboardNetworkRepository.instance.editPlaceOrder(
+      cartSaving,
       orderId,
       deviceId,
       deviceToken,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,7 +11,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/TaxCalculationResponse.dart';
-import 'package:marketplace_service_provider/src/components/dashboard/model/TaxOrderProductItem.dart';
+// import 'package:marketplace_service_provider/src/components/dashboard/model/TaxOrderProductItem.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/provider/booking_provider.dart';
@@ -34,6 +35,7 @@ import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 import 'package:marketplace_service_provider/src/widgets/gradient_elevated_button.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'add product/book_order_screen.dart';
 import 'chip/variant_chip_widget.dart';
@@ -51,6 +53,12 @@ class EditBookingDetailsScreen extends StatefulWidget {
 
 class _EditBookingDetailsScreenState
     extends BaseState<EditBookingDetailsScreen> {
+  double savings;
+  bool _showEdit = true;
+  StreamSubscription fcmEventStream;
+  StreamSubscription refreshEventStream;
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   bool isBookingDetailsApiLoading = true;
   BookingDetailsResponse _bookingDetailsResponse;
   StoreResponse storeResponse;
@@ -69,6 +77,36 @@ class _EditBookingDetailsScreenState
     });
     eventBus.fire(ReminderAlarmEvent.dismissNotification(
         ReminderAlarmEvent.notificationDismiss));
+    fcmEventStream = eventBus.on<FCMNotificationEvent>().listen((event) {
+      if (event != null && event.data != null)
+        switch (event.data.notifyType) {
+          case "ORDER_READY_DELIVERYBOY":
+            //TODO: refresh page Home page and open order detail page
+            _refreshController.requestRefresh();
+            _getBookingdetails(widget.booking, isShowLoader: false);
+            _showEdit = false;
+
+            break;
+        }
+    });
+    refreshEventStream = eventBus.on<RefreshEvent>().listen((event) {
+      if (mounted && _refreshController != null)
+        _refreshController.requestRefresh();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (fcmEventStream != null) fcmEventStream.cancel();
+    if (refreshEventStream != null) refreshEventStream.cancel();
+  }
+
+  void _onRefresh() async {
+    _getBookingdetails(widget.booking, isShowLoader: false);
+    if (_bookingDetailsResponse.bookings.status == "8") {
+      _showEdit = false;
+    }
   }
 
   getLatLng(Position position) async {
@@ -108,574 +146,760 @@ class _EditBookingDetailsScreenState
                   backgroundColor: Colors.black26,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
             )
-          : Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                    Card(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
-                      shadowColor: AppTheme.borderNotFocusedColor,
-                      elevation: 0.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
+          : SmartRefresher(
+              enablePullDown: true,
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 16.0,
                       ),
-                      child: Container(
-                        padding: EdgeInsets.all(18.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '#${widget.booking.displayOrderId} | ${AppUtils.convertDateFromFormat(widget.booking.created)}',
-                                    style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: widget
-                                      .booking.store.contactNumber.isNotEmpty,
-                                  child: Row(
-                                    children: [
-                                      InkWell(
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Image(
-                                              image: AssetImage(
-                                                AppImages.icon_whatsapp,
-                                              ),
-                                              height: 25,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            AppUtils.launchWhatsApp(widget
-                                                .booking.store.contactNumber);
-                                          }),
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      InkWell(
-                                          child: Image(
-                                            image:
-                                                AssetImage(AppImages.icon_call),
-                                            height: 25,
-                                          ),
-                                          onTap: () {
-                                            print("call");
-                                            AppUtils.launchCaller(widget
-                                                .booking.store.contactNumber);
-                                          }),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 2.0,
-                            ),
-                            Text(
-                              'Pickup Address',
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: 14.0,
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            Text(
-                              widget.booking.store?.storeName ?? "",
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: 18.0,
-                                  color: AppTheme.mainTextColor,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              "${widget.booking.cart.length} ${widget.booking.cart.length > 1 ? "Items" : "Item"}",
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: 14.0,
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            SizedBox(
-                              height: 4.0,
-                            ),
-                            Text(
-                              getStoreAddress(),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: AppConstants.smallSize,
-                                  color: AppTheme.mainTextColor,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Visibility(
-                                      visible: widget.booking.paymentMethod
-                                              .toLowerCase() ==
-                                          'cod',
-                                      child: Text(
-                                        "${AppConstants.currency}${widget.booking.total}",
-                                        style: TextStyle(
-                                            fontFamily: AppConstants.fontName,
-                                            fontSize: 16.0,
-                                            color: AppTheme.primaryColor,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                    Visibility(
-                                      visible: widget.booking.paymentMethod
-                                              .toLowerCase() !=
-                                          'cod',
-                                      child: Text(
-                                        "PAID",
-                                        style: TextStyle(
-                                            fontFamily: AppConstants.fontName,
-                                            fontSize: 16.0,
-                                            color: AppTheme.primaryColor,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                    Visibility(
-                                      visible: widget.booking.paymentMethod
-                                              .toLowerCase() ==
-                                          'cod',
-                                      child: Container(
-                                        margin:
-                                            EdgeInsets.only(top: 2.0, left: 5),
-                                        decoration: BoxDecoration(
-                                            color: AppTheme
-                                                .containerBackgroundColor,
-                                            borderRadius:
-                                                BorderRadius.circular(16.0)),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 4.0, horizontal: 8.0),
-                                        child: Text(
-                                          "${widget.booking.paymentMethod.toUpperCase()}",
-                                          style: TextStyle(
-                                              fontFamily: AppConstants.fontName,
-                                              fontSize: 10.0,
-                                              color: AppTheme.mainTextColor,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Flexible(child: Container()),
-                                    _getWidgetAccordingToStatus(),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 12.0,
-                            ),
-                            // Visibility(
-                            //   visible: widget.booking.runnerDeliveryAccepted ==
-                            //           '1' &&
-                            //       widget.booking.isManualAssignment == '1' &&
-                            //       widget.booking.readStatus == '0',
-                            //   child: Row(
-                            //     mainAxisAlignment:
-                            //         MainAxisAlignment.spaceBetween,
-                            //     children: [
-                            //       InkWell(
-                            //         onTap: () {
-                            //           _getReadOrder(widget.booking);
-                            //         },
-                            //         child: Container(
-                            //           decoration: BoxDecoration(
-                            //             borderRadius: BorderRadius.all(
-                            //                 Radius.circular(30)),
-                            //             gradient: LinearGradient(
-                            //               begin: Alignment.topRight,
-                            //               end: Alignment.bottomLeft,
-                            //               stops: [0.1, 0.5, 0.5, 0.9],
-                            //               colors: [
-                            //                 AppTheme.primaryColorDark,
-                            //                 AppTheme.primaryColor,
-                            //                 AppTheme.primaryColor,
-                            //                 AppTheme.primaryColor,
-                            //               ],
-                            //             ),
-                            //           ),
-                            //           padding: EdgeInsets.symmetric(
-                            //               vertical: 8.0, horizontal: 12.0),
-                            //           child: Text('Mark as read',
-                            //               style: TextStyle(
-                            //                   color: AppTheme.white,
-                            //                   fontSize:
-                            //                       AppConstants.extraSmallSize,
-                            //                   fontWeight: FontWeight.normal)),
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            SizedBox(
-                              height: 12.0,
-                            ),
-                            Divider(
-                              height: 1,
-                              thickness: 1,
-                            ),
-                            SizedBox(
-                              height: 12.0,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'Delivery Address',
-                                    style: TextStyle(
-                                        fontSize: 14.0,
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontWeight: FontWeight.w400),
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: widget.booking.user.phone.isNotEmpty,
-                                  child: Row(
-                                    children: [
-                                      InkWell(
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Image(
-                                              image: AssetImage(
-                                                AppImages.icon_whatsapp,
-                                              ),
-                                              height: 25,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            AppUtils.launchWhatsApp(
-                                                widget.booking.user.phone);
-                                          }),
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      InkWell(
-                                          child: Image(
-                                            image:
-                                                AssetImage(AppImages.icon_call),
-                                            height: 25,
-                                          ),
-                                          onTap: () {
-                                            AppUtils.launchCaller(
-                                                widget.booking.user.phone);
-                                          }),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 4.0,
-                            ),
-                            Text(
-                              '${widget.booking.user.fullName}',
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: AppConstants.largeSize,
-                                  color: AppTheme.mainTextColor,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            SizedBox(
-                              height: 4.0,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    widget.booking.bookingRequestUserAddress,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        fontFamily: AppConstants.fontName,
-                                        fontSize: AppConstants.smallSize,
-                                        color: AppTheme.mainTextColor,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Visibility(
-                                  visible:
-                                      _bookingDetailsResponse
-                                                  .bookings.userAddress.lat !=
-                                              null &&
-                                          _bookingDetailsResponse.bookings
-                                              .userAddress.lat.isNotEmpty &&
-                                          _bookingDetailsResponse
-                                                  .bookings.userAddress.lng !=
-                                              null &&
-                                          _bookingDetailsResponse.bookings
-                                              .userAddress.lng.isNotEmpty,
-                                  child: InkWell(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        child: Icon(
-                                          Icons.gps_fixed_outlined,
-                                          size: 25.0,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        AppUtils.openMap(
-                                            _bookingDetailsResponse
-                                                .bookings.userAddress.lat,
-                                            _bookingDetailsResponse
-                                                .bookings.userAddress.lng);
-                                      }),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 12.0,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Date & Time',
-                                  style: TextStyle(
-                                      fontSize: AppConstants.smallSize,
-                                      color: AppTheme.subHeadingTextColor,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                Text(
-                                  '${AppUtils.convertDateFromFormat(widget.booking.created)}',
-                                  style: TextStyle(
-                                      fontSize: AppConstants.smallSize,
-                                      color: AppTheme.mainTextColor,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 12.0,
-                            ),
-                            Text(
-                              'Delivery Slot',
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: AppConstants.smallSize,
-                                  color: AppTheme.subHeadingTextColor,
-                                  fontWeight: FontWeight.w400),
-                            ),
-                            SizedBox(
-                              height: 4.0,
-                            ),
-                            Text(
-                              widget.booking.deliveryTimeSlot.substring(
-                                  widget.booking.deliveryTimeSlot.indexOf(" ") +
-                                      1),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontFamily: AppConstants.fontName,
-                                  fontSize: AppConstants.smallSize,
-                                  color: AppTheme.mainTextColor,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            Visibility(
-                              visible: false,
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 12.0,
-                                  ),
-                                  StepViewer(
-                                    current: getCurrent(),
-                                    stopsRadius: 8.0,
-                                    pathColor: Colors.grey,
-                                    stopColor: Colors.grey,
-                                    selectedPathColor: AppTheme.primaryColor,
-                                    selectedStopColor: AppTheme.primaryColor,
-                                    stopValues: [
-                                      'You',
-                                      'Pickup',
-                                      'Delivery',
-                                    ],
-                                    distanceValues: [
-                                      _bookingDetailsResponse?.bookings != null
-                                          ? "${_bookingDetailsResponse.bookings.riderToStoreDistance.toString()} km"
-                                          : "",
-                                      _bookingDetailsResponse?.bookings != null
-                                          ? "${_bookingDetailsResponse.bookings.distance.toString()} km"
-                                          : "",
-                                    ],
-                                    showProgress: true,
-                                  ),
-                                  SizedBox(
-                                    height: 8.0,
-                                  ),
-                                  Center(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        double lat = double.tryParse(
-                                                getCurrent() == 0
-                                                    ? widget.booking.store.lat
-                                                    : widget.booking.userAddress
-                                                        .lat) ??
-                                            0;
-                                        double lng = double.tryParse(
-                                                getCurrent() == 0
-                                                    ? widget.booking.store.lng
-                                                    : widget.booking.userAddress
-                                                        .lng) ??
-                                            0;
-                                        MapUtils.openMap(lat, lng);
-                                      },
-                                      child: Text(
-                                        'Map View',
-                                        style: TextStyle(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            color: AppTheme.primaryColor,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14.0),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
+                      Card(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 4.0, vertical: 0.0),
+                        shadowColor: AppTheme.borderNotFocusedColor,
+                        elevation: 0.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 36.0),
-                      child: MySeparator(
-                        height: 2.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Card(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
-                      elevation: 0.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(18.0),
                         child: Container(
+                          padding: EdgeInsets.all(18.0),
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ListView.separated(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: editCartList.length,
-                                itemBuilder: (context, index) {
-                                  return listItem(context, index);
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return Divider();
-                                },
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      '#${widget.booking.displayOrderId} | ${AppUtils.convertDateFromFormat(widget.booking.created)}',
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: widget
+                                        .booking.store.contactNumber.isNotEmpty,
+                                    child: Row(
+                                      children: [
+                                        InkWell(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0),
+                                              child: Image(
+                                                image: AssetImage(
+                                                  AppImages.icon_whatsapp,
+                                                ),
+                                                height: 25,
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              AppUtils.launchWhatsApp(widget
+                                                  .booking.store.contactNumber);
+                                            }),
+                                        SizedBox(
+                                          width: 8.0,
+                                        ),
+                                        InkWell(
+                                            child: Image(
+                                              image: AssetImage(
+                                                  AppImages.icon_call),
+                                              height: 25,
+                                            ),
+                                            onTap: () {
+                                              print("call");
+                                              AppUtils.launchCaller(widget
+                                                  .booking.store.contactNumber);
+                                            }),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Divider(),
+                              SizedBox(
+                                height: 2.0,
+                              ),
+                              Text(
+                                'Pickup Address',
+                                style: TextStyle(
+                                    fontFamily: AppConstants.fontName,
+                                    fontSize: 14.0,
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              Text(
+                                widget.booking.store?.storeName ?? "",
+                                style: TextStyle(
+                                    fontFamily: AppConstants.fontName,
+                                    fontSize: 18.0,
+                                    color: AppTheme.mainTextColor,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                "${widget.booking.cart.length} ${widget.booking.cart.length > 1 ? "Items" : "Item"}",
+                                style: TextStyle(
+                                    fontFamily: AppConstants.fontName,
+                                    fontSize: 14.0,
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Text(
+                                getStoreAddress(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontFamily: AppConstants.fontName,
+                                    fontSize: AppConstants.smallSize,
+                                    color: AppTheme.mainTextColor,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Visibility(
+                                        visible: widget.booking.paymentMethod
+                                                .toLowerCase() ==
+                                            'cod',
+                                        child: Text(
+                                          "${AppConstants.currency}${widget.booking.total}",
+                                          style: TextStyle(
+                                              fontFamily: AppConstants.fontName,
+                                              fontSize: 16.0,
+                                              color: AppTheme.primaryColor,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: widget.booking.paymentMethod
+                                                .toLowerCase() !=
+                                            'cod',
+                                        child: Text(
+                                          "PAID",
+                                          style: TextStyle(
+                                              fontFamily: AppConstants.fontName,
+                                              fontSize: 16.0,
+                                              color: AppTheme.primaryColor,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: widget.booking.paymentMethod
+                                                .toLowerCase() ==
+                                            'cod',
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              top: 2.0, left: 5),
+                                          decoration: BoxDecoration(
+                                              color: AppTheme
+                                                  .containerBackgroundColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(16.0)),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 4.0, horizontal: 8.0),
+                                          child: Text(
+                                            "${widget.booking.paymentMethod.toUpperCase()}",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    AppConstants.fontName,
+                                                fontSize: 10.0,
+                                                color: AppTheme.mainTextColor,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Flexible(child: Container()),
+                                      _getWidgetAccordingToStatus(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 12.0,
+                              ),
+                              // Visibility(
+                              //   visible: widget.booking.runnerDeliveryAccepted ==
+                              //           '1' &&
+                              //       widget.booking.isManualAssignment == '1' &&
+                              //       widget.booking.readStatus == '0',
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: [
+                              //       InkWell(
+                              //         onTap: () {
+                              //           _getReadOrder(widget.booking);
+                              //         },
+                              //         child: Container(
+                              //           decoration: BoxDecoration(
+                              //             borderRadius: BorderRadius.all(
+                              //                 Radius.circular(30)),
+                              //             gradient: LinearGradient(
+                              //               begin: Alignment.topRight,
+                              //               end: Alignment.bottomLeft,
+                              //               stops: [0.1, 0.5, 0.5, 0.9],
+                              //               colors: [
+                              //                 AppTheme.primaryColorDark,
+                              //                 AppTheme.primaryColor,
+                              //                 AppTheme.primaryColor,
+                              //                 AppTheme.primaryColor,
+                              //               ],
+                              //             ),
+                              //           ),
+                              //           padding: EdgeInsets.symmetric(
+                              //               vertical: 8.0, horizontal: 12.0),
+                              //           child: Text('Mark as read',
+                              //               style: TextStyle(
+                              //                   color: AppTheme.white,
+                              //                   fontSize:
+                              //                       AppConstants.extraSmallSize,
+                              //                   fontWeight: FontWeight.normal)),
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              SizedBox(
+                                height: 12.0,
+                              ),
+                              Divider(
+                                height: 1,
+                                thickness: 1,
+                              ),
+                              SizedBox(
+                                height: 12.0,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Delivery Address',
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible:
+                                        widget.booking.user.phone.isNotEmpty,
+                                    child: Row(
+                                      children: [
+                                        InkWell(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0),
+                                              child: Image(
+                                                image: AssetImage(
+                                                  AppImages.icon_whatsapp,
+                                                ),
+                                                height: 25,
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              AppUtils.launchWhatsApp(
+                                                  widget.booking.user.phone);
+                                            }),
+                                        SizedBox(
+                                          width: 8.0,
+                                        ),
+                                        InkWell(
+                                            child: Image(
+                                              image: AssetImage(
+                                                  AppImages.icon_call),
+                                              height: 25,
+                                            ),
+                                            onTap: () {
+                                              AppUtils.launchCaller(
+                                                  widget.booking.user.phone);
+                                            }),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Text(
+                                '${widget.booking.user.fullName}',
+                                style: TextStyle(
+                                    fontFamily: AppConstants.fontName,
+                                    fontSize: AppConstants.largeSize,
+                                    color: AppTheme.mainTextColor,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      widget.booking.bookingRequestUserAddress,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                          fontFamily: AppConstants.fontName,
+                                          fontSize: AppConstants.smallSize,
+                                          color: AppTheme.mainTextColor,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Visibility(
+                                    visible: _bookingDetailsResponse
+                                                .bookings.userAddress.lat !=
+                                            null &&
+                                        _bookingDetailsResponse.bookings
+                                            .userAddress.lat.isNotEmpty &&
+                                        _bookingDetailsResponse
+                                                .bookings.userAddress.lng !=
+                                            null &&
+                                        _bookingDetailsResponse.bookings
+                                            .userAddress.lng.isNotEmpty,
+                                    child: InkWell(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: Icon(
+                                            Icons.gps_fixed_outlined,
+                                            size: 25.0,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          AppUtils.openMap(
+                                              _bookingDetailsResponse
+                                                  .bookings.userAddress.lat,
+                                              _bookingDetailsResponse
+                                                  .bookings.userAddress.lng);
+                                        }),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 12.0,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  widget.booking.created!=null? Text(
+                                    'Date & Time',
+                                    style: TextStyle(
+                                        fontSize: AppConstants.smallSize,
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontWeight: FontWeight.w400),
+                                  ):Container(),
+                                  SizedBox(
+                                    height: 4.0,
+                                  ),
+                                  Text(
+                                      widget.booking.created!=null? '${AppUtils.convertDateTime(widget.booking.created)}':"",
+                                    style: TextStyle(
+                                        fontSize: AppConstants.smallSize,
+                                        color: AppTheme.mainTextColor,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 12.0,
+                              ),
+                              widget.booking.deliveryTimeSlot!=null?Text(
+                                'Delivery Slot',
+                                style: TextStyle(
+                                    fontFamily: AppConstants.fontName,
+                                    fontSize: AppConstants.smallSize,
+                                    color: AppTheme.subHeadingTextColor,
+                                    fontWeight: FontWeight.w400),
+                              ):Container(),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Text(
+                                  widget.booking.deliveryTimeSlot!=null &&  widget.booking.deliveryTimeSlot.isNotEmpty?  widget.booking.deliveryTimeSlot.substring(widget
+                                        .booking.deliveryTimeSlot
+                                        .indexOf(" ") +
+                                    1):"",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontFamily: AppConstants.fontName,
+                                    fontSize: AppConstants.smallSize,
+                                    color: AppTheme.mainTextColor,
+                                    fontWeight: FontWeight.normal),
+                              ),
                               Visibility(
-                                visible: _bookingDetailsResponse
-                                    .bookings.note.isNotEmpty,
+                                visible: false,
                                 child: Column(
                                   children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '$labelOrderComment: ',
+                                    SizedBox(
+                                      height: 12.0,
+                                    ),
+                                    StepViewer(
+                                      current: getCurrent(),
+                                      stopsRadius: 8.0,
+                                      pathColor: Colors.grey,
+                                      stopColor: Colors.grey,
+                                      selectedPathColor: AppTheme.primaryColor,
+                                      selectedStopColor: AppTheme.primaryColor,
+                                      stopValues: [
+                                        'You',
+                                        'Pickup',
+                                        'Delivery',
+                                      ],
+                                      distanceValues: [
+                                        _bookingDetailsResponse?.bookings !=
+                                                null
+                                            ? "${_bookingDetailsResponse.bookings.riderToStoreDistance.toString()} km"
+                                            : "",
+                                        _bookingDetailsResponse?.bookings !=
+                                                null
+                                            ? "${_bookingDetailsResponse.bookings.distance.toString()} km"
+                                            : "",
+                                      ],
+                                      showProgress: true,
+                                    ),
+                                    SizedBox(
+                                      height: 8.0,
+                                    ),
+                                    Center(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          double lat = double.tryParse(
+                                                  getCurrent() == 0
+                                                      ? widget.booking.store.lat
+                                                      : widget.booking
+                                                          .userAddress.lat) ??
+                                              0;
+                                          double lng = double.tryParse(
+                                                  getCurrent() == 0
+                                                      ? widget.booking.store.lng
+                                                      : widget.booking
+                                                          .userAddress.lng) ??
+                                              0;
+                                          MapUtils.openMap(lat, lng);
+                                        },
+                                        child: Text(
+                                          'Map View',
                                           style: TextStyle(
-                                              color:
-                                                  AppTheme.subHeadingTextColor,
-                                              fontSize: AppConstants.smallSize,
-                                              fontWeight: FontWeight.normal),
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: AppTheme.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14.0),
                                         ),
-                                        SizedBox(
-                                          width: 12.0,
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            _bookingDetailsResponse
-                                                .bookings.note,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 36.0),
+                        child: MySeparator(
+                          height: 2.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Card(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 4.0, vertical: 0.0),
+                        elevation: 0.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(18.0),
+                          child: Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: editCartList.length,
+                                  itemBuilder: (context, index) {
+
+                                    return listItem(context, index);
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return Divider();
+                                  },
+                                ),
+                                Divider(),
+                                Visibility(
+                                  visible: _bookingDetailsResponse
+                                      .bookings.note.isNotEmpty,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '$labelOrderComment: ',
                                             style: TextStyle(
-                                                color: AppTheme.mainTextColor,
+                                                color: AppTheme
+                                                    .subHeadingTextColor,
                                                 fontSize:
                                                     AppConstants.smallSize,
                                                 fontWeight: FontWeight.normal),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    Divider(),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                // crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        logicBuilder(builderContext,
-                                            hitPlaceOrder: false);
-                                      },
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.refresh_sharp,
-                                            color: AppTheme.primaryColor,
-                                          ),
                                           SizedBox(
-                                            width: 5,
+                                            width: 12.0,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              _bookingDetailsResponse
+                                                  .bookings.note,
+                                              style: TextStyle(
+                                                  color: AppTheme.mainTextColor,
+                                                  fontSize:
+                                                      AppConstants.smallSize,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  // crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          logicBuilder(builderContext,
+                                              hitPlaceOrder: false);
+                                        },
+                                        child: _showEdit==true?Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.refresh_sharp,
+                                              color: AppTheme.primaryColor,
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text(
+                                              labelRefresh,
+                                              style: TextStyle(
+                                                  color: AppTheme.primaryColor),
+                                            )
+                                          ],
+                                        ):Container(),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 4.0, bottom: 4.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Flexible(
+                                            child: Text('Total',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize:
+                                                      AppConstants.smallSize,
+                                                  fontWeight: FontWeight.w500,
+                                                )),
                                           ),
                                           Text(
-                                            labelRefresh,
-                                            style: TextStyle(
-                                                color: AppTheme.primaryColor),
-                                          )
+                                              "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.itemSubTotal : _bookingDetailsResponse.bookings.checkout}",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize:
+                                                      AppConstants.smallSize,
+                                                  fontWeight: FontWeight.w500))
                                         ],
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(top: 4.0, bottom: 4.0),
-                                    child: Row(
+                                    Visibility(
+                                        visible: taxCalculationResponse != null
+                                            ? taxCalculationResponse
+                                                    .taxCalculation
+                                                    .discount
+                                                    .isNotEmpty &&
+                                                taxCalculationResponse
+                                                        .taxCalculation
+                                                        .discount !=
+                                                    '0.00'
+                                            : _bookingDetailsResponse
+                                                        .bookings.discount ==
+                                                    "0.00"
+                                                ? false
+                                                : true,
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 4, bottom: 4),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Flexible(
+                                                  child: Text('Discount',
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0xff74BA33),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      )),
+                                                ),
+                                                Text(
+                                                    "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.discount : _bookingDetailsResponse.bookings.discount}",
+                                                    style: TextStyle(
+                                                        color: AppTheme.black,
+                                                        fontSize: AppConstants
+                                                            .smallSize,
+                                                        fontWeight:
+                                                            FontWeight.w500))
+                                              ],
+                                            ))),
+                                    Visibility(
+                                        visible: taxCalculationResponse != null
+                                            ? taxCalculationResponse
+                                                    .taxCalculation
+                                                    .shipping
+                                                    .isNotEmpty &&
+                                                taxCalculationResponse
+                                                        .taxCalculation
+                                                        .shipping !=
+                                                    '0.00' &&
+                                                taxCalculationResponse
+                                                        .taxCalculation
+                                                        .shipping !=
+                                                    '0'
+                                            : _bookingDetailsResponse.bookings
+                                                        .shippingCharges ==
+                                                    "0.00"
+                                                ? false
+                                                : true,
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 4, bottom: 4),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Flexible(
+                                                  child:
+                                                      Text('Delivery Charges',
+                                                          style: TextStyle(
+                                                            color: AppTheme
+                                                                .lightGreenColor,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          )),
+                                                ),
+                                                Text(
+                                                    "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.shipping : _bookingDetailsResponse.bookings.shippingCharges != null ? _bookingDetailsResponse.bookings.shippingCharges : '0.00'}",
+                                                    style: TextStyle(
+                                                        color: AppTheme
+                                                            .lightGreenColor,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500))
+                                              ],
+                                            ))),
+                                    Visibility(
+                                        visible: taxCalculationResponse != null
+                                            ? taxCalculationResponse
+                                                    .taxCalculation
+                                                    .tax
+                                                    .isNotEmpty &&
+                                                taxCalculationResponse
+                                                        .taxCalculation.tax !=
+                                                    '0.00'
+                                            : _bookingDetailsResponse
+                                                        .bookings.tax ==
+                                                    "0.00"
+                                                ? false
+                                                : true,
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 4, bottom: 4),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Flexible(
+                                                  child: Text('Tax Charges',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: AppConstants
+                                                            .smallSize,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      )),
+                                                ),
+                                                Text(
+                                                    "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.tax : _bookingDetailsResponse.bookings.tax}",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: AppConstants
+                                                            .smallSize,
+                                                        fontWeight:
+                                                            FontWeight.w600))
+                                              ],
+                                            ))),
+                                    Container(
+                                      margin:
+                                          EdgeInsets.only(top: 4, bottom: 4),
+                                      color: Color(0xFFE1E1E1),
+                                      height: 1,
+                                    ),
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.max,
@@ -683,334 +907,170 @@ class _EditBookingDetailsScreenState
                                           CrossAxisAlignment.center,
                                       children: <Widget>[
                                         Flexible(
-                                          child: Text('Total',
+                                          child: Text('Payable Amount',
                                               style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize:
-                                                    AppConstants.smallSize,
+                                                fontSize: 17,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                         ),
-                                        Text(
-                                            "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.itemSubTotal : _bookingDetailsResponse.bookings.checkout}",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize:
-                                                    AppConstants.smallSize,
-                                                fontWeight: FontWeight.w500))
-                                      ],
-                                    ),
-                                  ),
-                                  Visibility(
-                                      visible: taxCalculationResponse != null
-                                          ? taxCalculationResponse
-                                                  .taxCalculation
-                                                  .discount
-                                                  .isNotEmpty &&
-                                              taxCalculationResponse
-                                                      .taxCalculation
-                                                      .discount !=
-                                                  '0.00'
-                                          : _bookingDetailsResponse
-                                                      .bookings.discount ==
-                                                  "0.00"
-                                              ? false
-                                              : true,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 4, bottom: 4),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Flexible(
-                                                child: Text('Discount',
-                                                    style: TextStyle(
-                                                      color: Color(0xff74BA33),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    )),
-                                              ),
-                                              Text(
-                                                  "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.discount : _bookingDetailsResponse.bookings.discount}",
-                                                  style: TextStyle(
-                                                      color: AppTheme.black,
-                                                      fontSize: AppConstants
-                                                          .smallSize,
-                                                      fontWeight:
-                                                          FontWeight.w500))
-                                            ],
-                                          ))),
-                                  Visibility(
-                                      visible: taxCalculationResponse != null
-                                          ? taxCalculationResponse
-                                                  .taxCalculation
-                                                  .shipping
-                                                  .isNotEmpty &&
-                                              taxCalculationResponse
-                                                      .taxCalculation
-                                                      .shipping !=
-                                                  '0.00' &&
-                                              taxCalculationResponse
-                                                      .taxCalculation
-                                                      .shipping !=
-                                                  '0'
-                                          : _bookingDetailsResponse.bookings
-                                                      .shippingCharges ==
-                                                  "0.00"
-                                              ? false
-                                              : true,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 4, bottom: 4),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Flexible(
-                                                child: Text('Delivery Charges',
-                                                    style: TextStyle(
-                                                      color: AppTheme
-                                                          .lightGreenColor,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    )),
-                                              ),
-                                              Text(
-                                                  "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.shipping : _bookingDetailsResponse.bookings.shippingCharges != null ? _bookingDetailsResponse.bookings.shippingCharges : '0.00'}",
-                                                  style: TextStyle(
-                                                      color: AppTheme
-                                                          .lightGreenColor,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500))
-                                            ],
-                                          ))),
-                                  Visibility(
-                                      visible: taxCalculationResponse != null
-                                          ? taxCalculationResponse
-                                                  .taxCalculation
-                                                  .tax
-                                                  .isNotEmpty &&
-                                              taxCalculationResponse
-                                                      .taxCalculation.tax !=
-                                                  '0.00'
-                                          : _bookingDetailsResponse
-                                                      .bookings.tax ==
-                                                  "0.00"
-                                              ? false
-                                              : true,
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 4, bottom: 4),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Flexible(
-                                                child: Text('Tax Charges',
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: AppConstants
-                                                          .smallSize,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    )),
-                                              ),
-                                              Text(
-                                                  "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.tax : _bookingDetailsResponse.bookings.tax}",
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: AppConstants
-                                                          .smallSize,
-                                                      fontWeight:
-                                                          FontWeight.w600))
-                                            ],
-                                          ))),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 4, bottom: 4),
-                                    color: Color(0xFFE1E1E1),
-                                    height: 1,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Flexible(
-                                        child: Text('Payable Amount',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w500,
-                                            )),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: <Widget>[
-                                          Text(
-                                              "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.total : _bookingDetailsResponse.bookings.total}",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w500)),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () async {
-                                      bool returnValue = await Navigator.push(
-                                          builderContext,
-                                          MaterialPageRoute(
-                                              builder: (context) => BookOrder(
-                                                  storeId:
-                                                      _bookingDetailsResponse
-                                                          .bookings.storeId)));
-                                      if (returnValue) {
-                                        for (int i = 0;
-                                            i <
-                                                OderCart.orderCartMap.values
-                                                    .toList()
-                                                    .length;
-                                            i++) {
-                                          dynamic product = OderCart
-                                              .orderCartMap.values
-                                              .toList()[i];
-                                          dynamic selectedVariant =
-                                              product.variants[
-                                                  product.selectedVariantIndex];
-                                          String userId =
-                                              _bookingDetailsResponse
-                                                  .bookings.cart.first.userId;
-                                          String orderId =
-                                              _bookingDetailsResponse
-                                                  .bookings.cart.first.orderId;
-                                          String deviceId =
-                                              _bookingDetailsResponse
-                                                  .bookings.cart.first.deviceId;
-                                          String deviceToken =
-                                              _bookingDetailsResponse.bookings
-                                                  .cart.first.deviceToken;
-                                          String platform =
-                                              _bookingDetailsResponse
-                                                  .bookings.cart.first.platform;
-                                          dynamic toBeAddProduct =
-                                              AppUtils.copyWithProduct(
-                                                  product,
-                                                  selectedVariant,
-                                                  userId,
-                                                  orderId,
-                                                  deviceId,
-                                                  deviceToken,
-                                                  platform);
-                                          bool productFound = false;
-                                          for (int j = 0;
-                                              j < editCartList.length;
-                                              j++) {
-                                            if (editCartList[j].productId ==
-                                                OderCart.orderCartMap.values
-                                                    .toList()[i]
-                                                    .id) {
-                                              productFound = true;
-                                              //update New Product here
-                                              if (selectedVariant.id !=
-                                                  editCartList[j].variantId) {
-                                                editCartList
-                                                    .add(toBeAddProduct);
-                                              } else {
-                                                editCartList[j].quantity =
-                                                    OderCart.orderCartMap.values
-                                                        .toList()[i]
-                                                        .count
-                                                        .toString();
-                                              }
-
-                                              // break;
-                                            }
-                                          }
-                                          if (!productFound) {
-                                            editCartList.add(toBeAddProduct);
-                                          }
-                                        }
-                                      }
-                                      setState(() {});
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.add,
-                                          size: 12,
-                                          color: AppTheme.primaryColor,
-                                        ),
-                                        Text(
-                                          "Add Product",
-                                          style: TextStyle(
-                                              color: AppTheme.primaryColor,
-                                              decoration:
-                                                  TextDecoration.underline),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: <Widget>[
+                                            Text(
+                                                "${AppConstants.currency}${taxCalculationResponse != null ? taxCalculationResponse.taxCalculation.total : _bookingDetailsResponse.bookings.total}",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 17,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                          ],
                                         )
                                       ],
                                     ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  MaterialButton(
-                                    height: 40,
-                                    elevation: 8,
-                                    onPressed: () {
-                                      logicBuilder(context);
-                                    },
-                                    color: AppTheme.primaryColor,
-                                    minWidth:
-                                        Dimensions.getWidth(percentage: 50),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30))),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 6.0),
-                                    child: Text(
-                                      'Send Invoice',
-                                      style: TextStyle(
-                                          color: AppTheme.white,
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.normal),
-                                      textAlign: TextAlign.center,
+                                    SizedBox(
+                                      height: 20,
                                     ),
-                                  ),
-                                ],
-                              )
-                            ],
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        bool returnValue = await Navigator.push(
+                                            builderContext,
+                                            MaterialPageRoute(
+                                                builder: (context) => BookOrder(
+                                                    storeId:
+                                                        _bookingDetailsResponse
+                                                            .bookings
+                                                            .storeId)));
+                                        if (returnValue) {
+                                          for (int i = 0;
+                                              i <
+                                                  OderCart.orderCartMap.values
+                                                      .toList()
+                                                      .length;
+                                              i++) {
+                                            dynamic product = OderCart
+                                                .orderCartMap.values
+                                                .toList()[i];
+                                            dynamic selectedVariant = product
+                                                    .variants[
+                                                product.selectedVariantIndex];
+                                            String userId =
+                                                _bookingDetailsResponse
+                                                    .bookings.cart.first.userId;
+                                            String orderId =
+                                                _bookingDetailsResponse.bookings
+                                                    .cart.first.orderId;
+                                            String deviceId =
+                                                _bookingDetailsResponse.bookings
+                                                    .cart.first.deviceId;
+                                            String deviceToken =
+                                                _bookingDetailsResponse.bookings
+                                                    .cart.first.deviceToken;
+                                            String platform =
+                                                _bookingDetailsResponse.bookings
+                                                    .cart.first.platform;
+                                            dynamic toBeAddProduct =
+                                                AppUtils.copyWithProduct(
+                                                    product,
+                                                    selectedVariant,
+                                                    userId,
+                                                    orderId,
+                                                    deviceId,
+                                                    deviceToken,
+                                                    platform);
+                                            bool productFound = false;
+                                            for (int j = 0;
+                                                j < editCartList.length;
+                                                j++) {
+                                              if (editCartList[j].productId ==
+                                                  OderCart.orderCartMap.values
+                                                      .toList()[i]
+                                                      .id) {
+                                                productFound = true;
+                                                //update New Product here
+                                                if (selectedVariant.id !=
+                                                    editCartList[j].variantId) {
+                                                  editCartList
+                                                      .add(toBeAddProduct);
+                                                } else {
+                                                  editCartList[j].quantity =
+                                                      OderCart
+                                                          .orderCartMap.values
+                                                          .toList()[i]
+                                                          .count
+                                                          .toString();
+                                                }
+
+                                                // break;
+                                              }
+                                            }
+                                            if (!productFound) {
+                                              editCartList.add(toBeAddProduct);
+                                            }
+                                          }
+                                        }
+                                        setState(() {});
+                                      },
+                                      child: _showEdit==true?Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add,
+                                            size: 12,
+                                            color: AppTheme.primaryColor,
+                                          ),
+                                          Text(
+                                            "Add Product",
+                                            style: TextStyle(
+                                                color: AppTheme.primaryColor,
+                                                decoration:
+                                                    TextDecoration.underline),
+                                          )
+                                        ],
+                                      ):Container(),
+                                    ),
+                                    SizedBox(height: 10),
+                                    _showEdit==true? MaterialButton(
+                                      height: 40,
+                                      elevation: 8,
+                                      onPressed: () {
+                                        logicBuilder(context);
+                                      },
+                                      color: AppTheme.primaryColor,
+                                      minWidth:
+                                          Dimensions.getWidth(percentage: 50),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(30))),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 6.0),
+                                      child: Text(
+                                        'Send Invoice',
+                                        style: TextStyle(
+                                            color: AppTheme.white,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.normal),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ):Container(),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                  ],
+                      SizedBox(
+                        height: 16.0,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1043,8 +1103,10 @@ class _EditBookingDetailsScreenState
   }
 
   Widget listItem(BuildContext context, int index) {
+
     double totalPrice = (double.parse(editCartList[index].price)) *
         (int.parse(editCartList[index].quantity));
+
     return Container(
       color: Colors.white,
       child: Column(
@@ -1119,7 +1181,7 @@ class _EditBookingDetailsScreenState
                                         fontWeight: FontWeight.w700)),
                               ),
                               Visibility(
-                                visible: editCartList[index].isEditPrice,
+                                visible: editCartList[index].isEditPrice ,
                                 child: SizedBox(
                                   width: 50,
                                   child: TextFormField(
@@ -1160,7 +1222,7 @@ class _EditBookingDetailsScreenState
                                   ),
                                 ),
                               ),
-                              GestureDetector(
+                              _showEdit==true?GestureDetector(
                                   onTap: () {
                                     editCartList[index].isEditPrice =
                                         !editCartList[index].isEditPrice;
@@ -1177,9 +1239,9 @@ class _EditBookingDetailsScreenState
                                           ? 20
                                           : 14,
                                     ),
-                                  )),
+                                  )):Container(),
                               Spacer(),
-                              Container(
+                              _showEdit==true?Container(
                                 padding: EdgeInsets.all(3),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
@@ -1239,17 +1301,17 @@ class _EditBookingDetailsScreenState
                                         )),
                                   ],
                                 ),
-                              ),
+                              ):Container(),
                             ],
                           ),
-                          Align(
+                          _showEdit==true?Align(
                             alignment: Alignment.topRight,
                             child: Text("${AppConstants.currency} $totalPrice",
                                 style: TextStyle(
                                     color: AppTheme.black,
                                     fontSize: AppConstants.extraSmallSize,
                                     fontWeight: FontWeight.w500)),
-                          ),
+                          ):Container(),
                         ],
                       ),
                     ),
@@ -1260,7 +1322,7 @@ class _EditBookingDetailsScreenState
           ),
           Visibility(
             visible: editCartList[index].variants != null &&
-                editCartList[index].variants.isNotEmpty,
+                editCartList[index].variants.isNotEmpty && _showEdit==true,
             child: VariantChips(
               variant: editCartList[index].variants,
               variantID: editCartList[index].variantId,
@@ -1744,13 +1806,18 @@ class _EditBookingDetailsScreenState
   }
 
   void _getBookingdetails(BookingRequest booking,
-      {bool isShowLoader = true}) async {
+      {bool isShowLoader = true,String type}) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
+      if (type == 'refresh') {
+        _onRefresh();
+        return;
+      }
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingDetailsApiLoading = true;
       _bookingDetailsResponse = await getIt
           .get<DashboardRepository>()
           .getBookingsdetails(userId: userId, orderId: booking.id);
+      _refreshController.refreshCompleted();
       AppUtils.hideLoader(context);
       if (_bookingDetailsResponse != null && _bookingDetailsResponse.success) {
         editCartList.clear();
@@ -2012,6 +2079,7 @@ class _EditBookingDetailsScreenState
         taxCalculationResponse = await getIt
             .get<DashboardRepository>()
             .taxCalculationApi(
+                cartSaving: _bookingDetailsResponse.bookings.cartSaving,
                 userId: userId,
                 shipping: _bookingDetailsResponse.bookings.shippingCharges,
                 discount: _bookingDetailsResponse.bookings.discount,
@@ -2048,6 +2116,7 @@ class _EditBookingDetailsScreenState
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .editPlaceOrder(
+              cartSaving:taxCalculationResponse.taxCalculation.cartSaving,
               orderId: _bookingDetailsResponse.bookings.id,
               deviceId: deviceId,
               deviceToken: deviceToken,
