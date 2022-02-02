@@ -377,6 +377,7 @@ class DashboardNetworkRepository extends DioBaseService {
       String shipping,
       String userWallet,
       String discount,
+      String cartSaving,
       String tax,
       String fixedDiscountAmount,
       String orderDetail,
@@ -388,10 +389,11 @@ class DashboardNetworkRepository extends DioBaseService {
       param['shipping'] = shipping;
       param['user_wallet'] = userWallet;
       param['discount'] = discount;
+      param['cart_saving'] = cartSaving;
       param['tax'] = tax;
       param['fixed_discount_amount'] = fixedDiscountAmount;
       param['order_detail'] = orderDetail;
-      print("$param");
+      print(" tax cal:$param");
       var response = await post(
           _runnerTaxCalculation
               .replaceAll('brandID',
@@ -414,6 +416,7 @@ class DashboardNetworkRepository extends DioBaseService {
     String platform,
     String total,
     String discount,
+    String cartSaving,
     String paymentMethod,
     String couponCode,
     String checkout,
@@ -436,6 +439,7 @@ class DashboardNetworkRepository extends DioBaseService {
       param['platform'] = platform;
       param['total'] = total;
       param['discount'] = discount;
+      param['cart_saving'] = cartSaving;
       param['tax'] = tax;
       param['payment_method'] = paymentMethod;
       param['coupon_code'] = couponCode;

@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "1044117320509",
-    "project_id": "flutter-valueappz-demostores",
-    "storage_bucket": "flutter-valueappz-demostores.appspot.com"
+    "project_number": "810385916032",
+    "project_id": "marketplace-admin-764d3",
+    "storage_bucket": "marketplace-admin-764d3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1044117320509:android:b1019f03a6101b4cc4cb54",
+        "mobilesdk_app_id": "1:810385916032:android:ea75a6b1622e7fdd5c2665",
         "android_client_info": {
-          "package_name": "com.storeapp.admin_sdk"
+          "package_name": "com.Foodinnow_merchant"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCcIMM7Rv7nE0qSlt4qWKmiOPVk7zjA91M"
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1044117320509-jrmqf1rvrup1m8bcrrf3jpqtjuilqtg8.apps.googleusercontent.com",
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.valueappz.marketplacedemo"
+                "bundle_id": "com.guzty.marketplace"
               }
             }
           ]
@@ -43,42 +43,438 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1044117320509:android:4375fbb7c620ac70c4cb54",
+        "mobilesdk_app_id": "1:810385916032:android:c8aa9a68c7208a9a5c2665",
         "android_client_info": {
-          "package_name": "com.valueappz.marketplace_grocer"
+          "package_name": "com.aagyo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1044117320509-cqlnvddisfc93tpdsd1hvu1d8iq8md5a.apps.googleusercontent.com",
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:e4810c91b9a249a95c2665",
+        "android_client_info": {
+          "package_name": "com.aagyorunner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:c4e24a1c808c0cea5c2665",
+        "android_client_info": {
+          "package_name": "com.arowanaspeedyfooda_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:f217b0d312043edd5c2665",
+        "android_client_info": {
+          "package_name": "com.arowanaspeedyfoodrunner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:9e2947692f4b62385c2665",
+        "android_client_info": {
+          "package_name": "com.delfo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:a0ab0bd52a8f5fd25c2665",
+        "android_client_info": {
+          "package_name": "com.delfo_merchnat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:5383521f690838645c2665",
+        "android_client_info": {
+          "package_name": "com.foodin.merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:b56ca5552a50e8865c2665",
+        "android_client_info": {
+          "package_name": "com.foodin.runner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:e1cf1fc65335921b5c2665",
+        "android_client_info": {
+          "package_name": "com.foodinnow_runner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:041519fbb5804af35c2665",
+        "android_client_info": {
+          "package_name": "com.foodolino.merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:910cd9bbe969ac305c2665",
+        "android_client_info": {
+          "package_name": "com.foodolino.runner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:41694e6f3a6d66805c2665",
+        "android_client_info": {
+          "package_name": "com.guzty.marketplace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-jg9vfbr5esjm4lf38kg49m5ic2ud1ff3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.valueappz.marketplace_grocer",
-            "certificate_hash": "e3746660b1a422503eedaec25e29fb5bb450ff42"
+            "package_name": "com.guzty.marketplace",
+            "certificate_hash": "27867ed4396aa35f8112256906c05ec41af0a07e"
           }
         },
         {
-          "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCcIMM7Rv7nE0qSlt4qWKmiOPVk7zjA91M"
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1044117320509-jrmqf1rvrup1m8bcrrf3jpqtjuilqtg8.apps.googleusercontent.com",
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.valueappz.marketplacedemo"
+                "bundle_id": "com.guzty.marketplace"
               }
             }
           ]
@@ -87,130 +483,582 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1044117320509:android:048cc6dde838b8d5c4cb54",
+        "mobilesdk_app_id": "1:810385916032:android:fc3f61cdf2ec04a25c2665",
+        "android_client_info": {
+          "package_name": "com.hoola"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:d8ea7614ae3bc9915c2665",
+        "android_client_info": {
+          "package_name": "com.hoola_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:c4acfb2ed772cdd25c2665",
+        "android_client_info": {
+          "package_name": "com.huonestopshoppingcentre.runner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:126966f47b2b1b555c2665",
+        "android_client_info": {
+          "package_name": "com.huonestopshoppingsentre.merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:3159d771b9e972395c2665",
+        "android_client_info": {
+          "package_name": "com.merchantapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:f7944460187421325c2665",
+        "android_client_info": {
+          "package_name": "com.namastekisan.marketplaceAdmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:6515134b445bbfbf5c2665",
+        "android_client_info": {
+          "package_name": "com.nintyTnine.merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:f293dd4584b9afca5c2665",
+        "android_client_info": {
+          "package_name": "com.nintyTnine.runner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:49070ce260c18ca35c2665",
+        "android_client_info": {
+          "package_name": "com.signity.localstarmarketplace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:24020276166c86bc5c2665",
+        "android_client_info": {
+          "package_name": "com.signity.marketplaceadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-f9o653sitsc0sc7jaisqao1s5qvboj8b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.signity.marketplaceadmin",
+            "certificate_hash": "c2106968e57610b4221ef9aa153407a0ad894064"
+          }
+        },
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:50b650646a0af7c45c2665",
+        "android_client_info": {
+          "package_name": "com.signity.samvruthaadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:55917e0fa07fb19e5c2665",
+        "android_client_info": {
+          "package_name": "com.tazzade_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:cd59276f4e1233a95c2665",
+        "android_client_info": {
+          "package_name": "com.totoglobalventures.merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:9f1cc72dca766dc25c2665",
+        "android_client_info": {
+          "package_name": "com.totoglobalventures_runner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:7548ad14059a169d5c2665",
+        "android_client_info": {
+          "package_name": "com.valueappz.brandmarketplaceRunner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.guzty.marketplace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810385916032:android:d42de2a1831158af5c2665",
         "android_client_info": {
           "package_name": "com.valueappz.marketplace_service_provider"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
+          "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCcIMM7Rv7nE0qSlt4qWKmiOPVk7zjA91M"
+          "current_key": "AIzaSyAZBy1iClctbxpJ4QM_oC9M9JtVrZC7oqU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
+              "client_id": "810385916032-b508ei225ppl672jrb82fttlbcgfa3js.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1044117320509-jrmqf1rvrup1m8bcrrf3jpqtjuilqtg8.apps.googleusercontent.com",
+              "client_id": "810385916032-7cmltr3n52rnbmng98vb0dg79rr7ead9.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.valueappz.marketplacedemo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1044117320509:android:83add04ddec4fb60c4cb54",
-        "android_client_info": {
-          "package_name": "com.valueappz.marketplacedemo"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1044117320509-aio1fiheklrstueiekhnc91ci2u5ucoi.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.valueappz.marketplacedemo",
-            "certificate_hash": "e3746660b1a422503eedaec25e29fb5bb450ff42"
-          }
-        },
-        {
-          "client_id": "1044117320509-mgkv0qbsdrc0863fgmd21rpnulmutp5d.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.valueappz.marketplacedemo",
-            "certificate_hash": "2aa9578c53bf7f0b249861338057f905e6a679c2"
-          }
-        },
-        {
-          "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCcIMM7Rv7nE0qSlt4qWKmiOPVk7zjA91M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1044117320509-jrmqf1rvrup1m8bcrrf3jpqtjuilqtg8.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.valueappz.marketplacedemo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1044117320509:android:306a0475ec7c5b51c4cb54",
-        "android_client_info": {
-          "package_name": "com.valuesAppz.restroAppMaster"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1044117320509-58rn7v7l7q15hettrboa7i70je8ru7o5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.valuesAppz.restroAppMaster",
-            "certificate_hash": "e3746660b1a422503eedaec25e29fb5bb450ff42"
-          }
-        },
-        {
-          "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCcIMM7Rv7nE0qSlt4qWKmiOPVk7zjA91M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1044117320509-6vethkqv9mq60tp91283sfdl53d60s6m.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1044117320509-jrmqf1rvrup1m8bcrrf3jpqtjuilqtg8.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.valueappz.marketplacedemo"
+                "bundle_id": "com.guzty.marketplace"
               }
             }
           ]
