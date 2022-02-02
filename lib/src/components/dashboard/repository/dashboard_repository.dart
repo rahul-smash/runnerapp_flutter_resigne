@@ -143,7 +143,6 @@ class DashboardRepository {
     String storeID,
   }) async {
     return await DashboardNetworkRepository.instance.editPlaceOrder(
-      cartSaving,
       orderId,
       deviceId,
       deviceToken,
@@ -152,6 +151,7 @@ class DashboardRepository {
       platform,
       total,
       discount,
+      cartSaving,
       paymentMethod,
       couponCode,
       checkout,
