@@ -418,18 +418,13 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: GestureDetector(
-                                          onTap: (){
-                                            _showMore();
-                                          },
-                                          child: Text(
-                                            'Delivery Address',
-                                            style: TextStyle(
-                                                fontSize: 14.0,
-                                                color:
-                                                    AppTheme.subHeadingTextColor,
-                                                fontWeight: FontWeight.w400),
-                                          ),
+                                        child: Text(
+                                          'Delivery Address',
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color:
+                                                  AppTheme.subHeadingTextColor,
+                                              fontWeight: FontWeight.w400),
                                         ),
                                       ),
                                       Visibility(
@@ -2030,78 +2025,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
 
     return '';
   }
-  void _showMore() {
-    showModalBottomSheet(
-      context: context,
-      // shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.only(
-      //         topRight: Radius.circular(AppSizes.defaultRoundedRadius),
-      //         topLeft: Radius.circular(AppSizes.defaultRoundedRadius))),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal:16),
-              child: Column(
 
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      SizedBox(height:20),
-                      Icon(Icons.close)
-                    ],
-                  ),
-                  Text("List of choices"),
-                  Row(children: [
-                    MaterialButton(
-                      height: 40,
-                      elevation: 8,
-                      onPressed: () {
-
-                      },
-                      color: AppTheme.primaryColor,
-                      minWidth:
-                      Dimensions.getWidth(percentage: 50),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(30))),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 6.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "I'll Choose",
-                            style: TextStyle(
-                                color: AppTheme.white,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.normal),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            "Repeat Last",
-                            style: TextStyle(
-                                color: AppTheme.white,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.normal),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    )
-                  ],)
-
-
-
-
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 }
 
 class MySeparator extends StatelessWidget {
