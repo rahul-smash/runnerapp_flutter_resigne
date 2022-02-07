@@ -191,16 +191,13 @@ class _EditBookingDetailsScreenState
                                             child: Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 8.0),
-                                              child: Image(
-                                                image: AssetImage(
-                                                  AppImages.icon_whatsapp,
-                                                ),
-                                                height: 25,
-                                              ),
+                                              child: Icon(Icons.message,size: 25,),
                                             ),
                                             onTap: () {
-                                              AppUtils.launchWhatsApp(widget
-                                                  .booking.store.contactNumber);
+                                              AppUtils.launchSMS(widget
+                                                  .booking
+                                                  .store
+                                                  .contactNumber);
                                             }),
                                         SizedBox(
                                           width: 8.0,
@@ -409,16 +406,13 @@ class _EditBookingDetailsScreenState
                                             child: Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 8.0),
-                                              child: Image(
-                                                image: AssetImage(
-                                                  AppImages.icon_whatsapp,
-                                                ),
-                                                height: 25,
-                                              ),
+                                              child: Icon(Icons.message,size: 25,),
                                             ),
                                             onTap: () {
-                                              AppUtils.launchWhatsApp(
-                                                  widget.booking.user.phone);
+                                              AppUtils.launchSMS(widget
+                                                  .booking
+                                                  .store
+                                                  .contactNumber);
                                             }),
                                         SizedBox(
                                           width: 8.0,

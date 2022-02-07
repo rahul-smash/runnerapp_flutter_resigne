@@ -28,6 +28,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
@@ -106,6 +107,9 @@ class AppUtils {
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
     String deviceId = AppSharedPref.instance.getDeviceId();
     String deviceToken = AppSharedPref.instance.getDeviceToken();
+    if(deviceToken==null||deviceToken.isEmpty){
+      deviceToken='deviceToken';
+    }
     Map<String, dynamic> param = Map();
     param['app_version'] = packageInfo.version;
     param['device_id'] = deviceId;
@@ -357,6 +361,17 @@ class AppUtils {
     // Use either Dart's string interpolation or the toString() method.
     // The "launch" method is part of "url_launcher".
     await launch('$link');
+  }
+  static launchSMS(String number) async {
+    try {
+      List<String> recipients=List.empty(growable: true);
+      recipients.add(number);
+      String _result = await sendSMS(
+          message: '', recipients: recipients);
+
+    } catch (error) {
+      print(error);
+    }
   }
 
   static launchMaps(String lat, String lng) async {

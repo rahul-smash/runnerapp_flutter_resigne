@@ -46,6 +46,8 @@ PODS:
     - Flutter
   - flutter_notification_plugin (0.0.1):
     - Flutter
+  - flutter_sms (1.1.0):
+    - Flutter
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
@@ -122,6 +124,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_timezone (from `.symlinks/plugins/flutter_native_timezone/ios`)
   - flutter_notification_plugin (from `.symlinks/plugins/flutter_notification_plugin/ios`)
+  - flutter_sms (from `.symlinks/plugins/flutter_sms/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geocoder (from `.symlinks/plugins/geocoder/ios`)
   - geocoding (from `.symlinks/plugins/geocoding/ios`)
@@ -170,6 +173,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_timezone/ios"
   flutter_notification_plugin:
     :path: ".symlinks/plugins/flutter_notification_plugin/ios"
+  flutter_sms:
+    :path: ".symlinks/plugins/flutter_sms/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   geocoder:
@@ -213,6 +218,7 @@ SPEC CHECKSUMS:
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_native_timezone: 5f05b2de06c9776b4cc70e1839f03de178394d22
   flutter_notification_plugin: d66d7aacc0062cbdc6f5eefe5499d575c9df73da
+  flutter_sms: 91ce41530f55c85d6524d82307a5d555844c086a
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   geocoder: 3cfab70531a0b367e917bafe82df4c30f6d4c45a
   geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
