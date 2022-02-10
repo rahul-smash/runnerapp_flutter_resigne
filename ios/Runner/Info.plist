@@ -25,12 +25,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>NA</string>
+	<string>Please allow location for updates</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Please allow location for updates</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>NA</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
+		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
