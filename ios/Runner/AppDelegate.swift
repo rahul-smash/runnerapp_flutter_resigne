@@ -11,7 +11,8 @@ import CoreLocation
       
       LocationManager.shared.setupLocationManager()
       
-     
+      
+      registerForRichNotifications()
       
       let controller:FlutterViewController = window?.rootViewController as! FlutterViewController
       
@@ -26,8 +27,20 @@ import CoreLocation
               result(FlutterMethodNotImplemented)
               return
             }
-          print(call.arguments!)
           
+          let argss = call.arguments as! NSArray
+          if argss[0] as! Int == 1{
+              let content = UNMutableNotificationContent()
+
+                  content.title = "You have pending orders"
+                 
+                  content.sound = UNNotificationSound.default
+
+                  let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+                  let request = UNNotificationRequest(identifier: "timerDone", content: content, trigger: trigger)
+
+                  UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+          }
         })
       
       
@@ -48,6 +61,30 @@ import CoreLocation
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+    
+    
+    func registerForRichNotifications() {
+
+           UNUserNotificationCenter.current().requestAuthorization(options: [.alert,.badge,.sound]) { (granted:Bool, error:Error?) in
+                if error != nil {
+                    print(error?.localizedDescription)
+                }
+                if granted {
+                    print("Permission granted")
+                } else {
+                    print("Permission not granted")
+                }
+            }
+
+            //actions defination
+//            let action1 = UNNotificationAction(identifier: "action1", title: "Action First", options: [.foreground])
+//            let action2 = UNNotificationAction(identifier: "action2", title: "Action Second", options: [.foreground])
+
+            let category = UNNotificationCategory(identifier: "timerDone", actions: [], intentIdentifiers: [], options: [])
+
+            UNUserNotificationCenter.current().setNotificationCategories([category])
+
+        }
     
     private func receiveLocations(result: FlutterResult) {
      
