@@ -679,56 +679,59 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: InkWell(
-                                        onTap: () async {
-                                          //TODO: Edit Order From here
-                                          String refreshPage =
-                                              await Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          EditBookingDetailsScreen(
-                                                              widget.booking,
-                                                              callBackMethod:
-                                                                  (status) {
-                                                            widget.booking
-                                                                    .status =
-                                                                status;
-                                                            if (mounted) {
-                                                              setState(() {
-                                                                _showEdit =
-                                                                    true;
-                                                              });
-                                                            }
-                                                            widget.callBackMethod(
-                                                                'refresh',
-                                                                widget.booking);
-                                                          })));
-                                          if (refreshPage != null &&
-                                              refreshPage == 'refreshPage') {
-                                            _getBookingdetails(widget.booking,
-                                                isShowLoader: true);
-                                          }
-                                        },
-                                        child: _showEdit == true
-                                            ? Text(
-                                                _bookingDetailsResponse
-                                                            .bookings.status ==
-                                                        "1"
-                                                    ? labelEditOrder
-                                                    : "",
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        AppConstants.largeSize,
-                                                    color:
-                                                        AppTheme.primaryColor,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              )
-                                            : Container(),
+                                    Visibility(
+                                      visible:_showEdit &&_bookingDetailsResponse
+                                          .bookings.status ==
+                                          "1",
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            //TODO: Edit Order From here
+                                            String refreshPage =
+                                                await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            EditBookingDetailsScreen(
+                                                                widget.booking,
+                                                                callBackMethod:
+                                                                    (status) {
+                                                              widget.booking
+                                                                      .status =
+                                                                  status;
+                                                              if (mounted) {
+                                                                setState(() {
+                                                                  _showEdit =
+                                                                      true;
+                                                                });
+                                                              }
+                                                              widget.callBackMethod(
+                                                                  'refresh',
+                                                                  widget.booking);
+                                                            })));
+                                            if (refreshPage != null &&
+                                                refreshPage == 'refreshPage') {
+                                              _getBookingdetails(widget.booking,
+                                                  isShowLoader: true);
+                                            }
+                                          },
+                                          child: Text(
+                                                  _bookingDetailsResponse
+                                                              .bookings.status ==
+                                                          "1"
+                                                      ? labelEditOrder
+                                                      : "",
+                                                  style: TextStyle(
+                                                      fontSize:
+                                                          AppConstants.largeSize,
+                                                      color:
+                                                          AppTheme.primaryColor,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                        ),
                                       ),
                                     ),
                                     ListView.separated(
