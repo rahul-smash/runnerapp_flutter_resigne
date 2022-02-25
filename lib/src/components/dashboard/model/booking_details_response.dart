@@ -85,6 +85,7 @@ class Bookings {
       this.shippingTax,
       this.shippingTaxRate,
       this.tax,
+      this.tip,
       this.storeTaxRateDetail,
       this.calculatedTaxDetail,
       this.storeFixedTaxDetail,
@@ -132,6 +133,7 @@ class Bookings {
   String shippingTax;
   String shippingTaxRate;
   String tax;
+  String tip;
   String storeTaxRateDetail;
   String calculatedTaxDetail;
   String storeFixedTaxDetail;
@@ -180,6 +182,7 @@ class Bookings {
           String shippingTax,
           String shippingTaxRate,
           String tax,
+          String tip,
           String storeTaxRateDetail,
           String calculatedTaxDetail,
           String storeFixedTaxDetail,
@@ -231,6 +234,7 @@ class Bookings {
         shippingTax: shippingTax ?? this.shippingTax,
         shippingTaxRate: shippingTaxRate ?? this.shippingTaxRate,
         tax: tax ?? this.tax,
+        tip: tip ?? this.tip,
         storeTaxRateDetail: storeTaxRateDetail ?? this.storeTaxRateDetail,
         calculatedTaxDetail: calculatedTaxDetail ?? this.calculatedTaxDetail,
         storeFixedTaxDetail: storeFixedTaxDetail ?? this.storeFixedTaxDetail,
@@ -300,6 +304,7 @@ class Bookings {
             ? null
             : json["shipping_tax_rate"],
         tax: json["tax"] == null ? null : json["tax"],
+        tip: json["tip"] == null ? null : json["tip"],
         storeTaxRateDetail: json["store_tax_rate_detail"] == null
             ? null
             : json["store_tax_rate_detail"],
@@ -379,6 +384,7 @@ class Bookings {
         "shipping_tax": shippingTax == null ? null : shippingTax,
         "shipping_tax_rate": shippingTaxRate == null ? null : shippingTaxRate,
         "tax": tax == null ? null : tax,
+        "tip": tip == null ? null : tip,
         "store_tax_rate_detail":
             storeTaxRateDetail == null ? null : storeTaxRateDetail,
         "calculated_tax_detail":
@@ -486,12 +492,9 @@ class Cart {
   String image10080;
   String image300200;
   String image;
-  bool isEditPrice=false;
+  bool isEditPrice = false;
 
-  Cart copyObject({
-    dynamic item
-  }) =>
-      Cart(
+  Cart copyObject({dynamic item}) => Cart(
         id: item.id ?? this.id,
         storeId: item.storeId ?? this.storeId,
         userId: item.userId ?? this.userId,
@@ -539,45 +542,64 @@ class Cart {
         storeId: json["store_id"] == null ? null : json["store_id"].toString(),
         userId: json["user_id"] == null ? null : json["user_id"].toString(),
         orderId: json["order_id"] == null ? null : json["order_id"].toString(),
-        deviceId: json["device_id"] == null ? null : json["device_id"].toString(),
-        deviceToken: json["device_token"] == null ? null : json["device_token"].toString(),
+        deviceId:
+            json["device_id"] == null ? null : json["device_id"].toString(),
+        deviceToken: json["device_token"] == null
+            ? null
+            : json["device_token"].toString(),
         platform: json["platform"] == null ? null : json["platform"].toString(),
-        productId: json["product_id"] == null ? null : json["product_id"].toString(),
-        productName: json["product_name"] == null ? null : json["product_name"].toString(),
-        variantId: json["variant_id"] == null ? null : json["variant_id"].toString(),
+        productId:
+            json["product_id"] == null ? null : json["product_id"].toString(),
+        productName: json["product_name"] == null
+            ? null
+            : json["product_name"].toString(),
+        variantId:
+            json["variant_id"] == null ? null : json["variant_id"].toString(),
         weight: json["weight"] == null ? null : json["weight"].toString(),
-        mrpPrice: json["mrp_price"] == null ? null : json["mrp_price"].toString(),
+        mrpPrice:
+            json["mrp_price"] == null ? null : json["mrp_price"].toString(),
         price: json["price"] == null ? null : json["price"].toString(),
         discount: json["discount"] == null ? null : json["discount"].toString(),
         variants: json["variants"] == null
             ? null
             : List<Variant>.from(
                 json["variants"].map((x) => Variant.fromJson(x))),
-        servicePayout:
-            json["service_payout"] == null ? null : json["service_payout"].toString(),
+        servicePayout: json["service_payout"] == null
+            ? null
+            : json["service_payout"].toString(),
         walletRefundAmount: json["wallet_refund_amount"] == null
             ? null
             : json["wallet_refund_amount"].toString(),
-        refundStatus:
-            json["refund_status"] == null ? null : json["refund_status"].toString(),
-        unitType: json["unit_type"] == null ? null : json["unit_type"].toString(),
+        refundStatus: json["refund_status"] == null
+            ? null
+            : json["refund_status"].toString(),
+        unitType:
+            json["unit_type"] == null ? null : json["unit_type"].toString(),
         quantity: json["quantity"] == null ? null : json["quantity"].toString(),
         comment: json["comment"] == null ? null : json["comment"].toString(),
-        isTaxEnable: json["isTaxEnable"] == null ? null : json["isTaxEnable"].toString(),
+        isTaxEnable:
+            json["isTaxEnable"] == null ? null : json["isTaxEnable"].toString(),
         hsnCode: json["hsn_code"] == null ? null : json["hsn_code"].toString(),
-        gstDetail: json["gst_detail"] == null ? null : json["gst_detail"].toString(),
+        gstDetail:
+            json["gst_detail"] == null ? null : json["gst_detail"].toString(),
         cgst: json["cgst"] == null ? null : json["cgst"].toString(),
         sgst: json["sgst"] == null ? null : json["sgst"].toString(),
         igst: json["igst"] == null ? null : json["igst"].toString(),
         gstType: json["gst_type"] == null ? null : json["gst_type"].toString(),
-        gstTaxRate: json["gst_tax_rate"] == null ? null : json["gst_tax_rate"].toString(),
-        gstState: json["gst_state"] == null ? null : json["gst_state"].toString(),
+        gstTaxRate: json["gst_tax_rate"] == null
+            ? null
+            : json["gst_tax_rate"].toString(),
+        gstState:
+            json["gst_state"] == null ? null : json["gst_state"].toString(),
         status: json["status"] == null ? null : json["status"].toString(),
         created: json["created"] == null ? null : json["created"].toString(),
         modified: json["modified"] == null ? null : json["modified"].toString(),
-        image10080: json["image_100_80"] == null ? null : json["image_100_80"].toString(),
-        image300200:
-            json["image_300_200"] == null ? null : json["image_300_200"].toString(),
+        image10080: json["image_100_80"] == null
+            ? null
+            : json["image_100_80"].toString(),
+        image300200: json["image_300_200"] == null
+            ? null
+            : json["image_300_200"].toString(),
         image: json["image"] == null ? null : json["image"].toString(),
       );
 

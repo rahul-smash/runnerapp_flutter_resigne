@@ -62,6 +62,7 @@ class LoginNetworkRepository extends DioBaseService {
     }
     return null;
   }
+
   Future<LoginResponse> userloginApi(String email, String password) async {
     try {
       Map<String, dynamic> param = {};
@@ -116,6 +117,7 @@ class LoginNetworkRepository extends DioBaseService {
     }
     return null;
   }
+
   Future<ForgotPasswordResponse> forgotPassword(String email) async {
     String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
     Map<String, dynamic> param =
@@ -131,6 +133,7 @@ class LoginNetworkRepository extends DioBaseService {
     }
     return null;
   }
+
   Future<ForgotPasswordResponse> resetPassword(String password,String id) async {
     String storeId = StoreConfigurationSingleton.instance.configModel.storeId;
     Map<String, dynamic> param =

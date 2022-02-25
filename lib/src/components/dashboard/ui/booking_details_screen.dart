@@ -999,6 +999,48 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                                     .w600))
                                                   ],
                                                 ))),
+                                        Visibility(
+                                            visible: _bookingDetailsResponse
+                                                .bookings.tip ==
+                                                "0.00"
+                                                ? false
+                                                : true,
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 4, bottom: 4),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                                  mainAxisSize:
+                                                  MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Flexible(
+                                                      child: Text(
+                                                          'Tip',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize:
+                                                            AppConstants
+                                                                .smallSize,
+                                                            fontWeight:
+                                                            FontWeight.w500,
+                                                          )),
+                                                    ),
+                                                    Text(
+                                                        "${AppConstants.currency}${_bookingDetailsResponse.bookings.tip}",
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize:
+                                                            AppConstants
+                                                                .smallSize,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w600))
+                                                  ],
+                                                ))),
                                         Container(
                                           margin: EdgeInsets.only(
                                               top: 4, bottom: 4),

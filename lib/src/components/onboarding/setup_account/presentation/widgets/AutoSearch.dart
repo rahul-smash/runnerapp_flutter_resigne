@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
@@ -18,15 +17,14 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 // basically your widget need to extends [GooglePlacesAutocompleteWidget]
 // and your state [GooglePlacesAutocompleteState]
 class CustomSearchScaffold extends PlacesAutocompleteWidget {
-  CustomSearchScaffold() :
-        super(
-          apiKey: kGoogleApiKey,
-        sessionToken: Uuid().generateV4(),
-        language: "en",
-        components: [Component(Component.country, "in")],
-        types: [],
-        strictbounds: false
-      );
+  CustomSearchScaffold()
+      : super(
+            apiKey: kGoogleApiKey,
+            sessionToken: Uuid().generateV4(),
+            language: "en",
+            components: [Component(Component.country, "in")],
+            types: [],
+            strictbounds: false);
 
   @override
   CustomSearchScaffoldState createState() => CustomSearchScaffoldState();
@@ -50,69 +48,72 @@ class CustomSearchScaffoldState extends PlacesAutocompleteState {
     return Scaffold(
 //        appBar: appBar,
         body: Container(
-          padding: EdgeInsets.only(top: 16,left: 5,right: 5,bottom: 16),
+            padding: EdgeInsets.only(top: 16, left: 5, right: 5, bottom: 16),
             child: Column(
-      children: [
-        Align(
-          alignment: Alignment.centerRight,
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
-              child: Icon(
-                Icons.cancel,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
-          child: Text(
-            'Search',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
-          ),
-        ),
-        Container(
-            margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 0),
-            //padding: EdgeInsets.all(5.0),
-            decoration: BoxDecoration(
-                color: AppTheme.grayCircle,
-                borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                border: Border.all(
-                  color: AppTheme.grayCircle,
-                )),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: Center(
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.fromLTRB(3, 3, 10, 3),
-                          /*child: Image.asset('images/searchicon.png',
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(5, 15, 5, 5),
+                      child: Icon(
+                        Icons.cancel,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
+                  child: Text(
+                    'Search',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+                Container(
+                    margin: EdgeInsets.only(
+                        left: 20, right: 20, top: 10, bottom: 0),
+                    //padding: EdgeInsets.all(5.0),
+                    decoration: BoxDecoration(
+                        color: AppTheme.grayCircle,
+                        borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                        border: Border.all(
+                          color: AppTheme.grayCircle,
+                        )),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      child: Center(
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(3, 3, 10, 3),
+                                /*child: Image.asset('images/searchicon.png',
                               width: 20,
                               fit: BoxFit.scaleDown,
                               color: Colors.grey)*/
-                        child: Icon(Icons.search,size: 20,
-                            color: AppTheme.primaryColor),
+                                child: Icon(Icons.search,
+                                    size: 20, color: AppTheme.primaryColor),
+                              ),
+                              Expanded(
+                                child: AppBarPlacesAutoCompleteTextField(
+                                  textDecoration: _defaultDecoration('Search'),
+                                ),
+                              )
+                            ]),
                       ),
-                      Expanded(
-                        child: AppBarPlacesAutoCompleteTextField(
-                          textDecoration: _defaultDecoration('Search'),
-                        ),
-                      )
-                    ]),
-              ),
-            )),
-        Expanded(child: body)
-      ],
-    )));
+                    )),
+                Expanded(child: body)
+              ],
+            )));
   }
 
   InputDecoration _defaultDecoration(String hint) {
@@ -143,11 +144,9 @@ class CustomSearchScaffoldState extends PlacesAutocompleteState {
       print("location = ${lat},${lng}");
       //var address = await Geocoder.local.findAddressesFromQuery(p.description);
 //      Navigator.pop(context, detail);
-      Navigator.pop(context, LatLng(lat,lng));
+      Navigator.pop(context, LatLng(lat, lng));
     }
   }
-
-
 
   @override
   void onResponseError(PlacesAutocompleteResponse response) {

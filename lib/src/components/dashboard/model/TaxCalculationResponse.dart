@@ -36,6 +36,7 @@ class TaxCalculationModel {
   String cartSaving;
   String itemSubTotal;
   String tax;
+  String tip;
   String discount;
   String shipping;
   String couponCode;
@@ -55,6 +56,7 @@ class TaxCalculationModel {
     this.cartSaving,
     this.itemSubTotal,
     this.tax,
+    this.tip,
     this.wallet_refund,
     this.discount,
     this.shipping,
@@ -78,6 +80,7 @@ class TaxCalculationModel {
     model.cartSaving = json['cart_saving'];
     model.itemSubTotal = json['item_sub_total'];
     model.tax = json['tax'];
+    model.tip = json['tip'];
     model.discount = json['discount'];
     model.shipping = json['shipping'];
     model.wallet_refund = json['wallet_refund'].toString();
@@ -123,6 +126,7 @@ class TaxCalculationModel {
     data['cart_saving'] = this.cartSaving;
     data['item_sub_total'] = this.itemSubTotal;
     data['tax'] = this.tax;
+    data['tip'] = this.tip;
     data['discount'] = this.discount;
     data['shipping'] = this.shipping;
     data['fixed_tax_amount'] = this.fixedTaxAmount;

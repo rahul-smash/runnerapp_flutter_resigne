@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geocoder/geocoder.dart';
+import 'package:geocode/geocode.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketplace_service_provider/core/dimensions/size_config.dart';
@@ -87,14 +87,16 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen>
         .then((value) async {
       businessDetailModel = value;
       // print("${userId.location.locationName}");
-      var addresses = await Geocoder.local
-          .findAddressesFromQuery(AppSharedPref.instance.getLocationId());
-      var first = addresses.first;
+      
+      GeoCode().forwardGeocoding(address: AppSharedPref.instance.getLocationId());
+      
+      var addresses = await GeoCode().forwardGeocoding(address: AppSharedPref.instance.getLocationId());
+      var first = addresses;
       center =
-          new LatLng(first.coordinates.latitude, first.coordinates.longitude);
+          new LatLng(first.latitude, first.longitude);
       widget.userlocation = center;
       PlacemarkModel placemarkModel = await AppUtils.getPlace(
-          first.coordinates.latitude, first.coordinates.longitude);
+          first.latitude, first.longitude);
       setBusinessData(placemarkModel: placemarkModel);
       workLocationList = businessDetailModel.data.serviceType;
       _selectedWorkLocationTag = workLocationList.first;
@@ -1575,14 +1577,15 @@ class _BusinessDetailScreenState extends BaseState<BusinessDetailScreen>
       try {
         localCenter = LatLng(latitude, longitude);
         localSelectedLocation = LatLng(latitude, longitude);
-        Coordinates coordinates = new Coordinates(latitude, longitude);
+        Coordinates coordinates = new Coordinates(latitude : latitude, longitude : longitude);
+
         var addresses =
-            await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        var first = addresses.first;
-        localAddress = first.addressLine;
+            await GeoCode().reverseGeocoding(latitude: coordinates.latitude, longitude: coordinates.longitude);
+        var first = addresses;
+        localAddress = first.city;
         if (setState != null)
           setState(() {
-            localAddress = first.addressLine;
+            localAddress = first.city;
           });
       } catch (e) {
         print(e);
