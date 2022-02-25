@@ -175,7 +175,7 @@ class _EditBookingDetailsScreenState
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '#${widget.booking.displayOrderId} | ${AppUtils.convertDateFromFormat(widget.booking.created)}',
+                                      '#${_bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
                                       style: TextStyle(
                                           fontSize: 12.0,
                                           color: AppTheme.subHeadingTextColor,
@@ -248,15 +248,47 @@ class _EditBookingDetailsScreenState
                               SizedBox(
                                 height: 4.0,
                               ),
-                              Text(
-                                getStoreAddress(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontFamily: AppConstants.fontName,
-                                    fontSize: AppConstants.smallSize,
-                                    color: AppTheme.mainTextColor,
-                                    fontWeight: FontWeight.normal),
+
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      getStoreAddress(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontFamily: AppConstants.fontName,
+                                          fontSize: AppConstants.smallSize,
+                                          color: AppTheme.mainTextColor,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Visibility(
+                                    visible: widget.booking.store?.lat !=
+                                        null &&
+                                        (widget.booking.store?.lat ?? '').isNotEmpty &&
+                                        widget.booking.store?.lng !=
+                                            null &&
+                                        (widget.booking.store?.lng ?? '').isNotEmpty,
+                                    child: InkWell(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: Icon(
+                                            Icons.gps_fixed_outlined,
+                                            size: 25.0,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          AppUtils.openMap(
+                                              widget.booking.store?.lat,
+                                              widget.booking.store?.lng);
+                                        }),
+                                  ),
+                                ],
                               ),
                               SizedBox(
                                 height: 8.0,

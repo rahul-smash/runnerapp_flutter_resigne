@@ -204,7 +204,10 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 8.0),
-                                                                                                    child: Icon(Icons.message,size: 25,),
+                                                  child: Icon(
+                                                    Icons.message,
+                                                    size: 25,
+                                                  ),
                                                 ),
                                                 onTap: () {
                                                   AppUtils.launchSMS(widget
@@ -263,15 +266,49 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   SizedBox(
                                     height: 4.0,
                                   ),
-                                  Text(
-                                    getStoreAddress(),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontFamily: AppConstants.fontName,
-                                        fontSize: AppConstants.smallSize,
-                                        color: AppTheme.mainTextColor,
-                                        fontWeight: FontWeight.normal),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          getStoreAddress(),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontFamily: AppConstants.fontName,
+                                              fontSize: AppConstants.smallSize,
+                                              color: AppTheme.mainTextColor,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Visibility(
+                                        visible: widget.booking.store?.lat !=
+                                                null &&
+                                            (widget.booking.store?.lat ?? '')
+                                                .isNotEmpty &&
+                                            widget.booking.store?.lng != null &&
+                                            (widget.booking.store?.lng ?? '')
+                                                .isNotEmpty,
+                                        child: InkWell(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0),
+                                              child: Icon(
+                                                Icons.gps_fixed_outlined,
+                                                size: 25.0,
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              AppUtils.openMap(
+                                                  widget.booking.store?.lat,
+                                                  widget.booking.store?.lng);
+                                            }),
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(
                                     height: 8.0,
@@ -431,7 +468,10 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 8.0),
-                                                  child: Icon(Icons.message,size: 25,),
+                                                  child: Icon(
+                                                    Icons.message,
+                                                    size: 25,
+                                                  ),
                                                 ),
                                                 onTap: () {
                                                   AppUtils.launchSMS(widget
@@ -529,18 +569,24 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      _bookingDetailsResponse.bookings!=null ? Text(
-                                        'Date & Time',
-                                        style: TextStyle(
-                                            fontSize: AppConstants.smallSize,
-                                            color: AppTheme.subHeadingTextColor,
-                                            fontWeight: FontWeight.w400),
-                                      ):"",
+                                      _bookingDetailsResponse.bookings != null
+                                          ? Text(
+                                              'Date & Time',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      AppConstants.smallSize,
+                                                  color: AppTheme
+                                                      .subHeadingTextColor,
+                                                  fontWeight: FontWeight.w400),
+                                            )
+                                          : "",
                                       SizedBox(
                                         height: 4.0,
                                       ),
                                       Text(
-                                        _bookingDetailsResponse.bookings!=null?'${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}':"",
+                                        _bookingDetailsResponse.bookings != null
+                                            ? '${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}'
+                                            : "",
                                         style: TextStyle(
                                             fontSize: AppConstants.smallSize,
                                             color: AppTheme.mainTextColor,
@@ -552,27 +598,36 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     height: 12.0,
                                   ),
                                   _bookingDetailsResponse
-                                      .bookings.deliveryTimeSlot!=null && _bookingDetailsResponse
-                                      .bookings.deliveryTimeSlot.isNotEmpty? Text(
-                                    'Delivery Slot',
-                                    style: TextStyle(
-                                        fontFamily: AppConstants.fontName,
-                                        fontSize: AppConstants.smallSize,
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontWeight: FontWeight.w400),
-                                  ):Container(),
+                                                  .bookings.deliveryTimeSlot !=
+                                              null &&
+                                          _bookingDetailsResponse.bookings
+                                              .deliveryTimeSlot.isNotEmpty
+                                      ? Text(
+                                          'Delivery Slot',
+                                          style: TextStyle(
+                                              fontFamily: AppConstants.fontName,
+                                              fontSize: AppConstants.smallSize,
+                                              color:
+                                                  AppTheme.subHeadingTextColor,
+                                              fontWeight: FontWeight.w400),
+                                        )
+                                      : Container(),
                                   SizedBox(
                                     height: 4.0,
                                   ),
                                   Text(
-                                      _bookingDetailsResponse
-                                          .bookings.deliveryTimeSlot!=null &&  _bookingDetailsResponse
-                                          .bookings.deliveryTimeSlot.isNotEmpty? _bookingDetailsResponse
-                                        .bookings.deliveryTimeSlot
-                                        .substring(_bookingDetailsResponse
-                                                .bookings.deliveryTimeSlot
-                                                .indexOf(" ") +
-                                            1):"",
+                                    _bookingDetailsResponse.bookings
+                                                    .deliveryTimeSlot !=
+                                                null &&
+                                            _bookingDetailsResponse.bookings
+                                                .deliveryTimeSlot.isNotEmpty
+                                        ? _bookingDetailsResponse
+                                            .bookings.deliveryTimeSlot
+                                            .substring(_bookingDetailsResponse
+                                                    .bookings.deliveryTimeSlot
+                                                    .indexOf(" ") +
+                                                1)
+                                        : "",
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         fontFamily: AppConstants.fontName,
@@ -680,9 +735,10 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Visibility(
-                                      visible:_showEdit &&_bookingDetailsResponse
-                                          .bookings.status ==
-                                          "1",
+                                      visible: _showEdit &&
+                                          _bookingDetailsResponse
+                                                  .bookings.status ==
+                                              "1",
                                       child: Align(
                                         alignment: Alignment.centerRight,
                                         child: InkWell(
@@ -709,7 +765,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                               }
                                                               widget.callBackMethod(
                                                                   'refresh',
-                                                                  widget.booking);
+                                                                  widget
+                                                                      .booking);
                                                             })));
                                             if (refreshPage != null &&
                                                 refreshPage == 'refreshPage') {
@@ -718,19 +775,17 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                             }
                                           },
                                           child: Text(
-                                                  _bookingDetailsResponse
-                                                              .bookings.status ==
-                                                          "1"
-                                                      ? labelEditOrder
-                                                      : "",
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          AppConstants.largeSize,
-                                                      color:
-                                                          AppTheme.primaryColor,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
+                                            _bookingDetailsResponse
+                                                        .bookings.status ==
+                                                    "1"
+                                                ? labelEditOrder
+                                                : "",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    AppConstants.largeSize,
+                                                color: AppTheme.primaryColor,
+                                                fontWeight: FontWeight.w500),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -1001,8 +1056,8 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                 ))),
                                         Visibility(
                                             visible: _bookingDetailsResponse
-                                                .bookings.tip ==
-                                                "0.00"
+                                                        .bookings.tip ==
+                                                    "0.00"
                                                 ? false
                                                 : true,
                                             child: Padding(
@@ -1010,23 +1065,22 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                     top: 4, bottom: 4),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   mainAxisSize:
-                                                  MainAxisSize.max,
+                                                      MainAxisSize.max,
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                                      CrossAxisAlignment.center,
                                                   children: <Widget>[
                                                     Flexible(
-                                                      child: Text(
-                                                          'Tip',
+                                                      child: Text('Tip',
                                                           style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize:
-                                                            AppConstants
-                                                                .smallSize,
+                                                                AppConstants
+                                                                    .smallSize,
                                                             fontWeight:
-                                                            FontWeight.w500,
+                                                                FontWeight.w500,
                                                           )),
                                                     ),
                                                     Text(
@@ -1034,11 +1088,11 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize:
-                                                            AppConstants
-                                                                .smallSize,
+                                                                AppConstants
+                                                                    .smallSize,
                                                             fontWeight:
-                                                            FontWeight
-                                                                .w600))
+                                                                FontWeight
+                                                                    .w600))
                                                   ],
                                                 ))),
                                         Container(
@@ -2061,7 +2115,6 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
 
     return '';
   }
-
 }
 
 class MySeparator extends StatelessWidget {
@@ -2094,6 +2147,4 @@ class MySeparator extends StatelessWidget {
       },
     );
   }
-
-
 }
