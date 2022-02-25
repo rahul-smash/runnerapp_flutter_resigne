@@ -106,6 +106,7 @@ class DashboardRepository {
     String discount,
     String cartSaving,
     String tax,
+    String tip,
     String fixedDiscountAmount,
     String orderDetail,
     String storeID,
@@ -116,6 +117,7 @@ class DashboardRepository {
         userWallet,
         discount,cartSaving,
         tax,
+        tip,
         fixedDiscountAmount,
         orderDetail,
         storeID);

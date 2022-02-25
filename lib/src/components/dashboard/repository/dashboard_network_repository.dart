@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -379,6 +380,7 @@ class DashboardNetworkRepository extends DioBaseService {
       String discount,
       String cartSaving,
       String tax,
+      String tip,
       String fixedDiscountAmount,
       String orderDetail,
       String storeID) async {
@@ -391,6 +393,7 @@ class DashboardNetworkRepository extends DioBaseService {
       param['discount'] = discount;
       param['cart_saving'] = cartSaving;
       param['tax'] = tax;
+      param['tip'] = tip;
       param['fixed_discount_amount'] = fixedDiscountAmount;
       param['order_detail'] = orderDetail;
       print(" tax cal:$param");

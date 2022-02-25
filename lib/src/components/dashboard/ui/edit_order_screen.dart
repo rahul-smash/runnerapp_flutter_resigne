@@ -887,6 +887,55 @@ class _EditBookingDetailsScreenState
                                                             FontWeight.w600))
                                               ],
                                             ))),
+                                    Visibility(
+                                        visible: (taxCalculationResponse != null && taxCalculationResponse
+                                            .taxCalculation
+                                            .tip != null)
+                                            ? taxCalculationResponse
+                                            .taxCalculation
+                                            .tip
+                                            .isNotEmpty &&
+                                            taxCalculationResponse
+                                                .taxCalculation.tip !=
+                                                '0.00'
+                                            : _bookingDetailsResponse
+                                            .bookings.tip ==
+                                            "0.00"
+                                            ? false
+                                            : true,
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 4, bottom: 4),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceBetween,
+                                              mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Flexible(
+                                                  child: Text('Tip',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: AppConstants
+                                                            .smallSize,
+                                                        fontWeight:
+                                                        FontWeight.w500,
+                                                      )),
+                                                ),
+                                                Text(
+                                                    "${AppConstants.currency}${(taxCalculationResponse != null && taxCalculationResponse
+                                                        .taxCalculation
+                                                        .tip != null) ? taxCalculationResponse.taxCalculation.tip : _bookingDetailsResponse.bookings.tip}",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: AppConstants
+                                                            .smallSize,
+                                                        fontWeight:
+                                                        FontWeight.w600))
+                                              ],
+                                            ))),
                                     Container(
                                       margin:
                                           EdgeInsets.only(top: 4, bottom: 4),
@@ -2078,6 +2127,7 @@ class _EditBookingDetailsScreenState
                 shipping: _bookingDetailsResponse.bookings.shippingCharges,
                 discount: _bookingDetailsResponse.bookings.discount,
                 tax: _bookingDetailsResponse.bookings.tax,
+                tip : _bookingDetailsResponse.bookings.tip,
                 fixedDiscountAmount: _bookingDetailsResponse.bookings.discount,
                 userWallet: '0',
                 orderDetail: orderDetail,
