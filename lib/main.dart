@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
@@ -11,7 +13,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_notification_plugin/flutter_notification_plugin.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/provider/booking_provider.dart';
@@ -61,10 +65,17 @@ const String isolateName2 = 'isolate2';
 final ReceivePort port = ReceivePort();
 final ReceivePort port2 = ReceivePort();
 
+const platform = MethodChannel('ios/locationUpdate');
+
+const pushChannel = MethodChannel('pushMethod');
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid) {
     await FlutterNotificationPlugin.stopForegroundService();
+    initAlarm();
+    initReminderAlarm();
+  } else if (Platform.isIOS) {
     initAlarm();
     initReminderAlarm();
   }
@@ -74,15 +85,15 @@ void main() async {
   AppNetwork.init();
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-  if (Platform.isAndroid){
-    await Firebase.initializeApp();
+  await Firebase.initializeApp();
 
-  // Set the background messaging handler early on, as a named top-level function
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  if (Platform.isAndroid) {
+    // Set the background messaging handler early on, as a named top-level function
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     NotificationService.initialize(_navigatorKey);
-}
+  }
 
-
+  firebaseCloudMessagingListeners();
 
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
@@ -162,13 +173,40 @@ void main() async {
   }
 }
 
+void firebaseCloudMessagingListeners() {
+  // var android = new AndroidInitializationSettings('drawable/ic_notification');
+  // var ios = new IOSInitializationSettings();
+  // var platform = new InitializationSettings(android: android,iOS: ios);
+  // flutterLocalNotificationsPlugin.initialize(platform);
+
+  //Getting the token from FCM
+  FirebaseMessaging.instance.getToken().then((token) {
+    print("this is tokennnnnnnnnnnnnn $token");
+  });
+
+  FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: false,
+  );
+}
+
 Future<void> initAlarm() async {
   await AppSharedPref.instance.init();
   AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
   //TODO: check user is login or not
   LocationPermission permissionStatus = await Geolocator.checkPermission();
-  if (Platform.isAndroid &&
-          AppConstants.isLoggedIn &&
+
+  print(permissionStatus);
+
+  if (permissionStatus == LocationPermission.denied ||
+      permissionStatus == LocationPermission.deniedForever) {
+    await GeolocatorPlatform.instance.requestPermission();
+
+    initAlarm();
+  }
+
+  if (AppConstants.isLoggedIn &&
           permissionStatus == LocationPermission.always ||
       permissionStatus == LocationPermission.whileInUse) {
     // Register the UI isolate's SendPort to allow for communication from the
@@ -177,31 +215,41 @@ Future<void> initAlarm() async {
       port.sendPort,
       isolateName,
     );
-    await AndroidAlarmManager.initialize();
+    if (Platform.isAndroid) {
+      await AndroidAlarmManager.initialize();
+      try {
+        port.listen((_) async {
+          print("-------port.listen-------------");
+          Position position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high);
+          debugPrint("----getCurrentPosition----- $position");
+          // await AppSharedPref.instance.isLoggedIn();
+          // if (AppConstants.isLoggedIn) {
+          //   LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
+          //   await getIt.get<DashboardRepository>().updateRunnerLatlng(
+          //       userId: loginResponse.data.id,
+          //       lat: '${position.latitude}',
+          //       lng: '${position.longitude}',
+          //       address: "address");
+          // }
+        });
+      } catch (e) {
+        print(e);
+      }
+
+      await AndroidAlarmManager.periodic(
+          Duration(seconds: 20), 0, handleBackgroundFunction,
+          rescheduleOnReboot: true, wakeup: true);
+    }
     // Register for events from the background isolate. These messages will
     // always coincide with an alarm firing.
-    try {
-      port.listen((_) async {
-        print("-------port.listen-------------");
-        Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
-        debugPrint("----getCurrentPosition----- $position");
-        // await AppSharedPref.instance.isLoggedIn();
-        // if (AppConstants.isLoggedIn) {
-        //   LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
-        //   await getIt.get<DashboardRepository>().updateRunnerLatlng(
-        //       userId: loginResponse.data.id,
-        //       lat: '${position.latitude}',
-        //       lng: '${position.longitude}',
-        //       address: "address");
-        // }
-      });
-    } catch (e) {
-      print(e);
+    else if (Platform.isIOS) {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      debugPrint("----getCurrentPosition----- $position");
+      Timer.periodic(
+          Duration(seconds: 15), (Timer t) => handleBackgroundFunction());
     }
-    await AndroidAlarmManager.periodic(
-        Duration(seconds: 20), 0, handleBackgroundFunction,
-        rescheduleOnReboot: true, wakeup: true);
   }
 }
 
@@ -212,6 +260,7 @@ Future<void> initReminderAlarm() async {
       pref.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
   bool isReminderAlarmEnabled =
       pref.getBool(AppSharePrefConstants.prefKeyAppReminderAlarm) ?? false;
+
   if (Platform.isAndroid && isLoggedIn && isReminderAlarmEnabled) {
     IsolateNameServer.registerPortWithName(
       port2.sendPort,
@@ -228,6 +277,21 @@ Future<void> initReminderAlarm() async {
     await AndroidAlarmManager.periodic(
         Duration(seconds: 5), 1, handleReminderAlarm,
         rescheduleOnReboot: true, wakeup: true);
+  } else if (Platform.isIOS && isLoggedIn) {
+    IsolateNameServer.registerPortWithName(
+      port2.sendPort,
+      isolateName2,
+    );
+
+    try {
+      port.listen((_) async {
+        print("-------port.listen-------------");
+      });
+    } catch (e) {
+      print(e);
+    }
+
+    Timer.periodic(Duration(seconds: 15), (Timer t) => handleReminderAlarm());
   }
 }
 
@@ -248,8 +312,12 @@ Future<void> handleReminderAlarm() async {
     if (reminderResponse != null && reminderResponse.success) {
       if (int.parse(reminderResponse.orderCountManual) > 0 ||
           int.parse(reminderResponse.orderCountAuto) > 0) {
-        startForegroundService('You have pending orders');
-        if (eventBus != null) eventBus.fire(RefreshEvent());
+        if (Platform.isIOS) {
+          pushChannel.invokeMethod('pushParams', [1]);
+        } else if (Platform.isAndroid) {
+          startForegroundService('You have pending orders');
+          if (eventBus != null) eventBus.fire(RefreshEvent());
+        }
       }
     }
   }
@@ -287,6 +355,19 @@ cancelAllAlarm() {
   if (Platform.isAndroid) AndroidAlarmManager.cancel(0);
 }
 
+Future<void> _getLocationIOS() async {
+  String locationIOSCurrent;
+  try {
+    final List<Object> result =
+        await platform.invokeMethod('getLocationBackground');
+    print(result);
+    locationIOSCurrent = 'Location current $result % .';
+  } on PlatformException catch (e) {
+    locationIOSCurrent = "Failed to get location: '${e.message}'.";
+  }
+  print(locationIOSCurrent);
+}
+
 // The background
 SendPort uiSendPort;
 SendPort uiSendPort2;
@@ -294,45 +375,103 @@ SendPort uiSendPort2;
 Future<void> handleBackgroundFunction() async {
   // await AppSharedPref.instance.init();
 
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  pref.reload();
-  final DateTime now = DateTime.now();
-  final int isolateId = Isolate.current.hashCode;
-  // if(LocationPermission.always==Geolocator.checkPermission()){
-  Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high);
-  debugPrint("----getCurrentPosition----- $position");
-  // This will be null if we're running in the background.
-  uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
-  uiSendPort?.send("");
-  // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-  AppConstants.isLoggedIn =
-      pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
-  print(
-      "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
-  if (AppConstants.isLoggedIn) {
-    // String userId = AppSharedPref.instance.getUserId();
-    String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
-    DashboardRepository repository = DashboardRepository();
-    String address = 'N/A';
-    try {
-      PlacemarkModel placemarkModel =
-          await AppUtils.getPlace(position.latitude, position.longitude);
-      address = placemarkModel.address;
-    } catch (e) {
-      debugPrint(e);
-    }
-    ConfigModel configModel = await getConfigureModel();
+  if (Platform.isIOS) {
+    //_getLocationIOS();
 
-    BaseResponse baseResponse = await repository.updateRunnerLatlng(
-        userId: userId,
-        lat: '${position.latitude}',
-        lng: '${position.longitude}',
-        address: address,
-        storeID: configModel.storeId);
-    if (baseResponse != null && baseResponse.success) {
-      print(
-          'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
+    List<Object> locationIOSCurrent;
+    try {
+      final List<Object> result =
+          await platform.invokeMethod('getLocationBackground');
+      print(result);
+      locationIOSCurrent = result;
+    } on PlatformException catch (e) {
+      debugPrint(e.message);
+      locationIOSCurrent = [];
+    }
+    print(locationIOSCurrent);
+
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.reload();
+    final DateTime now = DateTime.now();
+    final int isolateId = Isolate.current.hashCode;
+    // // if(LocationPermission.always==Geolocator.checkPermission()){
+    // Position position = await Geolocator.getCurrentPosition(
+    //     desiredAccuracy: LocationAccuracy.high);
+    // debugPrint("----getCurrentPosition----- $position");
+    // This will be null if we're running in the background.
+    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
+    uiSendPort?.send("");
+    // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+    AppConstants.isLoggedIn =
+        pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+    print(
+        "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
+    if (AppConstants.isLoggedIn) {
+      // String userId = AppSharedPref.instance.getUserId();
+      String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
+      DashboardRepository repository = DashboardRepository();
+      String address = 'N/A';
+      try {
+        PlacemarkModel placemarkModel = await AppUtils.getPlace(
+            locationIOSCurrent[1], locationIOSCurrent[0]);
+        address = placemarkModel.address;
+      } catch (e) {
+        debugPrint(e);
+      }
+      ConfigModel configModel = await getConfigureModel();
+
+      BaseResponse baseResponse = await repository.updateRunnerLatlng(
+          userId: userId,
+          lat: '${locationIOSCurrent[1]}',
+          lng: '${locationIOSCurrent[0]}',
+          address: address,
+          storeID: configModel.storeId);
+      if (baseResponse != null && baseResponse.success) {
+        print(
+            'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
+      }
+    }
+  } else if (Platform.isAndroid) {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.reload();
+    final DateTime now = DateTime.now();
+    final int isolateId = Isolate.current.hashCode;
+    // if(LocationPermission.always==Geolocator.checkPermission()){
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    debugPrint("----getCurrentPosition----- $position");
+    // This will be null if we're running in the background.
+    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
+    uiSendPort?.send("");
+    // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+    AppConstants.isLoggedIn =
+        pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+    print(
+        "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
+    if (AppConstants.isLoggedIn) {
+      // String userId = AppSharedPref.instance.getUserId();
+      String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
+      DashboardRepository repository = DashboardRepository();
+      String address = 'N/A';
+      try {
+        PlacemarkModel placemarkModel =
+            await AppUtils.getPlace(position.latitude, position.longitude);
+        address = placemarkModel.address;
+      } catch (e) {
+        debugPrint(e);
+      }
+      ConfigModel configModel = await getConfigureModel();
+
+      BaseResponse baseResponse = await repository.updateRunnerLatlng(
+          userId: userId,
+          lat: '${position.latitude}',
+          lng: '${position.longitude}',
+          address: address,
+          storeID: configModel.storeId);
+      if (baseResponse != null && baseResponse.success) {
+        print(
+            'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
+      }
     }
   }
 
@@ -421,23 +560,25 @@ class _MainWidgetState extends State<MainWidget> {
   void initState() {
     super.initState();
     eventBus.on<AlarmEvent>().listen((event) {
-      if(Platform.isAndroid){
-      if (event.event == 'start') {
-        initAlarm();
-      } else if (event.event == 'cancel') {
-        cancelAllAlarm();
-      }}
+      if (Platform.isAndroid) {
+        if (event.event == 'start') {
+          initAlarm();
+        } else if (event.event == 'cancel') {
+          cancelAllAlarm();
+        }
+      }
     });
 
     eventBus.on<ReminderAlarmEvent>().listen((event) {
-      if(Platform.isAndroid){
-      if (event.event == ReminderAlarmEvent.start) {
-        initReminderAlarm();
-      } else if (event.event == ReminderAlarmEvent.cancel) {
-        cancelReminderAlarm();
-      } else if (event.event == ReminderAlarmEvent.notificationDismiss) {
-        dismissReminderNotification();
-      }}
+      if (Platform.isAndroid) {
+        if (event.event == ReminderAlarmEvent.start) {
+          initReminderAlarm();
+        } else if (event.event == ReminderAlarmEvent.cancel) {
+          cancelReminderAlarm();
+        } else if (event.event == ReminderAlarmEvent.notificationDismiss) {
+          dismissReminderNotification();
+        }
+      }
     });
   }
 
