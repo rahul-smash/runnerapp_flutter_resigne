@@ -20,6 +20,17 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
+
+
+def centreDetails = [
+        applicationId : PACKAGE_NAME,// The name shown on the Android Launcher.
+        name          : APPLICATION_NAME,// The name shown on the Android Launcher.
+        keyAlias      : keyAlias,
+        keyPassword   : keyPassword,
+        storeFileLocal: storeFileLocal,
+        storePassword : storePassword,
+]
+
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -47,6 +58,14 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias centreDetails.keyAlias
+            keyPassword centreDetails.keyPassword
+            storeFile file(centreDetails.storeFileLocal)
+            storePassword centreDetails.storePassword
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
