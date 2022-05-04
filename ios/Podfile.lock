@@ -51,8 +51,6 @@ PODS:
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
-  - geocoder (0.0.1):
-    - Flutter
   - geocoding (1.0.5):
     - Flutter
   - geolocator_apple (1.2.0):
@@ -126,7 +124,6 @@ DEPENDENCIES:
   - flutter_notification_plugin (from `.symlinks/plugins/flutter_notification_plugin/ios`)
   - flutter_sms (from `.symlinks/plugins/flutter_sms/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
-  - geocoder (from `.symlinks/plugins/geocoder/ios`)
   - geocoding (from `.symlinks/plugins/geocoding/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
@@ -177,8 +174,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_sms/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
-  geocoder:
-    :path: ".symlinks/plugins/geocoder/ios"
   geocoding:
     :path: ".symlinks/plugins/geocoding/ios"
   geolocator_apple:
@@ -220,9 +215,8 @@ SPEC CHECKSUMS:
   flutter_notification_plugin: d66d7aacc0062cbdc6f5eefe5499d575c9df73da
   flutter_sms: 91ce41530f55c85d6524d82307a5d555844c086a
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
-  geocoder: 3cfab70531a0b367e917bafe82df4c30f6d4c45a
   geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
-  geolocator_apple: b741765c55dc21950e3e106e8b3584e55cf81ce5
+  geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_maps_flutter: 279865bd07e2d8751f43a3bc64bac7f6075d0c93
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleMaps: c213fc2334b7374144cede914da779b99be0ab74
@@ -244,4 +238,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 4e8f8b2be68aeea4c0d5beb6ff1e79fface1d048
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

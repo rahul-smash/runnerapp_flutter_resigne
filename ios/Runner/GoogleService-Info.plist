@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1044117320509-31dkvkhsmu9lru3e3js6tcld2brd1amn.apps.googleusercontent.com</string>
+	<string>50471815282-ddm6c4q0h1u3oc0scu8rl2f6gaofa0qn.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1044117320509-31dkvkhsmu9lru3e3js6tcld2brd1amn</string>
+	<string>com.googleusercontent.apps.50471815282-ddm6c4q0h1u3oc0scu8rl2f6gaofa0qn</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>1044117320509-58rn7v7l7q15hettrboa7i70je8ru7o5.apps.googleusercontent.com</string>
+	<string>50471815282-ip6uv167u8eblale5p0anm9sm3751n05.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAtYIpE__AMe5AwMNPg9h82f8XhT5DSS5Q</string>
+	<string>AIzaSyAg2coXIBtraTSs2p1YgWCQEEvCfpQpToE</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1044117320509</string>
+	<string>50471815282</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.signity.app.testing</string>
+	<string>com.zippcart.runner</string>
 	<key>PROJECT_ID</key>
-	<string>flutter-valueappz-demostores</string>
+	<string>flutter-valueappz-14</string>
 	<key>STORAGE_BUCKET</key>
-	<string>flutter-valueappz-demostores.appspot.com</string>
+	<string>flutter-valueappz-14.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1044117320509:ios:bd0c3b525f346694c4cb54</string>
+	<string>1:50471815282:ios:c532d2e4b0cbe24df0daeb</string>
 </dict>
 </plist>
