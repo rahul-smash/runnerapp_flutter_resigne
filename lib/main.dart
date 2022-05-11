@@ -206,12 +206,13 @@ Future<void> initAlarm() async {
     initAlarm();
   }
 
-  if (AppConstants.isLoggedIn &&
-          permissionStatus == LocationPermission.always ||
+  if (AppConstants.isLoggedIn && permissionStatus == LocationPermission.always ||
       permissionStatus == LocationPermission.whileInUse) {
+    print('===isLoggedIn===and =permissionStatus=always=whileInUse');
+    _locationTimer();
     // Register the UI isolate's SendPort to allow for communication from the
     // background isolate.
-    IsolateNameServer.registerPortWithName(
+    /*IsolateNameServer.registerPortWithName(
       port.sendPort,
       isolateName,
     );
@@ -223,15 +224,7 @@ Future<void> initAlarm() async {
           Position position = await Geolocator.getCurrentPosition(
               desiredAccuracy: LocationAccuracy.high);
           debugPrint("----getCurrentPosition----- $position");
-          // await AppSharedPref.instance.isLoggedIn();
-          // if (AppConstants.isLoggedIn) {
-          //   LoginResponse loginResponse = LoginUserSingleton.instance.loginResponse;
-          //   await getIt.get<DashboardRepository>().updateRunnerLatlng(
-          //       userId: loginResponse.data.id,
-          //       lat: '${position.latitude}',
-          //       lng: '${position.longitude}',
-          //       address: "address");
-          // }
+
         });
       } catch (e) {
         print(e);
@@ -249,7 +242,7 @@ Future<void> initAlarm() async {
       debugPrint("----getCurrentPosition----- $position");
       Timer.periodic(
           Duration(seconds: 15), (Timer t) => handleBackgroundFunction());
-    }
+    }*/
   }
 }
 
@@ -368,94 +361,45 @@ Future<void> _getLocationIOS() async {
   print(locationIOSCurrent);
 }
 
+Timer _timer;
+void _locationTimer() {
+  var duration = Duration(seconds: 20);
+  _timer = new Timer.periodic(
+    duration, (Timer timer) {
+
+      handleBackgroundFunction();
+    },
+  );
+}
+
+
+
 // The background
 SendPort uiSendPort;
 SendPort uiSendPort2;
 //Only for use android Platform
 Future<void> handleBackgroundFunction() async {
-  // await AppSharedPref.instance.init();
-
-  if (Platform.isIOS) {
-    //_getLocationIOS();
-
-    List<Object> locationIOSCurrent;
-    try {
-      final List<Object> result =
-          await platform.invokeMethod('getLocationBackground');
-      print(result);
-      locationIOSCurrent = result;
-    } on PlatformException catch (e) {
-      debugPrint(e.message);
-      locationIOSCurrent = [];
-    }
-    print(locationIOSCurrent);
-
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.reload();
-    final DateTime now = DateTime.now();
-    final int isolateId = Isolate.current.hashCode;
-    // // if(LocationPermission.always==Geolocator.checkPermission()){
-    // Position position = await Geolocator.getCurrentPosition(
-    //     desiredAccuracy: LocationAccuracy.high);
-    // debugPrint("----getCurrentPosition----- $position");
-    // This will be null if we're running in the background.
-    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
-    uiSendPort?.send("");
-    // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-    AppConstants.isLoggedIn =
-        pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
-    print(
-        "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
-    if (AppConstants.isLoggedIn) {
-      // String userId = AppSharedPref.instance.getUserId();
-      String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
-      DashboardRepository repository = DashboardRepository();
-      String address = 'N/A';
-      try {
-        PlacemarkModel placemarkModel = await AppUtils.getPlace(
-            locationIOSCurrent[1], locationIOSCurrent[0]);
-        address = placemarkModel.address;
-      } catch (e) {
-        debugPrint(e);
-      }
-      ConfigModel configModel = await getConfigureModel();
-
-      BaseResponse baseResponse = await repository.updateRunnerLatlng(
-          userId: userId,
-          lat: '${locationIOSCurrent[1]}',
-          lng: '${locationIOSCurrent[0]}',
-          address: address,
-          storeID: configModel.storeId);
-      if (baseResponse != null && baseResponse.success) {
-        print(
-            'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
-      }
-    }
-  } else if (Platform.isAndroid) {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.reload();
-    final DateTime now = DateTime.now();
-    final int isolateId = Isolate.current.hashCode;
+    //final DateTime now = DateTime.now();
+    //final int isolateId = Isolate.current.hashCode;
     // if(LocationPermission.always==Geolocator.checkPermission()){
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     debugPrint("----getCurrentPosition----- $position");
     // This will be null if we're running in the background.
-    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
-    uiSendPort?.send("");
+    //uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
+    //uiSendPort?.send("");
     // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-    AppConstants.isLoggedIn =
-        pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
-    print(
-        "======[$now]===== Hello, world! isolate=${isolateId} ${AppConstants.isLoggedIn}");
+    AppConstants.isLoggedIn = pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+    print("==isLoggedIn== ${AppConstants.isLoggedIn}");
     if (AppConstants.isLoggedIn) {
       // String userId = AppSharedPref.instance.getUserId();
       String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
       DashboardRepository repository = DashboardRepository();
       String address = 'N/A';
       try {
-        PlacemarkModel placemarkModel =
-            await AppUtils.getPlace(position.latitude, position.longitude);
+        PlacemarkModel placemarkModel = await AppUtils.getPlace(position.latitude, position.longitude);
         address = placemarkModel.address;
       } catch (e) {
         debugPrint(e);
@@ -469,13 +413,9 @@ Future<void> handleBackgroundFunction() async {
           address: address,
           storeID: configModel.storeId);
       if (baseResponse != null && baseResponse.success) {
-        print(
-            'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
+        print('user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
       }
     }
-  }
-
-  // }
 }
 
 Future<ConfigModel> getConfigureModel() async {
