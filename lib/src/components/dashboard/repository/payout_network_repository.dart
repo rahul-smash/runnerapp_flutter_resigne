@@ -30,8 +30,7 @@ class PayoutNetworkRepository extends DioBaseService {
       '/runner_deposits/completedDeposits'; //Completed Deposit List
   static const _depositsCompletedPayoutDetail =
       '/runner_deposits/depositHistory'; //Completed Deposit History List
-  static const _duePayout =
-      '/runner_orders/getOrderPayoutDetail'; //due Payout list
+  static const _duePayout = '/runner_payouts/pendingPayouts'; //due Payout list
 
   PayoutNetworkRepository._() : super(AppNetworkConstants.baseUrl);
 
@@ -194,19 +193,19 @@ class PayoutNetworkRepository extends DioBaseService {
     }
     return null;
   }
+
 //for due payout
-  Future<DuePayoutResponse> duePayoutData(
-      String runnerID) async {
+  Future<DuePayoutResponse> duePayoutData(String runnerID) async {
     try {
       Map<String, dynamic> param =
-      getIt.get<CommonNetworkUtils>().getDeviceParams();
-      param['runner_id']=runnerID;
+          getIt.get<CommonNetworkUtils>().getDeviceParams();
+      param['runner_id'] = runnerID;
       var response = await post(
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
-              '${_duePayout}'),
+              '${_duePayout}/${runnerID}'),
           param);
       DuePayoutResponse duePayoutResponse =
-      DuePayoutResponse.fromJson(jsonDecode(response));
+          DuePayoutResponse.fromJson(jsonDecode(response));
       return duePayoutResponse;
     } catch (e) {
       print(e);
