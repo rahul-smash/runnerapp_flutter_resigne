@@ -243,11 +243,11 @@ class _DuePayoutDetailScreenState extends BaseState<DuePayoutDetailScreen> {
                                                                 ?.data[index]
                                                                 .order
                                                                 .created),
-                                                        textAlign: TextAlign.center,
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: TextStyle(
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w600,
+                                                                FontWeight.w600,
                                                             color: AppTheme
                                                                 .mainTextColor),
                                                         overflow: TextOverflow

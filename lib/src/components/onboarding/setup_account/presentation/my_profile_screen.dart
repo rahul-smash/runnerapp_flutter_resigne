@@ -349,9 +349,9 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                           ));
                                     }).toList(),
                                     onTap: () {},
-                                    onChanged: widget.isComingFromAccount
-                                        ? null
-                                        : (newValue) => setState(() =>
+                                    onChanged:
+                                        // widget.isComingFromAccount ? null :
+                                        (newValue) => setState(() =>
                                             _selectedGenderUpOption = newValue),
                                     value: _selectedGenderUpOption,
                                     decoration: InputDecoration(
@@ -586,13 +586,12 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                 runSpacing: 5,
                                 children: addressProofsList.map((tag) {
                                   return InkWell(
-
                                       onTap: () {
                                         print("card");
                                         // if (widget.isComingFromAccount) {
-                                          setState(() {
-                                            _selectedProofTypeTag = tag;
-                                          });
+                                        setState(() {
+                                          _selectedProofTypeTag = tag;
+                                        });
                                         // }
                                       },
                                       child: Container(
@@ -783,10 +782,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
                                     ),
                                     onTap: () {
                                       // if (!widget.isComingFromAccount) {
-                                        imagePicker.showDialog(context,
-                                            docImage1: true,
-                                            profileImage: false,
-                                            docImage2: false);
+                                      imagePicker.showDialog(context,
+                                          docImage1: true,
+                                          profileImage: false,
+                                          docImage2: false);
                                       // }
                                     },
                                   ),
@@ -1130,8 +1129,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen>
         AppUtils.hideKeyboard(context);
         if (baseresponse.success) if (widget.isComingFromAccount) {
           Navigator.pop(context);
-        }
-        else {
+        } else {
           if (gotoProfileStepsScreen) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             widget.voidCallback();

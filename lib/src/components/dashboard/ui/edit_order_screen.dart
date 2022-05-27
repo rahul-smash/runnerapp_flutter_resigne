@@ -191,13 +191,14 @@ class _EditBookingDetailsScreenState
                                             child: Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 8.0),
-                                              child: Icon(Icons.message,size: 25,),
+                                              child: Icon(
+                                                Icons.message,
+                                                size: 25,
+                                              ),
                                             ),
                                             onTap: () {
                                               AppUtils.launchSMS(widget
-                                                  .booking
-                                                  .store
-                                                  .contactNumber);
+                                                  .booking.store.contactNumber);
                                             }),
                                         SizedBox(
                                           width: 8.0,
@@ -267,12 +268,13 @@ class _EditBookingDetailsScreenState
                                     width: 20,
                                   ),
                                   Visibility(
-                                    visible: widget.booking.store?.lat !=
-                                        null &&
-                                        (widget.booking.store?.lat ?? '').isNotEmpty &&
-                                        widget.booking.store?.lng !=
-                                            null &&
-                                        (widget.booking.store?.lng ?? '').isNotEmpty,
+                                    visible:
+                                        widget.booking.store?.lat != null &&
+                                            (widget.booking.store?.lat ?? '')
+                                                .isNotEmpty &&
+                                            widget.booking.store?.lng != null &&
+                                            (widget.booking.store?.lng ?? '')
+                                                .isNotEmpty,
                                     child: InkWell(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
@@ -438,13 +440,14 @@ class _EditBookingDetailsScreenState
                                             child: Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 8.0),
-                                              child: Icon(Icons.message,size: 25,),
+                                              child: Icon(
+                                                Icons.message,
+                                                size: 25,
+                                              ),
                                             ),
                                             onTap: () {
                                               AppUtils.launchSMS(widget
-                                                  .booking
-                                                  .store
-                                                  .contactNumber);
+                                                  .booking.store.contactNumber);
                                             }),
                                         SizedBox(
                                           width: 8.0,
@@ -531,18 +534,23 @@ class _EditBookingDetailsScreenState
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  widget.booking.created!=null? Text(
-                                    'Date & Time',
-                                    style: TextStyle(
-                                        fontSize: AppConstants.smallSize,
-                                        color: AppTheme.subHeadingTextColor,
-                                        fontWeight: FontWeight.w400),
-                                  ):Container(),
+                                  widget.booking.created != null
+                                      ? Text(
+                                          'Date & Time',
+                                          style: TextStyle(
+                                              fontSize: AppConstants.smallSize,
+                                              color:
+                                                  AppTheme.subHeadingTextColor,
+                                              fontWeight: FontWeight.w400),
+                                        )
+                                      : Container(),
                                   SizedBox(
                                     height: 4.0,
                                   ),
                                   Text(
-                                      widget.booking.created!=null? '${AppUtils.convertDateTime(widget.booking.created)}':"",
+                                    widget.booking.created != null
+                                        ? '${AppUtils.convertDateTime(widget.booking.created)}'
+                                        : "",
                                     style: TextStyle(
                                         fontSize: AppConstants.smallSize,
                                         color: AppTheme.mainTextColor,
@@ -553,22 +561,28 @@ class _EditBookingDetailsScreenState
                               SizedBox(
                                 height: 12.0,
                               ),
-                              widget.booking.deliveryTimeSlot!=null?Text(
-                                'Delivery Slot',
-                                style: TextStyle(
-                                    fontFamily: AppConstants.fontName,
-                                    fontSize: AppConstants.smallSize,
-                                    color: AppTheme.subHeadingTextColor,
-                                    fontWeight: FontWeight.w400),
-                              ):Container(),
+                              widget.booking.deliveryTimeSlot != null
+                                  ? Text(
+                                      'Delivery Slot',
+                                      style: TextStyle(
+                                          fontFamily: AppConstants.fontName,
+                                          fontSize: AppConstants.smallSize,
+                                          color: AppTheme.subHeadingTextColor,
+                                          fontWeight: FontWeight.w400),
+                                    )
+                                  : Container(),
                               SizedBox(
                                 height: 4.0,
                               ),
                               Text(
-                                  widget.booking.deliveryTimeSlot!=null &&  widget.booking.deliveryTimeSlot.isNotEmpty?  widget.booking.deliveryTimeSlot.substring(widget
-                                        .booking.deliveryTimeSlot
-                                        .indexOf(" ") +
-                                    1):"",
+                                widget.booking.deliveryTimeSlot != null &&
+                                        widget
+                                            .booking.deliveryTimeSlot.isNotEmpty
+                                    ? widget.booking.deliveryTimeSlot.substring(
+                                        widget.booking.deliveryTimeSlot
+                                                .indexOf(" ") +
+                                            1)
+                                    : "",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontFamily: AppConstants.fontName,
@@ -671,7 +685,6 @@ class _EditBookingDetailsScreenState
                                   physics: NeverScrollableScrollPhysics(),
                                   itemCount: editCartList.length,
                                   itemBuilder: (context, index) {
-
                                     return listItem(context, index);
                                   },
                                   separatorBuilder:
@@ -724,29 +737,45 @@ class _EditBookingDetailsScreenState
                                   children: <Widget>[
                                     Align(
                                       alignment: Alignment.centerRight,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          logicBuilder(builderContext,
-                                              hitPlaceOrder: false);
-                                        },
-                                        child: _showEdit==true?Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              Icons.refresh_sharp,
-                                              color: AppTheme.primaryColor,
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              labelRefresh,
-                                              style: TextStyle(
-                                                  color: AppTheme.primaryColor),
+                                      child: isBookingDetailsApiLoading
+                                          ? Center(
+                                              child: CircularProgressIndicator(
+                                                  backgroundColor:
+                                                      Colors.black26,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          Colors.black26)),
                                             )
-                                          ],
-                                        ):Container(),
-                                      ),
+                                          : GestureDetector(
+                                              onTap: () {
+                                                print("waheguru");
+                                                logicBuilder(builderContext,
+                                                    hitPlaceOrder: false);
+                                              },
+                                              child: _showEdit == true
+                                                  ? Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.refresh_sharp,
+                                                          color: AppTheme
+                                                              .primaryColor,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          labelRefresh,
+                                                          style: TextStyle(
+                                                              color: AppTheme
+                                                                  .primaryColor),
+                                                        )
+                                                      ],
+                                                    )
+                                                  : Container(),
+                                            ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
@@ -920,31 +949,35 @@ class _EditBookingDetailsScreenState
                                               ],
                                             ))),
                                     Visibility(
-                                        visible: (taxCalculationResponse != null && taxCalculationResponse
-                                            .taxCalculation
-                                            .tip != null)
-                                            ? taxCalculationResponse
-                                            .taxCalculation
-                                            .tip
-                                            .isNotEmpty &&
-                                            taxCalculationResponse
-                                                .taxCalculation.tip !=
-                                                '0.00'
-                                            : _bookingDetailsResponse
-                                            .bookings.tip ==
-                                            "0.00"
-                                            ? false
-                                            : true,
+                                        visible:
+                                            (taxCalculationResponse != null &&
+                                                    taxCalculationResponse
+                                                            .taxCalculation
+                                                            .tip !=
+                                                        null)
+                                                ? taxCalculationResponse
+                                                        .taxCalculation
+                                                        .tip
+                                                        .isNotEmpty &&
+                                                    taxCalculationResponse
+                                                            .taxCalculation
+                                                            .tip !=
+                                                        '0.00'
+                                                : _bookingDetailsResponse
+                                                            .bookings.tip ==
+                                                        "0.00"
+                                                    ? false
+                                                    : true,
                                         child: Padding(
                                             padding: EdgeInsets.only(
                                                 top: 4, bottom: 4),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Flexible(
                                                   child: Text('Tip',
@@ -953,19 +986,17 @@ class _EditBookingDetailsScreenState
                                                         fontSize: AppConstants
                                                             .smallSize,
                                                         fontWeight:
-                                                        FontWeight.w500,
+                                                            FontWeight.w500,
                                                       )),
                                                 ),
                                                 Text(
-                                                    "${AppConstants.currency}${(taxCalculationResponse != null && taxCalculationResponse
-                                                        .taxCalculation
-                                                        .tip != null) ? taxCalculationResponse.taxCalculation.tip : _bookingDetailsResponse.bookings.tip}",
+                                                    "${AppConstants.currency}${(taxCalculationResponse != null && taxCalculationResponse.taxCalculation.tip != null) ? taxCalculationResponse.taxCalculation.tip : _bookingDetailsResponse.bookings.tip}",
                                                     style: TextStyle(
                                                         color: Colors.black,
                                                         fontSize: AppConstants
                                                             .smallSize,
                                                         fontWeight:
-                                                        FontWeight.w600))
+                                                            FontWeight.w600))
                                               ],
                                             ))),
                                     Container(
@@ -1091,49 +1122,55 @@ class _EditBookingDetailsScreenState
                                         }
                                         setState(() {});
                                       },
-                                      child: _showEdit==true?Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.add,
-                                            size: 12,
-                                            color: AppTheme.primaryColor,
-                                          ),
-                                          Text(
-                                            "Add Product",
-                                            style: TextStyle(
-                                                color: AppTheme.primaryColor,
-                                                decoration:
-                                                    TextDecoration.underline),
-                                          )
-                                        ],
-                                      ):Container(),
+                                      child: _showEdit == true
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.add,
+                                                  size: 12,
+                                                  color: AppTheme.primaryColor,
+                                                ),
+                                                Text(
+                                                  "Add Product",
+                                                  style: TextStyle(
+                                                      color:
+                                                          AppTheme.primaryColor,
+                                                      decoration: TextDecoration
+                                                          .underline),
+                                                )
+                                              ],
+                                            )
+                                          : Container(),
                                     ),
                                     SizedBox(height: 10),
-                                    _showEdit==true? MaterialButton(
-                                      height: 40,
-                                      elevation: 8,
-                                      onPressed: () {
-                                        logicBuilder(context);
-                                      },
-                                      color: AppTheme.primaryColor,
-                                      minWidth:
-                                          Dimensions.getWidth(percentage: 50),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30))),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8.0, vertical: 6.0),
-                                      child: Text(
-                                        'Send Invoice',
-                                        style: TextStyle(
-                                            color: AppTheme.white,
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.normal),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ):Container(),
+                                    _showEdit == true
+                                        ? MaterialButton(
+                                            height: 40,
+                                            elevation: 8,
+                                            onPressed: () {
+                                              logicBuilder(context);
+                                            },
+                                            color: AppTheme.primaryColor,
+                                            minWidth: Dimensions.getWidth(
+                                                percentage: 50),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(30))),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0, vertical: 6.0),
+                                            child: Text(
+                                              'Send Invoice',
+                                              style: TextStyle(
+                                                  color: AppTheme.white,
+                                                  fontSize: 14.0,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          )
+                                        : Container(),
                                   ],
                                 )
                               ],
@@ -1178,7 +1215,6 @@ class _EditBookingDetailsScreenState
   }
 
   Widget listItem(BuildContext context, int index) {
-
     double totalPrice = (double.parse(editCartList[index].price)) *
         (int.parse(editCartList[index].quantity));
 
@@ -1256,7 +1292,7 @@ class _EditBookingDetailsScreenState
                                         fontWeight: FontWeight.w700)),
                               ),
                               Visibility(
-                                visible: editCartList[index].isEditPrice ,
+                                visible: editCartList[index].isEditPrice,
                                 child: SizedBox(
                                   width: 50,
                                   child: TextFormField(
@@ -1297,96 +1333,107 @@ class _EditBookingDetailsScreenState
                                   ),
                                 ),
                               ),
-                              _showEdit==true?GestureDetector(
-                                  onTap: () {
-                                    editCartList[index].isEditPrice =
-                                        !editCartList[index].isEditPrice;
-                                    setState(() {});
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Icon(
-                                      editCartList[index].isEditPrice
-                                          ? Icons.check
-                                          : Icons.edit,
-                                      color: AppTheme.black,
-                                      size: editCartList[index].isEditPrice
-                                          ? 20
-                                          : 14,
-                                    ),
-                                  )):Container(),
-                              Spacer(),
-                              _showEdit==true?Container(
-                                padding: EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: AppTheme.backgroundColor,
-                                    border: Border.all(color: AppTheme.black)),
-                                child: Row(
-                                  children: [
-                                    InkWell(
-                                        onTap: () {
-                                          int quantityInt = int.parse(
-                                                      editCartList[index]
-                                                          .quantity) >
-                                                  0
-                                              ? int.parse(editCartList[index]
-                                                      .quantity) -
-                                                  1
-                                              : 0;
-                                          editCartList[index].quantity =
-                                              quantityInt.toString();
-                                          setState(() {});
-                                        },
+                              _showEdit == true
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        editCartList[index].isEditPrice =
+                                            !editCartList[index].isEditPrice;
+                                        setState(() {});
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
                                         child: Icon(
-                                          Icons.remove,
+                                          editCartList[index].isEditPrice
+                                              ? Icons.check
+                                              : Icons.edit,
                                           color: AppTheme.black,
-                                          size: 16,
-                                        )),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 3),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 3, vertical: 2),
+                                          size: editCartList[index].isEditPrice
+                                              ? 20
+                                              : 14,
+                                        ),
+                                      ))
+                                  : Container(),
+                              Spacer(),
+                              _showEdit == true
+                                  ? Container(
+                                      padding: EdgeInsets.all(3),
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(3),
-                                          color: AppTheme.backgroundColor),
-                                      child: Text(
-                                        '${editCartList[index].quantity.toString()}',
-                                        style: TextStyle(
-                                            color: AppTheme.black,
-                                            fontSize: 16),
+                                              BorderRadius.circular(15),
+                                          color: AppTheme.backgroundColor,
+                                          border: Border.all(
+                                              color: AppTheme.black)),
+                                      child: Row(
+                                        children: [
+                                          InkWell(
+                                              onTap: () {
+                                                int quantityInt = int.parse(
+                                                            editCartList[index]
+                                                                .quantity) >
+                                                        0
+                                                    ? int.parse(
+                                                            editCartList[index]
+                                                                .quantity) -
+                                                        1
+                                                    : 0;
+                                                editCartList[index].quantity =
+                                                    quantityInt.toString();
+                                                setState(() {});
+                                              },
+                                              child: Icon(
+                                                Icons.remove,
+                                                color: AppTheme.black,
+                                                size: 16,
+                                              )),
+                                          Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 3),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 3, vertical: 2),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                                color:
+                                                    AppTheme.backgroundColor),
+                                            child: Text(
+                                              '${editCartList[index].quantity.toString()}',
+                                              style: TextStyle(
+                                                  color: AppTheme.black,
+                                                  fontSize: 16),
+                                            ),
+                                          ),
+                                          InkWell(
+                                              onTap: () {
+                                                int quantityInt = int.parse(
+                                                        editCartList[index]
+                                                            .quantity) +
+                                                    1;
+                                                editCartList[index].quantity =
+                                                    quantityInt.toString();
+                                                setState(() {});
+                                              },
+                                              child: Icon(
+                                                Icons.add,
+                                                color: AppTheme.black,
+                                                size: 16,
+                                              )),
+                                        ],
                                       ),
-                                    ),
-                                    InkWell(
-                                        onTap: () {
-                                          int quantityInt = int.parse(
-                                                  editCartList[index]
-                                                      .quantity) +
-                                              1;
-                                          editCartList[index].quantity =
-                                              quantityInt.toString();
-                                          setState(() {});
-                                        },
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppTheme.black,
-                                          size: 16,
-                                        )),
-                                  ],
-                                ),
-                              ):Container(),
+                                    )
+                                  : Container(),
                             ],
                           ),
-                          _showEdit==true?Align(
-                            alignment: Alignment.topRight,
-                            child: Text("${AppConstants.currency} $totalPrice",
-                                style: TextStyle(
-                                    color: AppTheme.black,
-                                    fontSize: AppConstants.extraSmallSize,
-                                    fontWeight: FontWeight.w500)),
-                          ):Container(),
+                          _showEdit == true
+                              ? Align(
+                                  alignment: Alignment.topRight,
+                                  child: Text(
+                                      "${AppConstants.currency} $totalPrice",
+                                      style: TextStyle(
+                                          color: AppTheme.black,
+                                          fontSize: AppConstants.extraSmallSize,
+                                          fontWeight: FontWeight.w500)),
+                                )
+                              : Container(),
                         ],
                       ),
                     ),
@@ -1397,7 +1444,8 @@ class _EditBookingDetailsScreenState
           ),
           Visibility(
             visible: editCartList[index].variants != null &&
-                editCartList[index].variants.isNotEmpty && _showEdit==true,
+                editCartList[index].variants.isNotEmpty &&
+                _showEdit == true,
             child: VariantChips(
               variant: editCartList[index].variants,
               variantID: editCartList[index].variantId,
@@ -1881,7 +1929,7 @@ class _EditBookingDetailsScreenState
   }
 
   void _getBookingdetails(BookingRequest booking,
-      {bool isShowLoader = true,String type}) async {
+      {bool isShowLoader = true, String type}) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
@@ -2159,7 +2207,7 @@ class _EditBookingDetailsScreenState
                 shipping: _bookingDetailsResponse.bookings.shippingCharges,
                 discount: _bookingDetailsResponse.bookings.discount,
                 tax: _bookingDetailsResponse.bookings.tax,
-                tip : _bookingDetailsResponse.bookings.tip,
+                tip: _bookingDetailsResponse.bookings.tip,
                 fixedDiscountAmount: _bookingDetailsResponse.bookings.discount,
                 userWallet: '0',
                 orderDetail: orderDetail,
@@ -2192,7 +2240,7 @@ class _EditBookingDetailsScreenState
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .editPlaceOrder(
-              cartSaving:taxCalculationResponse.taxCalculation.cartSaving,
+              cartSaving: taxCalculationResponse.taxCalculation.cartSaving,
               orderId: _bookingDetailsResponse.bookings.id,
               deviceId: deviceId,
               deviceToken: deviceToken,

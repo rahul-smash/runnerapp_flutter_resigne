@@ -13,6 +13,7 @@ import 'ExpansionTileWidget.dart';
 import 'order_cart.dart';
 
 double total = 0;
+
 class BookOrder extends StatefulWidget {
   var storeId;
   var customerId;
@@ -55,7 +56,6 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   List<SubCategory> _categoryList = [];
   TabController _tabController;
   double price = 0;
-
 
   @override
   void initState() {
@@ -538,7 +538,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                             horizontal: 7.0),
                                         // width: double.infinity,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 8.0, horizontal: 8.0),
+                                            vertical: 8.0, horizontal: 6.0),
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 color:
@@ -711,7 +711,8 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                   itemCount: _categoryList.length,
                   itemBuilder: (context, index) {
                     return index < _categoryList.length
-                        ? ExpansionTileWidget(categoryList: _categoryList[index],
+                        ? ExpansionTileWidget(
+                            categoryList: _categoryList[index],
                             storeID: widget.storeId,
                             index: index,
                           )
