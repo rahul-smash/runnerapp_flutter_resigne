@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_notification_plugin/flutter_notification_plugin.dart';
+
 // import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
@@ -206,7 +207,8 @@ Future<void> initAlarm() async {
     initAlarm();
   }
 
-  if (AppConstants.isLoggedIn && permissionStatus == LocationPermission.always ||
+  if (AppConstants.isLoggedIn &&
+          permissionStatus == LocationPermission.always ||
       permissionStatus == LocationPermission.whileInUse) {
     print('===isLoggedIn===and =permissionStatus=always=whileInUse');
     _locationTimer();
@@ -362,60 +364,62 @@ Future<void> _getLocationIOS() async {
 }
 
 Timer _timer;
+
 void _locationTimer() {
   var duration = Duration(seconds: 20);
   _timer = new Timer.periodic(
-    duration, (Timer timer) {
-
+    duration,
+    (Timer timer) {
       handleBackgroundFunction();
     },
   );
 }
-
-
 
 // The background
 SendPort uiSendPort;
 SendPort uiSendPort2;
 //Only for use android Platform
 Future<void> handleBackgroundFunction() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.reload();
-    //final DateTime now = DateTime.now();
-    //final int isolateId = Isolate.current.hashCode;
-    // if(LocationPermission.always==Geolocator.checkPermission()){
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    debugPrint("----getCurrentPosition----- $position");
-    // This will be null if we're running in the background.
-    //uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
-    //uiSendPort?.send("");
-    // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
-    AppConstants.isLoggedIn = pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
-    print("==isLoggedIn== ${AppConstants.isLoggedIn}");
-    if (AppConstants.isLoggedIn) {
-      // String userId = AppSharedPref.instance.getUserId();
-      String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
-      DashboardRepository repository = DashboardRepository();
-      String address = 'N/A';
-      try {
-        PlacemarkModel placemarkModel = await AppUtils.getPlace(position.latitude, position.longitude);
-        address = placemarkModel.address;
-      } catch (e) {
-        debugPrint(e);
-      }
-      ConfigModel configModel = await getConfigureModel();
-
-      BaseResponse baseResponse = await repository.updateRunnerLatlng(
-          userId: userId,
-          lat: '${position.latitude}',
-          lng: '${position.longitude}',
-          address: address,
-          storeID: configModel.storeId);
-      if (baseResponse != null && baseResponse.success) {
-        print('user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
-      }
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  pref.reload();
+  //final DateTime now = DateTime.now();
+  //final int isolateId = Isolate.current.hashCode;
+  // if(LocationPermission.always==Geolocator.checkPermission()){
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+  debugPrint("----getCurrentPosition----- $position");
+  // This will be null if we're running in the background.
+  //uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
+  //uiSendPort?.send("");
+  // AppConstants.isLoggedIn = await AppSharedPref.instance.isLoggedIn();
+  AppConstants.isLoggedIn =
+      pref?.getBool(AppSharePrefConstants.prefKeyIsLoggedIn) ?? false;
+  print("==isLoggedIn== ${AppConstants.isLoggedIn}");
+  if (AppConstants.isLoggedIn) {
+    // String userId = AppSharedPref.instance.getUserId();
+    String userId = pref?.getString(AppSharePrefConstants.prefKeyAppUserId);
+    DashboardRepository repository = DashboardRepository();
+    String address = 'N/A';
+    try {
+      PlacemarkModel placemarkModel =
+          await AppUtils.getPlace(position.latitude, position.longitude);
+      address = placemarkModel.address;
+    } catch (e) {
+      debugPrint(e);
     }
+    ConfigModel configModel = await getConfigureModel();
+
+    BaseResponse baseResponse = await repository.updateRunnerLatlng(
+        userId: userId,
+        lat: '${position.latitude}',
+        lng: '${position.longitude}',
+        address: address,
+        storeID: configModel.storeId);
+    if (baseResponse != null && baseResponse.success) {
+      print(
+          'user id ${userId} getCurrentPosition ===reseResponse updating lat lng==== ${baseResponse}');
+    }
+  }
 }
 
 Future<ConfigModel> getConfigureModel() async {

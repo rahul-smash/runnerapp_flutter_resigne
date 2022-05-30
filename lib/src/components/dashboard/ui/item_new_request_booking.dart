@@ -5,6 +5,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/dash
 import 'package:marketplace_service_provider/src/utils/app_constants.dart';
 import 'package:marketplace_service_provider/src/utils/app_strings.dart';
 import 'package:marketplace_service_provider/src/utils/app_theme.dart';
+import 'package:marketplace_service_provider/src/utils/app_utils.dart';
 import 'package:step_viewer/step_viewer.dart';
 
 enum RequestStatus { accept, reject }
@@ -21,7 +22,7 @@ class ItemViewOrderRequests extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Card(
-        margin: EdgeInsets.symmetric(horizontal: 18.0),
+        margin: EdgeInsets.symmetric(horizontal: 18.0, ),
         color: Colors.white,
         elevation: 8.0,
         shape:
@@ -31,6 +32,16 @@ class ItemViewOrderRequests extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                '#${bookingRequest.displayOrderId} | ${AppUtils.convertDateTime(bookingRequest.created)}',
+                style: TextStyle(
+                    fontSize: 12.0,
+                    color: AppTheme.subHeadingTextColor,
+                    fontWeight: FontWeight.normal),
+              ),
+              SizedBox(
+                height: 4.0,
+              ),
               Text(
                 'Pickup Address',
                 style: TextStyle(
@@ -116,7 +127,7 @@ class ItemViewOrderRequests extends StatelessWidget {
                         visible:
                             bookingRequest.paymentMethod.toLowerCase() != 'cod',
                         child: Text(
-                          "PAID",
+                          "${bookingRequest.total}",
                           style: TextStyle(
                               fontFamily: AppConstants.fontName,
                               fontSize: 16.0,

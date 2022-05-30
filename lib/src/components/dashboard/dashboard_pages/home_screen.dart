@@ -537,7 +537,6 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                 _dashboardResponse.bookingRequests != null &&
                 _dashboardResponse.bookingRequests.isNotEmpty
             ? Container(
-                height: 350,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(30.0),
@@ -603,7 +602,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                       height: 16,
                     ),
                     SizedBox(
-                      height: 250,
+                      height: 270,
                       child: PageView(
                         scrollDirection: Axis.horizontal,
                         controller: _pageController,
@@ -626,6 +625,9 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                           activeDotColor: AppTheme.white,
                           spacing: 5,
                         )),
+                    SizedBox(
+                      height: 30,
+                    ),
                   ],
                 ),
               )
@@ -641,7 +643,7 @@ class _HomeScreenState extends BaseState<HomeScreen> {
             top: _dashboardResponse != null &&
                     _dashboardResponse.bookingRequests != null &&
                     _dashboardResponse.bookingRequests.isNotEmpty
-                ? 320
+                ? 340
                 : 0,
           ),
           child: Center(

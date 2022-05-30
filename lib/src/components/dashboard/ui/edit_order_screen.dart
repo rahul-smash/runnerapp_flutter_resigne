@@ -238,7 +238,7 @@ class _EditBookingDetailsScreenState
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                "${widget.booking.cart.length} ${widget.booking.cart.length > 1 ? "Items" : "Item"}",
+                                "${editCartList.length} ${editCartList.length > 1 ? "Items" : "Item"}",
                                 style: TextStyle(
                                     fontFamily: AppConstants.fontName,
                                     fontSize: 14.0,
@@ -300,9 +300,7 @@ class _EditBookingDetailsScreenState
                                   Row(
                                     children: [
                                       Visibility(
-                                        visible: widget.booking.paymentMethod
-                                                .toLowerCase() ==
-                                            'cod',
+                                       visible: false,
                                         child: Text(
                                           "${AppConstants.currency}${widget.booking.total}",
                                           style: TextStyle(
@@ -312,23 +310,21 @@ class _EditBookingDetailsScreenState
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ),
+                                      // Visibility(
+                                      //   visible: widget.booking.paymentMethod
+                                      //           .toLowerCase() !=
+                                      //       'cod',
+                                      //   child: Text(
+                                      //     "PAID",
+                                      //     style: TextStyle(
+                                      //         fontFamily: AppConstants.fontName,
+                                      //         fontSize: 16.0,
+                                      //         color: AppTheme.primaryColor,
+                                      //         fontWeight: FontWeight.w600),
+                                      //   ),
+                                      // ),
                                       Visibility(
-                                        visible: widget.booking.paymentMethod
-                                                .toLowerCase() !=
-                                            'cod',
-                                        child: Text(
-                                          "PAID",
-                                          style: TextStyle(
-                                              fontFamily: AppConstants.fontName,
-                                              fontSize: 16.0,
-                                              color: AppTheme.primaryColor,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      Visibility(
-                                        visible: widget.booking.paymentMethod
-                                                .toLowerCase() ==
-                                            'cod',
+                                        visible: false,
                                         child: Container(
                                           margin: EdgeInsets.only(
                                               top: 2.0, left: 5),
@@ -724,30 +720,53 @@ class _EditBookingDetailsScreenState
                                   children: <Widget>[
                                     Align(
                                       alignment: Alignment.centerRight,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          logicBuilder(builderContext,
-                                              hitPlaceOrder: false);
-                                        },
-                                        child: _showEdit==true?Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              Icons.refresh_sharp,
-                                              color: AppTheme.primaryColor,
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              labelRefresh,
-                                              style: TextStyle(
-                                                  color: AppTheme.primaryColor),
-                                            )
-                                          ],
-                                        ):Container(),
-                                      ),
+                                      child: TextButton(onPressed:  () {
+                                        logicBuilder(builderContext,
+                                            hitPlaceOrder: false);
+                                      }, child: _showEdit==true?Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.refresh_sharp,
+                                            color: AppTheme.primaryColor,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            labelRefresh,
+                                            style: TextStyle(
+                                                color: AppTheme.primaryColor),
+                                          )
+                                        ],
+                                      ):Container()),
                                     ),
+                                    // Align(
+                                    //   alignment: Alignment.centerRight,
+                                    //   child: GestureDetector(
+                                    //     onTap: () {
+                                    //       logicBuilder(builderContext,
+                                    //           hitPlaceOrder: false);
+                                    //     },
+                                    //     child: _showEdit==true?Row(
+                                    //       mainAxisSize: MainAxisSize.min,
+                                    //       children: [
+                                    //         Icon(
+                                    //           Icons.refresh_sharp,
+                                    //           color: AppTheme.primaryColor,
+                                    //         ),
+                                    //         SizedBox(
+                                    //           width: 5,
+                                    //         ),
+                                    //         Text(
+                                    //           labelRefresh,
+                                    //           style: TextStyle(
+                                    //               color: AppTheme.primaryColor),
+                                    //         )
+                                    //       ],
+                                    //     ):Container(),
+                                    //   ),
+                                    // ),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           top: 4.0, bottom: 4.0),
@@ -1020,7 +1039,7 @@ class _EditBookingDetailsScreenState
                                                     storeId:
                                                         _bookingDetailsResponse
                                                             .bookings
-                                                            .storeId)));
+                                                            .storeId,editCartList:editCartList)));
                                         if (returnValue) {
                                           for (int i = 0;
                                               i <
@@ -1115,7 +1134,7 @@ class _EditBookingDetailsScreenState
                                       height: 40,
                                       elevation: 8,
                                       onPressed: () {
-                                        logicBuilder(context);
+                                        logicBuilder(context,);
                                       },
                                       color: AppTheme.primaryColor,
                                       minWidth:
@@ -1179,8 +1198,8 @@ class _EditBookingDetailsScreenState
 
   Widget listItem(BuildContext context, int index) {
 
-    double totalPrice = (double.parse(editCartList[index].price)) *
-        (int.parse(editCartList[index].quantity));
+    double totalPrice = AppUtils.roundOffPrice((double.parse(editCartList[index].price)) *
+        (int.parse(editCartList[index].quantity)),2);
 
     return Container(
       color: Colors.white,
@@ -2150,7 +2169,7 @@ class _EditBookingDetailsScreenState
     if (jsonList.length != 0) {
       String orderDetail = jsonEncode(jsonList);
       if (!getIt.get<NetworkConnectionObserver>().offline) {
-        if (hitPlaceOrder) AppUtils.showLoader(buildContext);
+        /*if (hitPlaceOrder)*/ AppUtils.showLoader(buildContext);
         taxCalculationResponse = await getIt
             .get<DashboardRepository>()
             .taxCalculationApi(
@@ -2169,7 +2188,7 @@ class _EditBookingDetailsScreenState
             hitPlaceOrder) {
           placeOrderApi(orderDetail);
         } else {
-          if (hitPlaceOrder) AppUtils.hideLoader(buildContext);
+          /*if (hitPlaceOrder)*/ AppUtils.hideLoader(buildContext);
         }
         setState(() {});
         isBookingDetailsApiLoading = false;

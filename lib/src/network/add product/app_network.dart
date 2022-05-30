@@ -44,8 +44,8 @@ class AppNetwork {
       ..options.contentType = "application/json";
   }
 
-  static Future<BestProduct> getCategoryProducts(
-      Map<String, dynamic> param,{String storeID}) async {
+  static Future<BestProduct> getCategoryProducts(Map<String, dynamic> param,
+      {String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -119,8 +119,8 @@ class AppNetwork {
     }
   }
 
-  static Future<CalculateAmount> calculateAmount(
-      Map<String, dynamic> param,{String storeID}) async {
+  static Future<CalculateAmount> calculateAmount(Map<String, dynamic> param,
+      {String storeID}) async {
     try {
       FormData formData = new FormData.fromMap(param);
       Response response = await _dio.post(
@@ -209,6 +209,8 @@ class AppNetwork {
               "/${storeID}" +
               REQUEST_CATEGORIES,
           data: formData);
+      print(
+          "url=${AppNetworkConstants.baseUrl + "${AppNetworkConstants.baseStoreParam}" + AppNetworkConstants.productRoute + "/${storeID}" + REQUEST_CATEGORIES}");
       print("response Get Categories=${response.data.toString()}");
       print("statusCode=${response.statusCode}");
 
@@ -222,7 +224,8 @@ class AppNetwork {
     }
   }
 
-  static Future<BestProduct> getBestProducts(Map<String, dynamic> param,  {String storeID}) async {
+  static Future<BestProduct> getBestProducts(Map<String, dynamic> param,
+      {String storeID}) async {
     try {
       // String body = convert.jsonEncode(param);
       FormData formData = new FormData.fromMap(param);
@@ -234,6 +237,8 @@ class AppNetwork {
               "/${storeID}" +
               REQUEST_GET_BESTSELLER,
           data: formData);
+      print(
+          'url== ${AppNetworkConstants.baseUrl + "${AppNetworkConstants.baseStoreParam}" + AppNetworkConstants.productRoute + "/${storeID}" + REQUEST_GET_BESTSELLER}');
       print("getBestProducts response=${response.data.toString()}");
       print("statusCode=${response.statusCode}");
       if (response.statusCode == 200) {

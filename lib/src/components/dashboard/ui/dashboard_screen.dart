@@ -329,22 +329,23 @@ startLocationSetup(BuildContext context) async {
           permission == LocationPermission.always) {
         if (permission == LocationPermission.whileInUse) {
           //TODO: Show better performance dialog
-          AppUtils.displayCommonDialog(context,
-              title: labelErrorAlert,
-              massage: labelBatterPerformanceMsg, positiveOnPressed: () async {
-            Navigator.pop(context);
-            await Geolocator.requestPermission();
-          });
+          // AppUtils.displayCommonDialog(context,
+          //     title: labelErrorAlert,
+          //     massage: labelBatterPerformanceMsg, positiveOnPressed: () async {
+          //   Navigator.pop(context);
+          //   await Geolocator.requestPermission();
+          // });
+          await Geolocator.requestPermission();
         }
         eventBus.fire(AlarmEvent.startPeriodicAlarm('start'));
       } else if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         //TODO: Show Dialog
-        AppUtils.displayCommonDialog(
-          context,
-          title: labelErrorAlert,
-          massage: labelNeedPermission,
-        );
+        // AppUtils.displayCommonDialog(
+        //   context,
+        //   title: labelErrorAlert,
+        //   massage: labelNeedPermission,
+        // );
       }
     }
   } else {

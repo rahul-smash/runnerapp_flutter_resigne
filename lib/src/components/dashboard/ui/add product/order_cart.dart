@@ -14,6 +14,7 @@ class OderCart {
     orderCartMap.remove(productId);
   }
   static Map<String, Data> getOrderCartMap() {
+    print('called  ${orderCartMap.length}');
     return orderCartMap;
   }
 

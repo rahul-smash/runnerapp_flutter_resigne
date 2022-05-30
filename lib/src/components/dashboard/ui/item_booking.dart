@@ -142,30 +142,26 @@ class _ItemBookingState extends BaseState<ItemBooking> {
                       SizedBox(
                         height: 4.0,
                       ),
-                      Visibility(
-                        visible:
-                            widget.booking.paymentMethod.toLowerCase() == 'cod',
-                        child: Text(
-                          "${AppConstants.currency}${widget.booking.total}",
-                          style: TextStyle(
-                              fontFamily: AppConstants.fontName,
-                              fontSize: 16.0,
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w600),
-                        ),
+                      Text(
+                        "${AppConstants.currency}${widget.booking.total}",
+                        style: TextStyle(
+                            fontFamily: AppConstants.fontName,
+                            fontSize: 16.0,
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.w600),
                       ),
-                      Visibility(
-                        visible:
-                            widget.booking.paymentMethod.toLowerCase() != 'cod',
-                        child: Text(
-                          "PAID",
-                          style: TextStyle(
-                              fontFamily: AppConstants.fontName,
-                              fontSize: 16.0,
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
+                      // Visibility(
+                      //   visible:
+                      //       widget.booking.paymentMethod.toLowerCase() != 'cod',
+                      //   child: Text(
+                      //     "PAID",
+                      //     style: TextStyle(
+                      //         fontFamily: AppConstants.fontName,
+                      //         fontSize: 16.0,
+                      //         color: AppTheme.primaryColor,
+                      //         fontWeight: FontWeight.w600),
+                      //   ),
+                      // ),
                       Visibility(
                         visible:
                             widget.booking.paymentMethod.toLowerCase() == 'cod',

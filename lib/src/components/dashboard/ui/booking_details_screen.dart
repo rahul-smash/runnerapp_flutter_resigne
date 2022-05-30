@@ -319,64 +319,52 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          Visibility(
-                                            visible: _bookingDetailsResponse
-                                                    .bookings.paymentMethod
-                                                    .toLowerCase() ==
-                                                'cod',
+                                          Text(
+                                            "${AppConstants.currency}${_bookingDetailsResponse.bookings.total}",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    AppConstants.fontName,
+                                                fontSize: 16.0,
+                                                color: AppTheme.primaryColor,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          // Visibility(
+                                          //   visible: _bookingDetailsResponse
+                                          //           .bookings.paymentMethod
+                                          //           .toLowerCase() !=
+                                          //       'cod',
+                                          //   child: Text(
+                                          //     "PAID",
+                                          //     style: TextStyle(
+                                          //         fontFamily:
+                                          //             AppConstants.fontName,
+                                          //         fontSize: 16.0,
+                                          //         color: AppTheme.primaryColor,
+                                          //         fontWeight: FontWeight.w600),
+                                          //   ),
+                                          // ),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                top: 2.0, left: 5),
+                                            decoration: BoxDecoration(
+                                                color: AppTheme
+                                                    .containerBackgroundColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        16.0)),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 4.0,
+                                                horizontal: 8.0),
                                             child: Text(
-                                              "${AppConstants.currency}${_bookingDetailsResponse.bookings.total}",
+                                              "${_bookingDetailsResponse.bookings.paymentMethod.toUpperCase()}",
                                               style: TextStyle(
                                                   fontFamily:
                                                       AppConstants.fontName,
-                                                  fontSize: 16.0,
-                                                  color: AppTheme.primaryColor,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ),
-                                          Visibility(
-                                            visible: _bookingDetailsResponse
-                                                    .bookings.paymentMethod
-                                                    .toLowerCase() !=
-                                                'cod',
-                                            child: Text(
-                                              "PAID",
-                                              style: TextStyle(
-                                                  fontFamily:
-                                                      AppConstants.fontName,
-                                                  fontSize: 16.0,
-                                                  color: AppTheme.primaryColor,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ),
-                                          Visibility(
-                                            visible: _bookingDetailsResponse
-                                                    .bookings.paymentMethod
-                                                    .toLowerCase() ==
-                                                'cod',
-                                            child: Container(
-                                              margin: EdgeInsets.only(
-                                                  top: 2.0, left: 5),
-                                              decoration: BoxDecoration(
-                                                  color: AppTheme
-                                                      .containerBackgroundColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          16.0)),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 4.0,
-                                                  horizontal: 8.0),
-                                              child: Text(
-                                                "${_bookingDetailsResponse.bookings.paymentMethod.toUpperCase()}",
-                                                style: TextStyle(
-                                                    fontFamily:
-                                                        AppConstants.fontName,
-                                                    fontSize: 10.0,
-                                                    color:
-                                                        AppTheme.mainTextColor,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
+                                                  fontSize: 10.0,
+                                                  color:
+                                                      AppTheme.mainTextColor,
+                                                  fontWeight:
+                                                      FontWeight.normal),
                                             ),
                                           ),
                                         ],

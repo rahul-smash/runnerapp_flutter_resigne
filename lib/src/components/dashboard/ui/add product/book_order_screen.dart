@@ -13,12 +13,19 @@ import 'ExpansionTileWidget.dart';
 import 'order_cart.dart';
 
 double total = 0;
+
 class BookOrder extends StatefulWidget {
   var storeId;
   var customerId;
   var customerPhone;
+  List<dynamic> editCartList;
 
-  BookOrder({Key key, this.customerId, this.customerPhone, this.storeId})
+  BookOrder(
+      {Key key,
+      this.customerId,
+      this.customerPhone,
+      this.storeId,
+      this.editCartList})
       : super(key: key);
 
   @override
@@ -56,19 +63,19 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
   TabController _tabController;
   double price = 0;
 
-
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, length: 2, initialIndex: 0);
     _tabController.addListener(_handleTabSelection);
     _initScrollListener();
+    OderCart.clearOrderCartMap();
     _getBestProducts();
     _getCategories();
     //TODO: handle this
     // cartDialog();
 
-    calculateAmount();
+    // calculateAmount();
   }
 
   _handleTabSelection() {
@@ -408,7 +415,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
         Expanded(
           child: productList.length > 0
               ? GridView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                  padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 80.0),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 6 / 9,
@@ -549,29 +556,33 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            Center(
-                                              child: Text(
-                                                productList[index].variants !=
-                                                        null
-                                                    ? productList[index]
-                                                                    .variants[
-                                                                productList[
-                                                                        index]
-                                                                    .selectedVariantIndex] !=
-                                                            null
-                                                        ? productList[index]
-                                                                    .variants[productList[
-                                                                            index]
-                                                                        .selectedVariantIndex]
-                                                                    .weight !=
-                                                                null
-                                                            ? '${productList[index].variants[productList[index].selectedVariantIndex]?.weight}'
-                                                                '${productList[index].variants[productList[index].selectedVariantIndex]?.unitType}'
-                                                            : ""
-                                                        : ""
-                                                    : "",
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
+                                            Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  productList[index].variants !=
+                                                          null
+                                                      ? productList[index]
+                                                                      .variants[
+                                                                  productList[
+                                                                          index]
+                                                                      .selectedVariantIndex] !=
+                                                              null
+                                                          ? productList[index]
+                                                                      .variants[
+                                                                          productList[index]
+                                                                              .selectedVariantIndex]
+                                                                      .weight !=
+                                                                  null
+                                                              ? '${productList[index].variants[productList[index].selectedVariantIndex]?.weight}'
+                                                                  '${productList[index].variants[productList[index].selectedVariantIndex]?.unitType}'
+                                                              : ""
+                                                          : ""
+                                                      : "",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  softWrap: true,
+                                                  maxLines: 2,
+                                                ),
                                               ),
                                             ),
                                             productList[index].variants.length >
@@ -709,11 +720,14 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
           child: _categoryList.length > 0
               ? ListView.builder(
                   itemCount: _categoryList.length,
+                  padding: EdgeInsets.only(bottom: 80.0),
                   itemBuilder: (context, index) {
                     return index < _categoryList.length
-                        ? ExpansionTileWidget(categoryList: _categoryList[index],
+                        ? ExpansionTileWidget(
+                            categoryList: _categoryList[index],
                             storeID: widget.storeId,
                             index: index,
+                            editCartList: widget.editCartList,
                           )
                         : new Container();
                   },
@@ -1148,21 +1162,31 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
       _totalOrders = int.tryParse(value.total) ?? 0;
       _start += PAGE_SIZE;
       List<Data> selectedProductList = [];
-      if (!OderCart.isCartEmpty()) {
-        selectedProductList.addAll(OderCart.getOrderCartMap().values.toList());
-      }
+      // if (!OderCart.isCartEmpty()) {
+      //   selectedProductList.addAll(OderCart.getOrderCartMap().values.toList());
+      // }
       List<Data> data = value.data;
-      for (Data getProductData in data) {
-        for (Data selectedData in selectedProductList) {
-          if (selectedData.id == getProductData.id) {
-            getProductData.count = selectedData.count;
-            print(selectedData.count);
-            getProductData.selectedVariantIndex =
-                selectedData.selectedVariantIndex;
-            break;
+      for (int dataCounter = 0; dataCounter < data.length; dataCounter++) {
+        productLoop:
+        for (dynamic selectedData in widget.editCartList) {
+          if (selectedData.productId == data[dataCounter].id) {
+            data[dataCounter].count = int.parse(selectedData.quantity);
+            variantLoop:
+            for (int variantCount = 0;
+                variantCount < data[dataCounter].variants.length;
+                variantCount++) {
+              if (data[dataCounter].variants[variantCount].id ==
+                  selectedData.variantId) {
+                data[dataCounter].selectedVariantIndex = variantCount;
+                OderCart.putOrder(data[dataCounter]);
+                break variantLoop;
+              }
+            }
+            break productLoop;
           }
         }
       }
+
       setState(() {
         _currentPageNumber == 1
             ? productList = data

@@ -343,12 +343,16 @@ class AppUtils {
   }
 
   static launchCaller(String call) async {
-    String url = "tel:${call}";
+    String url = "tel://${call}";
     if (await canLaunch(url)) {
       await launch(url);
     } else {
       throw 'Could not launch $url';
     }
+  }
+  static double roundOffPrice(double val, int places) {
+    double mod = pow(10.0, places);
+    return ((val * mod).round().toDouble() / mod);
   }
 
   // ...somewhere in your Flutter app...

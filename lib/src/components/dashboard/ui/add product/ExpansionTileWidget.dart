@@ -13,10 +13,15 @@ import 'order_cart.dart';
 
 class ExpansionTileWidget extends StatefulWidget {
   var customerId;
-  SubCategory categoryList ;
+  SubCategory categoryList;
+  List<dynamic> editCartList;
+
   var storeID;
-  var  index;
-   ExpansionTileWidget({Key key, this.index, this.storeID,this.customerId,this.categoryList}) : super(key: key);
+  var index;
+
+  ExpansionTileWidget(
+      {Key key, this.index, this.storeID, this.customerId, this.categoryList,this.editCartList})
+      : super(key: key);
 
   @override
   _ExpansionTileWidgetState createState() => _ExpansionTileWidgetState();
@@ -34,11 +39,11 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
   bool showLoading = true;
   bool showList = false;
   List<Data> categoryProduct = [];
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Container(
         width: double.infinity,
         color: Colors.grey[100],
@@ -59,10 +64,8 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
                 // this.isExpanded = false;
                 selected = -1;
               }
-              selectedCategoryId =
-                  widget.categoryList.categoryId;
-              selectedSubCategoryId =
-                  widget.categoryList.id;
+              selectedCategoryId = widget.categoryList.categoryId;
+              selectedSubCategoryId = widget.categoryList.id;
               // if(ExpandableCategories.getProductDataMap().containsKey(int.parse(selectedSubCategoryId))) {
               //   print("category existing product");
               //   print(ExpandableCategories.getProductDataMap());
@@ -109,7 +112,7 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
     };
 
     AppNetwork.getCategoryProducts(param, storeID: widget.storeID).then(
-            (value) => _handleProductResponse(value),
+        (value) => _handleProductResponse(value),
         onError: (error) => _handleError(error));
   }
 
@@ -122,20 +125,39 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
         newList.add(data);
       });
       List<Data> selectedProductList = [];
-      if (!OderCart.isCartEmpty()) {
-        selectedProductList.addAll(OderCart.getOrderCartMap().values.toList());
-      }
+
       List<Data> data = newList;
-      for (Data getProductData in data) {
-        for (Data selectedData in selectedProductList) {
-          if (selectedData.id == getProductData.id) {
-            getProductData.count = selectedData.count;
-            getProductData.selectedVariantIndex =
-                selectedData.selectedVariantIndex;
-            break;
+
+      for (int dataCounter = 0; dataCounter < data.length; dataCounter++) {
+        productLoop:
+        for (dynamic selectedData in widget.editCartList) {
+          if (selectedData.productId == data[dataCounter].id) {
+            data[dataCounter].count = int.parse(selectedData.quantity);
+            variantLoop:
+            for (int variantCount = 0;
+            variantCount < data[dataCounter].variants.length;
+            variantCount++) {
+              if (data[dataCounter].variants[variantCount].id ==
+                  selectedData.variantId) {
+                data[dataCounter].selectedVariantIndex = variantCount;
+                OderCart.putOrder(data[dataCounter]);
+                break variantLoop;
+              }
+            }
+            break productLoop;
           }
         }
       }
+      // for (Data getProductData in data) {
+      //   for (Data selectedData in selectedProductList) {
+      //     if (selectedData.id == getProductData.id) {
+      //       getProductData.count = selectedData.count;
+      //       getProductData.selectedVariantIndex =
+      //           selectedData.selectedVariantIndex;
+      //       break;
+      //     }
+      //   }
+      // }
       if (mounted) {
         setState(() {
           categoryProduct = data;
@@ -171,273 +193,277 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
   Widget _categoryProduct() {
     return categoryProduct.length > 0
         ? Container(
-      color: AppTheme.chipsBackgroundColor,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
-        child: GridView.builder(
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 6 / 9,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8),
-            itemCount: categoryProduct.length,
-            itemBuilder: (BuildContext context, int index) {
-              return index < categoryProduct.length
-                  ? InkWell(
-                onTap: () {
-                  setState(() {
-                    categoryProduct[index].count += 1;
-                    print("category count:${ categoryProduct[index].count}");
-                    OderCart.putOrder(categoryProduct[index]);
-                    // price = double.parse(categoryProduct[index]
-                    //     .variants[categoryProduct[index]
-                    //     .selectedVariantIndex]
-                    //     .price);
-                    // total!=null? total+=price: total=price;
-                    calculateAmount();
-                  });
-                },
-                child: Container(
-                  color: Colors.white,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Positioned(
-                        top: 0,
-                        left: 90,
-                        right: 0,
-                        child: Column(
-                          children: [
-                            Container(
-                              color: AppTheme.black,
-                              height: 20,
-                              width: 20,
-                              child: Center(
-                                  child: Text(
-                                    "+",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16),
-                                  )),
-                            ),
-                            Visibility(
-                              child: Container(
-                                height: 20,
-                                width: 20,
-                                child: Center(
-                                    child: Text(
-                                      categoryProduct[index]
-                                          .count
-                                          .toString(),
-                                      style: TextStyle(
+            color: AppTheme.chipsBackgroundColor,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+              child: GridView.builder(
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 6 / 9,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8),
+                  itemCount: categoryProduct.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return index < categoryProduct.length
+                        ? InkWell(
+                            onTap: () {
+                              setState(() {
+                                categoryProduct[index].count += 1;
+                                print(
+                                    "category count:${categoryProduct[index].count}");
+                                OderCart.putOrder(categoryProduct[index]);
+                                // price = double.parse(categoryProduct[index]
+                                //     .variants[categoryProduct[index]
+                                //     .selectedVariantIndex]
+                                //     .price);
+                                // total!=null? total+=price: total=price;
+                                calculateAmount();
+                              });
+                            },
+                            child: Container(
+                              color: Colors.white,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Positioned(
+                                    top: 0,
+                                    left: 90,
+                                    right: 0,
+                                    child: Column(
+                                      children: [
+                                        Container(
                                           color: AppTheme.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14),
-                                    )),
-                              ),
-                              visible: OderCart.getOrderCartMap()
-                                  .containsKey(
-                                  categoryProduct[index].id),
-                            ),
-                            Visibility(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (categoryProduct[index]
-                                        .count ==
-                                        1) {
-                                      categoryProduct[index].count =
-                                      0;
-                                      // total -= double.parse(categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price);
-                                      OderCart.removeOrder(
-                                          categoryProduct[index]
-                                              .id);
-                                      // calculateAmount();
-                                    } else if (categoryProduct[
-                                    index]
-                                        .count >
-                                        1) {
-                                      // total -= double.parse(categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price);
-                                      categoryProduct[index]
-                                          .count -= 1;
-                                      OderCart.putOrder(
-                                          categoryProduct[index]);
-                                      // calculateAmount();
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                  color: AppTheme.black,
-                                  height: 20,
-                                  width: 20,
-                                  child: Center(
-                                      child: Text(
-                                        "-",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight:
-                                            FontWeight.w500),
-                                      )),
-                                ),
-                              ),
-                              visible: OderCart.getOrderCartMap()
-                                  .containsKey(
-                                  categoryProduct[index].id),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceAround,
-                        children: [
-                          _getImageOrPlaceholder(
-                              categoryProduct[index].image),
-                          Text(
-                            categoryProduct[index].title != null
-                                ? categoryProduct[index].title
-                                : "",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 7.0),
-                            // width: 92,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 8.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: AppTheme.textLightColor),
-                            ),
-                            child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: Text(
-                                    categoryProduct[index]
-                                        .variants !=
-                                        null
-                                        ? categoryProduct[index]
-                                        .variants[
-                                    categoryProduct[
-                                    index]
-                                        .selectedVariantIndex] !=
-                                        null
-                                        ? categoryProduct[index]
-                                        .variants[categoryProduct[
-                                    index]
-                                        .selectedVariantIndex]
-                                        .weight !=
-                                        null
-                                        ? '${categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex]?.weight}'
-                                        '${categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex]?.unitType}'
-                                        : ""
-                                        : ""
-                                        : "",
-                                    overflow: TextOverflow.ellipsis,
+                                          height: 20,
+                                          width: 20,
+                                          child: Center(
+                                              child: Text(
+                                            "+",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16),
+                                          )),
+                                        ),
+                                        Visibility(
+                                          child: Container(
+                                            height: 20,
+                                            width: 20,
+                                            child: Center(
+                                                child: Text(
+                                              categoryProduct[index]
+                                                  .count
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: AppTheme.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14),
+                                            )),
+                                          ),
+                                          visible: OderCart.getOrderCartMap()
+                                              .containsKey(
+                                                  categoryProduct[index].id),
+                                        ),
+                                        Visibility(
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                if (categoryProduct[index]
+                                                        .count ==
+                                                    1) {
+                                                  categoryProduct[index].count =
+                                                      0;
+                                                  // total -= double.parse(categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price);
+                                                  OderCart.removeOrder(
+                                                      categoryProduct[index]
+                                                          .id);
+                                                  // calculateAmount();
+                                                } else if (categoryProduct[
+                                                            index]
+                                                        .count >
+                                                    1) {
+                                                  // total -= double.parse(categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price);
+                                                  categoryProduct[index]
+                                                      .count -= 1;
+                                                  OderCart.putOrder(
+                                                      categoryProduct[index]);
+                                                  // calculateAmount();
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              color: AppTheme.black,
+                                              height: 20,
+                                              width: 20,
+                                              child: Center(
+                                                  child: Text(
+                                                "-",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              )),
+                                            ),
+                                          ),
+                                          visible: OderCart.getOrderCartMap()
+                                              .containsKey(
+                                                  categoryProduct[index].id),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                categoryProduct[index]
-                                    .variants
-                                    .length >
-                                    1
-                                    ? Material(
-                                  child: InkWell(
-                                      splashColor:
-                                      Colors.grey,
-                                      onTap: () {
-                                        _askVariant(
-                                            categoryProduct[
-                                            index]
-                                                .variants)
-                                            .then((value) {
-                                          setState(() {
-                                            if (int.parse(
-                                                value) !=
-                                                categoryProduct[
-                                                index]
-                                                    .selectedVariantIndex) {
-                                              categoryProduct[
-                                              index]
-                                                  .count = 0;
-                                              OderCart.removeOrder(
-                                                  categoryProduct[
-                                                  index]
-                                                      .id);
-                                            }
-                                            categoryProduct[
-                                            index]
-                                                .selectedVariantIndex =
-                                                int.parse(
-                                                    value);
-                                          });
-                                        });
-                                      },
-                                      child: Icon(
-                                        Icons.arrow_drop_down,
-                                        size: 20,
-                                      )),
-                                )
-                                    : new Container(),
-                              ],
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _getImageOrPlaceholder(
+                                          categoryProduct[index].image),
+                                      Text(
+                                        categoryProduct[index].title != null
+                                            ? categoryProduct[index].title
+                                            : "",
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 7.0),
+                                        // width: 92,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.0, horizontal: 8.0),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppTheme.textLightColor),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  categoryProduct[index]
+                                                              .variants !=
+                                                          null
+                                                      ? categoryProduct[index]
+                                                                      .variants[
+                                                                  categoryProduct[
+                                                                          index]
+                                                                      .selectedVariantIndex] !=
+                                                              null
+                                                          ? categoryProduct[index]
+                                                                      .variants[categoryProduct[
+                                                                              index]
+                                                                          .selectedVariantIndex]
+                                                                      .weight !=
+                                                                  null
+                                                              ? '${categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex]?.weight}'
+                                                                  '${categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex]?.unitType}'
+                                                              : ""
+                                                          : ""
+                                                      : "",
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                            categoryProduct[index]
+                                                        .variants
+                                                        .length >
+                                                    1
+                                                ? Material(
+                                                    child: InkWell(
+                                                        splashColor:
+                                                            Colors.grey,
+                                                        onTap: () {
+                                                          _askVariant(
+                                                                  categoryProduct[
+                                                                          index]
+                                                                      .variants)
+                                                              .then((value) {
+                                                            setState(() {
+                                                              if (int.parse(
+                                                                      value) !=
+                                                                  categoryProduct[
+                                                                          index]
+                                                                      .selectedVariantIndex) {
+                                                                categoryProduct[
+                                                                        index]
+                                                                    .count = 0;
+                                                                OderCart.removeOrder(
+                                                                    categoryProduct[
+                                                                            index]
+                                                                        .id);
+                                                              }
+                                                              categoryProduct[
+                                                                          index]
+                                                                      .selectedVariantIndex =
+                                                                  int.parse(
+                                                                      value);
+                                                            });
+                                                          });
+                                                        },
+                                                        child: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          size: 20,
+                                                        )),
+                                                  )
+                                                : new Container(),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(categoryProduct[index].variants !=
+                                              null
+                                          ? categoryProduct[index]
+                                                      .variants[categoryProduct[
+                                                          index]
+                                                      .selectedVariantIndex] !=
+                                                  null
+                                              ? categoryProduct[index]
+                                                          .variants[categoryProduct[
+                                                                  index]
+                                                              .selectedVariantIndex]
+                                                          .price !=
+                                                      null
+                                                  ? '${AppUtils.getCurrencyPrice(double.parse(categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price.isNotEmpty ? categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price : "0.00") ?? 0)}'
+                                                  : "0"
+                                              : "0"
+                                          : "0"),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          Text(categoryProduct[index].variants !=
-                              null
-                              ? categoryProduct[index]
-                              .variants[categoryProduct[
-                          index]
-                              .selectedVariantIndex] !=
-                              null
-                              ? categoryProduct[index]
-                              .variants[categoryProduct[
-                          index]
-                              .selectedVariantIndex]
-                              .price !=
-                              null
-                              ? '${AppUtils.getCurrencyPrice(double.parse(categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price.isNotEmpty ? categoryProduct[index].variants[categoryProduct[index].selectedVariantIndex].price : "0.00") ?? 0)}'
-                              : "0"
-                              : "0"
-                              : "0"),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              )
-                  : new Container(
-                margin: EdgeInsets.only(bottom: 16.0),
-                child: Center(
-                    child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 3.0,
-                            valueColor: AlwaysStoppedAnimation(
-                                AppTheme.primaryColor)))),
-              );
-            }),
-      ),
-    )
+                          )
+                        : new Container(
+                            margin: EdgeInsets.only(bottom: 16.0),
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(
+                                child: SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 3.0,
+                                        valueColor: AlwaysStoppedAnimation(
+                                            AppTheme.primaryColor)))),
+                          );
+                  }),
+            ),
+          )
         : new Container(
-      // margin: EdgeInsets.only(bottom: 64.0),
-      margin: EdgeInsets.only(bottom: 16.0),
-      child: Center(
-          child: SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                  strokeWidth: 3.0,
-                  valueColor:
-                  AlwaysStoppedAnimation(AppTheme.primaryColor)))),
-    );
+            margin: EdgeInsets.only(bottom: 16.0),
+            padding: EdgeInsets.all(8.0),
+            child: Center(
+                child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 3.0,
+                        valueColor:
+                            AlwaysStoppedAnimation(AppTheme.primaryColor)))),
+          );
   }
 
   Widget _getImageOrPlaceholder(imageUrl) {
@@ -536,7 +562,7 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
     };
 
     AppNetwork.calculateAmount(param, storeID: widget.storeID).then(
-            (value) => _handleTaxCalculationResponse(value),
+        (value) => _handleTaxCalculationResponse(value),
         onError: (error) => _handleError(error));
   }
 
