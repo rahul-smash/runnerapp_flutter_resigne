@@ -8,10 +8,12 @@ import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/account_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_new_booking_request_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/home_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/my_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/notifications_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/dashboard_pages/payment_screen.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/new_request_booking_screen.dart';
 import 'package:marketplace_service_provider/src/components/side_menu/side_menu_screen.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 import 'package:marketplace_service_provider/src/singleton/versio_api_singleton.dart';
@@ -165,9 +167,22 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         );
         break;
       case 2:
-        return PaymentScreen(() {
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //       builder: (context) =>
+        //           NewRequestBookingScreen(
+        //             userId: userId,
+        //           )),
+        // );
+        // if (refreshData != null && refreshData) {
+        //   _refreshController.requestRefresh();
+        // }
+
+
+        return HomeNewBookingRequestScreen(() {
           _toggle();
         });
+
         break;
       case 3:
         return AccountScreen();
@@ -228,13 +243,13 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 label: labelMyBooking),
             BottomNavigationBarItem(
                 icon: Image(
-                  image: AssetImage(AppImages.icon_payment_gray),
+                  image: AssetImage(AppImages.icon_new_booking_request),
                   height: 22,
                   color: _selectedTabIndex == 2
                       ? AppTheme.primaryColorDark
                       : AppTheme.subHeadingTextColor,
                 ),
-                label: labelPayments),
+                label: labelNewRequests),
             BottomNavigationBarItem(
                 icon: Image(
                   image: AssetImage(AppImages.icon_account),

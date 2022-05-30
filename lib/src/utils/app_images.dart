@@ -47,6 +47,7 @@ class AppImages {
   static const icon_top_header_blue_tick = 'lib/src/components/dashboard/images/top_header_blue_tick.png';
   static const icon_top_header_tick = 'lib/src/components/dashboard/images/top_header_tick.png';
   static const icon_payment_gray = 'lib/src/components/dashboard/images/paymentgrayicon.png';
+  static const icon_new_booking_request = 'lib/src/components/dashboard/images/new_booking_request.png';
   static const icon_payment_method_graphic ="lib/src/components/dashboard/images/payment_method_graphic.png";
 
   static const icon_map = 'lib/src/components/dashboard/images/mapicon.png';
