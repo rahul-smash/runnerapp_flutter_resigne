@@ -11,6 +11,7 @@ import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.d
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
 import 'package:marketplace_service_provider/core/service_locator.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/TaxCalculationResponse.dart';
+
 // import 'package:marketplace_service_provider/src/components/dashboard/model/TaxOrderProductItem.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/booking_details_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
@@ -55,6 +56,7 @@ class _EditBookingDetailsScreenState
     extends BaseState<EditBookingDetailsScreen> {
   double savings;
   bool _showEdit = true;
+  bool isShowRefreshLoader = true;
   StreamSubscription fcmEventStream;
   StreamSubscription refreshEventStream;
   RefreshController _refreshController =
@@ -146,108 +148,111 @@ class _EditBookingDetailsScreenState
                   backgroundColor: Colors.black26,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.black26)),
             )
-          : SmartRefresher(
-              enablePullDown: true,
-              controller: _refreshController,
-              onRefresh: _onRefresh,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 16.0,
+          :
+          // SmartRefresher(
+          //         enablePullDown: true,
+          //         controller: _refreshController,
+          //         onRefresh: _onRefresh,
+          //         child:
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    Card(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                      shadowColor: AppTheme.borderNotFocusedColor,
+                      elevation: 0.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
-                      Card(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 4.0, vertical: 0.0),
-                        shadowColor: AppTheme.borderNotFocusedColor,
-                        elevation: 0.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.all(18.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '#${_bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
-                                      style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: AppTheme.subHeadingTextColor,
-                                          fontWeight: FontWeight.normal),
-                                    ),
+                      child: Container(
+                        padding: EdgeInsets.all(18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '#${_bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
+                                    style: TextStyle(
+                                        fontSize: 12.0,
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontWeight: FontWeight.normal),
                                   ),
-                                  Visibility(
-                                    visible: widget
-                                        .booking.store.contactNumber.isNotEmpty,
-                                    child: Row(
-                                      children: [
-                                        InkWell(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.0),
-                                              child: Icon(Icons.message,size: 25,),
+                                ),
+                                Visibility(
+                                  visible: widget
+                                      .booking.store.contactNumber.isNotEmpty,
+                                  child: Row(
+                                    children: [
+                                      InkWell(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Icon(
+                                              Icons.message,
+                                              size: 25,
                                             ),
-                                            onTap: () {
-                                              AppUtils.launchSMS(widget
-                                                  .booking
-                                                  .store
-                                                  .contactNumber);
-                                            }),
-                                        SizedBox(
-                                          width: 8.0,
-                                        ),
-                                        InkWell(
-                                            child: Image(
-                                              image: AssetImage(
-                                                  AppImages.icon_call),
-                                              height: 25,
-                                            ),
-                                            onTap: () {
-                                              print("call");
-                                              AppUtils.launchCaller(widget
-                                                  .booking.store.contactNumber);
-                                            }),
-                                      ],
-                                    ),
+                                          ),
+                                          onTap: () {
+                                            AppUtils.launchSMS(widget
+                                                .booking.store.contactNumber);
+                                          }),
+                                      SizedBox(
+                                        width: 8.0,
+                                      ),
+                                      InkWell(
+                                          child: Image(
+                                            image:
+                                                AssetImage(AppImages.icon_call),
+                                            height: 25,
+                                          ),
+                                          onTap: () {
+                                            print("call");
+                                            AppUtils.launchCaller(widget
+                                                .booking.store.contactNumber);
+                                          }),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 2.0,
-                              ),
-                              Text(
-                                'Pickup Address',
-                                style: TextStyle(
-                                    fontFamily: AppConstants.fontName,
-                                    fontSize: 14.0,
-                                    color: AppTheme.subHeadingTextColor,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              Text(
-                                widget.booking.store?.storeName ?? "",
-                                style: TextStyle(
-                                    fontFamily: AppConstants.fontName,
-                                    fontSize: 18.0,
-                                    color: AppTheme.mainTextColor,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                "${editCartList.length} ${editCartList.length > 1 ? "Items" : "Item"}",
-                                style: TextStyle(
-                                    fontFamily: AppConstants.fontName,
-                                    fontSize: 14.0,
-                                    color: AppTheme.subHeadingTextColor,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 2.0,
+                            ),
+                            Text(
+                              'Pickup Address',
+                              style: TextStyle(
+                                  fontFamily: AppConstants.fontName,
+                                  fontSize: 14.0,
+                                  color: AppTheme.subHeadingTextColor,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            Text(
+                              widget.booking.store?.storeName ?? "",
+                              style: TextStyle(
+                                  fontFamily: AppConstants.fontName,
+                                  fontSize: 18.0,
+                                  color: AppTheme.mainTextColor,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              "${editCartList.length} ${editCartList.length > 1 ? "Items" : "Item"}",
+                              style: TextStyle(
+                                  fontFamily: AppConstants.fontName,
+                                  fontSize: 14.0,
+                                  color: AppTheme.subHeadingTextColor,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            SizedBox(
+                              height: 4.0,
+                            ),
 
                               Row(
                                 children: [
@@ -301,16 +306,16 @@ class _EditBookingDetailsScreenState
                                     children: [
                                       Visibility(
                                        visible: false,
-                                        child: Text(
-                                          "${AppConstants.currency}${widget.booking.total}",
-                                          style: TextStyle(
-                                              fontFamily: AppConstants.fontName,
-                                              fontSize: 16.0,
-                                              color: AppTheme.primaryColor,
-                                              fontWeight: FontWeight.w600),
-                                        ),
+                                      child: Text(
+                                        "${AppConstants.currency}${widget.booking.total}",
+                                        style: TextStyle(
+                                            fontFamily: AppConstants.fontName,
+                                            fontSize: 16.0,
+                                            color: AppTheme.primaryColor,
+                                            fontWeight: FontWeight.w600),
                                       ),
-                                      // Visibility(
+                                    ),
+                                    // Visibility(
                                       //   visible: widget.booking.paymentMethod
                                       //           .toLowerCase() !=
                                       //       'cod',
@@ -325,116 +330,116 @@ class _EditBookingDetailsScreenState
                                       // ),
                                       Visibility(
                                         visible: false,
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              top: 2.0, left: 5),
-                                          decoration: BoxDecoration(
-                                              color: AppTheme
-                                                  .containerBackgroundColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(16.0)),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4.0, horizontal: 8.0),
-                                          child: Text(
-                                            "${widget.booking.paymentMethod.toUpperCase()}",
-                                            style: TextStyle(
-                                                fontFamily:
-                                                    AppConstants.fontName,
-                                                fontSize: 10.0,
-                                                color: AppTheme.mainTextColor,
-                                                fontWeight: FontWeight.normal),
-                                          ),
+                                      child: Container(
+                                        margin:
+                                            EdgeInsets.only(top: 2.0, left: 5),
+                                        decoration: BoxDecoration(
+                                            color: AppTheme
+                                                .containerBackgroundColor,
+                                            borderRadius:
+                                                BorderRadius.circular(16.0)),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 8.0),
+                                        child: Text(
+                                          "${widget.booking.paymentMethod.toUpperCase()}",
+                                          style: TextStyle(
+                                              fontFamily: AppConstants.fontName,
+                                              fontSize: 10.0,
+                                              color: AppTheme.mainTextColor,
+                                              fontWeight: FontWeight.normal),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Flexible(child: Container()),
-                                      _getWidgetAccordingToStatus(),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 12.0,
-                              ),
-                              // Visibility(
-                              //   visible: widget.booking.runnerDeliveryAccepted ==
-                              //           '1' &&
-                              //       widget.booking.isManualAssignment == '1' &&
-                              //       widget.booking.readStatus == '0',
-                              //   child: Row(
-                              //     mainAxisAlignment:
-                              //         MainAxisAlignment.spaceBetween,
-                              //     children: [
-                              //       InkWell(
-                              //         onTap: () {
-                              //           _getReadOrder(widget.booking);
-                              //         },
-                              //         child: Container(
-                              //           decoration: BoxDecoration(
-                              //             borderRadius: BorderRadius.all(
-                              //                 Radius.circular(30)),
-                              //             gradient: LinearGradient(
-                              //               begin: Alignment.topRight,
-                              //               end: Alignment.bottomLeft,
-                              //               stops: [0.1, 0.5, 0.5, 0.9],
-                              //               colors: [
-                              //                 AppTheme.primaryColorDark,
-                              //                 AppTheme.primaryColor,
-                              //                 AppTheme.primaryColor,
-                              //                 AppTheme.primaryColor,
-                              //               ],
-                              //             ),
-                              //           ),
-                              //           padding: EdgeInsets.symmetric(
-                              //               vertical: 8.0, horizontal: 12.0),
-                              //           child: Text('Mark as read',
-                              //               style: TextStyle(
-                              //                   color: AppTheme.white,
-                              //                   fontSize:
-                              //                       AppConstants.extraSmallSize,
-                              //                   fontWeight: FontWeight.normal)),
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
-                              SizedBox(
-                                height: 12.0,
-                              ),
-                              Divider(
-                                height: 1,
-                                thickness: 1,
-                              ),
-                              SizedBox(
-                                height: 12.0,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Delivery Address',
-                                      style: TextStyle(
-                                          fontSize: 14.0,
-                                          color: AppTheme.subHeadingTextColor,
-                                          fontWeight: FontWeight.w400),
                                     ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    Flexible(child: Container()),
+                                    _getWidgetAccordingToStatus(),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 12.0,
+                            ),
+                            // Visibility(
+                            //   visible: widget.booking.runnerDeliveryAccepted ==
+                            //           '1' &&
+                            //       widget.booking.isManualAssignment == '1' &&
+                            //       widget.booking.readStatus == '0',
+                            //   child: Row(
+                            //     mainAxisAlignment:
+                            //         MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       InkWell(
+                            //         onTap: () {
+                            //           _getReadOrder(widget.booking);
+                            //         },
+                            //         child: Container(
+                            //           decoration: BoxDecoration(
+                            //             borderRadius: BorderRadius.all(
+                            //                 Radius.circular(30)),
+                            //             gradient: LinearGradient(
+                            //               begin: Alignment.topRight,
+                            //               end: Alignment.bottomLeft,
+                            //               stops: [0.1, 0.5, 0.5, 0.9],
+                            //               colors: [
+                            //                 AppTheme.primaryColorDark,
+                            //                 AppTheme.primaryColor,
+                            //                 AppTheme.primaryColor,
+                            //                 AppTheme.primaryColor,
+                            //               ],
+                            //             ),
+                            //           ),
+                            //           padding: EdgeInsets.symmetric(
+                            //               vertical: 8.0, horizontal: 12.0),
+                            //           child: Text('Mark as read',
+                            //               style: TextStyle(
+                            //                   color: AppTheme.white,
+                            //                   fontSize:
+                            //                       AppConstants.extraSmallSize,
+                            //                   fontWeight: FontWeight.normal)),
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            SizedBox(
+                              height: 12.0,
+                            ),
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                            ),
+                            SizedBox(
+                              height: 12.0,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Delivery Address',
+                                    style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: AppTheme.subHeadingTextColor,
+                                        fontWeight: FontWeight.w400),
                                   ),
-                                  Visibility(
-                                    visible:
-                                        widget.booking.user.phone.isNotEmpty,
-                                    child: Row(
-                                      children: [
-                                        InkWell(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.0),
-                                              child: Icon(Icons.message,size: 25,),
+                                ),
+                                Visibility(
+                                  visible: widget.booking.user.phone.isNotEmpty,
+                                  child: Row(
+                                    children: [
+                                      InkWell(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Icon(
+                                              Icons.message,
+                                              size: 25,
                                             ),
                                             onTap: () {
                                               AppUtils.launchSMS(widget
@@ -1100,71 +1105,75 @@ class _EditBookingDetailsScreenState
                                                           .toString();
                                                 }
 
-                                                // break;
-                                              }
-                                            }
-                                            if (!productFound) {
-                                              editCartList.add(toBeAddProduct);
+                                              // break;
                                             }
                                           }
+                                          if (!productFound) {
+                                            editCartList.add(toBeAddProduct);
+                                          }
                                         }
-                                        setState(() {});
-                                      },
-                                      child: _showEdit==true?Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.add,
-                                            size: 12,
-                                            color: AppTheme.primaryColor,
-                                          ),
-                                          Text(
-                                            "Add Product",
-                                            style: TextStyle(
+                                      }
+                                      setState(() {});
+                                    },
+                                    child: _showEdit == true
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.add,
+                                                size: 12,
                                                 color: AppTheme.primaryColor,
-                                                decoration:
-                                                    TextDecoration.underline),
+                                              ),
+                                              Text(
+                                                "Add Product",
+                                                style: TextStyle(
+                                                    color:
+                                                        AppTheme.primaryColor,
+                                                    decoration: TextDecoration
+                                                        .underline),
+                                              )
+                                            ],
                                           )
-                                        ],
-                                      ):Container(),
-                                    ),
-                                    SizedBox(height: 10),
-                                    _showEdit==true? MaterialButton(
-                                      height: 40,
-                                      elevation: 8,
-                                      onPressed: () {
-                                        logicBuilder(context,);
-                                      },
-                                      color: AppTheme.primaryColor,
-                                      minWidth:
-                                          Dimensions.getWidth(percentage: 50),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30))),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8.0, vertical: 6.0),
-                                      child: Text(
-                                        'Send Invoice',
-                                        style: TextStyle(
-                                            color: AppTheme.white,
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.normal),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ):Container(),
-                                  ],
-                                )
-                              ],
-                            ),
+                                        : Container(),
+                                  ),
+                                  SizedBox(height: 10),
+                                  _showEdit == true
+                                      ? MaterialButton(
+                                          height: 40,
+                                          elevation: 8,
+                                          onPressed: () {
+                                            logicBuilder(context,);
+                                          },
+                                          color: AppTheme.primaryColor,
+                                          minWidth: Dimensions.getWidth(
+                                              percentage: 50),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30))),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.0, vertical: 6.0),
+                                          child: Text(
+                                            'Send Invoice',
+                                            style: TextStyle(
+                                                color: AppTheme.white,
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.normal),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        )
+                                      : Container(),
+                                ],
+                              )
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -1197,7 +1206,6 @@ class _EditBookingDetailsScreenState
   }
 
   Widget listItem(BuildContext context, int index) {
-
     double totalPrice = AppUtils.roundOffPrice((double.parse(editCartList[index].price)) *
         (int.parse(editCartList[index].quantity)),2);
 
@@ -1275,7 +1283,7 @@ class _EditBookingDetailsScreenState
                                         fontWeight: FontWeight.w700)),
                               ),
                               Visibility(
-                                visible: editCartList[index].isEditPrice ,
+                                visible: editCartList[index].isEditPrice,
                                 child: SizedBox(
                                   width: 50,
                                   child: TextFormField(
@@ -1316,96 +1324,107 @@ class _EditBookingDetailsScreenState
                                   ),
                                 ),
                               ),
-                              _showEdit==true?GestureDetector(
-                                  onTap: () {
-                                    editCartList[index].isEditPrice =
-                                        !editCartList[index].isEditPrice;
-                                    setState(() {});
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Icon(
-                                      editCartList[index].isEditPrice
-                                          ? Icons.check
-                                          : Icons.edit,
-                                      color: AppTheme.black,
-                                      size: editCartList[index].isEditPrice
-                                          ? 20
-                                          : 14,
-                                    ),
-                                  )):Container(),
-                              Spacer(),
-                              _showEdit==true?Container(
-                                padding: EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: AppTheme.backgroundColor,
-                                    border: Border.all(color: AppTheme.black)),
-                                child: Row(
-                                  children: [
-                                    InkWell(
-                                        onTap: () {
-                                          int quantityInt = int.parse(
-                                                      editCartList[index]
-                                                          .quantity) >
-                                                  0
-                                              ? int.parse(editCartList[index]
-                                                      .quantity) -
-                                                  1
-                                              : 0;
-                                          editCartList[index].quantity =
-                                              quantityInt.toString();
-                                          setState(() {});
-                                        },
+                              _showEdit == true
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        editCartList[index].isEditPrice =
+                                            !editCartList[index].isEditPrice;
+                                        setState(() {});
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
                                         child: Icon(
-                                          Icons.remove,
+                                          editCartList[index].isEditPrice
+                                              ? Icons.check
+                                              : Icons.edit,
                                           color: AppTheme.black,
-                                          size: 16,
-                                        )),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 3),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 3, vertical: 2),
+                                          size: editCartList[index].isEditPrice
+                                              ? 20
+                                              : 14,
+                                        ),
+                                      ))
+                                  : Container(),
+                              Spacer(),
+                              _showEdit == true
+                                  ? Container(
+                                      padding: EdgeInsets.all(3),
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(3),
-                                          color: AppTheme.backgroundColor),
-                                      child: Text(
-                                        '${editCartList[index].quantity.toString()}',
-                                        style: TextStyle(
-                                            color: AppTheme.black,
-                                            fontSize: 16),
+                                              BorderRadius.circular(15),
+                                          color: AppTheme.backgroundColor,
+                                          border: Border.all(
+                                              color: AppTheme.black)),
+                                      child: Row(
+                                        children: [
+                                          InkWell(
+                                              onTap: () {
+                                                int quantityInt = int.parse(
+                                                            editCartList[index]
+                                                                .quantity) >
+                                                        0
+                                                    ? int.parse(
+                                                            editCartList[index]
+                                                                .quantity) -
+                                                        1
+                                                    : 0;
+                                                editCartList[index].quantity =
+                                                    quantityInt.toString();
+                                                setState(() {});
+                                              },
+                                              child: Icon(
+                                                Icons.remove,
+                                                color: AppTheme.black,
+                                                size: 16,
+                                              )),
+                                          Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 3),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 3, vertical: 2),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                                color:
+                                                    AppTheme.backgroundColor),
+                                            child: Text(
+                                              '${editCartList[index].quantity.toString()}',
+                                              style: TextStyle(
+                                                  color: AppTheme.black,
+                                                  fontSize: 16),
+                                            ),
+                                          ),
+                                          InkWell(
+                                              onTap: () {
+                                                int quantityInt = int.parse(
+                                                        editCartList[index]
+                                                            .quantity) +
+                                                    1;
+                                                editCartList[index].quantity =
+                                                    quantityInt.toString();
+                                                setState(() {});
+                                              },
+                                              child: Icon(
+                                                Icons.add,
+                                                color: AppTheme.black,
+                                                size: 16,
+                                              )),
+                                        ],
                                       ),
-                                    ),
-                                    InkWell(
-                                        onTap: () {
-                                          int quantityInt = int.parse(
-                                                  editCartList[index]
-                                                      .quantity) +
-                                              1;
-                                          editCartList[index].quantity =
-                                              quantityInt.toString();
-                                          setState(() {});
-                                        },
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppTheme.black,
-                                          size: 16,
-                                        )),
-                                  ],
-                                ),
-                              ):Container(),
+                                    )
+                                  : Container(),
                             ],
                           ),
-                          _showEdit==true?Align(
-                            alignment: Alignment.topRight,
-                            child: Text("${AppConstants.currency} $totalPrice",
-                                style: TextStyle(
-                                    color: AppTheme.black,
-                                    fontSize: AppConstants.extraSmallSize,
-                                    fontWeight: FontWeight.w500)),
-                          ):Container(),
+                          _showEdit == true
+                              ? Align(
+                                  alignment: Alignment.topRight,
+                                  child: Text(
+                                      "${AppConstants.currency} $totalPrice",
+                                      style: TextStyle(
+                                          color: AppTheme.black,
+                                          fontSize: AppConstants.extraSmallSize,
+                                          fontWeight: FontWeight.w500)),
+                                )
+                              : Container(),
                         ],
                       ),
                     ),
@@ -1416,7 +1435,8 @@ class _EditBookingDetailsScreenState
           ),
           Visibility(
             visible: editCartList[index].variants != null &&
-                editCartList[index].variants.isNotEmpty && _showEdit==true,
+                editCartList[index].variants.isNotEmpty &&
+                _showEdit == true,
             child: VariantChips(
               variant: editCartList[index].variants,
               variantID: editCartList[index].variantId,
@@ -1900,7 +1920,7 @@ class _EditBookingDetailsScreenState
   }
 
   void _getBookingdetails(BookingRequest booking,
-      {bool isShowLoader = true,String type}) async {
+      {bool isShowLoader = true, String type}) async {
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (type == 'refresh') {
         _onRefresh();
@@ -2178,7 +2198,7 @@ class _EditBookingDetailsScreenState
                 shipping: _bookingDetailsResponse.bookings.shippingCharges,
                 discount: _bookingDetailsResponse.bookings.discount,
                 tax: _bookingDetailsResponse.bookings.tax,
-                tip : _bookingDetailsResponse.bookings.tip,
+                tip: _bookingDetailsResponse.bookings.tip,
                 fixedDiscountAmount: _bookingDetailsResponse.bookings.discount,
                 userWallet: '0',
                 orderDetail: orderDetail,
@@ -2211,7 +2231,7 @@ class _EditBookingDetailsScreenState
       BaseResponse baseResponse = await getIt
           .get<DashboardRepository>()
           .editPlaceOrder(
-              cartSaving:taxCalculationResponse.taxCalculation.cartSaving,
+              cartSaving: taxCalculationResponse.taxCalculation.cartSaving,
               orderId: _bookingDetailsResponse.bookings.id,
               deviceId: deviceId,
               deviceToken: deviceToken,

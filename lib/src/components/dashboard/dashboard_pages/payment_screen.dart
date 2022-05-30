@@ -756,7 +756,7 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
                           // due payout
                           InkWell(
                             onTap: () {
-                              _openDuePayoutDetail();
+                              // _openDuePayoutDetail();
                             },
                             child: Container(
                               margin: EdgeInsets.only(
@@ -837,11 +837,11 @@ class _PaymentScreenState extends BaseState<PaymentScreen> {
         MaterialPageRoute(builder: (builder) => DepositHistoryScreen()));
   }
 
-  void _openDuePayoutDetail() {
-    //TODO: handle this
-    Navigator.push(context,
-        MaterialPageRoute(builder: (builder) => DuePayoutDetailScreen()));
-  }
+  // void _openDuePayoutDetail() {
+  //   //TODO: handle this
+  //   Navigator.push(context,
+  //       MaterialPageRoute(builder: (builder) => DuePayoutDetailScreen()));
+  // }
 
   Widget _createTopCard(
       Color cardBackgroundColor,

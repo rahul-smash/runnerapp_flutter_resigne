@@ -15,7 +15,6 @@ class ExpansionTileWidget extends StatefulWidget {
   var customerId;
   SubCategory categoryList;
   List<dynamic> editCartList;
-
   var storeID;
   var index;
 
@@ -195,14 +194,14 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
         ? Container(
             color: AppTheme.chipsBackgroundColor,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+              padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
               child: GridView.builder(
                   physics: ScrollPhysics(),
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
-                      childAspectRatio: 6 / 9,
+                      childAspectRatio: 5 / 9,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8),
                   itemCount: categoryProduct.length,
@@ -328,10 +327,10 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
                                       ),
                                       Container(
                                         margin: EdgeInsets.symmetric(
-                                            horizontal: 7.0),
+                                            horizontal: 4.0),
                                         // width: 92,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 8.0, horizontal: 8.0),
+                                            vertical: 8.0, horizontal: 4.0),
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                               color: AppTheme.textLightColor),
@@ -365,7 +364,7 @@ class _ExpansionTileWidgetState extends State<ExpansionTileWidget> {
                                                               : ""
                                                           : ""
                                                       : "",
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow: TextOverflow.visible,
                                                 ),
                                               ),
                                             ),

@@ -545,7 +545,7 @@ class _BookOrderState extends State<BookOrder> with TickerProviderStateMixin {
                                             horizontal: 7.0),
                                         // width: double.infinity,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 8.0, horizontal: 8.0),
+                                            vertical: 8.0, horizontal: 6.0),
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 color:
