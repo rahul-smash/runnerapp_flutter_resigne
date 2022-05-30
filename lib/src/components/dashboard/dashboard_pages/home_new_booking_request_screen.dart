@@ -193,11 +193,11 @@ class _HomeNewBookingRequestScreenState extends BaseState<HomeNewBookingRequestS
         MaterialPageRoute(builder: (builder) => DepositHistoryScreen()));
   }
 
-  void _openDuePayoutDetail() {
-    //TODO: handle this
-    Navigator.push(context,
-        MaterialPageRoute(builder: (builder) => DuePayoutDetailScreen()));
-  }
+  // void _openDuePayoutDetail() {
+  //   //TODO: handle this
+  //   Navigator.push(context,
+  //       MaterialPageRoute(builder: (builder) => DuePayoutDetailScreen()));
+  // }
 
   Widget _createTopCard(
       Color cardBackgroundColor,
