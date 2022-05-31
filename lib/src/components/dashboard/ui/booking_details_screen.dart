@@ -187,7 +187,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          '#${_bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
+                                          '#${ _bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
                                           style: TextStyle(
                                               fontSize: 12.0,
                                               color:
