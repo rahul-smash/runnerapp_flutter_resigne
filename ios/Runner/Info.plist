@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Zipp Cart Rider</string>
+	<string>Zipp Cart Runner</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,19 +17,23 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires camera access to capture users profile</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allow access to your current location for order delivery</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Please allow location for updates</string>
+	<string>Allow access to your current location for order delivery</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Please allow location for updates</string>
+	<string>Allow access to your current location for order delivery</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>NA</string>
+	<string>App needs access to photo lib for profile images</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

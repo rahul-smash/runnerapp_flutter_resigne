@@ -239,9 +239,17 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
                             shrinkWrap: true,
                             itemCount: _bookingResponse.bookings.length,
                             itemBuilder: (BuildContext context, int index) {
+                              print("==check status");
+                              print(_bookingResponse.bookings[index].status);
+                              print(index);
                               return ItemBooking(
                                 _bookingResponse.bookings[index],
                                 _bookingAction,
+                                isRejected:
+                                    _bookingResponse.bookings[index].status ==
+                                            '2'
+                                        ? true
+                                        : false,
                                 readStatusChange: () {
                                   _bookingResponse.bookings[index].readStatus =
                                       '1';

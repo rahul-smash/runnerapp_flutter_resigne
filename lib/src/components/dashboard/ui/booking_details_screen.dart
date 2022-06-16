@@ -187,7 +187,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          '#${ _bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
+                                          '#${_bookingDetailsResponse.bookings.displayOrderId} | ${AppUtils.convertDateTime(_bookingDetailsResponse.bookings.created)}',
                                           style: TextStyle(
                                               fontSize: 12.0,
                                               color:
@@ -353,16 +353,14 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                     BorderRadius.circular(
                                                         16.0)),
                                             padding: EdgeInsets.symmetric(
-                                                vertical: 4.0,
-                                                horizontal: 8.0),
+                                                vertical: 4.0, horizontal: 8.0),
                                             child: Text(
                                               "${_bookingDetailsResponse.bookings.paymentMethod.toUpperCase()}",
                                               style: TextStyle(
                                                   fontFamily:
                                                       AppConstants.fontName,
                                                   fontSize: 10.0,
-                                                  color:
-                                                      AppTheme.mainTextColor,
+                                                  color: AppTheme.mainTextColor,
                                                   fontWeight:
                                                       FontWeight.normal),
                                             ),

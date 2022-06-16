@@ -20,9 +20,11 @@ import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_
 class ItemBooking extends StatefulWidget {
   final BookingRequest booking;
   final Function callBackMethod;
+  final bool isRejected;
   final VoidCallback readStatusChange;
 
-  ItemBooking(this.booking, this.callBackMethod, {this.readStatusChange});
+  ItemBooking(this.booking, this.callBackMethod,
+      {this.readStatusChange, this.isRejected});
 
   @override
   _ItemBookingState createState() => _ItemBookingState();
@@ -40,18 +42,25 @@ class _ItemBookingState extends BaseState<ItemBooking> {
       onTap: () {
         widget.booking.readStatus = '1';
         widget.readStatusChange();
+        print("Waheguru");
+        print(widget.isRejected);
         setState(() {});
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => BookingDetailsScreen(
-                        widget.booking, callBackMethod: (status) {
-                      widget.booking.status = status;
-                      if (mounted) {
-                        setState(() {});
-                      }
-                      widget.callBackMethod('refresh', widget.booking);
-                    })));
+
+        if (widget.isRejected) {
+          print("status 2");
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => BookingDetailsScreen(
+                          widget.booking, callBackMethod: (status) {
+                        widget.booking.status = status;
+                        if (mounted) {
+                          setState(() {});
+                        }
+                        widget.callBackMethod('refresh', widget.booking);
+                      })));
+        }
       },
       child: Card(
         color: Colors.white,

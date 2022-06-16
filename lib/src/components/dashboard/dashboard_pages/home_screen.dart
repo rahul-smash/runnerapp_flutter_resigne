@@ -142,7 +142,9 @@ class _HomeScreenState extends BaseState<HomeScreen> {
           status:
               _getCurrentStatus(_filterOptions[selectedBookingFilterIndex]));
       _getFilterCount();
-      if(mounted){ setState(() {});}
+      if (mounted) {
+        setState(() {});
+      }
 
       AppUtils.hideLoader(context);
       isBookingApiLoading = false;
@@ -729,9 +731,13 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                             itemCount: _bookingResponse.bookings.length,
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
+                              print("==Waheguru");
+                              print(_bookingResponse.bookings[index].status);
                               return ItemBooking(
                                 _bookingResponse.bookings[index],
                                 _bookingAction,
+                                isRejected:
+                                    RequestStatus.reject == true ? true : false,
                                 readStatusChange: () {
                                   _bookingResponse.bookings[index].readStatus =
                                       '1';

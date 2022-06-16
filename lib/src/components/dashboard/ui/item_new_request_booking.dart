@@ -22,7 +22,9 @@ class ItemViewOrderRequests extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Card(
-        margin: EdgeInsets.symmetric(horizontal: 18.0, ),
+        margin: EdgeInsets.symmetric(
+          horizontal: 18.0,
+        ),
         color: Colors.white,
         elevation: 8.0,
         shape:
