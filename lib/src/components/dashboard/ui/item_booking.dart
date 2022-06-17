@@ -42,7 +42,7 @@ class _ItemBookingState extends BaseState<ItemBooking> {
       onTap: () {
         widget.booking.readStatus = '1';
         widget.readStatusChange();
-        print("Waheguru");
+
         print(widget.isRejected);
         setState(() {});
 

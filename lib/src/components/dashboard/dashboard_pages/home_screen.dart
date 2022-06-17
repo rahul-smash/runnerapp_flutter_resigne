@@ -731,7 +731,6 @@ class _HomeScreenState extends BaseState<HomeScreen> {
                             itemCount: _bookingResponse.bookings.length,
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
-                              print("==Waheguru");
                               print(_bookingResponse.bookings[index].status);
                               return ItemBooking(
                                 _bookingResponse.bookings[index],
