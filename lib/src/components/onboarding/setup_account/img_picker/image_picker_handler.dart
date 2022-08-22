@@ -8,7 +8,6 @@ import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
 
 class ImagePickerHandler {
-
   final ImagePicker _picker = ImagePicker();
   ImagePickerDialog imagePicker;
   ImagePickerListener _listener;
@@ -25,14 +24,16 @@ class ImagePickerHandler {
 
   openCamera() async {
     imagePicker.dismissDialog();
-    var image = await _picker.pickImage(source: ImageSource.camera,imageQuality: 50);
+    var image =
+        await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     cropImage(image);
     //selectedImage(image);
   }
 
   openGallery() async {
     imagePicker.dismissDialog();
-    var image = await await _picker.pickImage(source: ImageSource.gallery,imageQuality: 50);
+    var image = await await _picker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
     cropImage(image);
     //selectedImage(image);
   }
@@ -43,7 +44,7 @@ class ImagePickerHandler {
   }
 
   Future cropImage(XFile image) async {
-    File croppedFile = await ImageCropper.cropImage(
+    File croppedFile = await ImageCropper().cropImage(
         sourcePath: image.path,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
@@ -61,14 +62,13 @@ class ImagePickerHandler {
         iosUiSettings: IOSUiSettings(
           minimumAspectRatio: 1.0,
           title: 'Crop Image',
-        )
-    );
+        ));
     //print("croppedFile=${croppedFile}");
-    if(croppedFile != null){
-      var result = await PreviewCroppedImageAlert.previewCroppedImageDialog(context, "Preview", croppedFile,
-          "Cancel", "OK");
+    if (croppedFile != null) {
+      var result = await PreviewCroppedImageAlert.previewCroppedImageDialog(
+          context, "Preview", croppedFile, "Cancel", "OK");
       //print("result=${result}");
-      if(result){
+      if (result) {
         XFile xFile = new XFile(croppedFile.path);
         selectedImage(xFile);
       }
@@ -76,17 +76,25 @@ class ImagePickerHandler {
   }
 
   Future selectedImage(XFile image) async {
-    _listener.selectedProfileImage(image,this.profileImage,this.docImage1,this.docImage2,this.docImage3,
-        this.docCertificateImage1,this.docCertificateImage2,this.docCertificateImage3);
+    _listener.selectedProfileImage(
+        image,
+        this.profileImage,
+        this.docImage1,
+        this.docImage2,
+        this.docImage3,
+        this.docCertificateImage1,
+        this.docCertificateImage2,
+        this.docCertificateImage3);
   }
 
-  showDialog(BuildContext context,{bool profileImage = false,
-    bool docImage1= false,
-    bool docImage2= false,
-    bool docImage3= false,
-    bool docCertificateImage1 = false,
-    bool docCertificateImage2= false,
-    bool docCertificateImage3 = false}) {
+  showDialog(BuildContext context,
+      {bool profileImage = false,
+      bool docImage1 = false,
+      bool docImage2 = false,
+      bool docImage3 = false,
+      bool docCertificateImage1 = false,
+      bool docCertificateImage2 = false,
+      bool docCertificateImage3 = false}) {
     this.context = context;
     this.profileImage = profileImage;
     this.docImage1 = docImage1;
@@ -97,17 +105,21 @@ class ImagePickerHandler {
     this.docCertificateImage3 = docCertificateImage3;
     imagePicker.getImage(context);
   }
-  closeDialog(){
+
+  closeDialog() {
     imagePicker.dismissDialog();
   }
-
-
 }
-
 
 abstract class ImagePickerListener {
-  selectedProfileImage(XFile _image,bool profileImage, bool docImage1, bool docImage2,bool docImage3,
-      bool docCertificateImage1,bool docCertificateImage2,bool docCertificateImage3,);
+  selectedProfileImage(
+    XFile _image,
+    bool profileImage,
+    bool docImage1,
+    bool docImage2,
+    bool docImage3,
+    bool docCertificateImage1,
+    bool docCertificateImage2,
+    bool docCertificateImage3,
+  );
 }
-
-

@@ -507,7 +507,7 @@ class Cart {
         variantId: item.variantId ?? this.variantId,
         weight: item.weight ?? this.weight,
         mrpPrice: item.mrpPrice ?? this.mrpPrice,
-        price: item.price ?? this.price,
+        price: item.price ?? this.price.toString(),
         discount: item.discount ?? this.discount,
         servicePayout: item.servicePayout ?? this.servicePayout,
         walletRefundAmount: item.walletRefundAmount ?? this.walletRefundAmount,

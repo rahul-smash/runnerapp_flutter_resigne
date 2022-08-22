@@ -6,6 +6,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:marketplace_service_provider/core/dimensions/widget_dimensions.dart';
 import 'package:marketplace_service_provider/core/network/connectivity/network_connection_observer.dart';
@@ -1208,10 +1210,14 @@ class _EditBookingDetailsScreenState
   }
 
   Widget listItem(BuildContext context, int index) {
-    double totalPrice = AppUtils.roundOffPrice(
-        (double.parse(editCartList[index].price)) *
-            (int.parse(editCartList[index].quantity)),
-        2);
+    double totalPrice = 0.0;
+    if (editCartList[index].price.toString().isNotEmpty &&
+        editCartList[index].quantity.toString().isNotEmpty) {
+      totalPrice = AppUtils.roundOffPrice(
+          (double.parse(editCartList[index].price)) *
+              (int.parse(editCartList[index].quantity)),
+          2);
+    }
 
     return Container(
       color: Colors.white,
@@ -1289,23 +1295,37 @@ class _EditBookingDetailsScreenState
                               Visibility(
                                 visible: editCartList[index].isEditPrice,
                                 child: SizedBox(
-                                  width: 50,
+                                  width: 70,
                                   child: TextFormField(
                                     controller: TextEditingController(
                                         text: editCartList[index].price),
                                     keyboardType: TextInputType.number,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
                                     textInputAction: TextInputAction.next,
-                                    validator: (value) =>
-                                        value.isEmpty ? 'enter amount' : null,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d+\.?\d*')),
+                                    ],
+                                    // validator: (value) {
+                                    //   if (value != null || value.isNotEmpty) {
+                                    //     return 'Enter price';
+                                    //   }
+                                    //   return null;
+                                    // },
                                     style: TextStyle(
                                         color: AppTheme.mainTextColor),
                                     onFieldSubmitted: (value) {
-                                      editCartList[index].price = value;
-                                      editCartList[index].mrpPrice = value;
+                                      editCartList[index].price =
+                                          value.replaceAll(" ", "");
+                                      editCartList[index].mrpPrice =
+                                          value.replaceAll(" ", "");
                                     },
                                     onChanged: (value) {
-                                      editCartList[index].price = value;
-                                      editCartList[index].mrpPrice = value;
+                                      editCartList[index].price =
+                                          value.replaceAll(" ", "");
+                                      editCartList[index].mrpPrice =
+                                          value.replaceAll(" ", "");
                                     },
                                     decoration: InputDecoration(
                                       counterText: '',
@@ -1331,9 +1351,18 @@ class _EditBookingDetailsScreenState
                               _showEdit == true
                                   ? GestureDetector(
                                       onTap: () {
-                                        editCartList[index].isEditPrice =
-                                            !editCartList[index].isEditPrice;
-                                        setState(() {});
+                                        if (editCartList[index]
+                                            .price
+                                            .toString()
+                                            .isEmpty) {
+                                          AppUtils.showToast(
+                                              "Enter price", true);
+                                          _showEdit == true;
+                                        } else {
+                                          editCartList[index].isEditPrice =
+                                              !editCartList[index].isEditPrice;
+                                          setState(() {});
+                                        }
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.0),
@@ -2035,6 +2064,14 @@ class _EditBookingDetailsScreenState
     }
   }
 
+  String validateMyInput(String value) {
+    RegExp regex = new RegExp(r'^(?=\D*(?:\d\D*){1,12}$)\d+(?:\.\d{1,4})?$');
+    if (!regex.hasMatch(value))
+      return 'Enter Valid Number';
+    else
+      return null;
+  }
+
   String _getCurrentOrderStatus(BookingRequest booking) {
     switch (booking.status) {
       case '0':
@@ -2093,7 +2130,8 @@ class _EditBookingDetailsScreenState
             item: _bookingDetailsResponse.bookings.cart[cartCounter],
             variantId:
                 _bookingDetailsResponse.bookings.cart[cartCounter].variantId,
-            price: _bookingDetailsResponse.bookings.cart[cartCounter].price,
+            price: _bookingDetailsResponse.bookings.cart[cartCounter].price
+                .replaceAll(" ", ""),
             oldQuantity:
                 _bookingDetailsResponse.bookings.cart[cartCounter].quantity,
             quantity: '0',
@@ -2121,7 +2159,8 @@ class _EditBookingDetailsScreenState
                 item: _bookingDetailsResponse.bookings.cart[cartCounter],
                 variantId: _bookingDetailsResponse
                     .bookings.cart[cartCounter].variantId,
-                price: _bookingDetailsResponse.bookings.cart[cartCounter].price,
+                price: _bookingDetailsResponse.bookings.cart[cartCounter].price
+                    .replaceAll(" ", ""),
                 oldQuantity:
                     _bookingDetailsResponse.bookings.cart[cartCounter].quantity,
                 quantity: '0',
@@ -2131,7 +2170,7 @@ class _EditBookingDetailsScreenState
             editJsonList.add(TaxOrderProductItem.copyWith(
                 item: editCartList[editListCounter],
                 variantId: editCartList[editListCounter].variantId,
-                price: editCartList[editListCounter].price,
+                price: editCartList[editListCounter].price.replaceAll(" ", ""),
                 oldQuantity: editCartList[editListCounter].quantity,
                 quantity: editCartList[editListCounter].quantity,
                 changeStatus: newlyAdded));
@@ -2143,7 +2182,8 @@ class _EditBookingDetailsScreenState
               editJsonList.add(TaxOrderProductItem.copyWith(
                   item: editCartList[editListCounter],
                   variantId: editCartList[editListCounter].variantId,
-                  price: editCartList[editListCounter].price,
+                  price:
+                      editCartList[editListCounter].price.replaceAll(" ", ""),
                   oldQuantity: _bookingDetailsResponse
                       .bookings.cart[cartCounter].quantity,
                   quantity: editCartList[editListCounter].quantity,
@@ -2154,7 +2194,8 @@ class _EditBookingDetailsScreenState
               editJsonList.add(TaxOrderProductItem.copyWith(
                   item: editCartList[editListCounter],
                   variantId: editCartList[editListCounter].variantId,
-                  price: editCartList[editListCounter].price,
+                  price:
+                      editCartList[editListCounter].price.replaceAll(" ", ""),
                   oldQuantity: _bookingDetailsResponse
                       .bookings.cart[cartCounter].quantity,
                   quantity: editCartList[editListCounter].quantity,
@@ -2166,7 +2207,7 @@ class _EditBookingDetailsScreenState
             editJsonList.add(TaxOrderProductItem.copyWith(
                 item: editCartList[editListCounter],
                 variantId: editCartList[editListCounter].variantId,
-                price: editCartList[editListCounter].price,
+                price: editCartList[editListCounter].price.replaceAll(" ", ""),
                 oldQuantity: editCartList[editListCounter].quantity,
                 quantity: editCartList[editListCounter].quantity,
                 changeStatus: noChanges));
@@ -2181,7 +2222,7 @@ class _EditBookingDetailsScreenState
         editJsonList.add(TaxOrderProductItem.copyWith(
             item: editCartList[editListCounter],
             variantId: editCartList[editListCounter].variantId,
-            price: editCartList[editListCounter].price,
+            price: editCartList[editListCounter].price.replaceAll(" ", ""),
             oldQuantity: editCartList[editListCounter].quantity,
             quantity: editCartList[editListCounter].quantity,
             changeStatus: newlyAdded));

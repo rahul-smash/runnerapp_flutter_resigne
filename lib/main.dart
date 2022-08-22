@@ -122,7 +122,7 @@ void main() async {
   } else {
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
-      await AppSharedPref.instance.setDeviceId(androidDeviceInfo.androidId);
+      await AppSharedPref.instance.setDeviceId(androidDeviceInfo.id);
     } else {
       IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
       await AppSharedPref.instance

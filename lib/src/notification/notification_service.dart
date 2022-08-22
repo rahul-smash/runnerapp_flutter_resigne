@@ -1,17 +1,5 @@
 import 'dart:convert';
 
-// import 'package:appventure/bloc/AppStateBloc.dart';
-// import 'package:appventure/models/notification_model.dart';
-// import 'package:appventure/models/schedule_notification.dart';
-// import 'package:appventure/screens/main_screen/components/main_screen_parameter.dart';
-// import 'package:appventure/screens/main_screen/main_screen.dart';
-// import 'package:appventure/screens/notifications/notifications_screen.dart';
-// import 'package:appventure/screens/vendor/vendor_booking_overview_screen/booking_overview_screen.dart';
-// import 'package:appventure/services/notification_service/notification_actions.dart';
-// import 'package:appventure/services/response/user_login_response.dart';
-// import 'package:appventure/services/user_provider.dart';
-// import 'package:appventure/services/user_service.dart';
-// import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -75,7 +63,6 @@ class NotificationService {
     var fcmToken = await _firebaseMessaging.getToken();
     _instance._saveFcmToken(fcmToken);
     await AppUtils.getDeviceInfo();
-
 
     _firebaseMessaging.getInitialMessage().then((message) {
       if (message != null) {
@@ -150,7 +137,8 @@ class NotificationService {
   void _handlePushWhileOpen(RemoteMessage message) {
     // appStateBloc.getNotifications();
     print('---------handlePushWhileOpen---------=${message.data}');
-    eventBus.fire(FCMNotificationEvent( parseNotificationData(message.data, false)));
+    eventBus
+        .fire(FCMNotificationEvent(parseNotificationData(message.data, false)));
     //Log firebase event
     // FirebaseAnalytics().logEvent(
     //   name: 'fcm_notification_foreground',

@@ -94,11 +94,14 @@ class AppUtils {
     );
   }
 
-  static convertDateTime(String utcTime){
-    var dateFormat = DateFormat("dd MMM yyyy, hh:mm aa"); // you can change the format here
-    var utcDate = dateFormat.format(DateTime.parse(utcTime)); // pass the UTC time here
+  static convertDateTime(String utcTime) {
+    var dateFormat =
+        DateFormat("dd MMM yyyy, hh:mm aa"); // you can change the format here
+    var utcDate =
+        dateFormat.format(DateTime.parse(utcTime)); // pass the UTC time here
     var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
-    String createdDate = dateFormat.format(DateTime.parse(localDate)); // you will local time
+    String createdDate =
+        dateFormat.format(DateTime.parse(localDate)); // you will local time
     return createdDate;
   }
 
@@ -107,8 +110,8 @@ class AppUtils {
     PackageInfo packageInfo = await AppUtils.getAppVersionDetails();
     String deviceId = AppSharedPref.instance.getDeviceId();
     String deviceToken = AppSharedPref.instance.getDeviceToken();
-    if(deviceToken==null||deviceToken.isEmpty){
-      deviceToken='deviceToken';
+    if (deviceToken == null || deviceToken.isEmpty) {
+      deviceToken = 'deviceToken';
     }
     Map<String, dynamic> param = Map();
     param['app_version'] = packageInfo.version;
@@ -128,7 +131,7 @@ class AppUtils {
         param['model'] = androidInfo.model;
         param['manufacturer'] = androidInfo.manufacturer;
         param['isPhysicalDevice'] = androidInfo.isPhysicalDevice;
-        param['androidId'] = androidInfo.androidId;
+        param['androidId'] = androidInfo.id;
         param['brand'] = androidInfo.brand;
         param['device'] = androidInfo.device;
         param['display'] = androidInfo.display;
@@ -350,6 +353,7 @@ class AppUtils {
       throw 'Could not launch $url';
     }
   }
+
   static double roundOffPrice(double val, int places) {
     double mod = pow(10.0, places);
     return ((val * mod).round().toDouble() / mod);
@@ -366,13 +370,12 @@ class AppUtils {
     // The "launch" method is part of "url_launcher".
     await launch('$link');
   }
+
   static launchSMS(String number) async {
     try {
-      List<String> recipients=List.empty(growable: true);
+      List<String> recipients = List.empty(growable: true);
       recipients.add(number);
-      String _result = await sendSMS(
-          message: '', recipients: recipients);
-
+      String _result = await sendSMS(message: '', recipients: recipients);
     } catch (error) {
       print(error);
     }
@@ -755,7 +758,7 @@ class AppUtils {
       'tags': build.tags,
       'type': build.type,
       'isPhysicalDevice': build.isPhysicalDevice,
-      'androidId': build.androidId,
+      'androidId': build.id,
       'systemFeatures': build.systemFeatures,
     };
   }
@@ -838,7 +841,7 @@ class AppUtils {
           String variantId,
           String weight,
           String mrpPrice,
-          String price,
+          dynamic price,
           String discount,
           String servicePayout,
           String walletRefundAmount,
