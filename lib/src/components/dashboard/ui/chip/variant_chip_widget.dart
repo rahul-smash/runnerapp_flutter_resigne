@@ -19,7 +19,6 @@ class VariantChips extends StatefulWidget {
 }
 
 class _VariantChipsState extends State<VariantChips> {
-  // List<String> options = ['500g', '1Kg','2Kg','3Kg'];
   List<Variant> variantList = List.empty(growable: true);
 
   @override

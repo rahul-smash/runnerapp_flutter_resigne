@@ -259,6 +259,7 @@ class DashboardNetworkRepository extends DioBaseService {
           apiPath(StoreConfigurationSingleton.instance.configModel.storeId,
               '${_bookingDetails}${orderId}'),
           param);
+      log("check response${response}");
       BookingDetailsResponse bookingResponse =
           BookingDetailsResponse.fromJson(jsonDecode(response));
       return bookingResponse;
@@ -391,7 +392,8 @@ class DashboardNetworkRepository extends DioBaseService {
       param['shipping'] = shipping;
       param['user_wallet'] = userWallet;
       param['discount'] = discount;
-      param['cart_saving'] = cartSaving!=null&&cartSaving.isNotEmpty?cartSaving:'0.00';
+      param['cart_saving'] =
+          cartSaving != null && cartSaving.isNotEmpty ? cartSaving : '0.00';
       param['tax'] = tax;
       param['tip'] = tip;
       param['fixed_discount_amount'] = fixedDiscountAmount;

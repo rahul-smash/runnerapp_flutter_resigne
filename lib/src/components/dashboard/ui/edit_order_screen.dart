@@ -19,6 +19,7 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/book
 import 'package:marketplace_service_provider/src/components/dashboard/model/dashboard_response_summary.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/provider/booking_provider.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/repository/dashboard_repository.dart';
+import 'package:marketplace_service_provider/src/components/dashboard/ui/InvoiceImageView.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/add%20product/order_cart.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/dashboard_screen.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/ui/step_viewer.dart';
@@ -444,8 +445,8 @@ class _EditBookingDetailsScreenState
                                             ),
                                           ),
                                           onTap: () {
-                                            AppUtils.launchSMS(widget
-                                                .booking.store.contactNumber);
+                                            AppUtils.launchSMS(
+                                                widget.booking.user.phone);
                                           }),
                                       SizedBox(
                                         width: 8.0,
@@ -1447,6 +1448,9 @@ class _EditBookingDetailsScreenState
                                   : Container(),
                             ],
                           ),
+                          SizedBox(
+                            height: 8,
+                          ),
                           _showEdit == true
                               ? Align(
                                   alignment: Alignment.topRight,
@@ -2020,6 +2024,44 @@ class _EditBookingDetailsScreenState
       AppUtils.noNetWorkDialog(context);
     }
     setState(() {});
+  }
+
+  void invoiceDoorstepDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        // insetPadding: EdgeInsets.all(10),
+
+        title: Text("Choose the options below"),
+        content: Container(
+          height: 150,
+          child: Column(
+            children: [
+              TextButton(
+                onPressed: () {},
+                child: Text("Upload Image"),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text("Remarks"),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text("Submit"),
+              ),
+            ],
+          ),
+        ),
+        // actions: <Widget>[
+        //   TextButton(
+        //       child: Text(labelOk),
+        //       onPressed: onPressed ??
+        //               () {
+        //             Navigator.pop(context);
+        //           })
+        // ],
+      ),
+    );
   }
 
   _bookingAction(String type, dynamic booking) async {

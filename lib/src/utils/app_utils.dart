@@ -30,6 +30,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 
+import '../widgets/gradient_elevated_button.dart';
+
 appPrintLog(dynamic content) {
   if (AppConstants.isLoggerOn) print(content);
 }
@@ -701,6 +703,62 @@ class AppUtils {
               )),
         );
       },
+    );
+  }
+
+  static String chooseImageDialog(BuildContext context,
+      {String title = '',
+      bool cameraButtonEnable = true,
+      bool galleryButtonEnable = false,
+      Function cameraPressed,
+      Function galleryPressed}) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Center(child: Text(title)),
+        content: Container(
+          height: Dimensions.getHeight(percentage: 20),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 5,
+              ),
+              Visibility(
+                visible: cameraButtonEnable,
+                child: Container(
+                  height: Dimensions.getHeight(percentage: 7),
+                  width: Dimensions.getHeight(percentage: 20),
+                  child: GradientElevatedButton(
+                    onPressed: cameraPressed ??
+                        () {
+                          Navigator.pop(context);
+                        },
+                    buttonText: "Camera",
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Visibility(
+                visible: galleryButtonEnable,
+                child: Container(
+                  height: Dimensions.getHeight(percentage: 7),
+                  width: Dimensions.getHeight(percentage: 20),
+                  child: GradientElevatedButton(
+                    onPressed: galleryPressed ??
+                        () {
+                          Navigator.pop(context);
+                        },
+                    buttonText: "Gallery",
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

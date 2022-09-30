@@ -461,9 +461,7 @@ class _BookingDetailsScreenState extends BaseState<BookingDetailsScreen> {
                                                 ),
                                                 onTap: () {
                                                   AppUtils.launchSMS(widget
-                                                      .booking
-                                                      .store
-                                                      .contactNumber);
+                                                      .booking.user.phone);
                                                 }),
                                             SizedBox(
                                               width: 8.0,

@@ -17,6 +17,9 @@ import 'package:marketplace_service_provider/src/utils/callbacks.dart';
 import 'package:marketplace_service_provider/src/widgets/base_state.dart';
 import 'package:marketplace_service_provider/src/widgets/cash_collection_bottom_sheet.dart';
 
+import '../../../utils/app_strings.dart';
+import 'InvoiceImageView.dart';
+
 class ItemBooking extends StatefulWidget {
   final BookingRequest booking;
   final Function callBackMethod;
@@ -230,7 +233,103 @@ class _ItemBookingState extends BaseState<ItemBooking> {
                 thickness: 1,
               ),
               SizedBox(
-                height: 12.0,
+                height: 10.0,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InvoiceImageView(
+                                    booking: widget.booking,
+                                    imageType: "0",
+                                  )));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.borderNotFocusedColor,
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      child: Text("Invoice",
+                          style: TextStyle(
+                              color: AppTheme.black,
+                              fontSize: AppConstants.smallSize,
+                              fontWeight: FontWeight.normal)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InvoiceImageView(
+                                    booking: widget.booking,
+                                    imageType: "1",
+                                  )));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.borderNotFocusedColor,
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      child: Text("Doorstep",
+                          style: TextStyle(
+                              color: AppTheme.black,
+                              fontSize: AppConstants.smallSize,
+                              fontWeight: FontWeight.normal)),
+                    ),
+                  )
+                  // Container(
+                  //   child: Wrap(children: [
+                  //     Row(
+                  //       children: [
+                  //         TextButton(
+                  //             onPressed: () {
+                  //               Navigator.push(
+                  //                   context,
+                  //                   MaterialPageRoute(
+                  //                       builder: (context) => InvoiceImageView(
+                  //                             booking: widget.booking,
+                  //                             imageType: "0",
+                  //                           )));
+                  //             },
+                  //             child: Text("Invoice")),
+                  //         TextButton(
+                  //             onPressed: () {
+                  //               Navigator.push(
+                  //                   context,
+                  //                   MaterialPageRoute(
+                  //                       builder: (context) => InvoiceImageView(
+                  //                             booking: widget.booking,
+                  //                             imageType: "1",
+                  //                           )));
+                  //             },
+                  //             child: Text("Doorstep")),
+                  //       ],
+                  //     ),
+                  //   ]),
+                  // ),
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Divider(
+                height: 1,
+                thickness: 1,
+              ),
+              SizedBox(
+                height: 10.0,
               ),
               Visibility(
                 visible: widget.booking.runnerDeliveryAccepted == '1',

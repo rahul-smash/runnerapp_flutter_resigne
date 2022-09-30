@@ -13,8 +13,10 @@ import 'package:marketplace_service_provider/src/components/dashboard/model/add%
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/loyalty_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/user_response.dart';
 import 'package:marketplace_service_provider/src/components/dashboard/model/add%20product/add_customer_response.dart';
+import 'package:marketplace_service_provider/src/model/get_invoice_image_response.dart';
 import 'package:marketplace_service_provider/src/sharedpreference/app_shared_pref.dart';
 
+import '../../model/invoice_image_response.dart';
 import '../app_network_constants.dart';
 
 class AppNetwork {
@@ -33,6 +35,8 @@ class AppNetwork {
   static const REQUEST_DELIVERY_SLOTS = '/delivery_zones/deliveryTimeSlot';
   static const REQUEST_ADD_DELIVERY_ADDRESS = "/deliveryAddress";
   static const REQUEST_PLACE_PICKUP_ORDER = '/orders/pickupPlaceOrder';
+  static const INVOICE_IMAGES = '/runner_orders/invoice_images';
+  static const GET_INVOICE_IMAGES = '/runner_orders/get_order_invoice_images';
 
   static void init() {
     _dio = new Dio();
@@ -410,6 +414,84 @@ class AppNetwork {
       print("statusCode=${response.statusCode}");
       if (response.statusCode == 200) {
         return calculateResponseFromJson(response.data.toString());
+      }
+    } on DioError catch (e) {
+      print("DioError.response ${e.response.data}");
+      print("DioError.statusCode ${e.response.statusCode}");
+      throw new CustomException(e.response.data, e.response.statusCode);
+    } catch (e) {
+      print("CHECKOUT-----------");
+      print(e);
+    }
+  }
+
+  static Future<InvoiceImageResponse> invoiceImages(
+      File selectedProfileImg,
+      String runnerId,
+      String orderId,
+      String storeId,
+      String remarks,
+      String imageType) async {
+    try {
+      String fileName = selectedProfileImg != null
+          ? selectedProfileImg.path.split('/').last
+          : "";
+      FormData formData = new FormData.fromMap({
+        "runner_id": runnerId,
+        "order_id": orderId,
+        "store_id": storeId,
+        "remarks": remarks,
+        "image_type": imageType,
+        "image": selectedProfileImg == null
+            ? ""
+            : await MultipartFile.fromFile(
+                selectedProfileImg.path,
+                filename: fileName,
+              ),
+      });
+
+      Response response = await _dio.post(
+          AppNetworkConstants.baseUrl +
+              "${AppNetworkConstants.baseStoreParam}" +
+              AppNetworkConstants.baseRouteV2 +
+              "${AppSharedPref.instance.getStoreId()}" +
+              INVOICE_IMAGES,
+          data: formData);
+
+      print("response=${response.data.toString()}");
+      print("statusCode=${response.statusCode}");
+      if (response.statusCode == 200) {
+        return invoiceImageResponseFromJson(response.data.toString());
+      }
+    } on DioError catch (e) {
+      print("DioError.response ${e.response.data}");
+      print("DioError.statusCode ${e.response.statusCode}");
+      throw new CustomException(e.response.data, e.response.statusCode);
+    } catch (e) {
+      print("CHECKOUT-----------");
+      print(e);
+    }
+  }
+
+  static Future<GetInvoiceImageResponse> getInvoiceImage(
+    String runnerId,
+    String orderId,
+  ) async {
+    try {
+      FormData formData =
+          new FormData.fromMap({"runner_id": runnerId, "order_id": orderId});
+      Response response = await _dio.post(
+          AppNetworkConstants.baseUrl +
+              "${AppNetworkConstants.baseStoreParam}" +
+              AppNetworkConstants.baseRouteV2 +
+              "${AppSharedPref.instance.getStoreId()}" +
+              GET_INVOICE_IMAGES,
+          data: formData);
+
+      print("response=${response.data.toString()}");
+      print("statusCode=${response.statusCode}");
+      if (response.statusCode == 200) {
+        return getInvoiceImageResponseFromJson(response.data.toString());
       }
     } on DioError catch (e) {
       print("DioError.response ${e.response.data}");
