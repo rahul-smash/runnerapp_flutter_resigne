@@ -270,7 +270,7 @@ Future<void> initReminderAlarm() async {
       print(e);
     }
     await AndroidAlarmManager.periodic(
-        Duration(seconds: 5), 1, handleReminderAlarm,
+        Duration(seconds: 90), 1, handleReminderAlarm,
         rescheduleOnReboot: true, wakeup: true);
   } else if (Platform.isIOS && isLoggedIn) {
     IsolateNameServer.registerPortWithName(
@@ -286,7 +286,7 @@ Future<void> initReminderAlarm() async {
       print(e);
     }
 
-    Timer.periodic(Duration(seconds: 15), (Timer t) => handleReminderAlarm());
+    Timer.periodic(Duration(seconds: 90), (Timer t) => handleReminderAlarm());
   }
 }
 
