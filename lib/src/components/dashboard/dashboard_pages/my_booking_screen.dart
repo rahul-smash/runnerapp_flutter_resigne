@@ -97,7 +97,7 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
 
   void _getMyBookingOrders(
       {bool isShowLoader = true, FilterType bookingSorting}) async {
-    print('_getMyBookingOrders------');
+    print('@@getMyBookingOrders------');
     if (!getIt.get<NetworkConnectionObserver>().offline) {
       if (isShowLoader) AppUtils.showLoader(context);
       isBookingApiLoading = true;
@@ -107,7 +107,10 @@ class _MyBookingScreenState extends BaseState<MyBookingScreen> {
           bookingSorting: bookingSorting ?? FilterType.Delivery_Time_Slot,
           page: 1,
           limit: 1000);
+      print('@@getMyBookingOrders------2');
+
       _getFilterCount();
+      print('@@getMyBookingOrders------');
       AppUtils.hideLoader(context);
       _refreshController.refreshCompleted();
       isBookingApiLoading = false;
